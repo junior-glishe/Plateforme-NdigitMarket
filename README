@@ -1,0 +1,506 @@
+# NDIGITMARKET – Interface d'Administration
+
+> **Marketplace de Templates & Ressources Web Premium**
+
+## Présentation
+
+NDIGITMARKET est une plateforme spécialisée dans la vente de templates, scripts et ressources web destinées aux développeurs, designers et professionnels du numérique.
+
+Ce projet correspond au développement du **Back-Office Administrateur**, permettant aux administrateurs de gérer l'ensemble de la plateforme depuis une interface moderne, sécurisée et intuitive.
+
+L'objectif est de centraliser toutes les opérations administratives dans un seul espace de travail.
+
+---
+
+# Technologies utilisées
+
+Le projet est actuellement développé avec les technologies suivantes :
+
+* HTML5
+* CSS3
+* JavaScript (ES6)
+* PHP (Back-End)
+* MySQL
+* Responsive Design
+
+---
+
+# Structure du projet
+
+```
+NDIGITMARKET/
+│
+├── assets/
+│   ├── CSS/
+│   │   ├── app.css
+│   │   └── style.css
+│   │
+│   ├── IMAGE/
+│   │   └── LOGO.svg
+│   │
+│   └── JS/
+│       └── script.js
+│
+├── Auth/
+│   └── connexion.html
+│
+├── layout/
+│   ├── avis-commentaires.html
+│   ├── categorie.html
+│   ├── contenus.html
+│   ├── financieres-commission.html
+│   ├── gestion-commande.html
+│   ├── gestion-produits.html
+│   ├── gestion-utilisateur.html
+│   ├── gestion-vendeur.html
+│   ├── logs-audit.html
+│   ├── notifications.html
+│   ├── parametres-systeme.html
+│   └── rapport-stat.html
+│
+└── dashboard.html
+```
+
+---
+
+# Description des dossiers
+
+## assets/
+
+Ce dossier contient toutes les ressources statiques utilisées dans le projet.
+
+### CSS/
+
+Contient les feuilles de styles.
+
+* **style.css** → styles globaux de l'application.
+* **app.css** → styles spécifiques aux composants ou au tableau de bord.
+
+---
+
+### IMAGE/
+
+Contient toutes les ressources graphiques.
+
+Exemple :
+
+* Logo
+* Icônes
+* Illustrations
+* Images du site
+
+---
+
+### JS/
+
+Contient tous les scripts JavaScript.
+
+Exemple :
+
+* animations
+* interactions utilisateur
+* ouverture de menu
+* notifications
+* graphiques
+* appels AJAX
+
+---
+
+# Auth/
+
+Ce dossier regroupe toutes les pages liées à l'authentification.
+
+Actuellement :
+
+```
+connexion.html
+```
+
+Cette page permet :
+
+* Connexion Administrateur
+* Vérification des identifiants
+* Création de session
+* Redirection vers le Dashboard
+
+À terme, ce dossier pourra également contenir :
+
+```
+Auth/
+
+connexion.html
+
+mot-de-passe-oublie.html
+
+verification-otp.html
+
+reinitialisation.html
+```
+
+---
+
+# dashboard.html
+
+Il s'agit de la page principale de l'administration.
+
+Après connexion, l'utilisateur est redirigé vers cette page.
+
+Le Dashboard affiche notamment :
+
+* Chiffre d'affaires
+* Nombre de commandes
+* Produits vendus
+* Utilisateurs
+* Nouveaux vendeurs
+* Produits en attente
+* Graphiques
+* Activité récente
+* Notifications
+
+Le Dashboard constitue le centre de pilotage de la plateforme.
+
+---
+
+# layout/
+
+Ce dossier contient tous les modules principaux de l'administration.
+
+Chaque fichier représente une fonctionnalité indépendante.
+
+---
+
+## gestion-utilisateur.html
+
+Gestion complète des utilisateurs.
+
+Fonctionnalités prévues :
+
+* Liste des utilisateurs
+* Recherche
+* Filtres
+* Consultation du profil
+* Modification
+* Suspension
+* Bannissement
+* Suppression
+* Historique
+
+---
+
+## gestion-vendeur.html
+
+Gestion des vendeurs de la marketplace.
+
+Fonctionnalités :
+
+* Validation des demandes vendeur
+* Suspension
+* Activation
+* Boutique
+* Produits
+* Revenus
+* Paiements
+* Historique
+
+---
+
+## gestion-produits.html
+
+Gestion des templates et ressources numériques.
+
+Fonctionnalités :
+
+* Validation
+* Publication
+* Refus
+* Modification
+* Suppression
+* Gestion des catégories
+* Produits Premium
+* Produits gratuits
+
+---
+
+## gestion-commande.html
+
+Gestion des commandes.
+
+Fonctionnalités :
+
+* Consultation
+* Paiement
+* Livraison
+* Facture
+* Téléchargement
+* Remboursement
+
+---
+
+## financieres-commission.html
+
+Gestion financière.
+
+Permet de suivre :
+
+* Chiffre d'affaires
+* Revenus
+* Commissions
+* Versements
+* Historique financier
+* Solde vendeur
+
+---
+
+## categorie.html
+
+Gestion des catégories.
+
+Fonctionnalités :
+
+* Création
+* Modification
+* Suppression
+* Activation
+* Désactivation
+* Réorganisation
+
+---
+
+## contenus.html
+
+Gestion du contenu de la plateforme.
+
+Permet de gérer :
+
+* Bannières
+* Promotions
+* Slides
+* Pages
+* Sections
+* Contenus marketing
+
+---
+
+## notifications.html
+
+Centre de notifications.
+
+Affiche notamment :
+
+* Nouveaux vendeurs
+* Nouveaux produits
+* Nouvelles commandes
+* Alertes système
+* Messages
+
+---
+
+## avis-commentaires.html
+
+Gestion des avis clients.
+
+Fonctionnalités :
+
+* Validation
+* Suppression
+* Réponse
+* Signalement
+* Modération
+
+---
+
+## rapport-stat.html
+
+Module d'analyse.
+
+Permet d'afficher :
+
+* Statistiques
+* Graphiques
+* Évolution des ventes
+* Produits populaires
+* Catégories
+* Utilisateurs
+* Export PDF
+* Export Excel
+
+---
+
+## parametres-systeme.html
+
+Configuration générale.
+
+Exemples :
+
+* Nom du site
+* Logo
+* SMTP
+* API
+* Mobile Money
+* Commission
+* Devise
+* Maintenance
+* Comptes administrateurs
+
+---
+
+## logs-audit.html
+
+Journal de sécurité.
+
+Enregistre toutes les actions administratives :
+
+* Connexions
+* Modifications
+* Suppressions
+* Paiements
+* Paramètres
+* Erreurs
+* Activités administrateur
+
+---
+
+# Architecture fonctionnelle
+
+Le panneau d'administration est organisé autour des modules suivants :
+
+```
+Dashboard
+
+│
+
+├── Gestion des utilisateurs
+
+├── Gestion des vendeurs
+
+├── Gestion des produits
+
+├── Gestion des commandes
+
+├── Finances & Commissions
+
+├── Catégories
+
+├── Gestion des contenus
+
+├── Notifications
+
+├── Avis & Commentaires
+
+├── Statistiques & Rapports
+
+├── Paramètres système
+
+└── Logs & Audit Trail
+```
+
+---
+
+# Organisation recommandée
+
+Au fur et à mesure de l'évolution du projet, il est conseillé d'ajouter les dossiers suivants :
+
+```
+components/
+```
+
+Contiendra :
+
+* Sidebar
+* Navbar
+* Footer
+* Cards
+* Tableaux
+* Modals
+
+---
+
+```
+includes/
+```
+
+Contiendra :
+
+* header.php
+* footer.php
+* sidebar.php
+* navbar.php
+
+---
+
+```
+config/
+```
+
+Contiendra :
+
+* connexion base de données
+* constantes
+* variables globales
+
+---
+
+```
+api/
+```
+
+Contiendra toutes les API utilisées par le Back-End.
+
+---
+
+```
+uploads/
+```
+
+Stockage des :
+
+* Images
+* Logos
+* Templates ZIP
+* Documents
+
+---
+
+# Objectifs du projet
+
+Le panneau d'administration doit permettre de :
+
+* Administrer entièrement la plateforme NDIGITMARKET.
+* Gérer les utilisateurs et vendeurs.
+* Contrôler les produits publiés.
+* Superviser les commandes.
+* Gérer les paiements et commissions.
+* Consulter les statistiques.
+* Configurer la plateforme.
+* Assurer la sécurité grâce aux journaux d'audit.
+
+---
+
+# Évolutions prévues
+
+Les prochaines versions pourront intégrer :
+
+* Authentification à deux facteurs (2FA)
+* Notifications en temps réel
+* Chat interne
+* Tableau de bord temps réel
+* Gestion avancée des rôles
+* Export PDF/Excel
+* API REST
+* Tableau de bord analytique
+* Mode sombre
+* Multilingue
+* Responsive mobile
+
+---
+
+# Auteur
+
+Projet développé dans le cadre de la plateforme **NDIGITMARKET**.
+
+**Version :** 1.0
+**Statut :** En développement 
+
+---
+
+**© NDIGITMARKET — Tous droits réservés.**
