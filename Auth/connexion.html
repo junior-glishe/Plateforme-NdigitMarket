@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion </title>
+  <link rel="stylesheet" href="../assets/CSS/style.css">
+  
+  <meta name="description" content="Connectez-vous à votre espace MediTrace pour accéder à la gestion des hospitalisations.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0d6b4e",
+            accent: "#0891b2"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+</head>
+<body class="bg-gradient-custom min-h-screen">
+
+  <div class="flex min-h-screen">
+    <!-- Section gauche - Formulaire -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 overflow-y-auto">
+      <div class="max-w-md w-full">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+          <div class="flex justify-center mb-4">
+            <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d6b4e" stroke-width="1.8">
+                <path d="M12 3L3 8L12 13L21 8L12 3Z" stroke-linecap="round"/>
+                <path d="M5 13L5 17.5C5 18.7 8 20 12 20C16 20 19 18.7 19 17.5L19 13" stroke-linecap="round"/>
+                <path d="M12 13V20" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-800">NDIGIT<span class="text-primary">MARKET</span></h1>
+          <p class="text-gray-500 text-sm mt-2">Connectez-vous à votre espace</p>
+        </div>
+
+        <!-- Sélection du rôle -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Je suis :</label>
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Aministrateur -->
+            <div class="role-card border border-gray-200 rounded-xl p-3 text-center" data-role="patient">
+              <div class="role-icon w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2 transition">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d6b4e" stroke-width="1.8">
+                  <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"/>
+                  <path d="M5 20V19C5 15.6863 7.68629 13 11 13H13C16.3137 13 19 15.6863 19 19V20"/>
+                </svg>
+              </div>
+              <span class="role-name text-sm text-gray-700 transition">Aministrateur</span>
+            </div>
+
+            <!-- Moderateur -->
+            <div class="role-card border border-gray-200 rounded-xl p-3 text-center" data-role="medecin">
+              <div class="role-icon w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2 transition">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d6b4e" stroke-width="1.8">
+                  <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <span class="role-name text-sm text-gray-700 transition">Moderateur</span>
+            </div>
+
+            <!-- Support -->
+            <div class="role-card border border-gray-200 rounded-xl p-3 text-center" data-role="infirmier">
+              <div class="role-icon w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-2 transition">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d6b4e" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v4l3 3"/>
+                </svg>
+              </div>
+              <span class="role-name text-sm text-gray-700 transition">Support</span>
+            </div>
+
+           
+            
+          </div>
+        </div>
+
+        <!-- Formulaire -->
+        <form id="loginForm" class="space-y-6">
+          <input type="hidden" id="selectedRole" name="role" value="">
+          
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Adresse email</label>
+            <input 
+              type="email" 
+              id="email"
+              name=""
+              required
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white input-focus transition"
+              placeholder="exemple@gmail.com"
+            >
+          </div>
+
+          <!-- Mot de passe -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+            <input 
+              type="password" 
+              id="password"
+              name=""
+              required
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white input-focus transition"
+              placeholder="••••••••"
+            >
+          </div>
+
+          <!-- Options -->
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20">
+              <span class="text-sm text-gray-600">Se souvenir de moi</span>
+            </label>
+          </div>
+
+          <!-- Bouton connexion -->
+          <button 
+            type="submit" 
+            class="w-full py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition"
+          >
+            Se connecter
+          </button>
+        </form>
+
+        <!-- Message d'erreur -->
+        <div id="errorMsg" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm text-center">
+           Email, mot de passe ou rôle incorrect
+        </div>
+
+        <!-- Message alerte rôle -->
+        <div id="roleAlert" class="hidden mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-700 text-sm text-center">
+           Veuillez sélectionner votre rôle
+        </div>
+
+        <!-- Lien retour accueil -->
+        <div class="text-center mt-6">
+          <a href="index.html" class="text-sm text-gray-500 hover:text-primary transition">← Retour à l'accueil</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section droite - Image  FULL HEIGHT -->
+    <div class="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gray-900">
+  
+  <img 
+    src="../assets/IMAGE/LOGO.svg" 
+    alt="NDIGITMARKET Logo"
+    class="w-2/3 h-auto object-contain"
+  >
+
+  <!-- Overlay léger -->
+  <div class="absolute inset-0 bg-black/10"></div>
+
+  <!-- Texte -->
+  <div class="absolute bottom-10 text-center px-6">
+    <h3 class="text-2xl font-bold text-white mb-2">NDIGITMARKET</h3>
+    <p class="text-white/80 text-sm">NDIGITMARKET est une plateforme digitale béninoise qui permet aux développeurs et créateurs de sites web d’accéder facilement à des templates, scripts et ressources numériques pour accélérer leurs projets.</p>
+  </div>
+</div>
+  </div>
+
+
+   <script src="../assets/JS/script.js"></script>
+</body>
+</html>
