@@ -6,11 +6,9 @@
     const errorMsg = document.getElementById('errorMsg');
     const loginForm = document.getElementById('loginForm');
 
-    // Comptes de test par rôle
     const demoUsers = [
     ];
 
-    // Clic sur une carte rôle
     roleCards.forEach(card => {
       card.addEventListener('click', function() {
         // Retirer la sélection de toutes les cartes
@@ -46,18 +44,16 @@
         // Redirection simulée selon le rôle
         let dashboardUrl = '';
         switch(user.role) {
-          case 'admin':
-            dashboardUrl = 'admin/dashboard.php';
+          case '':
+            dashboardUrl = '/dashboard.php';
             break;
-          case 'medecin':
-            dashboardUrl = 'medecins/dashboard.php';
+          case '':
+            dashboardUrl = '/dashboard.php';
             break;
-          case 'infirmier':
-            dashboardUrl = 'infirmiers/dashboard.php';
+          case '':
+            dashboardUrl = '/dashboard.php';
             break;
-          case 'patient':
-            dashboardUrl = 'patients/dashboard.php';
-            break;
+          
         }
         alert(`Bienvenue ${user.name} ! Redirection vers votre espace ${user.role}...`);
         // window.location.href = dashboardUrl;
@@ -72,46 +68,5 @@
 
 
 
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (sidebar.classList.contains('open')) {
-                    closeSidebar();
-                } else {
-                    openSidebar();
-                }
-            });
-
-            overlay.addEventListener('click', closeSidebar);
-
-            // Fermer avec la touche Echap
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                    closeSidebar();
-                }
-            });
-
-            // À l'agrandissement de l'écran, si la sidebar est ouverte en mobile, on la referme
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768 && sidebar.classList.contains('open')) {
-                    closeSidebar();
-                }
-            });
-        })();
+       
     
