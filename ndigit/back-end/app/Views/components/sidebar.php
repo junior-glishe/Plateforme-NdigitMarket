@@ -1,7 +1,7 @@
 <?php
-// $role = $_SESSION['user_role'];
-// $currentPage = $_GET['url'] ?? 'dashboard';
-// $baseUrl = "/NdigitMarket/public/index.php?url=";
+$role = $_SESSION['user_role'];
+$currentPage = $_GET['url'] ?? 'dashboard';
+$baseUrl = "/NdigitMarket/public/index.php?url=";
 
 ?>
 <!DOCTYPE html>
