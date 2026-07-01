@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<?php 
+session_start();
+require('../include/connect.php');
+?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin - NDIGITMARKET</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/vendors/bootstrap.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #087d67;
+            --primary-dark: #065a4a;
+            --primary-light: #e8f5f2;
+            --accent: #f97316;
+            --dark: #0f1923;
+            --dark-2: #1a2634;
+            --text: #374151;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f9fafb;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            --radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-header h3 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-header h4 {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: var(--text-light);
+            font-size: 18px;
+            z-index: 1;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(8,125,103,0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .forgot-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .remember-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox_animated {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .form-check-label {
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(8,125,103,0.3);
+        }
+
+        .btn-login i {
+            font-size: 18px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .alert-error i {
+            font-size: 18px;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .footer-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            
+            <!-- Header -->
+            <div class="login-header">
+                <img src="assets/images/logo-white.png" alt="NDIGITMARKET" class="logo" onerror="this.src='assets/images/lo.png'">
+                <h3>Bienvenue sur NdigitMarket</h3>
+                <h4>Connectez-vous à votre compte administrateur</h4>
+            </div>
+
+            <!-- Body -->
+            <div class="login-body">
+                
+                <?php
+                if(isset($_POST['envoyer'])){
+                    $mdp = htmlspecialchars($_POST['mdp']);
+                    $email = htmlspecialchars($_POST['email']);
+
+                    $resultats = $database->query('SELECT * FROM admin');
+                    $a = false;
+
+                    while ($donnee = $resultats->fetch()) {
+                        if ($donnee['email'] == $email && $donnee['mdp'] == $mdp) {
+                            $_SESSION["admin"] = "oui";
+                            $_SESSION["email"] = $email;
+                            
+                            echo '
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                            <script>
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Connexion réussie !",
+                                    text: "Vous allez être redirigé vers le tableau de bord.",
+                                    confirmButtonColor: "#087d67",
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                }).then((result) => {
+                                    window.location.href = "apps/index";
+                                });
+                            </script>';
+                            $a = true;
+                        }
+                    }
+
+                    if ($a == false) {
+                        echo '<div class="alert-error">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                Adresse email ou mot de passe incorrect
+                              </div>';
+                    }
+                }
+                ?>
+
+                <form method="POST">
+                    
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label class="form-label">Adresse Email</label>
+                        <div class="input-group">
+                            <i class="fa-regular fa-envelope input-icon"></i>
+                            <input type="email" name="email" class="form-control" placeholder="admin@ndigitmarket.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" name="mdp" id="password" class="form-control" placeholder="••••••••" required>
+                            <i class="fa-regular fa-eye-slash password-toggle" id="togglePassword" onclick="togglePassword()"></i>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="form-group">
+                        <div class="forgot-box">
+                            <div class="remember-box">
+                                <input class="checkbox_animated" type="checkbox" id="remember">
+                                <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                            </div>
+                            <a href="forgot" class="forgot-password">Mot de passe oublié ?</a>
+                        </div>
+                    </div>
+
+                    <!-- Bouton de connexion -->
+                    <button type="submit" name="envoyer" class="btn-login">
+                        <i class="fa-regular fa-arrow-right-to-bracket"></i>
+                        Se connecter
+                    </button>
+                </form>
+
+                <div class="footer-text">
+                    &copy; <?php echo date('Y'); ?> NDIGITMARKET. Tous droits réservés.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Afficher/masquer le mot de passe
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                password.type = 'password';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>
