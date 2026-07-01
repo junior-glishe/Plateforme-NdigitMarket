@@ -226,41 +226,6 @@ $baseUrl = "/NdigitMarket/public/index.php?url=";
 
                 <!-- SUPPORT -->
                 <?php if($role === 'support'): ?>
-
-                <a href="<?= $baseUrl ?>dashboard_support" 
-                   class="sidebar-link <?= $currentPage === 'dashboard_support' ? 'active' : '' ?>">
-                    <i class="fas fa-th-large"></i> Tableau de bord
-                </a>
-
-                <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Support client</h4>
-
-                <a href="<?= $baseUrl ?>tickets" 
-                   class="sidebar-link <?= $currentPage === 'tickets' ? 'active' : '' ?>">
-                    <i class="fas fa-ticket-alt"></i> Tickets support
-                </a>
-
-                <a href="<?= $baseUrl ?>chats" 
-                   class="sidebar-link <?= $currentPage === 'chats' ? 'active' : '' ?>">
-                    <i class="fas fa-comments"></i> Chat en direct
-                </a>
-
-                <a href="<?= $baseUrl ?>clients" 
-                   class="sidebar-link <?= $currentPage === 'clients' ? 'active' : '' ?>">
-                    <i class="fas fa-user-friends"></i> Clients
-                </a>
-
-                <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gestion</h4>
-
-                <a href="<?= $baseUrl ?>reclamations" 
-                   class="sidebar-link <?= $currentPage === 'reclamations' ? 'active' : '' ?>">
-                    <i class="fas fa-exclamation-triangle"></i> Réclamations
-                </a>
-
-                <a href="<?= $baseUrl ?>retours" 
-                   class="sidebar-link <?= $currentPage === 'retours' ? 'active' : '' ?>">
-                    <i class="fas fa-undo-alt"></i> Retours & remboursements
-                </a>
-
                 <a href="<?= $baseUrl ?>faq" 
                    class="sidebar-link <?= $currentPage === 'faq' ? 'active' : '' ?>">
                     <i class="fas fa-question-circle"></i> FAQ & base de connaissances
@@ -282,48 +247,6 @@ $baseUrl = "/NdigitMarket/public/index.php?url=";
 
                 <!-- MODERATEUR -->
                 <?php if($role === 'moderateur'): ?>
-
-                <a href="<?= $baseUrl ?>dashboard_moderateur" 
-                   class="sidebar-link <?= $currentPage === 'dashboard_moderateur' ? 'active' : '' ?>">
-                    <i class="fas fa-th-large"></i> Tableau de bord
-                </a>
-
-                <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Modération contenu</h4>
-
-                <a href="<?= $baseUrl ?>contenus_moderation" 
-                   class="sidebar-link <?= $currentPage === 'contenus_moderation' ? 'active' : '' ?>">
-                    <i class="fas fa-newspaper"></i> Contenus à modérer
-                </a>
-
-                <a href="<?= $baseUrl ?>produits_moderation" 
-                   class="sidebar-link <?= $currentPage === 'produits_moderation' ? 'active' : '' ?>">
-                    <i class="fas fa-store"></i> Produits en attente
-                </a>
-
-                <a href="<?= $baseUrl ?>commentaires" 
-                   class="sidebar-link <?= $currentPage === 'commentaires' ? 'active' : '' ?>">
-                    <i class="fas fa-comment-dots"></i> Commentaires
-                </a>
-
-                <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Signalements</h4>
-
-                <a href="<?= $baseUrl ?>signalements" 
-                   class="sidebar-link <?= $currentPage === 'signalements' ? 'active' : '' ?>">
-                    <i class="fas fa-flag"></i> Signalements utilisateurs
-                </a>
-
-                <a href="<?= $baseUrl ?>litiges" 
-                   class="sidebar-link <?= $currentPage === 'litiges' ? 'active' : '' ?>">
-                    <i class="fas fa-gavel"></i> Litiges
-                </a>
-
-                <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Communauté</h4>
-
-                <a href="<?= $baseUrl ?>membres" 
-                   class="sidebar-link <?= $currentPage === 'membres' ? 'active' : '' ?>">
-                    <i class="fas fa-users"></i> Membres
-                </a>
-
                 <a href="<?= $baseUrl ?>sanctions" 
                    class="sidebar-link <?= $currentPage === 'sanctions' ? 'active' : '' ?>">
                     <i class="fas fa-ban"></i> Sanctions
