@@ -1,7 +1,7 @@
 <?php
-$role = $_SESSION['user_role'];
+$role = $_SESSION['admin'];
 $currentPage = $_GET['url'] ?? 'dashboard';
-$baseUrl = "/NdigitMarket/public/index.php?url=";
+$baseUrl = "/ndigit/back-end/routes/api.php?url=";
 
 ?>
 <!DOCTYPE html>

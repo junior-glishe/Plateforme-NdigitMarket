@@ -14,81 +14,8 @@
 <body>
     <div id="overlay" class="overlay"></div>
 
-    <aside id="sidebar" class="sidebar sidebar-mobile md:sidebar-mobile md:translate-x-0">
-        <div class="p-6">
-            <!-- Logo -->
-            <div class="flex items-center gap-3 mb-8">
-                <div class="w-10 h-10 bg-[#0EA486] rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                    N
-                </div>
-                <div>
-                    <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">NDIGITMARKET</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-gray-400">Administration</p>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <nav class="space-y-0.5">
-                <a href="../dashboard.html" class="sidebar-link">
-                    <i class="fas fa-th-large"></i> Tableau de bord
-                </a>
-                <a href="../layout/gestion-utilisateur.html" class="sidebar-link">
-                    <i class="fas fa-users"></i> Gestion utilisateur
-                </a>
-                <a href="../layout/gestion-vendeur.html" class="sidebar-link">
-                    <i class="fas fa-store"></i> Gestion vendeur
-                </a>
-                <a href="../layout/gestion-produits.html" class="sidebar-link">
-                    <i class="fas fa-file-code"></i> Produits & Templates
-                </a>
-                <a href="../layout/gestion-commande.html" class="sidebar-link">
-                    <i class="fas fa-shopping-cart"></i> Gestion commande
-                </a>
-                <a href="../layout/financieres-commission.html" class="sidebar-link">
-                    <i class="fas fa-coins"></i> Financières & commission
-                </a>
-                <a href="../layout/categorie.html" class="sidebar-link">
-                    <i class="fas fa-tags"></i> Catégorie
-                </a>
-                <a href="../layout/contenus.html" class="sidebar-link">
-                    <i class="fas fa-newspaper"></i> Contenus
-                </a>
-                <a href="../layout/notifications.html" class="sidebar-link">
-                    <i class="fas fa-bell"></i> Notifications
-                </a>
-                <a href="../layout/rapport-stat.html" class="sidebar-link">
-                    <i class="fas fa-chart-pie"></i> Statistique & rapport
-                </a>
-                <a href="../layout/avis-commentaires.html" class="sidebar-link">
-                    <i class="fas fa-comment-dots"></i> Avis / Commentaire
-                </a>
-                <a href="../layout/parametres-systeme.html" class="sidebar-link">
-                    <i class="fas fa-cog"></i> Paramètre système
-                </a>
-                <a href="../layout/logs-audit.html" class="sidebar-link active">
-                    <i class="fas fa-history"></i> Logs & audit trail
-                </a>
-            </nav>
-
-            <!-- Profil en bas -->
-            <div class="mt-8 pt-6 border-t border-gray-100">
-                <div class="bg-[#0F172A] rounded-2xl p-4 text-white">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 bg-[#0EA486] rounded-full flex items-center justify-center text-lg font-semibold">
-                            A
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold">....</p>
-                            <p class="text-[11px] text-gray-400">....</p>
-                        </div>
-                    </div>
-                    <button class="text-xs text-gray-300 hover:text-white transition flex items-center gap-2">
-                        <i class="fas fa-sign-out-alt"></i> Déconnexion
-                    </button>
-                </div>
-            </div>
-        </div>
-    </aside>
+    
+    <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <main class="md:ml-[280px] min-h-screen p-4 md:p-8 transition-all">
 
