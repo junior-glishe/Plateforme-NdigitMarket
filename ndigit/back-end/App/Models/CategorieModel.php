@@ -239,4 +239,152 @@ class CategorieModel {
         $text = preg_replace('/-+/', '-', $text);
         return trim($text, '-');
     }
+
+    /**
+ * Filtrer les catégories avec recherche, statut et tri
+ */
+public function filterCategories($search = null, $statut = null, $tri = null) {
+    $sql = "SELECT c.*, 
+            (SELECT COUNT(*) FROM produits WHERE categorie_id = c.id) as nb_produits
+            FROM categories c 
+            WHERE 1=1";
+    $params = [];
+    
+    // Recherche
+    if ($search && !empty($search)) {
+        $sql .= " AND (c.nom_categorie LIKE ? OR c.description LIKE ?)";
+        $params[] = '%' . $search . '%';
+        $params[] = '%' . $search . '%';
+    }
+    
+    // Filtre statut
+    if ($statut && in_array($statut, ['active', 'inactive'])) {
+        $sql .= " AND c.statut = ?";
+        $params[] = $statut;
+    }
+    
+    // Tri
+    switch ($tri) {
+        case 'produits':
+            $sql .= " ORDER BY nb_produits DESC";
+            break;
+        case 'nom':
+            $sql .= " ORDER BY c.nom_categorie ASC";
+            break;
+        case 'date':
+            $sql .= " ORDER BY c.created_at DESC";
+            break;
+        default: // 'ordre'
+            $sql .= " ORDER BY c.ordre_affichage ASC, c.id DESC";
+    }
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Récupérer les produits d'une catégorie
+ */
+public function getProductsByCategory($categoryId, $limit = 5) {
+    $stmt = $this->pdo->prepare("
+        SELECT p.*, u.nom as vendeur 
+        FROM produits p
+        LEFT JOIN users u ON p.id_vendeur = u.id
+        WHERE p.categorie_id = ?
+        ORDER BY p.date_ajout DESC
+        LIMIT ?
+    ");
+    $stmt->execute([$categoryId, $limit]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Compter les produits actifs d'une catégorie
+ * (approuvés = actifs)
+ */
+public function countActiveProductsByCategory($categoryId) {
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) as total 
+        FROM produits 
+        WHERE categorie_id = ? 
+        AND statut = 'approuve'
+    ");
+    $stmt->execute([$categoryId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Compter les produits inactifs d'une catégorie
+ * (en_attente + refuse)
+ */
+public function countInactiveProductsByCategory($categoryId) {
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) as total 
+        FROM produits 
+        WHERE categorie_id = ? 
+        AND statut IN ('en_attente', 'refuse')
+    ");
+    $stmt->execute([$categoryId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Compter les vendeurs utilisant une catégorie
+ */
+public function countVendeursByCategory($categoryId) {
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(DISTINCT id_vendeur) as total 
+        FROM produits 
+        WHERE categorie_id = ? 
+        AND id_vendeur IS NOT NULL
+    ");
+    $stmt->execute([$categoryId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Récupérer la liste des icônes disponibles
+ */
+public function getAvailableIcons() {
+    return [
+        'fa-solid fa-globe',
+        'fa-solid fa-palette',
+        'fa-solid fa-gears',
+        'fa-brands fa-react',
+        'fa-solid fa-pen-ruler',
+        'fa-solid fa-plug',
+        'fa-solid fa-mobile-screen-button',
+        'fa-solid fa-laptop-code',
+        'fa-solid fa-cart-shopping',
+        'fa-solid fa-chart-line',
+        'fa-solid fa-code',
+        'fa-solid fa-database',
+        'fa-solid fa-cloud',
+        'fa-solid fa-shield-halved',
+        'fa-solid fa-rocket',
+        'fa-solid fa-wand-magic-sparkles'
+    ];
+}
+
+/**
+ * Récupérer la liste des couleurs disponibles
+ */
+public function getAvailableColors() {
+    return [
+        'blue' => 'Bleu / Indigo',
+        'orange' => 'Orange / Rouge',
+        'purple' => 'Violet / Indigo',
+        'cyan' => 'Cyan / Bleu',
+        'pink' => 'Rose / Rouge',
+        'amber' => 'Ambre / Jaune',
+        'emerald' => 'Émeraude / Teal',
+        'red' => 'Rouge',
+        'green' => 'Vert',
+        'gray' => 'Gris'
+    ];
+}
 }

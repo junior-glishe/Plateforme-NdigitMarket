@@ -1,7 +1,7 @@
 <?php
-$role = $_SESSION['admin'];
+$role = "admin";
 $currentPage = $_GET['url'] ?? 'dashboard';
-$baseUrl = "/ndigit/back-end/routes/api.php?url=";
+$baseUrl = "/Plateforme-NdigitMarket/ndigit/back-end/routes/api.php?url=";
 
 ?>
 <!DOCTYPE html>
@@ -186,7 +186,7 @@ $baseUrl = "/ndigit/back-end/routes/api.php?url=";
                 </a>
 
                 <a href="<?= $baseUrl ?>categories"
-                   class="sidebar-link <?= $currentPage === 'categorie.php' ? 'active' : '' ?>">
+                   class="sidebar-link <?= $currentPage === '../admin/categorie.php' ? 'active' : '' ?>">
                     <i class="fas fa-tags"></i> Catégorie
                 </a>
 

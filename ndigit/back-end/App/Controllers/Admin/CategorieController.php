@@ -8,40 +8,41 @@ class CategorieController {
     public function __construct($pdo) {
         $this->model = new CategorieModel($pdo);
     }
-
-    
     
     /**
      * Afficher la page de gestion des catégories
      */
     public function index() {
-        $categories = $this->model->getAllCategories();
-        
-        // Statistiques
-        $stats = [
-            'total' => $this->model->countCategories(),
-            'actives' => $this->model->countActiveCategories(),
-            'inactives' => $this->model->countInactiveCategories(),
-            'produits' => $this->model->countAllProducts()
-        ];
+    $categories = $this->model->getAllCategories();
+    
+    // Statistiques
+    $stats = [
+        'total' => $this->model->countCategories(),
+        'actives' => $this->model->countActiveCategories(),
+        'inactives' => $this->model->countInactiveCategories(),
+        'produits' => $this->model->countAllProducts()
+    ];
 
-
-        $data = [
-            'categories' => $categories,
-            'stats' => $stats
-        ];
-
-        // Pour chaque catégorie, compter les produits associés
-        foreach ($categories as &$category) {
-            $category['nb_produits'] = $this->model->countProductsByCategory($category['id']);
-        }
-
-         $this->render('admin/categorie', [
-        'categories' => $categories,
-        'stats' => $stats
-    ]);
-
+    // Pour chaque catégorie, compter les produits associés
+    foreach ($categories as &$category) {
+        $category['nb_produits'] = $this->model->countProductsByCategory($category['id']);
     }
+
+    // Récupérer les listes d'icônes et couleurs
+    $icons = $this->model->getAvailableIcons();
+    $colors = $this->model->getAvailableColors();
+
+    // Initialiser categoryDetail à null (pas de données par défaut)
+    $categoryDetail = null;
+
+    $this->render('admin/categorie', [
+        'categories' => $categories,
+        'stats' => $stats,
+        'icons' => $icons,
+        'colors' => $colors,
+        'categoryDetail' => $categoryDetail  // 👈 AJOUTER CETTE LIGNE
+    ]);
+}
         private function render($view, $data = [])
         {
             extract($data);
@@ -106,20 +107,39 @@ class CategorieController {
      * Récupérer une catégorie (AJAX)
      */
     public function getCategory() {
-        if (!isset($_GET['id'])) {
-            $this->jsonResponse(['error' => 'ID manquant'], 400);
-            return;
-        }
-        
-        $category = $this->model->getCategoryById((int)$_GET['id']);
-        if (!$category) {
-            $this->jsonResponse(['error' => 'Catégorie non trouvée'], 404);
-            return;
-        }
-        
-        $category['nb_produits'] = $this->model->countProductsByCategory($category['id']);
-        $this->jsonResponse(['success' => true, 'data' => $category]);
+    // Vérifier si l'ID est présent
+    if (!isset($_GET['id'])) {
+        $this->jsonResponse(['error' => 'ID manquant'], 400);
+        return;
     }
+    
+    $id = (int)$_GET['id'];
+    
+    // Récupérer la catégorie
+    $category = $this->model->getCategoryById($id);
+    
+    if (!$category) {
+        $this->jsonResponse(['error' => 'Catégorie non trouvée'], 404);
+        return;
+    }
+    
+    // Compter les produits
+    $category['nb_produits'] = $this->model->countProductsByCategory($id);
+    
+    // Récupérer les produits de la catégorie
+    $category['produits'] = $this->model->getProductsByCategory($id);
+    
+    // Statistiques supplémentaires
+    $category['produits_actifs'] = $this->model->countActiveProductsByCategory($id);
+    $category['produits_inactifs'] = $this->model->countInactiveProductsByCategory($id);
+    $category['vendeurs'] = $this->model->countVendeursByCategory($id);
+    $category['sous_categories'] = 0; // à adapter selon ta BD
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $category  // 👈 ATTENTION: utilise 'data' pas 'category'
+    ]);
+}
     
     /**
      * Mettre à jour une catégorie
@@ -288,7 +308,32 @@ class CategorieController {
             $this->jsonResponse(['error' => 'Erreur lors de la fusion'], 500);
         }
     }
-    
+
+        /**
+         * Filtrer les catégories (AJAX)
+         * Retourne les données en JSON
+         */
+        public function filter() {
+            // Récupérer les paramètres
+            $search = $_GET['search'] ?? null;
+            $statut = $_GET['statut'] ?? null;
+            $tri = $_GET['tri'] ?? null;
+            
+            // Filtrer les catégories
+            $categories = $this->model->filterCategories($search, $statut, $tri);
+            
+            // Compter les produits pour chaque catégorie
+            foreach ($categories as &$category) {
+                $category['nb_produits'] = $this->model->countProductsByCategory($category['id']);
+            }
+            
+            $this->jsonResponse([
+                'success' => true,
+                'categories' => $categories,
+                'count' => count($categories)
+            ]);
+        }
+            
     /**
      * Upload d'image
      */

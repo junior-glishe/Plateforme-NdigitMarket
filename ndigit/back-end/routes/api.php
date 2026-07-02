@@ -29,7 +29,6 @@ switch ($url) {
         $controller = new CategorieController($pdo);
         $controller->getCategory();
         break;
-    
     // Mettre à jour une catégorie
     case 'categories_edit':
         require_once __DIR__ . '/../App/Controllers/Admin/CategorieController.php';
@@ -63,6 +62,12 @@ switch ($url) {
         require_once __DIR__ . '/../App/Controllers/Admin/CategorieController.php';
         $controller = new CategorieController($pdo);
         $controller->merge();
+        break;
+
+    case 'categories_filter':
+        require_once __DIR__ . '/../App/Controllers/Admin/CategorieController.php';
+        $controller = new CategorieController($pdo);
+        $controller->filter();
         break;
 
         

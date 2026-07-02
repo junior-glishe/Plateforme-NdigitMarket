@@ -119,22 +119,22 @@ $stats = $stats ?? [
             </div>
 
             <!-- Barre de recherche + filtres -->
-            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-4">
+            <div id="searchSection" class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-4">
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex-1 min-w-[220px] relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="text" placeholder="Rechercher une catégorie..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                        <input type="text" id="searchInput" placeholder="Rechercher une catégorie..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                     </div>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les statuts</option>
-                        <option>Actives</option>
-                        <option>Inactives</option>
+                    <select id="statusFilter" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="all">Tous les statuts</option>
+                        <option value="active">Actives</option>
+                        <option value="inactive">Inactives</option>
                     </select>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Trier par : Ordre d'affichage</option>
-                        <option>Nombre de produits</option>
-                        <option>Nom (A-Z)</option>
-                        <option>Date de création</option>
+                    <select id="sortFilter" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="ordre">Trier par : Ordre d'affichage</option>
+                        <option value="produits">Nombre de produits</option>
+                        <option value="nom">Nom (A-Z)</option>
+                        <option value="date">Date de création</option>
                     </select>
                 </div>
             </div>
@@ -152,61 +152,81 @@ $stats = $stats ?? [
 
             <!-- Liste des catégories -->
             <div id="categoriesList" class="space-y-3">
-                <!-- Catégorie 1 : WordPress -->
-                <div class="category-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden" draggable="true" data-id="1">
-                    <div class="flex items-stretch">
-                        <!-- Drag handle -->
-                        <div class="drag-handle w-12 bg-gray-50 hover:bg-gray-100 flex items-center justify-center cursor-grab active:cursor-grabbing border-r border-gray-100 transition">
-                            <i class="fas fa-grip-vertical text-gray-400"></i>
-                        </div>
-                        <!-- Contenu -->
-                        <div class="flex-1 p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
-                            <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-globe text-3xl text-blue-600"></i>
-                        </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2 mb-1">
-                                    <h5 class="text-sm font-bold text-[#0F172A]">WordPress</h5>
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                        <i class="fas fa-check mr-1"></i>Active
-                                    </span>
-                                    <span class="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                                        /wordpress
-                                    </span>
+                <?php if (!empty($categories)): ?>
+                    <?php foreach ($categories as $category): ?>
+                        <!-- Catégorie -->
+                        <div class="category-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden" 
+                            draggable="true" 
+                            data-id="<?= $category['id'] ?>">
+                            <div class="flex items-stretch">
+                                <!-- Drag handle -->
+                                <div class="drag-handle w-12 bg-gray-50 hover:bg-gray-100 flex items-center justify-center cursor-grab active:cursor-grabbing border-r border-gray-100 transition">
+                                    <i class="fas fa-grip-vertical text-gray-400"></i>
                                 </div>
-                                <p class="text-xs text-gray-500 line-clamp-1 mb-2">Thèmes et templates WordPress pour sites professionnels</p>
-                                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                                    <span class="flex items-center gap-1"><i class="fas fa-box text-[#0EA486]"></i> <strong class="text-[#0F172A]">...</strong> produits</span>
-                                    <span class="flex items-center gap-1"><i class="fas fa-calendar text-gray-400"></i> Créé le ...</span>
-                                    <span class="flex items-center gap-1"><i class="fas fa-sort-numeric-up text-gray-400"></i> Position <strong class="text-[#0F172A]">1</strong></span>
+                                <!-- Contenu -->
+                                <div class="flex-1 p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <i class="<?= $category['icone'] ?? 'fa-solid fa-globe' ?> text-3xl text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                                            <h5 class="text-sm font-bold text-[#0F172A]"><?= htmlspecialchars($category['nom_categorie']) ?></h5>
+                                            <span class="text-[10px] font-semibold <?= $category['statut'] === 'active' ? 'text-emerald-700 bg-emerald-100' : 'text-gray-500 bg-gray-100' ?> px-2 py-0.5 rounded-full">
+                                                <i class="fas <?= $category['statut'] === 'active' ? 'fa-check' : 'fa-pause' ?> mr-1"></i>
+                                                <?= $category['statut'] === 'active' ? 'Active' : 'Inactive' ?>
+                                            </span>
+                                            <span class="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                                                /<?= htmlspecialchars($category['slug'] ?? '') ?>
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 line-clamp-1 mb-2"><?= htmlspecialchars($category['description'] ?? 'Aucune description') ?></p>
+                                        <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                            <span class="flex items-center gap-1"><i class="fas fa-box text-[#0EA486]"></i> <strong class="text-[#0F172A]"><?= $category['nb_produits'] ?? 0 ?></strong> produits</span>
+                                            <span class="flex items-center gap-1"><i class="fas fa-calendar text-gray-400"></i> <?= date('d/m/Y', strtotime($category['created_at'] ?? 'now')) ?></span>
+                                            <span class="flex items-center gap-1"><i class="fas fa-sort-numeric-up text-gray-400"></i> Position <strong class="text-[#0F172A]"><?= $category['ordre_affichage'] ?? 0 ?></strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <button class="openCategoryDetailBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                                title="Voir détail"
+                                                data-id="<?= $category['id'] ?>">
+                                            <i class="fas fa-eye text-xs"></i>
+                                        </button>
+                                        <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
+                                                title="Modifier"
+                                                data-id="<?= $category['id'] ?>"
+                                                data-name="<?= htmlspecialchars($category['nom_categorie']) ?>"
+                                                data-slug="<?= htmlspecialchars($category['slug'] ?? '') ?>"
+                                                data-emoji="<?= htmlspecialchars($category['icone'] ?? 'fa-solid fa-globe') ?>">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        <button class="toggleCategoryBtn w-9 h-9 rounded-lg <?= $category['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition" 
+                                                title="<?= $category['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
+                                                data-id="<?= $category['id'] ?>">
+                                            <i class="fas <?= $category['statut'] === 'active' ? 'fa-toggle-on' : 'fa-toggle-off' ?> text-xs"></i>
+                                        </button>
+                                        <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" 
+                                                title="Fusionner"
+                                                data-id="<?= $category['id'] ?>"
+                                                data-name="<?= htmlspecialchars($category['nom_categorie']) ?>">
+                                            <i class="fas fa-object-group text-xs"></i>
+                                        </button>
+                                        <button class="openDeleteBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" 
+                                                title="Supprimer"
+                                                data-id="<?= $category['id'] ?>">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-1.5">
-                                <button class="openCategoryDetailBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" title="Voir détail">
-                                    <i class="fas fa-eye text-xs"></i>
-                                </button>
-                                <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" title="Modifier">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </button>
-                                <button class="toggleCategoryBtn w-9 h-9 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" title="Désactiver"  data-id="<?= $category['id'] ?>">
-                                    <i class="fas fa-toggle-on text-xs"></i>
-                                </button>
-                                <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" title="Fusionner">
-                                    <i class="fas fa-object-group text-xs"></i>
-                                </button>
-                                <button class="openDeleteBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" title="Supprimer">
-                                    <i class="fas fa-trash text-xs"></i>
-                                </button>
-                            </div>
                         </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-folder-open text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-400">Aucune catégorie trouvée</p>
                     </div>
-                </div>
-
-                
-
-                
-
-                
+             <?php endif; ?>
             </div>
         </section>
 
@@ -217,185 +237,198 @@ $stats = $stats ?? [
 
     <!-- MODAL : CRÉER / MODIFIER CATÉGORIE -->
     <div id="categoryFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-tags text-[#0EA486]"></i> <span id="formModalTitle">Nouvelle catégorie</span>
-                    </h3>
-                    <p class="text-xs text-gray-400">Créer ou modifier une catégorie de produits</p>
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-tags text-[#0EA486]"></i> 
+                    <span id="formModalTitle">Nouvelle catégorie</span>
+                </h3>
+                <p class="text-xs text-gray-400">Créer ou modifier une catégorie de produits</p>
+            </div>
+            <button class="closeCategoryFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form class="p-6 overflow-y-auto space-y-4">
+            <!-- ID caché pour l'édition -->
+            <input type="hidden" id="categoryId" name="id" value="">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Nom -->
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la catégorie <span class="text-red-500">*</span></label>
+                    <input type="text" id="categoryName" name="nom_categorie" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: WordPress">
                 </div>
-                <button class="closeCategoryFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+
+                <!-- Slug -->
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Slug URL <span class="text-red-500">*</span></label>
+                    <div class="flex items-center">
+                        <span class="px-3 py-2.5 bg-gray-100 border border-r-0 border-gray-100 rounded-l-xl text-xs text-gray-500">ndigitmarket.com/</span>
+                        <input type="text" id="categorySlug" name="slug" class="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-r-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="wordpress">
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-1">Généré automatiquement depuis le nom, modifiable si nécessaire</p>
+                </div>
+
+                <!-- Icône -->
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                        Icône <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="relative">
+                        <input type="hidden" id="categoryEmoji" name="icone" value="fa-solid fa-globe">
+                        <div id="categoryIcon" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-center text-2xl focus-within:border-[#0EA486]">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        <?php 
+                        $icons = [
+                            'fa-solid fa-globe',
+                            'fa-solid fa-palette',
+                            'fa-solid fa-gears',
+                            'fa-brands fa-react',
+                            'fa-solid fa-pen-ruler',
+                            'fa-solid fa-plug',
+                            'fa-solid fa-mobile-screen-button',
+                            'fa-solid fa-laptop-code',
+                            'fa-solid fa-cart-shopping',
+                            'fa-solid fa-chart-line',
+                            'fa-solid fa-code',
+                            'fa-solid fa-database',
+                            'fa-solid fa-cloud',
+                            'fa-solid fa-shield-halved',
+                            'fa-solid fa-rocket',
+                            'fa-solid fa-wand-magic-sparkles'
+                        ];
+                        foreach ($icons as $icon): ?>
+                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="<?= $icon ?>">
+                                <i class="<?= $icon ?>"></i>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- Couleur -->
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Couleur d'arrière-plan</label>
+                    <select id="categoryColor" name="couleur" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                        <?php 
+                        $colors = [
+                            'blue' => 'Bleu / Indigo',
+                            'orange' => 'Orange / Rouge',
+                            'purple' => 'Violet / Indigo',
+                            'cyan' => 'Cyan / Bleu',
+                            'pink' => 'Rose / Rouge',
+                            'amber' => 'Ambre / Jaune',
+                            'emerald' => 'Émeraude / Teal',
+                            'red' => 'Rouge',
+                            'green' => 'Vert',
+                            'gray' => 'Gris'
+                        ];
+                        foreach ($colors as $value => $label): ?>
+                            <option value="<?= $value ?>"><?= $label ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Description -->
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Description</label>
+                    <textarea id="categoryDescription" name="description" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Description courte de la catégorie..."></textarea>
+                </div>
+
+                <!-- Statut -->
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Statut</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
+                            <input type="radio" name="statut" value="active" checked class="w-4 h-4 text-[#0EA486]">
+                            <div>
+                                <p class="text-xs font-semibold text-emerald-700">Active</p>
+                                <p class="text-[10px] text-emerald-600">Visible sur le site</p>
+                            </div>
+                        </label>
+                        <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer">
+                            <input type="radio" name="statut" value="inactive" class="w-4 h-4 text-gray-500">
+                            <div>
+                                <p class="text-xs font-semibold text-gray-600">Inactive</p>
+                                <p class="text-[10px] text-gray-500">Masquée du site</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Image upload -->
+                <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Image de la catégorie</label>
+                    <input type="file" id="categoryImage" name="image" accept="image/*" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                    <div id="currentImagePreview" class="hidden mt-2">
+                        <img id="currentImage" src="" class="h-20 rounded-lg">
+                        <p class="text-xs text-gray-400 mt-1">Image actuelle</p>
+                    </div>
+                </div>
             </div>
 
-            <form class="p-6 overflow-y-auto space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Nom -->
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la catégorie <span class="text-red-500">*</span></label>
-                        <input type="text" id="categoryName" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: WordPress">
-                    </div>
-
-                    <!-- Slug -->
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Slug URL <span class="text-red-500">*</span></label>
-                        <div class="flex items-center">
-                            <span class="px-3 py-2.5 bg-gray-100 border border-r-0 border-gray-100 rounded-l-xl text-xs text-gray-500">ndigitmarket.com/</span>
-                            <input type="text" id="categorySlug" class="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-r-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="wordpress">
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-1">Généré automatiquement depuis le nom, modifiable si nécessaire</p>
-                    </div>
-
-                    <!-- Icône emoji -->
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">
-                            Icône <span class="text-red-500">*</span>
-                        </label>
-
-                        <div class="relative">
-                            <!-- Valeur envoyée au serveur -->
-                            <input type="hidden" id="categoryEmoji" value="fa-solid fa-globe">
-
-                            <!-- Aperçu de l'icône -->
-                            <div id="categoryIcon"
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-center text-2xl focus-within:border-[#0EA486]">
-                                <i class="fa-solid fa-globe"></i>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap gap-1 mt-2">
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-globe">
-                                <i class="fa-solid fa-globe"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-palette">
-                                <i class="fa-solid fa-palette"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-gears">
-                                <i class="fa-solid fa-gears"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-brands fa-react">
-                                <i class="fa-brands fa-react"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-pen-ruler">
-                                <i class="fa-solid fa-pen-ruler"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-plug">
-                                <i class="fa-solid fa-plug"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-mobile-screen-button">
-                                <i class="fa-solid fa-mobile-screen-button"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-laptop-code">
-                                <i class="fa-solid fa-laptop-code"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-cart-shopping">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                            </button>
-
-                            <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="fa-solid fa-chart-line">
-                                <i class="fa-solid fa-chart-line"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Couleur -->
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Couleur d'arrière-plan</label>
-                        <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                            <option>Bleu / Indigo</option>
-                            <option>Orange / Rouge</option>
-                            <option>Violet / Indigo</option>
-                            <option>Cyan / Bleu</option>
-                            <option>Rose / Rouge</option>
-                            <option>Ambre / Jaune</option>
-                            <option>Émeraude / Teal</option>
-                        </select>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Description</label>
-                        <textarea rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Description courte de la catégorie..."></textarea>
-                    </div>
-
-                    <!-- Statut -->
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Statut</label>
-                        <div class="flex gap-2">
-                            <label class="flex-1 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
-                                <input type="radio" name="status" value="active" checked class="w-4 h-4 text-[#0EA486]">
-                                <div>
-                                    <p class="text-xs font-semibold text-emerald-700">Active</p>
-                                    <p class="text-[10px] text-emerald-600">Visible sur le site</p>
-                                </div>
-                            </label>
-                            <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer">
-                                <input type="radio" name="status" value="inactive" class="w-4 h-4 text-gray-500">
-                                <div>
-                                    <p class="text-xs font-semibold text-gray-600">Inactive</p>
-                                    <p class="text-[10px] text-gray-500">Masquée du site</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                    <button type="button" class="closeCategoryFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                        Annuler
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-save"></i> Enregistrer
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                <button type="button" class="closeCategoryFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    Annuler
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- MODAL : DÉTAIL CATÉGORIE -->
-    <div id="categoryDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-info-circle text-[#0EA486]"></i> Détail de la catégorie
-                    </h3>
-                    <p class="text-xs text-gray-400">Informations et produits associés</p>
-                </div>
-                <button class="closeCategoryDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+<!-- MODAL : DÉTAIL CATÉGORIE -->
+<div id="categoryDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-info-circle text-[#0EA486]"></i> Détail de la catégorie
+                </h3>
+                <p class="text-xs text-gray-400">Informations et produits associés</p>
             </div>
+            <button class="closeCategoryDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="overflow-y-auto p-6 space-y-5">
+        <div class="overflow-y-auto p-6 space-y-5" id="categoryDetailContent">
+            <?php if (!empty($categoryDetail) && is_array($categoryDetail)): ?>
+                <?php $cat = $categoryDetail; ?>
+                
                 <!-- En-tête -->
-                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
+                <div class="bg-gradient-to-br <?= isset($cat['couleur']) && $cat['couleur'] === 'blue' ? 'from-blue-100 to-indigo-100' : 'from-indigo-50 to-purple-50' ?> rounded-2xl p-5 border border-indigo-100">
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-4xl shadow-sm">
-                            🌐
+                            <i class="<?= isset($cat['icone']) ? $cat['icone'] : 'fa-solid fa-globe' ?>"></i>
                         </div>
                         <div class="flex-1">
                             <div class="flex flex-wrap items-center gap-2 mb-1">
-                                <h4 class="text-lg font-bold text-[#0F172A]">WordPress</h4>
-                                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                    <i class="fas fa-check mr-1"></i>Active
+                                <h4 class="text-lg font-bold text-[#0F172A]"><?= isset($cat['nom_categorie']) ? htmlspecialchars($cat['nom_categorie']) : 'Catégorie' ?></h4>
+                                <span class="text-[10px] font-semibold <?= isset($cat['statut']) && $cat['statut'] === 'active' ? 'text-emerald-700 bg-emerald-100' : 'text-gray-500 bg-gray-100' ?> px-2 py-0.5 rounded-full">
+                                    <i class="fas <?= isset($cat['statut']) && $cat['statut'] === 'active' ? 'fa-check' : 'fa-pause' ?> mr-1"></i>
+                                    <?= isset($cat['statut']) && $cat['statut'] === 'active' ? 'Active' : 'Inactive' ?>
                                 </span>
                             </div>
-                            <p class="text-xs text-gray-500">Slug: <span class="font-mono">/wordpress</span> · ID: ...</p>
+                            <p class="text-xs text-gray-500">
+                                Slug: <span class="font-mono">/<?= isset($cat['slug']) ? htmlspecialchars($cat['slug']) : '' ?></span> · 
+                                ID: <?= isset($cat['id']) ? $cat['id'] : '---' ?> · 
+                                Position: <?= isset($cat['ordre_affichage']) ? $cat['ordre_affichage'] : 0 ?>
+                            </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl font-bold text-[#0EA486]">...</p>
-                            <p class="text-xs text-gray-500">Produits actifs</p>
+                            <p class="text-2xl font-bold text-[#0EA486]"><?= isset($cat['nb_produits']) ? $cat['nb_produits'] : 0 ?></p>
+                            <p class="text-xs text-gray-500">Produits</p>
                         </div>
                     </div>
                 </div>
@@ -409,23 +442,37 @@ $stats = $stats ?? [
                         <div class="space-y-2 text-xs">
                             <div class="flex justify-between py-2 border-b border-gray-50">
                                 <span class="text-gray-500">Nom</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
+                                <span class="font-medium text-[#0F172A]"><?= isset($cat['nom_categorie']) ? htmlspecialchars($cat['nom_categorie']) : '---' ?></span>
                             </div>
                             <div class="flex justify-between py-2 border-b border-gray-50">
                                 <span class="text-gray-500">Slug</span>
-                                <span class="font-mono font-medium text-[#0F172A]">...</span>
+                                <span class="font-mono font-medium text-[#0F172A]">/<?= isset($cat['slug']) ? htmlspecialchars($cat['slug']) : '---' ?></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-50">
+                                <span class="text-gray-500">Icône</span>
+                                <span class="font-medium text-[#0F172A]"><i class="<?= isset($cat['icone']) ? $cat['icone'] : 'fa-solid fa-globe' ?>"></i></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-50">
+                                <span class="text-gray-500">Couleur</span>
+                                <span class="font-medium text-[#0F172A]"><?= isset($cat['couleur']) ? htmlspecialchars($cat['couleur']) : 'blue' ?></span>
                             </div>
                             <div class="flex justify-between py-2 border-b border-gray-50">
                                 <span class="text-gray-500">Statut</span>
-                                <span class="font-medium text-emerald-600">...</span>
+                                <span class="font-medium <?= isset($cat['statut']) && $cat['statut'] === 'active' ? 'text-emerald-600' : 'text-gray-500' ?>">
+                                    <?= isset($cat['statut']) && $cat['statut'] === 'active' ? 'Active' : 'Inactive' ?>
+                                </span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-50">
+                                <span class="text-gray-500">Position</span>
+                                <span class="font-medium text-[#0F172A]"><?= isset($cat['ordre_affichage']) ? $cat['ordre_affichage'] : 0 ?></span>
                             </div>
                             <div class="flex justify-between py-2 border-b border-gray-50">
                                 <span class="text-gray-500">Date de création</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
+                                <span class="font-medium text-[#0F172A]"><?= isset($cat['created_at']) ? date('d/m/Y H:i', strtotime($cat['created_at'])) : '---' ?></span>
                             </div>
                             <div class="flex justify-between py-2">
                                 <span class="text-gray-500">Dernière modification</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
+                                <span class="font-medium text-[#0F172A]"><?= isset($cat['updated_at']) ? date('d/m/Y H:i', strtotime($cat['updated_at'])) : '---' ?></span>
                             </div>
                         </div>
                     </div>
@@ -436,24 +483,24 @@ $stats = $stats ?? [
                         </h5>
                         <div class="space-y-2 text-xs">
                             <div class="flex justify-between py-2 border-b border-gray-50">
+                                <span class="text-gray-500">Total produits</span>
+                                <span class="font-semibold text-[#0F172A]"><?= isset($cat['nb_produits']) ? $cat['nb_produits'] : 0 ?></span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-50">
                                 <span class="text-gray-500">Produits actifs</span>
-                                <span class="font-semibold text-[#0F172A]">...</span>
+                                <span class="font-semibold text-emerald-600"><?= isset($cat['produits_actifs']) ? $cat['produits_actifs'] : 0 ?></span>
                             </div>
                             <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Produits en attente</span>
-                                <span class="font-semibold text-yellow-600">...</span>
+                                <span class="text-gray-500">Produits inactifs</span>
+                                <span class="font-semibold text-gray-500"><?= isset($cat['produits_inactifs']) ? $cat['produits_inactifs'] : 0 ?></span>
                             </div>
                             <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Total ventes</span>
-                                <span class="font-semibold text-[#0EA486]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">CA généré</span>
-                                <span class="font-semibold text-[#0EA486]">... FCFA</span>
+                                <span class="text-gray-500">Sous-catégories</span>
+                                <span class="font-semibold text-[#0F172A]"><?= isset($cat['sous_categories']) ? $cat['sous_categories'] : 0 ?></span>
                             </div>
                             <div class="flex justify-between py-2">
                                 <span class="text-gray-500">Vendeurs utilisant</span>
-                                <span class="font-semibold text-[#0F172A]">...</span>
+                                <span class="font-semibold text-[#0F172A]"><?= isset($cat['vendeurs']) ? $cat['vendeurs'] : 0 ?></span>
                             </div>
                         </div>
                     </div>
@@ -464,16 +511,26 @@ $stats = $stats ?? [
                     <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
                         <i class="fas fa-align-left text-[#0EA486]"></i> Description
                     </h5>
-                    <p class="text-sm text-gray-600 leading-relaxed">...</p>
+                    <p class="text-sm text-gray-600 leading-relaxed"><?= isset($cat['description']) && !empty($cat['description']) ? htmlspecialchars($cat['description']) : 'Aucune description disponible pour cette catégorie.' ?></p>
                 </div>
+
+                <!-- Image -->
+                <?php if (isset($cat['image_cat']) && !empty($cat['image_cat'])): ?>
+                <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
+                        <i class="fas fa-image text-[#0EA486]"></i> Image
+                    </h5>
+                    <img src="/uploads/<?= $cat['image_cat'] ?>" class="max-h-48 rounded-lg">
+                </div>
+                <?php endif; ?>
 
                 <!-- Produits associés -->
                 <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                     <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                         <h5 class="text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
-                            <i class="fas fa-box text-[#0EA486]"></i> Produits associés (aperçu)
+                            <i class="fas fa-box text-[#0EA486]"></i> Produits associés
                         </h5>
-                        <span class="text-[10px] text-gray-400">Top 5</span>
+                        <span class="text-[10px] text-gray-400"><?= isset($cat['nb_produits']) ? $cat['nb_produits'] : 0 ?> produits</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
@@ -487,32 +544,54 @@ $stats = $stats ?? [
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <i class="fas fa-image text-indigo-400 text-xs"></i>
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-[#0F172A] text-xs">...</p>
-                                                <p class="text-[10px] text-gray-400">...</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3 text-xs text-gray-600">...</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">... FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">...</td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">...</span>
-                                    </td>
-                                </tr>
+                                <?php if (isset($cat['produits']) && !empty($cat['produits'])): ?>
+                                    <?php foreach (array_slice($cat['produits'], 0, 5) as $produit): ?>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                        <i class="fas fa-image text-indigo-400 text-xs"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold text-[#0F172A] text-xs"><?= isset($produit['nom_produit']) ? htmlspecialchars($produit['nom_produit']) : 'Sans nom' ?></p>
+                                                        <p class="text-[10px] text-gray-400"><?= isset($produit['slug']) ? htmlspecialchars($produit['slug']) : '' ?></p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-xs text-gray-600"><?= isset($produit['vendeur']) ? htmlspecialchars($produit['vendeur']) : 'Admin' ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= isset($produit['prix']) ? number_format($produit['prix'], 0, ',', ' ') . ' FCFA' : '---' ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= isset($produit['ventes']) ? $produit['ventes'] : 0 ?></td>
+                                            <td class="px-4 py-3">
+                                                <span class="text-[10px] font-semibold <?= (isset($produit['statut']) && $produit['statut'] === 'active') ? 'text-emerald-700 bg-emerald-100' : 'text-gray-500 bg-gray-100' ?> px-2 py-1 rounded-full">
+                                                    <?= (isset($produit['statut']) && $produit['statut'] === 'active') ? 'Publié' : 'Brouillon' ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                            <i class="fas fa-box-open text-2xl block mb-2"></i>
+                                            Aucun produit dans cette catégorie
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+
+            <?php else: ?>
+                <!-- Message quand aucune donnée -->
+                <div class="text-center py-12 text-gray-400">
+                    <i class="fas fa-info-circle text-4xl mb-3"></i>
+                    <p class="text-lg font-semibold">Aucune information disponible</p>
+                    <p class="text-sm">Veuillez sélectionner une catégorie pour voir les détails</p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
+</div>
 
     <!-- MODAL : FUSIONNER CATÉGORIES -->
     <div id="mergeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -880,7 +959,7 @@ $stats = $stats ?? [
                 // Déterminer l'action
                 const action = currentCategoryId ? 'categories_edit' : 'categories_add';
 
-                fetch('index.php?url=' + action, {
+                fetch('api.php?url=' + action, {
                     method: 'POST',
                     body: formData
                 })
@@ -905,8 +984,321 @@ $stats = $stats ?? [
             });
         })();
 
-        // Modal détail
-        setupModal('categoryDetailModal', '.openCategoryDetailBtn', '.closeCategoryDetailBtn');
+        // ============================================
+// MODAL DÉTAIL - Version unique
+// ============================================
+(function() {
+    const modal = document.getElementById('categoryDetailModal');
+    const openBtns = document.querySelectorAll('.openCategoryDetailBtn');
+    const closeBtns = document.querySelectorAll('.closeCategoryDetailBtn');
+    const content = document.getElementById('categoryDetailContent');
+
+    // Helpers
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function formatPrice(price) {
+        if (!price) return '---';
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return '---';
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        } catch (e) {
+            return '---';
+        }
+    }
+
+    function openModal() {
+        const btn = this;
+        const id = btn.getAttribute('data-id');
+        
+        if (!id) {
+            showToast('Erreur', 'ID manquant', 'error');
+            return;
+        }
+
+        content.innerHTML = `
+            <div class="flex justify-center py-12">
+                <div class="flex flex-col items-center gap-3">
+                    <i class="fas fa-spinner fa-spin text-3xl text-[#0EA486]"></i>
+                    <p class="text-gray-400 text-sm">Chargement...</p>
+                </div>
+            </div>
+        `;
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        fetch('api.php?url=categories_get&id=' + id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderDetail(data.data);
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center py-12 text-red-500">
+                            <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                            <p class="text-lg font-semibold">Erreur</p>
+                            <p class="text-sm">${data.error || 'Erreur de chargement'}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                content.innerHTML = `
+                    <div class="text-center py-12 text-red-500">
+                        <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                        <p class="text-lg font-semibold">Erreur serveur</p>
+                        <p class="text-sm">Veuillez réessayer</p>
+                    </div>
+                `;
+            });
+    }
+
+    function renderDetail(cat) {
+        const statutClass = cat.statut === 'active' 
+            ? 'text-emerald-700 bg-emerald-100' 
+            : 'text-gray-500 bg-gray-100';
+        const statutIcon = cat.statut === 'active' ? 'fa-check' : 'fa-pause';
+        const statutText = cat.statut === 'active' ? 'Active' : 'Inactive';
+
+        let produitsHtml = '';
+        if (cat.produits && cat.produits.length > 0) {
+            cat.produits.slice(0, 5).forEach(p => {
+                let pStatutClass = 'text-gray-500 bg-gray-100';
+                let pStatutText = 'Inconnu';
+                
+                if (p.statut === 'approuve') {
+                    pStatutClass = 'text-emerald-700 bg-emerald-100';
+                    pStatutText = 'Approuvé';
+                } else if (p.statut === 'en_attente') {
+                    pStatutClass = 'text-yellow-700 bg-yellow-100';
+                    pStatutText = 'En attente';
+                } else if (p.statut === 'refuse') {
+                    pStatutClass = 'text-red-700 bg-red-100';
+                    pStatutText = 'Refusé';
+                }
+                
+                const imagePath = p.image ? p.image : '';
+                const imageHtml = imagePath 
+                    ? `<img src="/${imagePath}" class="w-8 h-8 rounded-lg object-cover">` 
+                    : `<i class="fas fa-image text-indigo-400 text-xs"></i>`;
+                
+                produitsHtml += `
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    ${imageHtml}
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-[#0F172A] text-xs">${escapeHtml(p.nom_article || 'Sans nom')}</p>
+                                    <p class="text-[10px] text-gray-400">${escapeHtml(p.auteur || '')}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-gray-600">${escapeHtml(p.vendeur || 'Admin')}</td>
+                        <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${formatPrice(p.prix)}</td>
+                        <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">0</td>
+                        <td class="px-4 py-3">
+                            <span class="text-[10px] font-semibold ${pStatutClass} px-2 py-1 rounded-full">${pStatutText}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+        } else {
+            produitsHtml = `
+                <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-box-open text-2xl block mb-2"></i>
+                        Aucun produit dans cette catégorie
+                    </td>
+                </tr>
+            `;
+        }
+
+        content.innerHTML = `
+            <div class="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl p-5 border border-indigo-100">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-4xl shadow-sm">
+                        <i class="${cat.icone || 'fa-solid fa-globe'}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <h4 class="text-lg font-bold text-[#0F172A]">${escapeHtml(cat.nom_categorie)}</h4>
+                            <span class="text-[10px] font-semibold ${statutClass} px-2 py-0.5 rounded-full">
+                                <i class="fas ${statutIcon} mr-1"></i>${statutText}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500">
+                            Slug: <span class="font-mono">/${escapeHtml(cat.slug || '')}</span> · 
+                            ID: ${cat.id} · 
+                            Position: ${cat.ordre_affichage || 0}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold text-[#0EA486]">${cat.nb_produits || 0}</p>
+                        <p class="text-xs text-gray-500">Produits</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-[#0EA486]"></i> Informations
+                    </h5>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Nom</span>
+                            <span class="font-medium text-[#0F172A]">${escapeHtml(cat.nom_categorie)}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Slug</span>
+                            <span class="font-mono font-medium text-[#0F172A]">/${escapeHtml(cat.slug || '')}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Icône</span>
+                            <span class="font-medium text-[#0F172A]"><i class="${cat.icone || 'fa-solid fa-globe'}"></i></span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Couleur</span>
+                            <span class="font-medium text-[#0F172A]">${escapeHtml(cat.couleur || 'blue')}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Statut</span>
+                            <span class="font-medium ${cat.statut === 'active' ? 'text-emerald-600' : 'text-gray-500'}">${statutText}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Position</span>
+                            <span class="font-medium text-[#0F172A]">${cat.ordre_affichage || 0}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500"> Dates de création</span>
+                            <span class="font-medium text-[#0F172A]">${formatDate(cat.created_at)}</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-500">Dernière modification</span>
+                            <span class="font-medium text-[#0F172A]">${formatDate(cat.updated_at)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-[#0EA486]"></i> Statistiques
+                    </h5>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Total produits</span>
+                            <span class="font-semibold text-[#0F172A]">${cat.nb_produits || 0}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Produits approuvés</span>
+                            <span class="font-semibold text-emerald-600">${cat.produits_actifs || 0}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Produits en attente/refusés</span>
+                            <span class="font-semibold text-yellow-600">${cat.produits_inactifs || 0}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Sous-catégories</span>
+                            <span class="font-semibold text-[#0F172A]">${cat.sous_categories || 0}</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-500">Vendeurs utilisant</span>
+                            <span class="font-semibold text-[#0F172A]">${cat.vendeurs || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
+                    <i class="fas fa-align-left text-[#0EA486]"></i> Description
+                </h5>
+                <p class="text-sm text-gray-600 leading-relaxed">${escapeHtml(cat.description || 'Aucune description disponible pour cette catégorie.')}</p>
+            </div>
+
+            ${cat.image_cat ? `
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
+                    <i class="fas fa-image text-[#0EA486]"></i> Image
+                </h5>
+                <img src="/uploads/${cat.image_cat}" class="max-h-48 rounded-lg" onerror="this.style.display='none'">
+            </div>
+            ` : ''}
+
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <h5 class="text-xs font-semibold text-gray-500 uppercase flex items-center gap-2">
+                        <i class="fas fa-box text-[#0EA486]"></i> Produits associés (5 derniers)
+                    </h5>
+                    <span class="text-[10px] text-gray-400">${cat.nb_produits || 0} produits</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                            <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-4 py-3">Produit</th>
+                                <th class="px-4 py-3">Vendeur</th>
+                                <th class="px-4 py-3">Prix</th>
+                                <th class="px-4 py-3">Ventes</th>
+                                <th class="px-4 py-3">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            ${produitsHtml}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        content.innerHTML = `
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-info-circle text-4xl mb-3"></i>
+                <p class="text-lg font-semibold">Aucune information disponible</p>
+                <p class="text-sm">Veuillez sélectionner une catégorie pour voir les détails</p>
+            </div>
+        `;
+    }
+
+    openBtns.forEach(btn => {
+        btn.removeEventListener('click', openModal);
+        btn.addEventListener('click', openModal);
+    });
+
+    closeBtns.forEach(btn => {
+        btn.removeEventListener('click', closeModal);
+        btn.addEventListener('click', closeModal);
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+})();
 
         // Modal fusion
         (function() {
@@ -1011,7 +1403,7 @@ $stats = $stats ?? [
                     }
                     
                     // Envoyer la requête de suppression
-                    fetch('index.php?url=categories_delete', {
+                    fetch('api.php?url=categories_delete', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -1108,7 +1500,7 @@ $stats = $stats ?? [
                     return;
                 }
 
-            fetch('index.php?url=categories_toggle', {
+            fetch('api.php?url=categories_toggle', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -1210,6 +1602,227 @@ $stats = $stats ?? [
                 showToast('Ordre enregistré', 'L\'ordre d\'affichage a été sauvegardé', 'success');
             });
         })();
+
+        // ============================================
+// FILTRAGE CATEGORIES
+// ============================================
+(function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    let debounceTimer = null;
+
+    // Fonction pour construire le HTML d'une catégorie
+    function renderCategory(category) {
+        const statutClass = category.statut === 'active' 
+            ? 'text-emerald-700 bg-emerald-100' 
+            : 'text-gray-500 bg-gray-100';
+        const statutIcon = category.statut === 'active' ? 'fa-check' : 'fa-pause';
+        const statutText = category.statut === 'active' ? 'Active' : 'Inactive';
+        const toggleClass = category.statut === 'active' 
+            ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' 
+            : 'bg-gray-50 text-gray-400 hover:bg-gray-100';
+        const toggleIcon = category.statut === 'active' ? 'fa-toggle-on' : 'fa-toggle-off';
+        const toggleTitle = category.statut === 'active' ? 'Désactiver' : 'Activer';
+
+        return `
+            <div class="category-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden" 
+                 draggable="true" 
+                 data-id="${category.id}">
+                <div class="flex items-stretch">
+                    <div class="drag-handle w-12 bg-gray-50 hover:bg-gray-100 flex items-center justify-center cursor-grab active:cursor-grabbing border-r border-gray-100 transition">
+                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                    </div>
+                    <div class="flex-1 p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="${category.icone || 'fa-solid fa-globe'} text-3xl text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h5 class="text-sm font-bold text-[#0F172A]">${escapeHtml(category.nom_categorie)}</h5>
+                                <span class="text-[10px] font-semibold ${statutClass} px-2 py-0.5 rounded-full">
+                                    <i class="fas ${statutIcon} mr-1"></i>
+                                    ${statutText}
+                                </span>
+                                <span class="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                                    /${escapeHtml(category.slug || '')}
+                                </span>
+                            </div>
+                            <p class="text-xs text-gray-500 line-clamp-1 mb-2">${escapeHtml(category.description || 'Aucune description')}</p>
+                            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                <span class="flex items-center gap-1"><i class="fas fa-box text-[#0EA486]"></i> <strong class="text-[#0F172A]">${category.nb_produits || 0}</strong> produits</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-calendar text-gray-400"></i> ${formatDate(category.created_at)}</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-sort-numeric-up text-gray-400"></i> Position <strong class="text-[#0F172A]">${category.ordre_affichage || 0}</strong></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button class="openCategoryDetailBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                    title="Voir détail"
+                                    data-id="${category.id}">
+                                <i class="fas fa-eye text-xs"></i>
+                            </button>
+                            <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
+                                    title="Modifier"
+                                    data-id="${category.id}"
+                                    data-name="${escapeHtml(category.nom_categorie)}"
+                                    data-slug="${escapeHtml(category.slug || '')}"
+                                    data-emoji="${escapeHtml(category.icone || 'fa-solid fa-globe')}">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button class="toggleCategoryBtn w-9 h-9 rounded-lg ${toggleClass} flex items-center justify-center transition" 
+                                    title="${toggleTitle}"
+                                    data-id="${category.id}">
+                                <i class="fas ${toggleIcon} text-xs"></i>
+                            </button>
+                            <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" 
+                                    title="Fusionner"
+                                    data-id="${category.id}"
+                                    data-name="${escapeHtml(category.nom_categorie)}">
+                                <i class="fas fa-object-group text-xs"></i>
+                            </button>
+                            <button class="openDeleteBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" 
+                                    title="Supprimer"
+                                    data-id="${category.id}">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Helper pour échapper le HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Helper pour formater la date
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    function filterCategories() {
+        const search = searchInput ? searchInput.value.trim() : '';
+        const statut = statusFilter ? statusFilter.value : 'all';
+        const tri = sortFilter ? sortFilter.value : 'ordre';
+
+        // Construction des paramètres
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (statut !== 'all') params.append('statut', statut);
+        if (tri !== 'ordre') params.append('tri', tri);
+
+        // Si pas de filtres, recharger la page
+        if (!params.toString()) {
+            location.reload();
+            return;
+        }
+
+        // Afficher loading
+        const container = document.getElementById('categoriesList');
+        container.innerHTML = `
+            <div class="col-span-full flex justify-center py-12">
+                <div class="flex flex-col items-center gap-3">
+                    <i class="fas fa-spinner fa-spin text-3xl text-[#0EA486]"></i>
+                    <p class="text-gray-400 text-sm">Chargement...</p>
+                </div>
+            </div>
+        `;
+
+        // Fetch vers backend
+        fetch('api.php?url=categories_filter?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.categories && data.categories.length > 0) {
+                        // Construire le HTML à partir des données JSON
+                        let html = '';
+                        data.categories.forEach(cat => {
+                            html += renderCategory(cat);
+                        });
+                        container.innerHTML = html;
+                        // Réattacher les événements
+                        reattachFilterEvents();
+                    } else {
+                        container.innerHTML = `
+                            <div class="col-span-full text-center py-12">
+                                <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-400">Aucune catégorie trouvée</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    showToast('Erreur', data.error || 'Erreur de chargement', 'error');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                showToast('Erreur', 'Erreur serveur', 'error');
+            });
+    }
+
+    // Réattacher les événements après filtrage
+    function reattachFilterEvents() {
+        // Détail
+        document.querySelectorAll('.openCategoryDetailBtn').forEach(btn => {
+            btn.removeEventListener('click', window.openDetailModal);
+            btn.addEventListener('click', window.openDetailModal);
+        });
+        
+        // Édition
+        document.querySelectorAll('.openCategoryFormBtn').forEach(btn => {
+            btn.removeEventListener('click', window.openEditModal);
+            btn.addEventListener('click', window.openEditModal);
+        });
+        
+        // Toggle
+        document.querySelectorAll('.toggleCategoryBtn').forEach(btn => {
+            btn.removeEventListener('click', window.openToggleModal);
+            btn.addEventListener('click', window.openToggleModal);
+        });
+        
+        // Suppression
+        document.querySelectorAll('.openDeleteBtn').forEach(btn => {
+            btn.removeEventListener('click', window.openDeleteModal);
+            btn.addEventListener('click', window.openDeleteModal);
+        });
+        
+        // Fusion
+        document.querySelectorAll('.openMergeBtn').forEach(btn => {
+            btn.removeEventListener('click', window.openMergeModal);
+            btn.addEventListener('click', window.openMergeModal);
+        });
+        
+        // Drag & Drop
+        if (typeof initDragDrop === 'function') {
+            initDragDrop();
+        }
+    }
+
+    // Debounce pour la recherche
+    function debounceFilter() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(filterCategories, 500);
+    }
+
+    // Écouteurs d'événements
+    if (searchInput) searchInput.addEventListener('input', debounceFilter);
+    if (statusFilter) statusFilter.addEventListener('change', filterCategories);
+    if (sortFilter) sortFilter.addEventListener('change', filterCategories);
+
+    // Exposer les fonctions pour réattachement
+    window.reattachFilterEvents = reattachFilterEvents;
+})();
 
         // ESC pour fermer tous les modals
         document.addEventListener('keydown', function(e) {
