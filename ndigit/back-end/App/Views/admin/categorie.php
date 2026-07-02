@@ -202,7 +202,8 @@ $stats = $stats ?? [
                                         </button>
                                         <button class="toggleCategoryBtn w-9 h-9 rounded-lg <?= $category['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition" 
                                                 title="<?= $category['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
-                                                data-id="<?= $category['id'] ?>">
+                                                data-id="<?= $category['id'] ?>"
+                                                 data-nom="<?= htmlspecialchars($category['nom_categorie']) ?>"> 
                                             <i class="fas <?= $category['statut'] === 'active' ? 'fa-toggle-on' : 'fa-toggle-off' ?> text-xs"></i>
                                         </button>
                                         <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" 
@@ -692,7 +693,7 @@ $stats = $stats ?? [
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                     <p class="text-xs text-gray-500 mb-1">Catégorie à supprimer</p>
                     <p class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                        <span class="text-xl"></span> WordPress
+                        <span class="text-xl"></span> 
                     </p>
                     <p class="text-[11px] text-gray-400 mt-1">Produits associés: <strong class="text-red-600">...</strong></p>
                 </div>
@@ -743,7 +744,7 @@ $stats = $stats ?? [
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                     <p class="text-xs text-gray-500 mb-1">Catégorie concernée</p>
                     <p class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                        <span class="text-xl"></span> WordPress
+                        <span class="text-xl"></span> <span id="toggleCategoryName">Sans nom</span>
                     </p>
                 </div>
             </div>
@@ -1435,99 +1436,103 @@ $stats = $stats ?? [
         })();
 
         // Modal toggle statut
-        (function() {
-            const modal = document.getElementById('toggleModal');
-            const openBtns = document.querySelectorAll('.toggleCategoryBtn');
-            const closeBtns = document.querySelectorAll('.closeToggleBtn');
-            const confirmBtn = document.getElementById('confirmToggleBtn');
-            const title = document.getElementById('toggleTitle');
-            const infoText = document.getElementById('toggleInfoText');
-            const info = document.getElementById('toggleInfo');
+        // Modal toggle statut
+(function() {
+    const modal = document.getElementById('toggleModal');
+    const openBtns = document.querySelectorAll('.toggleCategoryBtn');
+    const closeBtns = document.querySelectorAll('.closeToggleBtn');
+    const confirmBtn = document.getElementById('confirmToggleBtn');
+    const title = document.getElementById('toggleTitle');
+    const infoText = document.getElementById('toggleInfoText');
+    const info = document.getElementById('toggleInfo');
+    const categoryNameSpan = document.getElementById('toggleCategoryName'); // 👈 AJOUTE ÇA
 
-            let currentCategoryId = null;
-            let currentAction = null; // "activate" ou "deactivate"
+    let currentCategoryId = null;
+    let currentAction = null; // "activate" ou "deactivate"
 
-            function openModal() {
-                const btn = this;
-                currentCategoryId = btn.getAttribute('data-id');
+    function openModal() {
+        const btn = this;
+        currentCategoryId = btn.getAttribute('data-id');
+        const categoryName = btn.getAttribute('data-nom') || 'Catégorie'; // 👈 RÉCUPÈRE LE NOM
 
-                const isOn = btn.querySelector('.fa-toggle-on');
+        // Afficher le nom dans le modal
+        if (categoryNameSpan) {
+            categoryNameSpan.textContent = categoryName;
+        }
 
-                if (isOn) {
-                    currentAction = 'deactivate';
+        const isOn = btn.querySelector('.fa-toggle-on');
 
-                    title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver la catégorie';
-                    infoText.textContent = 'La catégorie sera masquée du site, mais les produits associés resteront disponibles.';
-                    info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
-                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-                    confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+        if (isOn) {
+            currentAction = 'deactivate';
 
-                } else {
-                    currentAction = 'activate';
+            title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver la catégorie';
+            infoText.textContent = 'La catégorie sera masquée du site, mais les produits associés resteront disponibles.';
+            info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
+            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+            confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
 
-                    title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer la catégorie';
-                    infoText.textContent = 'La catégorie sera à nouveau visible sur le site et ses produits seront affichés.';
-                    info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
-                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-                    confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
-                }
+        } else {
+            currentAction = 'activate';
 
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
+            title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer la catégorie';
+            infoText.textContent = 'La catégorie sera à nouveau visible sur le site et ses produits seront affichés.';
+            info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
+            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+            confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        currentCategoryId = null;
+        currentAction = null;
+    }
+
+    openBtns.forEach(btn => btn.addEventListener('click', openModal));
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // CONFIRM ACTION + FETCH BACKEND
+    confirmBtn.addEventListener('click', function() {
+
+        if (!currentCategoryId) {
+            showToast('Erreur', 'ID manquant', 'error');
+            return;
+        }
+
+        fetch('api.php?url=categories_toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + currentCategoryId + '&statut=' + (currentAction === 'activate' ? 'active' : 'inactive')
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeModal();
+                showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Erreur', data.error || 'Action impossible', 'error');
             }
+        })
+        .catch(error => {
+            console.error(error);
+            showToast('Erreur', 'Erreur serveur', 'error');
+        });
+    });
 
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-                currentCategoryId = null;
-                currentAction = null;
-            }
-
-            openBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            // CONFIRM ACTION + FETCH BACKEND
-            confirmBtn.addEventListener('click', function() {
-
-                if (!currentCategoryId) {
-                    showToast('Erreur', 'ID manquant', 'error');
-                    return;
-                }
-
-            fetch('api.php?url=categories_toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + currentCategoryId + '&statut=' + (currentAction === 'activate' ? 'active' : 'inactive')
-            })
-                .then(response => response.json())
-                .then(data => {
-
-                    if (data.success) {
-                        closeModal();
-                        showToast('Succès', data.message || 'Statut mis à jour', 'success');
-
-                        // reload page pour refresh UI
-                        setTimeout(() => location.reload(), 1000);
-
-                    } else {
-                        showToast('Erreur', data.error || 'Action impossible', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    showToast('Erreur', 'Erreur serveur', 'error');
-                });
-            });
-
-        })();
+})();
 
         // Drag & Drop réorganisation
         (function() {

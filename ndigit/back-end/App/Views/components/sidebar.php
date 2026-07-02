@@ -186,7 +186,7 @@ $baseUrl = "/Plateforme-NdigitMarket/ndigit/back-end/routes/api.php?url=";
                 </a>
 
                 <a href="<?= $baseUrl ?>categories"
-                   class="sidebar-link <?= $currentPage === '../admin/categorie.php' ? 'active' : '' ?>">
+                   class="sidebar-link <?= $currentPage === 'categories' ? 'active' : '' ?>">
                     <i class="fas fa-tags"></i> Catégorie
                 </a>
 
