@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../models/CategorieModel.php';
+require_once __DIR__ . '/../../config/database.php';
 
 class CategorieModel {
     private $pdo;
@@ -35,6 +35,13 @@ class CategorieModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
+
+    public function countAllProducts() {
+    $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM produits");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'];
+}
+
     /**
      * Compter le nombre total de catégories
      */

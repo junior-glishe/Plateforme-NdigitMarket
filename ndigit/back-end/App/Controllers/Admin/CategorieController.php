@@ -1,14 +1,15 @@
 <?php
-// app/controllers/CategorieController.php
 
-require_once __DIR__ . '/../models/CategorieModel.php';
+require_once __DIR__ . '/../../Models/CategorieModel.php';
 
 class CategorieController {
     private $model;
     
-    public function __construct() {
-        $this->model = new CategorieModel();
+    public function __construct($pdo) {
+        $this->model = new CategorieModel($pdo);
     }
+
+    
     
     /**
      * Afficher la page de gestion des catégories
@@ -20,18 +21,32 @@ class CategorieController {
         $stats = [
             'total' => $this->model->countCategories(),
             'actives' => $this->model->countActiveCategories(),
-            'inactives' => $this->model->countInactiveCategories()
+            'inactives' => $this->model->countInactiveCategories(),
+            'produits' => $this->model->countAllProducts()
         ];
-        
+
+
+        $data = [
+            'categories' => $categories,
+            'stats' => $stats
+        ];
+
         // Pour chaque catégorie, compter les produits associés
         foreach ($categories as &$category) {
             $category['nb_produits'] = $this->model->countProductsByCategory($category['id']);
         }
-        
-        // Inclure la vue
-        include __DIR__ . '/../views/categorie/index.php';
+
+         $this->render('admin/categorie', [
+        'categories' => $categories,
+        'stats' => $stats
+    ]);
+
     }
-    
+        private function render($view, $data = [])
+        {
+            extract($data);
+            require __DIR__ . '/../../Views/admin/categorie.php';
+        }   
     /**
      * Ajouter une catégorie (AJAX ou POST)
      */

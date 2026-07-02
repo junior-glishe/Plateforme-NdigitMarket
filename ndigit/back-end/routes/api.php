@@ -1,10 +1,9 @@
 <?php
 
-use CategorieController;
 
 session_start();
 
-require_once __DIR__ . '/../app/config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 $url = $_GET['url'] ?? 'dashboard';
 
@@ -32,7 +31,7 @@ switch ($url) {
         break;
     
     // Mettre à jour une catégorie
-    case 'categories_update':
+    case 'categories_edit':
         require_once __DIR__ . '/../App/Controllers/Admin/CategorieController.php';
         $controller = new CategorieController($pdo);
         $controller->update();

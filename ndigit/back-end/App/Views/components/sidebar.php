@@ -185,8 +185,8 @@ $baseUrl = "/ndigit/back-end/routes/api.php?url=";
                     <i class="fas fa-coins"></i> Financières & commission
                 </a>
 
-                <a href="<?= $baseUrl ?>categories" 
-                   class="sidebar-link <?= $currentPage === 'categories' ? 'active' : '' ?>">
+                <a href="<?= $baseUrl ?>categories"
+                   class="sidebar-link <?= $currentPage === 'categorie.php' ? 'active' : '' ?>">
                     <i class="fas fa-tags"></i> Catégorie
                 </a>
 

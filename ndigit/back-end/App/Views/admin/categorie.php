@@ -1,3 +1,11 @@
+<?php 
+$stats = $stats ?? [
+    'total' => 0,
+    'actives' => 0,
+    'inactives' => 0,
+    'produits' => 0
+];
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -58,7 +66,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TOTAL</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $stats['total'] ?></p>
                     <p class="text-xs text-gray-400 mt-1">Catégories totales</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -68,7 +76,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ACTIVES</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $stats['actives'] ?></p>
                     <p class="text-xs text-gray-400 mt-1">Catégories actives</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -78,7 +86,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">INACTIVES</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $stats['inactives'] ?></p>
                     <p class="text-xs text-gray-400 mt-1">Catégories désactivées</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -88,7 +96,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">PRODUITS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $stats['produits'] ?></p>
                     <p class="text-xs text-gray-400 mt-1">Produits associés</p>
                 </div>
             </div>
@@ -180,7 +188,7 @@
                                 <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" title="Modifier">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                <button class="toggleCategoryBtn w-9 h-9 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" title="Désactiver">
+                                <button class="toggleCategoryBtn w-9 h-9 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" title="Désactiver"  data-id="<?= $category['id'] ?>">
                                     <i class="fas fa-toggle-on text-xs"></i>
                                 </button>
                                 <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" title="Fusionner">
@@ -774,46 +782,78 @@
             return { openModal, closeModal };
         }
 
+     
         // Modal formulaire catégorie
         (function() {
             const modal = document.getElementById('categoryFormModal');
             const openBtns = document.querySelectorAll('.openCategoryFormBtn, #openCategoryFormBtn');
             const closeBtns = document.querySelectorAll('.closeCategoryFormBtn');
             const title = document.getElementById('formModalTitle');
+            const form = modal.querySelector('form');
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-            function openModal(isEdit = false) {
+            let currentCategoryId = null; // Pour l'édition
+
+            function openModal(isEdit = false, data = null) {
                 title.textContent = isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie';
+                
+                if (isEdit && data) {
+                    currentCategoryId = data.id;
+                    document.getElementById('categoryName').value = data.name;
+                    document.getElementById('categorySlug').value = data.slug;
+                    document.getElementById('categoryEmoji').value = data.emoji;
+                    document.getElementById('categoryIcon').innerHTML = `<i class="${data.emoji}"></i>`;
+                } else {
+                    currentCategoryId = null;
+                    form.reset();
+                    document.getElementById('categoryIcon').innerHTML = `<i class="fas fa-tag"></i>`;
+                }
+
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
             }
+
             function closeModal() {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
+                currentCategoryId = null;
             }
 
-            openBtns.forEach(btn => btn.addEventListener('click', function() {
-                const isEdit = this.classList.contains('openCategoryFormBtn');
-                openModal(isEdit);
-            }));
+            // Ouvrir pour nouvelle catégorie
+            document.querySelectorAll('#openCategoryFormBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    openModal(false);
+                });
+            });
+
+            // Ouvrir pour édition (avec données)
+            document.querySelectorAll('.openCategoryFormBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const data = {
+                        id: this.dataset.id,
+                        name: this.dataset.name,
+                        slug: this.dataset.slug,
+                        emoji: this.dataset.emoji
+                    };
+                    openModal(true, data);
+                });
+            });
+
             closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) closeModal();
             });
 
             // Sélection d'une icône
-document.querySelectorAll('.emoji-pick').forEach(btn => {
-    btn.addEventListener('click', function () {
-        const icon = this.dataset.emoji;
-
-        // Stocke la classe Font Awesome
-        document.getElementById('categoryEmoji').value = icon;
-
-        // Met à jour l'aperçu
-        document.getElementById('categoryIcon').innerHTML = `<i class="${icon}"></i>`;
-    });
-});
+            document.querySelectorAll('.emoji-pick').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const icon = this.dataset.emoji;
+                    document.getElementById('categoryEmoji').value = icon;
+                    document.getElementById('categoryIcon').innerHTML = `<i class="${icon}"></i>`;
+                });
+            });
 
             // Auto-generate slug
             const nameInput = document.getElementById('categoryName');
@@ -825,11 +865,43 @@ document.querySelectorAll('.emoji-pick').forEach(btn => {
                     .replace(/^-+|-+$/g, '');
             });
 
-            // Submit
-            modal.querySelector('form').addEventListener('submit', function(e) {
+            // SUBMIT AVEC FETCH
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                closeModal();
-                showToast('Succès', 'Catégorie enregistrée avec succès', 'success');
+
+                // Désactiver le bouton pour éviter double soumission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+                // Récupérer les données
+                const formData = new FormData(form);
+                formData.append('id', currentCategoryId || '');
+
+                // Déterminer l'action
+                const action = currentCategoryId ? 'categories_edit' : 'categories_add';
+
+                fetch('index.php?url=' + action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeModal();
+                        showToast('Succès', data.message || 'Catégorie enregistrée', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    showToast('Erreur', 'Erreur serveur', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
+                });
             });
         })();
 
@@ -980,17 +1052,27 @@ document.querySelectorAll('.emoji-pick').forEach(btn => {
             const infoText = document.getElementById('toggleInfoText');
             const info = document.getElementById('toggleInfo');
 
+            let currentCategoryId = null;
+            let currentAction = null; // "activate" ou "deactivate"
+
             function openModal() {
                 const btn = this;
+                currentCategoryId = btn.getAttribute('data-id');
+
                 const isOn = btn.querySelector('.fa-toggle-on');
-                
+
                 if (isOn) {
+                    currentAction = 'deactivate';
+
                     title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver la catégorie';
                     infoText.textContent = 'La catégorie sera masquée du site, mais les produits associés resteront disponibles.';
                     info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
                     confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
                     confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+
                 } else {
+                    currentAction = 'activate';
+
                     title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer la catégorie';
                     infoText.textContent = 'La catégorie sera à nouveau visible sur le site et ses produits seront affichés.';
                     info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
@@ -1002,22 +1084,57 @@ document.querySelectorAll('.emoji-pick').forEach(btn => {
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
             }
+
             function closeModal() {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 document.body.style.overflow = '';
+                currentCategoryId = null;
+                currentAction = null;
             }
 
             openBtns.forEach(btn => btn.addEventListener('click', openModal));
             closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) closeModal();
             });
 
+            // CONFIRM ACTION + FETCH BACKEND
             confirmBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Statut modifié', 'Le statut de la catégorie a été mis à jour', 'success');
+
+                if (!currentCategoryId) {
+                    showToast('Erreur', 'ID manquant', 'error');
+                    return;
+                }
+
+            fetch('index.php?url=categories_toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + currentCategoryId + '&statut=' + (currentAction === 'activate' ? 'active' : 'inactive')
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.success) {
+                        closeModal();
+                        showToast('Succès', data.message || 'Statut mis à jour', 'success');
+
+                        // reload page pour refresh UI
+                        setTimeout(() => location.reload(), 1000);
+
+                    } else {
+                        showToast('Erreur', data.error || 'Action impossible', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    showToast('Erreur', 'Erreur serveur', 'error');
+                });
             });
+
         })();
 
         // Drag & Drop réorganisation
