@@ -600,79 +600,78 @@ $stats = $stats ?? [
     </div>
 </div>
 
-    <!-- MODAL : FUSIONNER CATÉGORIES -->
-    <div id="mergeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-object-group text-purple-500"></i> Fusionner les catégories
-                    </h3>
-                    <p class="text-xs text-gray-400">Déplacer les produits d'une catégorie vers une autre</p>
-                </div>
-                <button class="closeMergeBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                    <p class="text-sm text-purple-700">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        Tous les produits de la catégorie source seront déplacés vers la catégorie cible. La catégorie source sera ensuite supprimée.
-                    </p>
-                </div>
-
-                <!-- Catégorie source -->
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Catégorie source (à supprimer) <span class="text-red-500">*</span></label>
-                    <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-purple-500">
-                        <option>— Sélectionner —</option>
-                        <option> WordPress (... produits)</option>
-                        <option> HTML (... produits)</option>
-                        <option> PHP (... produits)</option>
-                        <option> React (... produits)</option>
-                        <option> PSD (... produits)</option>
-                        <option> Plugin (... produits)</option>
-                    </select>
-                </div>
-
-                <div class="flex items-center justify-center">
-                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                        <i class="fas fa-arrow-down"></i>
+            <!-- MODAL : FUSIONNER CATÉGORIES -->
+        <div id="mergeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                            <i class="fas fa-object-group text-purple-500"></i> Fusionner les catégories
+                        </h3>
+                        <p class="text-xs text-gray-400">Déplacer les produits d'une catégorie vers une autre</p>
                     </div>
+                    <button class="closeMergeBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
+                <form id="mergeForm" class="p-6 space-y-4">
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                        <p class="text-sm text-purple-700">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Tous les produits de la catégorie source seront déplacés vers la catégorie cible. La catégorie source sera ensuite supprimée.
+                        </p>
+                    </div>
 
-                <!-- Catégorie cible -->
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Catégorie cible (recevoir les produits) <span class="text-red-500">*</span></label>
-                    <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-purple-500">
-                        <option>— Sélectionner —</option>
-                        <option> WordPress (... produits)</option>
-                        <option> HTML (... produits)</option>
-                        <option> PHP (... produits)</option>
-                        <option> React (... produits)</option>
-                        <option> PSD (... produits)</option>
-                        <option> Plugin (... produits)</option>
-                    </select>
-                </div>
+                    <!-- Catégorie source -->
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Catégorie source (à supprimer) <span class="text-red-500">*</span></label>
+                        <select id="mergeSourceId" name="source_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-purple-500">
+                            <option value="">— Sélectionner —</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= $cat['id'] ?>">
+                                    <?= htmlspecialchars($cat['nom_categorie']) ?> (<?= $cat['nb_produits'] ?? 0 ?> produits)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                <div>
-                    <label class="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500 mt-0.5" required>
-                        <span>Je confirme vouloir fusionner ces catégories. Cette action est irréversible.</span>
-                    </label>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeMergeBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Annuler
-                </button>
-                <button class="px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-object-group"></i> Confirmer la fusion
-                </button>
+                    <div class="flex items-center justify-center">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                    </div>
+
+                    <!-- Catégorie cible -->
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Catégorie cible (recevoir les produits) <span class="text-red-500">*</span></label>
+                        <select id="mergeTargetId" name="target_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-purple-500">
+                            <option value="">— Sélectionner —</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= $cat['id'] ?>">
+                                    <?= htmlspecialchars($cat['nom_categorie']) ?> (<?= $cat['nb_produits'] ?? 0 ?> produits)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" id="mergeConfirm" class="w-4 h-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500 mt-0.5" required>
+                            <span>Je confirme vouloir fusionner ces catégories. Cette action est irréversible.</span>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-2">
+                        <button type="button" class="closeMergeBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                            Annuler
+                        </button>
+                        <button type="submit" id="confirmMergeBtn" class="px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                            <i class="fas fa-object-group"></i> Confirmer la fusion
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
 
     <!-- MODAL : SUPPRIMER CATÉGORIE -->
     <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1366,33 +1365,127 @@ $stats = $stats ?? [
 })();
 
         // Modal fusion
-        (function() {
-            const modal = document.getElementById('mergeModal');
-            const openBtns = document.querySelectorAll('.openMergeBtn');
-            const closeBtns = document.querySelectorAll('.closeMergeBtn');
+        // Modal fusion
+(function() {
+    const modal = document.getElementById('mergeModal');
+    const openBtns = document.querySelectorAll('.openMergeBtn');
+    const closeBtns = document.querySelectorAll('.closeMergeBtn');
+    const form = document.getElementById('mergeForm');
+    const submitBtn = document.getElementById('confirmMergeBtn');
+    const confirmCheckbox = document.getElementById('mergeConfirm');
 
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-            }
+    let currentSourceId = null;
 
-            openBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
+    function openModal() {
+        const btn = this;
+        currentSourceId = btn.getAttribute('data-id');
+        const nom = btn.getAttribute('data-name') || 'Catégorie';
+
+        // 🔥 Pré-sélectionner la source
+        const sourceSelect = document.getElementById('mergeSourceId');
+        if (sourceSelect && currentSourceId) {
+            sourceSelect.value = currentSourceId;
+            // Désactiver la source pour éviter de la sélectionner comme cible
+            const targetSelect = document.getElementById('mergeTargetId');
+            if (targetSelect) {
+                // Retirer la source de la liste des cibles
+                Array.from(targetSelect.options).forEach(opt => {
+                    if (opt.value == currentSourceId) {
+                        opt.disabled = true;
+                    }
+                });
+            }
+        }
+
+        // Réinitialiser le formulaire
+        form.reset();
+        confirmCheckbox.checked = false;
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        currentSourceId = null;
+        
+        // Réactiver les options désactivées
+        const targetSelect = document.getElementById('mergeTargetId');
+        if (targetSelect) {
+            Array.from(targetSelect.options).forEach(opt => {
+                opt.disabled = false;
             });
+        }
+    }
 
-            modal.querySelector('button.bg-purple-500').addEventListener('click', function() {
+    // Vérifier que la confirmation est cochée
+    confirmCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    openBtns.forEach(btn => btn.addEventListener('click', openModal));
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // 🔥 SOUMISSION AVEC FETCH
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const sourceId = document.getElementById('mergeSourceId').value;
+        const targetId = document.getElementById('mergeTargetId').value;
+
+        if (!sourceId || !targetId) {
+            showToast('Erreur', 'Veuillez sélectionner les deux catégories', 'error');
+            return;
+        }
+
+        if (sourceId === targetId) {
+            showToast('Erreur', 'Les catégories source et cible doivent être différentes', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fusion en cours...';
+
+        const formData = new FormData(form);
+
+        fetch('api.php?url=categories_merge', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
                 closeModal();
-                showToast('Fusion réussie', 'Les catégories ont été fusionnées', 'success');
-            });
-        })();
+                showToast('Succès', data.message || 'Catégories fusionnées avec succès', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de la fusion', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-object-group"></i> Confirmer la fusion';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur serveur', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-object-group"></i> Confirmer la fusion';
+        });
+    });
+})();
 
         // Modal suppression
         (function() {
@@ -1898,7 +1991,7 @@ $stats = $stats ?? [
         const statut = statusFilter ? statusFilter.value : 'all';
         const tri = sortFilter ? sortFilter.value : 'ordre';
 
-        // 🔥 Construction des paramètres
+        //  Construction des paramètres
         let params = '';
         if (search) params += (params ? '&' : '') + 'search=' + encodeURIComponent(search);
         if (statut !== 'all') params += (params ? '&' : '') + 'statut=' + encodeURIComponent(statut);
