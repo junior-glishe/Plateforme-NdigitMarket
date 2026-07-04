@@ -83,55 +83,55 @@ class CategorieModel {
      * Ajouter une catégorie
      */
     public function addCategory($data) {
-        $sql = "INSERT INTO categories (
-                    nom_categorie, 
-                    slug, 
-                    description, 
-                    icone, 
-                    couleur, 
-                    statut, 
-                    ordre_affichage,
-                    image_cat
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['nom_categorie'],
-            $data['slug'],
-            $data['description'] ?? null,
-            $data['icone'] ?? 'fa-solid fa-globe',
-            $data['couleur'] ?? 'blue',
-            $data['statut'] ?? 'active',
-            $data['ordre_affichage'] ?? 0,
-            $data['image_cat'] ?? null
-        ]);
-    }
+    $sql = "INSERT INTO categories (
+                nom_categorie, 
+                slug, 
+                description, 
+                icone, 
+                couleur, 
+                statut, 
+                ordre_affichage,
+                sous_categories,
+                image_cat
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
-    /**
-     * Mettre à jour une catégorie
-     */
-    public function updateCategory($id, $data) {
-        $sql = "UPDATE categories SET 
-                    nom_categorie = ?,
-                    slug = ?,
-                    description = ?,
-                    icone = ?,
-                    couleur = ?,
-                    statut = ?
-                WHERE id = ?";
-        
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['nom_categorie'],
-            $data['slug'],
-            $data['description'] ?? null,
-            $data['icone'] ?? 'fa-solid fa-globe',
-            $data['couleur'] ?? 'blue',
-            $data['statut'] ?? 'active',
-            $id
-        ]);
-    }
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['nom_categorie'],
+        $data['slug'],
+        $data['description'] ?? null,
+        $data['icone'] ?? 'fa-solid fa-globe',
+        $data['couleur'] ?? 'blue',
+        $data['statut'] ?? 'active',
+        $data['ordre_affichage'] ?? 0,
+        $data['sous_categories'] ?? '0',
+        $data['image_cat'] ?? null
+    ]);
+}
+
+public function updateCategory($id, $data) {
+    $sql = "UPDATE categories SET 
+                nom_categorie = ?,
+                slug = ?,
+                description = ?,
+                icone = ?,
+                couleur = ?,
+                statut = ?,
+                sous_categories = ?
+            WHERE id = ?";
     
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['nom_categorie'],
+        $data['slug'],
+        $data['description'] ?? null,
+        $data['icone'] ?? 'fa-solid fa-globe',
+        $data['couleur'] ?? 'blue',
+        $data['statut'] ?? 'active',
+        $data['sous_categories'] ?? '0',
+        $id
+    ]);
+}
     /**
      * Mettre à jour l'image d'une catégorie
      */

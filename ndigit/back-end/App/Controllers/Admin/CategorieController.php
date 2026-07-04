@@ -52,56 +52,112 @@ class CategorieController {
      * Ajouter une catégorie (AJAX ou POST)
      */
     public function add() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $nom_categorie = trim($_POST['nom_categorie'] ?? '');
+    if (empty($nom_categorie)) {
+        $this->jsonResponse(['error' => 'Le nom de la catégorie est requis'], 400);
+        return;
+    }
+    
+    $slug = trim($_POST['slug'] ?? '');
+    if (empty($slug)) {
+        $slug = $this->model->generateUniqueSlug($nom_categorie);
+    } else {
+        if ($this->model->slugExists($slug)) {
+            $this->jsonResponse(['error' => 'Ce slug existe déjà'], 400);
             return;
-        }
-        
-        $nom_categorie = trim($_POST['nom_categorie'] ?? '');
-        if (empty($nom_categorie)) {
-            $this->jsonResponse(['error' => 'Le nom de la catégorie est requis'], 400);
-            return;
-        }
-        
-        // Générer le slug
-        $slug = trim($_POST['slug'] ?? '');
-        if (empty($slug)) {
-            $slug = $this->model->generateUniqueSlug($nom_categorie);
-        } else {
-            // Vérifier si le slug existe déjà
-            if ($this->model->slugExists($slug)) {
-                $this->jsonResponse(['error' => 'Ce slug existe déjà'], 400);
-                return;
-            }
-        }
-        
-        // Traitement de l'image
-        $imageName = null;
-        if (!empty($_FILES['image']['name'])) {
-            $imageName = $this->uploadImage($_FILES['image']);
-            if (!$imageName) {
-                $this->jsonResponse(['error' => 'Erreur lors du téléchargement de l\'image'], 400);
-                return;
-            }
-        }
-        
-        $data = [
-            'nom_categorie' => $nom_categorie,
-            'slug' => $slug,
-            'description' => $_POST['description'] ?? null,
-            'icone' => $_POST['icone'] ?? 'fa-solid fa-globe',
-            'couleur' => $_POST['couleur'] ?? 'blue',
-            'statut' => $_POST['statut'] ?? 'active',
-            'ordre_affichage' => (int)($this->model->countCategories() + 1),
-            'image_cat' => $imageName
-        ];
-        
-        if ($this->model->addCategory($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Catégorie ajoutée avec succès']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de l\'ajout de la catégorie'], 500);
         }
     }
+    
+    $imageName = null;
+    if (!empty($_FILES['image']['name'])) {
+        $imageName = $this->uploadImage($_FILES['image']);
+        if (!$imageName) {
+            $this->jsonResponse(['error' => 'Erreur lors du téléchargement de l\'image'], 400);
+            return;
+        }
+    }
+    
+    $data = [
+        'nom_categorie' => $nom_categorie,
+        'slug' => $slug,
+        'description' => $_POST['description'] ?? null,
+        'icone' => $_POST['icone'] ?? 'fa-solid fa-globe',
+        'couleur' => $_POST['couleur'] ?? 'blue',
+        'statut' => $_POST['statut'] ?? 'active',
+        'ordre_affichage' => (int)($this->model->countCategories() + 1),
+        'sous_categories' => $_POST['sous_categories'] ?? '0',
+        'image_cat' => $imageName
+    ];
+    
+    if ($this->model->addCategory($data)) {
+        $this->jsonResponse(['success' => true, 'message' => 'Catégorie ajoutée avec succès']);
+    } else {
+        $this->jsonResponse(['error' => 'Erreur lors de l\'ajout de la catégorie'], 500);
+    }
+}
+
+public function update() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $id = (int)($_POST['id'] ?? 0);
+    if (!$id) {
+        $this->jsonResponse(['error' => 'ID manquant'], 400);
+        return;
+    }
+    
+    $category = $this->model->getCategoryById($id);
+    if (!$category) {
+        $this->jsonResponse(['error' => 'Catégorie non trouvée'], 404);
+        return;
+    }
+    
+    $nom_categorie = trim($_POST['nom_categorie'] ?? '');
+    if (empty($nom_categorie)) {
+        $this->jsonResponse(['error' => 'Le nom de la catégorie est requis'], 400);
+        return;
+    }
+    
+    $slug = trim($_POST['slug'] ?? '');
+    if (empty($slug)) {
+        $slug = $this->model->slugify($nom_categorie);
+    }
+    
+    if ($this->model->slugExists($slug, $id)) {
+        $this->jsonResponse(['error' => 'Ce slug existe déjà'], 400);
+        return;
+    }
+    
+    $data = [
+        'nom_categorie' => $nom_categorie,
+        'slug' => $slug,
+        'description' => $_POST['description'] ?? null,
+        'icone' => $_POST['icone'] ?? 'fa-solid fa-globe',
+        'couleur' => $_POST['couleur'] ?? 'blue',
+        'statut' => $_POST['statut'] ?? 'active',
+        'sous_categories' => $_POST['sous_categories'] ?? '0'
+    ];
+    
+    if (!empty($_FILES['image']['name'])) {
+        $imageName = $this->uploadImage($_FILES['image']);
+        if ($imageName) {
+            $this->model->updateCategoryImage($id, $imageName);
+        }
+    }
+    
+    if ($this->model->updateCategory($id, $data)) {
+        $this->jsonResponse(['success' => true, 'message' => 'Catégorie mise à jour avec succès']);
+    } else {
+        $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+    }
+}
     
     /**
      * Récupérer une catégorie (AJAX)
@@ -144,64 +200,7 @@ class CategorieController {
     /**
      * Mettre à jour une catégorie
      */
-    public function update() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-        
-        $id = (int)($_POST['id'] ?? 0);
-        if (!$id) {
-            $this->jsonResponse(['error' => 'ID manquant'], 400);
-            return;
-        }
-        
-        $category = $this->model->getCategoryById($id);
-        if (!$category) {
-            $this->jsonResponse(['error' => 'Catégorie non trouvée'], 404);
-            return;
-        }
-        
-        $nom_categorie = trim($_POST['nom_categorie'] ?? '');
-        if (empty($nom_categorie)) {
-            $this->jsonResponse(['error' => 'Le nom de la catégorie est requis'], 400);
-            return;
-        }
-        
-        // Vérifier le slug
-        $slug = trim($_POST['slug'] ?? '');
-        if (empty($slug)) {
-            $slug = $this->model->slugify($nom_categorie);
-        }
-        
-        if ($this->model->slugExists($slug, $id)) {
-            $this->jsonResponse(['error' => 'Ce slug existe déjà'], 400);
-            return;
-        }
-        
-        $data = [
-            'nom_categorie' => $nom_categorie,
-            'slug' => $slug,
-            'description' => $_POST['description'] ?? null,
-            'icone' => $_POST['icone'] ?? 'fa-solid fa-globe',
-            'couleur' => $_POST['couleur'] ?? 'blue',
-            'statut' => $_POST['statut'] ?? 'active'
-        ];
-        
-        // Traitement de l'image si présente
-        if (!empty($_FILES['image']['name'])) {
-            $imageName = $this->uploadImage($_FILES['image']);
-            if ($imageName) {
-                $this->model->updateCategoryImage($id, $imageName);
-            }
-        }
-        
-        if ($this->model->updateCategory($id, $data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Catégorie mise à jour avec succès']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
-        }
-    }
+    
     
     /**
      * Mettre à jour l'ordre d'affichage
@@ -338,31 +337,44 @@ class CategorieController {
      * Upload d'image
      */
     private function uploadImage($file) {
-        $imageName = time() . '_' . basename($file['name']);
-        $imagePath = __DIR__ . '/../../public/uploads/' . $imageName;
-        $imageSize = $file['size'];
-        $imageTmp = $file['tmp_name'];
-        $imageType = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
-        
-        $formats_autorises = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
-        if (!in_array($imageType, $formats_autorises)) {
-            return false;
-        }
-        
-        if ($imageSize > 2 * 1024 * 1024) { // 2MB
-            return false;
-        }
-        
-        if (!is_dir(__DIR__ . '/../../public/uploads')) {
-            mkdir(__DIR__ . '/../../public/uploads', 0777, true);
-        }
-        
-        if (move_uploaded_file($imageTmp, $imagePath)) {
-            return $imageName;
-        }
-        
+    // 🔥 Chemin vers le dossier uploads (qui existe déjà)
+     $uploadDir = __DIR__ . '/../../../public/uploads/';     
+    
+    // 🔥 Vérifier que le dossier existe
+    if (!is_dir($uploadDir)) {
+        error_log('❌ Le dossier uploads n\'existe pas: ' . $uploadDir);
         return false;
     }
+    
+    // 🔥 Vérifier que le dossier est accessible en écriture
+    if (!is_writable($uploadDir)) {
+        error_log('❌ Le dossier n\'est pas accessible en écriture: ' . $uploadDir);
+        return false;
+    }
+    
+    $imageName = time() . '_' . basename($file['name']);
+    $imagePath = $uploadDir . $imageName;
+    $imageTmp = $file['tmp_name'];
+    $imageType = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
+    
+    $formats_autorises = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
+    if (!in_array($imageType, $formats_autorises)) {
+        error_log('❌ Format non autorisé: ' . $imageType);
+        return false;
+    }
+    
+    if ($file['size'] > 2 * 1024 * 1024) { // 2MB
+        error_log('❌ Fichier trop volumineux: ' . $file['size']);
+        return false;
+    }
+    
+    if (move_uploaded_file($imageTmp, $imagePath)) {
+        return $imageName;
+    }
+    
+    error_log('❌ Erreur lors du déplacement du fichier vers: ' . $imagePath);
+    return false;
+}
     
     /**
      * Réponse JSON

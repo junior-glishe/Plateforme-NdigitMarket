@@ -193,13 +193,17 @@ $stats = $stats ?? [
                                             <i class="fas fa-eye text-xs"></i>
                                         </button>
                                         <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
-                                                title="Modifier"
-                                                data-id="<?= $category['id'] ?>"
-                                                data-name="<?= htmlspecialchars($category['nom_categorie']) ?>"
-                                                data-slug="<?= htmlspecialchars($category['slug'] ?? '') ?>"
-                                                data-emoji="<?= htmlspecialchars($category['icone'] ?? 'fa-solid fa-globe') ?>">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
+                                            title="Modifier"
+                                            data-id="<?= $category['id'] ?>"
+                                            data-name="<?= htmlspecialchars($category['nom_categorie']) ?>"
+                                            data-slug="<?= htmlspecialchars($category['slug'] ?? '') ?>"
+                                            data-emoji="<?= htmlspecialchars($category['icone'] ?? 'fa-solid fa-globe') ?>"
+                                            data-couleur="<?= htmlspecialchars($category['couleur'] ?? 'blue') ?>"
+                                            data-description="<?= htmlspecialchars($category['description'] ?? '') ?>"
+                                            data-statut="<?= $category['statut'] ?? 'active' ?>"
+                                            data-image="<?= htmlspecialchars($category['image_cat'] ?? '') ?>">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
                                         <button class="toggleCategoryBtn w-9 h-9 rounded-lg <?= $category['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition" 
                                                 title="<?= $category['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
                                                 data-id="<?= $category['id'] ?>"
@@ -310,6 +314,8 @@ $stats = $stats ?? [
                             <button type="button" class="emoji-pick w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-lg transition" data-emoji="<?= $icon ?>">
                                 <i class="<?= $icon ?>"></i>
                             </button>
+
+                            
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -387,7 +393,7 @@ $stats = $stats ?? [
     </div>
 </div>
 
-    <!-- MODAL : DÉTAIL CATÉGORIE -->
+    
 <!-- MODAL : DÉTAIL CATÉGORIE -->
 <div id="categoryDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
@@ -864,126 +870,184 @@ $stats = $stats ?? [
 
      
         // Modal formulaire catégorie
-        (function() {
-            const modal = document.getElementById('categoryFormModal');
-            const openBtns = document.querySelectorAll('.openCategoryFormBtn, #openCategoryFormBtn');
-            const closeBtns = document.querySelectorAll('.closeCategoryFormBtn');
-            const title = document.getElementById('formModalTitle');
-            const form = modal.querySelector('form');
-            const submitBtn = form.querySelector('button[type="submit"]');
+(function() {
+    const modal = document.getElementById('categoryFormModal');
+    const openBtns = document.querySelectorAll('.openCategoryFormBtn, #openCategoryFormBtn');
+    const closeBtns = document.querySelectorAll('.closeCategoryFormBtn');
+    const title = document.getElementById('formModalTitle');
+    const form = modal.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-            let currentCategoryId = null; // Pour l'édition
+    let currentCategoryId = null;
 
-            function openModal(isEdit = false, data = null) {
-                title.textContent = isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie';
-                
-                if (isEdit && data) {
-                    currentCategoryId = data.id;
-                    document.getElementById('categoryName').value = data.name;
-                    document.getElementById('categorySlug').value = data.slug;
-                    document.getElementById('categoryEmoji').value = data.emoji;
-                    document.getElementById('categoryIcon').innerHTML = `<i class="${data.emoji}"></i>`;
-                } else {
-                    currentCategoryId = null;
-                    form.reset();
-                    document.getElementById('categoryIcon').innerHTML = `<i class="fas fa-tag"></i>`;
+    function openModal(isEdit = false, data = null) {
+        title.textContent = isEdit ? 'Modifier la catégorie' : 'Nouvelle catégorie';
+        
+        // Réinitialiser
+        form.reset();
+        document.getElementById('categoryIcon').innerHTML = `<i class="fas fa-tag"></i>`;
+        document.getElementById('categoryEmoji').value = 'fa-solid fa-globe';
+        
+        const colorSelect = document.getElementById('categoryColor');
+        if (colorSelect) colorSelect.value = 'blue';
+        
+        const preview = document.getElementById('currentImagePreview');
+        if (preview) preview.classList.add('hidden');
+        
+        if (isEdit && data) {
+            currentCategoryId = data.id;
+            document.getElementById('categoryName').value = data.name || '';
+            document.getElementById('categorySlug').value = data.slug || '';
+            document.getElementById('categoryEmoji').value = data.emoji || 'fa-solid fa-globe';
+            document.getElementById('categoryIcon').innerHTML = `<i class="${data.emoji || 'fa-solid fa-globe'}"></i>`;
+            
+            if (data.couleur && colorSelect) {
+                colorSelect.value = data.couleur;
+            }
+            
+            const descTextarea = document.getElementById('categoryDescription');
+            if (descTextarea && data.description) {
+                descTextarea.value = data.description;
+            }
+            
+            if (data.statut) {
+                const statusRadios = document.querySelectorAll('input[name="statut"]');
+                statusRadios.forEach(radio => {
+                    radio.checked = radio.value === data.statut;
+                });
+            }
+            
+            if (data.image) {
+                const preview = document.getElementById('currentImagePreview');
+                const img = document.getElementById('currentImage');
+                if (preview && img) {
+                    img.src = '/uploads/' + data.image;
+                    preview.classList.remove('hidden');
                 }
-
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
             }
+        } else {
+            currentCategoryId = null;
+            const statusRadios = document.querySelectorAll('input[name="statut"]');
+            statusRadios.forEach(radio => {
+                radio.checked = radio.value === 'active';
+            });
+        }
 
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-                currentCategoryId = null;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        currentCategoryId = null;
+    }
+
+    // Nouvelle catégorie
+    document.querySelectorAll('#openCategoryFormBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            openModal(false);
+        });
+    });
+
+    // Édition
+    document.querySelectorAll('.openCategoryFormBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const data = {
+                id: this.dataset.id || '',
+                name: this.dataset.name || '',
+                slug: this.dataset.slug || '',
+                emoji: this.dataset.emoji || 'fa-solid fa-globe',
+                couleur: this.dataset.couleur || 'blue',
+                description: this.dataset.description || '',
+                statut: this.dataset.statut || 'active',
+                image: this.dataset.image || ''
+            };
+            openModal(true, data);
+        });
+    });
+
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // Sélection icône
+    document.querySelectorAll('.emoji-pick').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const icon = this.dataset.emoji;
+            document.getElementById('categoryEmoji').value = icon;
+            document.getElementById('categoryIcon').innerHTML = `<i class="${icon}"></i>`;
+        });
+    });
+
+    // Auto-generate slug
+    const nameInput = document.getElementById('categoryName');
+    const slugInput = document.getElementById('categorySlug');
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('input', function() {
+            slugInput.value = this.value.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        });
+    }
+
+    // SUBMIT
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const nom = document.getElementById('categoryName').value.trim();
+        if (!nom) {
+            showToast('Erreur', 'Le nom de la catégorie est requis', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        const formData = new FormData(form);
+        formData.append('id', currentCategoryId || '');
+        formData.append('sous_categories', '0'); // 👈 IMPORTANT
+
+        const action = currentCategoryId ? 'categories_edit' : 'categories_add';
+
+        fetch('api.php?url=' + action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            // Voir la réponse brute pour debug
+            return response.text().then(text => {
+                console.log('📥 Réponse brute:', text);
+                try {
+                    return JSON.parse(text);
+                } catch(e) {
+                    throw new Error('Réponse non-JSON: ' + text.substring(0, 100));
+                }
+            });
+        })
+        .then(data => {
+            if (data.success) {
+                closeModal();
+                showToast('Succès', data.message || 'Catégorie enregistrée', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
             }
-
-            // Ouvrir pour nouvelle catégorie
-            document.querySelectorAll('#openCategoryFormBtn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    openModal(false);
-                });
-            });
-
-            // Ouvrir pour édition (avec données)
-            document.querySelectorAll('.openCategoryFormBtn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const data = {
-                        id: this.dataset.id,
-                        name: this.dataset.name,
-                        slug: this.dataset.slug,
-                        emoji: this.dataset.emoji
-                    };
-                    openModal(true, data);
-                });
-            });
-
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            // Sélection d'une icône
-            document.querySelectorAll('.emoji-pick').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const icon = this.dataset.emoji;
-                    document.getElementById('categoryEmoji').value = icon;
-                    document.getElementById('categoryIcon').innerHTML = `<i class="${icon}"></i>`;
-                });
-            });
-
-            // Auto-generate slug
-            const nameInput = document.getElementById('categoryName');
-            const slugInput = document.getElementById('categorySlug');
-            nameInput.addEventListener('input', function() {
-                slugInput.value = this.value.toLowerCase()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-            });
-
-            // SUBMIT AVEC FETCH
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Désactiver le bouton pour éviter double soumission
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-
-                // Récupérer les données
-                const formData = new FormData(form);
-                formData.append('id', currentCategoryId || '');
-
-                // Déterminer l'action
-                const action = currentCategoryId ? 'categories_edit' : 'categories_add';
-
-                fetch('api.php?url=' + action, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        closeModal();
-                        showToast('Succès', data.message || 'Catégorie enregistrée', 'success');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                    showToast('Erreur', 'Erreur serveur', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
-                });
-            });
-        })();
+        })
+        .catch(error => {
+            console.error('❌ Erreur:', error);
+            showToast('Erreur', error.message || 'Erreur serveur', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
+        });
+    });
+})();
 
         // ============================================
 // MODAL DÉTAIL - Version unique
@@ -1716,19 +1780,132 @@ $stats = $stats ?? [
         });
     }
 
+    // ============================================
+// FILTRAGE CATEGORIES - VERSION CORRIGÉE
+// ============================================
+(function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    let debounceTimer = null;
+
+    // Helper pour échapper le HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Helper pour formater la date
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    // Fonction pour construire le HTML d'une catégorie
+    function renderCategory(category) {
+        const statutClass = category.statut === 'active' 
+            ? 'text-emerald-700 bg-emerald-100' 
+            : 'text-gray-500 bg-gray-100';
+        const statutIcon = category.statut === 'active' ? 'fa-check' : 'fa-pause';
+        const statutText = category.statut === 'active' ? 'Active' : 'Inactive';
+        const toggleClass = category.statut === 'active' 
+            ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' 
+            : 'bg-gray-50 text-gray-400 hover:bg-gray-100';
+        const toggleIcon = category.statut === 'active' ? 'fa-toggle-on' : 'fa-toggle-off';
+        const toggleTitle = category.statut === 'active' ? 'Désactiver' : 'Activer';
+
+        return `
+            <div class="category-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden" 
+                 draggable="true" 
+                 data-id="${category.id}">
+                <div class="flex items-stretch">
+                    <div class="drag-handle w-12 bg-gray-50 hover:bg-gray-100 flex items-center justify-center cursor-grab active:cursor-grabbing border-r border-gray-100 transition">
+                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                    </div>
+                    <div class="flex-1 p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="${category.icone || 'fa-solid fa-globe'} text-3xl text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h5 class="text-sm font-bold text-[#0F172A]">${escapeHtml(category.nom_categorie)}</h5>
+                                <span class="text-[10px] font-semibold ${statutClass} px-2 py-0.5 rounded-full">
+                                    <i class="fas ${statutIcon} mr-1"></i>
+                                    ${statutText}
+                                </span>
+                                <span class="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                                    /${escapeHtml(category.slug || '')}
+                                </span>
+                            </div>
+                            <p class="text-xs text-gray-500 line-clamp-1 mb-2">${escapeHtml(category.description || 'Aucune description')}</p>
+                            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                <span class="flex items-center gap-1"><i class="fas fa-box text-[#0EA486]"></i> <strong class="text-[#0F172A]">${category.nb_produits || 0}</strong> produits</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-calendar text-gray-400"></i> ${formatDate(category.created_at)}</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-sort-numeric-up text-gray-400"></i> Position <strong class="text-[#0F172A]">${category.ordre_affichage || 0}</strong></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button class="openCategoryDetailBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                    title="Voir détail"
+                                    data-id="${category.id}">
+                                <i class="fas fa-eye text-xs"></i>
+                            </button>
+                            <button class="openCategoryFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
+                                    title="Modifier"
+                                    data-id="${category.id}"
+                                    data-name="${escapeHtml(category.nom_categorie)}"
+                                    data-slug="${escapeHtml(category.slug || '')}"
+                                    data-emoji="${escapeHtml(category.icone || 'fa-solid fa-globe')}"
+                                    data-couleur="${escapeHtml(category.couleur || 'blue')}"
+                                    data-description="${escapeHtml(category.description || '')}"
+                                    data-statut="${category.statut || 'active'}"
+                                    data-image="${escapeHtml(category.image_cat || '')}">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button class="toggleCategoryBtn w-9 h-9 rounded-lg ${toggleClass} flex items-center justify-center transition" 
+                                    title="${toggleTitle}"
+                                    data-id="${category.id}"
+                                    data-nom="${escapeHtml(category.nom_categorie)}">
+                                <i class="fas ${toggleIcon} text-xs"></i>
+                            </button>
+                            <button class="openMergeBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" 
+                                    title="Fusionner"
+                                    data-id="${category.id}"
+                                    data-name="${escapeHtml(category.nom_categorie)}">
+                                <i class="fas fa-object-group text-xs"></i>
+                            </button>
+                            <button class="openDeleteBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" 
+                                    title="Supprimer"
+                                    data-id="${category.id}">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     function filterCategories() {
         const search = searchInput ? searchInput.value.trim() : '';
         const statut = statusFilter ? statusFilter.value : 'all';
         const tri = sortFilter ? sortFilter.value : 'ordre';
 
-        // Construction des paramètres
-        const params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (statut !== 'all') params.append('statut', statut);
-        if (tri !== 'ordre') params.append('tri', tri);
+        // 🔥 Construction des paramètres
+        let params = '';
+        if (search) params += (params ? '&' : '') + 'search=' + encodeURIComponent(search);
+        if (statut !== 'all') params += (params ? '&' : '') + 'statut=' + encodeURIComponent(statut);
+        if (tri !== 'ordre') params += (params ? '&' : '') + 'tri=' + encodeURIComponent(tri);
 
         // Si pas de filtres, recharger la page
-        if (!params.toString()) {
+        if (!params) {
             location.reload();
             return;
         }
@@ -1744,20 +1921,24 @@ $stats = $stats ?? [
             </div>
         `;
 
-        // Fetch vers backend
-        fetch('api.php?url=categories_filter?' + params.toString())
-            .then(response => response.json())
+        // 🔥 Fetch vers backend
+        fetch('api.php?url=categories_filter&' + params)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('📥 Réponse filtre:', data);
                 if (data.success) {
                     if (data.categories && data.categories.length > 0) {
-                        // Construire le HTML à partir des données JSON
                         let html = '';
                         data.categories.forEach(cat => {
                             html += renderCategory(cat);
                         });
                         container.innerHTML = html;
-                        // Réattacher les événements
-                        reattachFilterEvents();
+                        // Les événements sont déjà gérés par les closures existantes
                     } else {
                         container.innerHTML = `
                             <div class="col-span-full text-center py-12">
@@ -1771,11 +1952,22 @@ $stats = $stats ?? [
                 }
             })
             .catch(error => {
-                console.error(error);
+                console.error('❌ Erreur:', error);
                 showToast('Erreur', 'Erreur serveur', 'error');
             });
     }
 
+    // Debounce pour la recherche
+    function debounceFilter() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(filterCategories, 500);
+    }
+
+    // Écouteurs d'événements
+    if (searchInput) searchInput.addEventListener('input', debounceFilter);
+    if (statusFilter) statusFilter.addEventListener('change', filterCategories);
+    if (sortFilter) sortFilter.addEventListener('change', filterCategories);
+})();
     // Réattacher les événements après filtrage
     function reattachFilterEvents() {
         // Détail
