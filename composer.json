@@ -1,0 +1,16 @@
+{
+    "name": "ndigitmarket/backoffice",
+    "description": "NDIGITMARKET back-office administrateur (PHP MVC).",
+    "type": "project",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
