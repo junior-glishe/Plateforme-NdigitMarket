@@ -71,12 +71,107 @@ switch ($url) {
         break;
 
         
-//     case 'contenus':
-//         require_once __DIR__ . '/../app/controllers/StudentsController.php';
-//         $controller = new StudentsController($pdo);
-//         $controller->index();
-//         break;
+    case 'contenus':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->index();
+        break;
 
+        // ============================================
+    // BANNIÈRES
+    // ============================================
+    case 'bannieres':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->index();
+        break;
+
+    case 'banniere_get':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->getBanniere();
+        break;
+
+    case 'banniere_add':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->addBanniere();
+        break;
+
+    case 'banniere_edit':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->updateBanniere();
+        break;
+
+    case 'banniere_toggle':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->toggleBanniere();
+        break;
+
+    case 'banniere_update_order':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->updateBanniereOrder();
+        break;
+
+    case 'banniere_delete':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->deleteBanniere();
+        break;
+
+    case 'banniere_stats':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->getBanniereStats();
+        break;
+
+    // ============================================
+    // CODES PROMO
+    // ============================================
+    case 'promo_generate':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->generateCode();
+        break;
+
+    case 'promo_get':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->getCodePromo();
+        break;
+
+    case 'promo_add':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->addCodePromo();
+        break;
+
+    case 'promo_edit':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->updateCodePromo();
+        break;
+
+    case 'promo_toggle':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->toggleCodePromo();
+        break;
+
+    case 'promo_delete':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->deleteCodePromo();
+        break;
+
+    case 'promo_history':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->getPromoHistorique();
+        break;
 //     case 'notifications':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
 //         $controller = new LoginController($pdo);
