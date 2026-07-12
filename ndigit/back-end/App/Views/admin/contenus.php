@@ -665,7 +665,7 @@
         </div>
     </div>
 
-   <!-- MODAL : STATS BANNIÈRE -->
+ <!-- MODAL : STATS BANNIÈRE -->
 <div id="bannerStatsModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -681,9 +681,86 @@
             </button>
         </div>
 
-        <!-- Le contenu est généré entièrement par JS -->
         <div class="overflow-y-auto p-6 space-y-5" id="bannerStatsContent">
-            <!-- Rempli par JS -->
+            
+            <!-- Stats cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Affichages</p>
+                    <p id="statsVues" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] mt-1" id="statsVuesEvolution">
+                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                        <span class="text-emerald-600">0%</span>
+                    </p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                    <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Clics</p>
+                    <p id="statsClics" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] mt-1" id="statsClicsEvolution">
+                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                        <span class="text-emerald-600">0%</span>
+                    </p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+                    <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CTR</p>
+                    <p id="statsCtr" class="text-2xl font-bold text-[#0F172A]">0%</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Taux de clic</p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+                    <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Jours actifs</p>
+                    <p id="statsJoursActifs" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Depuis activation</p>
+                </div>
+            </div>
+
+            <!-- Graphique -->
+            <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
+                </h5>
+                <div id="statsChart" class="flex items-end justify-between gap-2 h-40">
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Lun</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Mar</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Mer</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Jeu</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Ven</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Sam</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-[#0EA486] rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-800 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400 font-semibold">Dim</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 mt-3 text-xs">
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Affichages</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded"></span> Clics</span>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -1452,7 +1529,7 @@ function formatDateForMySQL(datetime) {
 })();
 
 // ============================================
-// MODAL STATS BANNIÈRE - VERSION DYNAMIQUE
+// MODAL STATS BANNIÈRE - VERSION MAINTENABLE
 // ============================================
 (function() {
     'use strict';
@@ -1468,8 +1545,6 @@ function formatDateForMySQL(datetime) {
         const btn = this;
         const id = btn.getAttribute('data-id');
         
-        console.log('🟢 ID récupéré:', id);
-
         if (!id) {
             if (typeof showToast === 'function') {
                 showToast('Erreur', 'ID manquant', 'error');
@@ -1494,7 +1569,6 @@ function formatDateForMySQL(datetime) {
         fetch('api.php?url=banniere_stats&id=' + id)
             .then(response => response.json())
             .then(data => {
-                console.log('🟢 Données reçues:', data);
                 if (data.success) {
                     renderStats(data.data);
                 } else {
@@ -1502,7 +1576,7 @@ function formatDateForMySQL(datetime) {
                 }
             })
             .catch(error => {
-                console.error('🔴 Erreur:', error);
+                console.error('Erreur:', error);
                 showError('Erreur de connexion au serveur');
             });
     }
@@ -1521,69 +1595,42 @@ function formatDateForMySQL(datetime) {
     }
 
     function renderStats(data) {
-        console.log('🟢 renderStats appelé avec:', data);
+        console.log('🟢 Données reçues:', data);
         
         try {
             const total = data.total || {};
             const days = data['7days'] || [];
             
-            // === CRÉER LE CONTENU COMPLET DYNAMIQUEMENT ===
+            // === 1. RESTAURER LE HTML D'ORIGINE ===
+            restoreOriginalHTML();
             
-            let html = `
-                <!-- Stats cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                        <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Affichages</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">${formatNumber(total.vues || 0)}</p>
-                        <p class="text-[10px] mt-1" id="statsVuesEvolution">
-                            <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
-                            <span class="text-emerald-600">0%</span>
-                        </p>
-                    </div>
-                    <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                        <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Clics</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">${formatNumber(total.clics || 0)}</p>
-                        <p class="text-[10px] mt-1" id="statsClicsEvolution">
-                            <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
-                            <span class="text-emerald-600">0%</span>
-                        </p>
-                    </div>
-                    <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
-                        <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CTR</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">${(total.ctr || 0).toFixed(1)}%</p>
-                        <p class="text-[10px] text-gray-400 mt-1">Taux de clic</p>
-                    </div>
-                    <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                        <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Jours actifs</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">${data.jours_actifs || 0}</p>
-                        <p class="text-[10px] text-gray-400 mt-1">Depuis activation</p>
-                    </div>
-                </div>
+            // === 2. METTRE À JOUR LES VALEURS ===
+            
+            // Vues
+            const vuesEl = document.getElementById('statsVues');
+            if (vuesEl) vuesEl.textContent = formatNumber(total.vues || 0);
+            
+            // Clics
+            const clicsEl = document.getElementById('statsClics');
+            if (clicsEl) clicsEl.textContent = formatNumber(total.clics || 0);
+            
+            // CTR
+            const ctrEl = document.getElementById('statsCtr');
+            if (ctrEl) ctrEl.textContent = (total.ctr || 0).toFixed(1) + '%';
+            
+            // Jours actifs
+            const joursEl = document.getElementById('statsJoursActifs');
+            if (joursEl) joursEl.textContent = data.jours_actifs || 0;
 
-                <!-- Graphique -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100">
-                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
-                    </h5>
-                    <div id="statsChart" class="flex items-end justify-between gap-2 h-40">
-                        ${generateChart(days)}
-                    </div>
-                    <div class="flex items-center gap-4 mt-3 text-xs">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Affichages</span>
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded"></span> Clics</span>
-                    </div>
-                </div>
-            `;
-            
-            // Insérer le HTML dans content
-            content.innerHTML = html;
-            
-            // Mettre à jour les évolutions après avoir inséré le HTML
+            // === 3. METTRE À JOUR LES ÉVOLUTIONS ===
             const evolution = data.evolution || { vues: 0, clics: 0 };
             updateEvolution('statsVuesEvolution', evolution.vues);
             updateEvolution('statsClicsEvolution', evolution.clics);
+
+            // === 4. METTRE À JOUR LE GRAPHIQUE ===
+            renderChart(days);
             
-            console.log('✅ RenderStats terminé avec succès');
+            console.log('✅ Stats affichées avec succès');
             
         } catch (error) {
             console.error('🔴 Erreur dans renderStats:', error);
@@ -1591,13 +1638,113 @@ function formatDateForMySQL(datetime) {
         }
     }
 
-    function generateChart(days) {
-        console.log('🟢 generateChart appelé avec', days.length, 'jours');
+    function restoreOriginalHTML() {
+        // Restaurer le HTML original du modal
+        content.innerHTML = `
+            <!-- Stats cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Affichages</p>
+                    <p id="statsVues" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] mt-1" id="statsVuesEvolution">
+                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                        <span class="text-emerald-600">0%</span>
+                    </p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                    <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Clics</p>
+                    <p id="statsClics" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] mt-1" id="statsClicsEvolution">
+                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                        <span class="text-emerald-600">0%</span>
+                    </p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+                    <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CTR</p>
+                    <p id="statsCtr" class="text-2xl font-bold text-[#0F172A]">0%</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Taux de clic</p>
+                </div>
+                <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+                    <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Jours actifs</p>
+                    <p id="statsJoursActifs" class="text-2xl font-bold text-[#0F172A]">0</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Depuis activation</p>
+                </div>
+            </div>
+
+            <!-- Graphique -->
+            <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
+                </h5>
+                <div id="statsChart" class="flex items-end justify-between gap-2 h-40">
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Lun</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Mar</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Mer</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Jeu</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Ven</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400">Sam</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1">
+                        <div class="w-full bg-[#0EA486] rounded-t-lg" style="height: 10%;"></div>
+                        <div class="w-full bg-purple-800 rounded-t-lg" style="height: 5%;"></div>
+                        <span class="text-[10px] text-gray-400 font-semibold">Dim</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 mt-3 text-xs">
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Affichages</span>
+                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded"></span> Clics</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateEvolution(elementId, value) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        
+        const val = Number(value) || 0;
+        const isPositive = val >= 0;
+        const arrow = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+        const color = isPositive ? 'text-emerald-600' : 'text-red-600';
+        const sign = isPositive ? '+' : '';
+        
+        el.innerHTML = `
+            <i class="fas ${arrow} text-[8px] ${color}"></i>
+            <span class="${color}">${sign}${val}%</span>
+        `;
+    }
+
+    function renderChart(days) {
+        const chartContainer = document.getElementById('statsChart');
+        if (!chartContainer) return;
         
         const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
         
         if (!days || days.length === 0) {
-            return `
+            chartContainer.innerHTML = `
                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                     <div class="text-center">
                         <i class="fas fa-chart-simple text-3xl mb-2 opacity-30"></i>
@@ -1606,9 +1753,9 @@ function formatDateForMySQL(datetime) {
                     </div>
                 </div>
             `;
+            return;
         }
 
-        // Calculer les maximums
         let maxVues = 1;
         let maxClics = 1;
         days.forEach(function(d) {
@@ -1642,28 +1789,7 @@ function formatDateForMySQL(datetime) {
             `;
         });
         
-        return html;
-    }
-
-    function updateEvolution(elementId, value) {
-        const el = document.getElementById(elementId);
-        if (!el) {
-            console.warn('⚠️ Element non trouvé:', elementId);
-            return;
-        }
-        
-        const val = Number(value) || 0;
-        const isPositive = val >= 0;
-        const arrow = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
-        const color = isPositive ? 'text-emerald-600' : 'text-red-600';
-        const sign = isPositive ? '+' : '';
-        
-        el.innerHTML = `
-            <i class="fas ${arrow} text-[8px] ${color}"></i>
-            <span class="${color}">${sign}${val}%</span>
-        `;
-        
-        console.log('✅ Evolution mise à jour:', elementId, sign + val + '%');
+        chartContainer.innerHTML = html;
     }
 
     function formatNumber(num) {
@@ -1700,7 +1826,6 @@ function formatDateForMySQL(datetime) {
 
     console.log('✅ Script stats prêt');
 })();
-
 // ============================================
 // MODAL TOGGLE BANNIÈRE
 // ============================================
