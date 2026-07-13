@@ -316,7 +316,7 @@
                                 <th class="px-4 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100" id="promoTableBody">
                               <?php if (!empty($codesPromo)): ?>
                                 <?php foreach ($codesPromo as $promo): ?>
                                     <?php
@@ -1228,334 +1228,314 @@ function formatDateForMySQL(datetime) {
     return datetime.replace('T', ' ') + ':00';
 }
 
-
 // ============================================
-// CODES PROMO - FILTRES UNIQUEMENT
+// CODES PROMO - FILTRES AVEC API
 // ============================================
 (function() {
     'use strict';
 
-    // Récupérer les éléments directement (sans vérification)
     const searchInput = document.getElementById('promoSearchInput');
     const statusFilter = document.getElementById('promoStatusFilter');
     const typeFilter = document.getElementById('promoTypeFilter');
-    const promoList = document.getElementById('promoList');
+    const tbody = document.getElementById('promoTableBody');
 
-    // Si les éléments n'existent pas, on crée des sélecteurs alternatifs
-    function getElements() {
-        // Essayer avec les IDs
-        let search = document.getElementById('promoSearchInput');
-        let status = document.getElementById('promoStatusFilter');
-        let type = document.getElementById('promoTypeFilter');
-        let list = document.getElementById('promoList');
+    let timeoutId = null;
 
-        // Si les IDs ne fonctionnent pas, essayer avec les classes
-        if (!search) {
-            search = document.querySelector('.bg-white .flex-1 input[type="text"]');
-            console.log('🔵 Recherche par classe:', !!search);
-        }
-        if (!status) {
-            status = document.querySelector('.bg-white select:first-of-type');
-            console.log('🔵 Statut par classe:', !!status);
-        }
-        if (!type) {
-            type = document.querySelector('.bg-white select:last-of-type');
-            console.log('🔵 Type par classe:', !!type);
-        }
-        if (!list) {
-            list = document.querySelector('.space-y-3');
-            console.log('🔵 Liste par classe:', !!list);
-        }
-
-        return { search, status, type, list };
+    if (!searchInput || !statusFilter || !typeFilter || !tbody) {
+        console.error('🔴 Éléments manquants');
+        return;
     }
 
-    function applyFilters() {
-        const elements = getElements();
-        const searchInput = elements.search;
-        const statusFilter = elements.status;
-        const typeFilter = elements.type;
-        const promoList = elements.list;
+    function loadPromoCodes() {
+        const search = searchInput.value.trim();
+        const status = statusFilter.value;
+        const type = typeFilter.value;
 
-        if (!promoList) {
-            console.error('🔴 Liste introuvable');
-            return;
-        }
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">
+                    <i class="fas fa-spinner fa-spin text-2xl block mb-2"></i>
+                    Chargement...
+                </td>
+            </tr>
+        `;
 
-        const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const status = statusFilter ? statusFilter.value : '';
-        const type = typeFilter ? typeFilter.value : '';
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (status) params.append('status', status);
+        if (type) params.append('type', type);
 
-        const cards = promoList.querySelectorAll('.promo-card');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
-            let show = true;
-            
-            if (search) {
-                const code = card.querySelector('.font-mono')?.textContent?.toLowerCase() || '';
-                if (!code.includes(search)) show = false;
-            }
-
-            if (show && status) {
-                const statusBadge = card.querySelector('.rounded-full');
-                if (statusBadge) {
-                    const statusText = statusBadge.textContent.trim().toLowerCase();
-                    const statusMap = {
-                        'active': 'actif',
-                        'inactive': 'inactif',
-                        'expire': 'expiré'
-                    };
-                    if (!statusText.includes(statusMap[status] || status)) show = false;
+        fetch('api.php?url=promo_list&' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderPromoCodes(data.data);
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-red-500 text-sm">
+                                <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
+                                ${data.error || 'Erreur de chargement'}
+                            </td>
+                        </tr>
+                    `;
                 }
-            }
-
-            if (show && type) {
-                const typeBadge = card.querySelector('.bg-blue-100');
-                if (typeBadge) {
-                    const typeText = typeBadge.textContent.trim().toLowerCase();
-                    const typeMap = {
-                        'percentage': '%',
-                        'fixed': 'fcfa'
-                    };
-                    if (!typeText.includes(typeMap[type] || type)) show = false;
-                }
-            }
-
-            card.style.display = show ? '' : 'none';
-            if (show) visibleCount++;
-        });
-
-        // Message "aucun résultat"
-        const existingMsg = promoList.querySelector('.no-results-msg');
-        if (visibleCount === 0 && cards.length > 0) {
-            if (!existingMsg) {
-                const msg = document.createElement('div');
-                msg.className = 'no-results-msg text-center py-12';
-                msg.innerHTML = `
-                    <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-gray-400">Aucun code promo ne correspond à vos critères</p>
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-red-500 text-sm">
+                            <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
+                            Erreur de connexion
+                        </td>
+                    </tr>
                 `;
-                promoList.appendChild(msg);
-            }
-        } else {
-            if (existingMsg) existingMsg.remove();
-        }
-    }
-
-    // Attendre que le DOM soit prêt
-    document.addEventListener('DOMContentLoaded', function() {
-        const elements = getElements();
-        
-        if (elements.search) elements.search.addEventListener('input', applyFilters);
-        if (elements.status) elements.status.addEventListener('change', applyFilters);
-        if (elements.type) elements.type.addEventListener('change', applyFilters);
-        
-        applyFilters();
-        console.log('✅ Filtres prêts');
-    });
-
-})();
-
-// ============================================
-// MODAL FORMULAIRE BANNIÈRE
-// ============================================
-(function() {
-    const modal = document.getElementById('bannerFormModal');
-    const openBtns = document.querySelectorAll('.openBannerFormBtn, #openBannerFormBtn');
-    const closeBtns = document.querySelectorAll('.closeBannerFormBtn');
-    const form = document.getElementById('bannerForm');
-    const title = document.getElementById('bannerFormTitle');
-    const submitBtn = document.getElementById('bannerSubmitBtn');
-    const submitText = document.getElementById('bannerSubmitText');
-
-    let currentBannerId = null;
-
-    const titleInput = document.getElementById('bannerTitle');
-    const subtitleInput = document.getElementById('bannerSubtitle');
-    const buttonTextInput = document.getElementById('bannerButtonText');
-    const previewTitle = document.getElementById('previewTitle');
-    const previewSubtitle = document.getElementById('previewSubtitle');
-    const previewButton = document.getElementById('previewButton');
-
-    function updatePreview() {
-        previewTitle.textContent = titleInput.value || 'Titre de la bannière';
-        previewSubtitle.textContent = subtitleInput.value || 'Sous-titre';
-        previewButton.textContent = buttonTextInput.value || 'Voir les offres';
-    }
-
-    titleInput.addEventListener('input', updatePreview);
-    subtitleInput.addEventListener('input', updatePreview);
-    buttonTextInput.addEventListener('input', updatePreview);
-
-    const imageInput = document.getElementById('bannerImage');
-    const imagePreview = document.getElementById('bannerImagePreview');
-    const imagePreviewImg = document.getElementById('bannerImagePreviewImg');
-
-    imageInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreviewImg.src = e.target.result;
-                imagePreview.classList.remove('hidden');
-                document.getElementById('bannerPreview').style.backgroundImage = `url(${e.target.result})`;
-                document.getElementById('bannerPreview').style.backgroundSize = 'cover';
-                document.getElementById('bannerPreview').style.backgroundPosition = 'center';
-            };
-            reader.readAsDataURL(this.files[0]);
-        }
-    });
-
-    function openBannerFormModal(isEdit = false, data = null) {
-        title.textContent = isEdit ? 'Modifier la bannière' : 'Nouvelle bannière';
-        submitText.textContent = isEdit ? 'Modifier' : 'Enregistrer';
-        
-        form.reset();
-        document.getElementById('bannerId').value = '';
-        imagePreview.classList.add('hidden');
-        imagePreviewImg.src = '';
-        document.getElementById('bannerPreview').style.backgroundImage = '';
-        document.getElementById('bannerPreview').style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
-        
-        if (isEdit && data) {
-            currentBannerId = data.id;
-            document.getElementById('bannerId').value = data.id;
-            document.getElementById('bannerTitle').value = data.titre || '';
-            document.getElementById('bannerSubtitle').value = data.sousTitre || '';
-            document.getElementById('bannerButtonText').value = data.texteBouton || 'Voir les offres';
-            document.getElementById('bannerUrl').value = data.url || '';
-            
-            // 🔥 ICI : CONVERSION MySQL → HTML pour les dates
-            document.getElementById('bannerDateDebut').value = formatDateForInput(data.dateDebut || '');
-            document.getElementById('bannerDateFin').value = formatDateForInput(data.dateFin || '');
-            
-            const statusRadios = document.querySelectorAll('input[name="statut"]');
-            statusRadios.forEach(radio => {
-                radio.checked = radio.value === (data.statut || 'active');
             });
+    }
+
+    function renderPromoCodes(codes) {
+        if (!codes || codes.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-ticket-alt text-3xl block mb-2"></i>
+                        Aucun code promo trouvé
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = '';
+        codes.forEach(promo => {
+            const statut = promo.statut || 'inactive';
             
-            if (data.image) {
-                imagePreviewImg.src = '/back-end/uploads/bannieres/' + data.image;
-                imagePreview.classList.remove('hidden');
-            }
-            updatePreview();
-        } else {
-            currentBannerId = null;
-            const statusRadios = document.querySelectorAll('input[name="statut"]');
-            statusRadios.forEach(radio => {
-                radio.checked = radio.value === 'active';
-            });
-            updatePreview();
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeBannerFormModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-        currentBannerId = null;
-        document.getElementById('bannerPreview').style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
-    }
-
-    document.querySelectorAll('#openBannerFormBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            openBannerFormModal(false);
-        });
-    });
-
-    document.querySelectorAll('.openBannerFormBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const data = {
-                id: this.dataset.id || '',
-                titre: this.dataset.titre || '',
-                sousTitre: this.dataset.sousTitre || '',
-                image: this.dataset.image || '',
-                texteBouton: this.dataset.texteBouton || 'Voir les offres',
-                url: this.dataset.url || '',
-                dateDebut: this.dataset.debut || '',
-                dateFin: this.dataset.fin || '',
-                statut: this.dataset.statut || 'active'
+            const statutClasses = {
+                'active': 'text-emerald-700 bg-emerald-100',
+                'inactive': 'text-gray-500 bg-gray-100',
+                'expire': 'text-red-700 bg-red-100'
             };
-            openBannerFormModal(true, data);
+            const statutLabels = {
+                'active': 'Actif',
+                'inactive': 'Inactif',
+                'expire': 'Expiré'
+            };
+            const statutIcons = {
+                'active': 'fa-check',
+                'inactive': 'fa-pause',
+                'expire': 'fa-times'
+            };
+
+            const utilisationsMax = promo.utilisations_max || 0;
+            const utilisationsActuelles = promo.utilisations_actuelles || 0;
+            const pourcentage = utilisationsMax > 0 ? Math.round((utilisationsActuelles / utilisationsMax) * 100) : 0;
+            
+            const typeText = promo.type === 'percentage' ? 'Pourcentage' : 'Montant fixe';
+            const typeClass = promo.type === 'percentage' ? 'text-purple-700 bg-purple-100' : 'text-blue-700 bg-blue-100';
+            const valeurFormatee = promo.type === 'percentage' ? promo.valeur + '%' : formatNumber(promo.valeur) + ' FCFA';
+
+            html += `
+                <tr class="hover:bg-gray-50/50 transition" data-id="${promo.id}">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center text-purple-600">
+                                <i class="fas fa-ticket-alt text-xs"></i>
+                            </div>
+                            <span class="font-mono font-bold text-[#0F172A] text-sm">${escapeHtml(promo.code)}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="text-[10px] font-semibold ${typeClass} px-2 py-1 rounded-full">${typeText}</span>
+                    </td>
+                    <td class="px-4 py-3 text-xs font-bold text-[#0EA486]">${valeurFormatee}</td>
+                    <td class="px-4 py-3">
+                        <div class="text-xs text-gray-500 space-y-0.5">
+                            <p>Min: ${formatNumber(promo.montant_minimum || 0)} FCFA</p>
+                            <p>Max: ${utilisationsMax > 0 ? utilisationsMax + ' utilisations' : 'Illimité'}</p>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden w-16">
+                                <div class="bg-[#0EA486] h-full" style="width: ${Math.min(pourcentage, 100)}%;"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-[#0F172A]">${utilisationsActuelles}/${utilisationsMax > 0 ? utilisationsMax : '∞'}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-xs text-gray-500">
+                        ${promo.date_expiration ? formatDate(promo.date_expiration) : '---'}
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="text-[10px] font-semibold ${statutClasses[statut] || 'bg-gray-100 text-gray-500'} px-2 py-1 rounded-full">
+                            <i class="fas ${statutIcons[statut] || 'fa-circle'} mr-1"></i>
+                            ${statutLabels[statut] || statut}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="openPromoHistoryBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" 
+                                    title="Historique"
+                                    data-id="${promo.id}"
+                                    data-code="${escapeHtml(promo.code)}"
+                                    data-total="${utilisationsActuelles}">
+                                <i class="fas fa-history text-xs"></i>
+                            </button>
+                            <button class="openPromoFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" 
+                                    title="Modifier"
+                                    data-id="${promo.id}"
+                                    data-code="${escapeHtml(promo.code)}"
+                                    data-type="${promo.type}"
+                                    data-valeur="${promo.valeur}"
+                                    data-montant-minimum="${promo.montant_minimum || 0}"
+                                    data-utilisations-max="${promo.utilisations_max || ''}"
+                                    data-date-expiration="${promo.date_expiration || ''}"
+                                    data-statut="${promo.statut || 'active'}">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button class="togglePromoBtn w-8 h-8 rounded-lg ${statut === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'} flex items-center justify-center" 
+                                    title="${statut === 'active' ? 'Désactiver' : 'Activer'}"
+                                    data-id="${promo.id}"
+                                    data-statut="${statut}"
+                                    data-code="${escapeHtml(promo.code)}">
+                                <i class="fas ${statut === 'active' ? 'fa-toggle-on' : 'fa-toggle-off'} text-xs"></i>
+                            </button>
+                            <button class="openDeletePromoBtn w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center" 
+                                    title="Supprimer"
+                                    data-id="${promo.id}"
+                                    data-code="${escapeHtml(promo.code)}">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
         });
-    });
 
-    closeBtns.forEach(btn => btn.addEventListener('click', closeBannerFormModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeBannerFormModal();
-    });
+        tbody.innerHTML = html;
+        attachEvents();
+    }
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    function attachEvents() {
+        // Toggle
+        document.querySelectorAll('.togglePromoBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const statut = this.dataset.statut;
+                const code = this.dataset.code;
+                togglePromoStatus(id, statut, code);
+            });
+        });
 
-        const titre = document.getElementById('bannerTitle').value.trim();
-        const url = document.getElementById('bannerUrl').value.trim();
-        const dateDebut = document.getElementById('bannerDateDebut').value;
-        const dateFin = document.getElementById('bannerDateFin').value;
+        // Delete
+        document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const code = this.dataset.code;
+                deletePromoCode(id, code);
+            });
+        });
+    }
 
-        if (!titre) {
-            showToast('Erreur', 'Le titre est requis', 'error');
-            return;
-        }
-        if (!url) {
-            showToast('Erreur', 'L\'URL de destination est requise', 'error');
-            return;
-        }
-        if (!dateDebut) {
-            showToast('Erreur', 'La date de début est requise', 'error');
-            return;
-        }
-        if (!dateFin) {
-            showToast('Erreur', 'La date de fin est requise', 'error');
-            return;
-        }
+    function togglePromoStatus(id, statut, code) {
+        const newStatut = statut === 'active' ? 'inactive' : 'active';
+        const action = newStatut === 'active' ? 'Activer' : 'Désactiver';
 
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        if (!confirm(`${action} le code promo "${code}" ?`)) return;
 
-        const formData = new FormData(form);
-        formData.append('id', currentBannerId || '');
-
-
-        // 🔥 ICI : CONVERSION HTML → MySQL pour les dates
-        formData.set('date_debut', formatDateForMySQL(dateDebut));
-        formData.set('date_fin', formatDateForMySQL(dateFin));
-
-        const action = currentBannerId ? 'banniere_edit' : 'banniere_add';
-
-        fetch('api.php?url=' + action, {
+        fetch('api.php?url=promo_toggle', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + id + '&statut=' + newStatut
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur réseau: ' + response.status);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
-                closeBannerFormModal();
-                showToast('Succès', data.message || 'Bannière enregistrée avec succès', 'success');
-                setTimeout(() => location.reload(), 1000);
+                showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                loadPromoCodes();
             } else {
-                showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentBannerId ? 'Modifier' : 'Enregistrer');
+                showToast('Erreur', data.error || 'Erreur', 'error');
             }
         })
         .catch(error => {
             console.error('Erreur:', error);
-            showToast('Erreur', error.message || 'Erreur serveur', 'error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentBannerId ? 'Modifier' : 'Enregistrer');
+            showToast('Erreur', 'Erreur de connexion', 'error');
         });
+    }
+
+    function deletePromoCode(id, code) {
+        if (!confirm(`Supprimer définitivement le code promo "${code}" ?`)) return;
+
+        fetch('api.php?url=promo_delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Succès', data.message || 'Code promo supprimé', 'success');
+                loadPromoCodes();
+            } else {
+                showToast('Erreur', data.error || 'Erreur', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function formatNumber(num) {
+        num = Number(num) || 0;
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function showToast(title, message, type = 'success') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(title, message, type);
+        } else {
+            alert(title + ': ' + message);
+        }
+    }
+
+    // Écouteurs
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(loadPromoCodes, 300);
     });
+
+    statusFilter.addEventListener('change', loadPromoCodes);
+    typeFilter.addEventListener('change', loadPromoCodes);
+
+    // Chargement initial
+    loadPromoCodes();
+
+    console.log('✅ Filtres API prêts');
+
 })();
+
 
 // ============================================
 // MODAL APERÇU BANNIÈRE

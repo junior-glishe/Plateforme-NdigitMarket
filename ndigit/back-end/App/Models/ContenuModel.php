@@ -454,4 +454,36 @@ public function countTotalUtilisations() {
     return $result['total'] ?? 0;
 }
 
+
+public function getCodesPromoFiltered($search = '', $status = '', $type = '') {
+    $sql = "SELECT cp.*, 
+                   c.nom_categorie as categorie_nom,
+                   (SELECT COUNT(*) FROM promo_utilisations WHERE code_promo_id = cp.id) as utilisations
+            FROM codes_promo cp
+            LEFT JOIN categories c ON cp.categorie_id = c.id
+            WHERE 1=1";
+    
+    $params = [];
+    
+    if (!empty($search)) {
+        $sql .= " AND cp.code LIKE ?";
+        $params[] = '%' . $search . '%';
+    }
+    
+    if (!empty($status)) {
+        $sql .= " AND cp.statut = ?";
+        $params[] = $status;
+    }
+    
+    if (!empty($type)) {
+        $sql .= " AND cp.type = ?";
+        $params[] = $type;
+    }
+    
+    $sql .= " ORDER BY cp.id DESC";
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

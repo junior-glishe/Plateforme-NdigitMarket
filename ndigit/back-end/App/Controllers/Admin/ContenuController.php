@@ -501,4 +501,28 @@ class ContenuController {
         
         return false;
     }
+
+    public function listCodesPromo() {
+    // Récupérer les filtres
+    $search = $_GET['search'] ?? '';
+    $status = $_GET['status'] ?? '';
+    $type = $_GET['type'] ?? '';
+    
+    // Récupérer les codes avec filtres
+    $codes = $this->model->getCodesPromoFiltered($search, $status, $type);
+    
+    // Statistiques
+    $stats = [
+        'total' => $this->model->countCodesPromo(),
+        'active' => $this->model->countActiveCodesPromo(),
+        'inactive' => $this->model->countInactiveCodesPromo(),
+        'total_remises' => $this->model->getTotalRemises()
+    ];
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $codes,
+        'stats' => $stats
+    ]);
+}
 }

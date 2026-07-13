@@ -154,6 +154,12 @@ switch ($url) {
         $controller = new ContenuController($pdo);
         $controller->updateCodePromo();
         break;
+        
+    case 'promo_list':
+        require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
+        $controller = new ContenuController($pdo);
+        $controller->listCodesPromo();
+        break;
 
     case 'promo_toggle':
         require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
