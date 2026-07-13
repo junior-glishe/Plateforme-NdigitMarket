@@ -1,11 +1,13 @@
 <?php
-
 require_once __DIR__ . '/../../Models/ContenuModel.php';
+require_once __DIR__ . '/../../Models/CategorieModel.php';
 
 class ContenuController {
     private $model;
+    private $pdo;  // 🔥 AJOUTE CETTE PROPRIÉTÉ
     
     public function __construct($pdo) {
+        $this->pdo = $pdo;  // 🔥 STOCKE LE PDO
         $this->model = new ContenuModel($pdo);
     }
 
@@ -14,56 +16,65 @@ class ContenuController {
     // ============================================
 
     public function index() {
-    $bannieres = $this->model->getAllBannieres();
-    
-    // 🔥 AJOUTE LES COULEURS ICI
-    $colors = [
-        ['#6366f1', '#8b5cf6'],   // Indigo → Violet
-        ['#f59e0b', '#ef4444'],   // Ambre → Rouge
-        ['#10b981', '#06b6d4'],   // Émeraude → Cyan
-        ['#8b5cf6', '#ec4899'],   // Violet → Rose
-        ['#f472b6', '#fb923c'],   // Rose → Orange
-        ['#14b8a6', '#3b82f6'],   // Teal → Bleu
-        ['#a855f7', '#d946ef'],   // Violet → Fuchsia
-        ['#f97316', '#ef4444'],   // Orange → Rouge
-        ['#3b82f6', '#8b5cf6'],   // Bleu → Violet
-        ['#ec4899', '#f59e0b']    // Rose → Ambre
-    ];
-    
-    foreach ($bannieres as &$banniere) {
-        $color = $colors[array_rand($colors)];
-        $banniere['couleur_1'] = $color[0];
-        $banniere['couleur_2'] = $color[1];
-    }
-    
-    $codesPromo = $this->model->getAllCodesPromo();
-    
-    // Statistiques bannières
-    $statsBannieres = [
-        'total' => $this->model->countBannieres(),
-        'actives' => $this->model->countActiveBannieres(),
-        'inactives' => $this->model->countInactiveBannieres()
-    ];
-    $statsVues = $this->model->getBanniereStatsTotal();
-    $statsBannieres['vues'] = $statsVues['total_vues'] ?? 0;
-    $statsBannieres['clics'] = $statsVues['total_clics'] ?? 0;
-    
+        // 🔥 Récupérer les catégories - Utilise $this->pdo
+        $categorieModel = new CategorieModel($this->pdo);
+        $categories = $categorieModel->getAllCategories();
+        
+        // Bannières
+        $bannieres = $this->model->getAllBannieres();
+        
+        // Ajouter les couleurs aux bannières
+        $colors = [
+            ['#6366f1', '#8b5cf6'],
+            ['#f59e0b', '#ef4444'],
+            ['#10b981', '#06b6d4'],
+            ['#8b5cf6', '#ec4899'],
+            ['#f472b6', '#fb923c'],
+            ['#14b8a6', '#3b82f6'],
+            ['#a855f7', '#d946ef'],
+            ['#f97316', '#ef4444'],
+            ['#3b82f6', '#8b5cf6'],
+            ['#ec4899', '#f59e0b']
+        ];
+        
+        foreach ($bannieres as &$banniere) {
+            $color = $colors[array_rand($colors)];
+            $banniere['couleur_1'] = $color[0];
+            $banniere['couleur_2'] = $color[1];
+        }
+        
+        // Codes promo
+        $codesPromo = $this->model->getAllCodesPromo();
+        
+        // Statistiques bannières
+        $statsBannieres = [
+            'total' => $this->model->countBannieres(),
+            'actives' => $this->model->countActiveBannieres(),
+            'inactives' => $this->model->countInactiveBannieres()
+        ];
+        $statsVues = $this->model->getBanniereStatsTotal();
+        $statsBannieres['vues'] = $statsVues['total_vues'] ?? 0;
+        $statsBannieres['clics'] = $statsVues['total_clics'] ?? 0;
+        
         // Statistiques codes promo
-    $statsPromo = [
-        'total' => $this->model->countCodesPromo(),
-        'actifs' => $this->model->countActiveCodesPromo(),
-        'inactifs' => $this->model->countInactiveCodesPromo(),
-        'utilisations' => $this->model->countTotalUtilisations(),  // 👈 METHODE A AJOUTER
-        'remises' => $this->model->getTotalRemises()
-    ];
-    
-    $this->render('admin/contenus', [
-        'bannieres' => $bannieres,
-        'codesPromo' => $codesPromo,
-        'statsBannieres' => $statsBannieres,
-        'statsPromo' => $statsPromo
-    ]);
-}
+        $statsPromo = [
+            'total' => $this->model->countCodesPromo(),
+            'actifs' => $this->model->countActiveCodesPromo(),
+            'inactifs' => $this->model->countInactiveCodesPromo(),
+            'utilisations' => $this->model->countTotalUtilisations(),
+            'remises' => $this->model->getTotalRemises()
+        ];
+        
+        // Passer TOUTES les données à la vue
+        $this->render('admin/contenus', [
+            'bannieres' => $bannieres,
+            'codesPromo' => $codesPromo,
+            'statsBannieres' => $statsBannieres,
+            'statsPromo' => $statsPromo,
+            'categories' => $categories
+        ]);
+    }
+
 
     // ============================================
     // BANNIÈRES - CRUD

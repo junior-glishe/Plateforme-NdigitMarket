@@ -876,13 +876,13 @@
                 </button>
             </div>
 
-            <form class="p-6 overflow-y-auto space-y-4">
+            <form id="promoForm" class="p-6 overflow-y-auto space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Code -->
                     <div class="md:col-span-2">
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Code promotionnel <span class="text-red-500">*</span></label>
                         <div class="flex gap-2">
-                            <input type="text" id="promoCode" class="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono font-bold uppercase focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: BLACKFRIDAY50">
+                            <input type="text" id="promoCode" name="code" class="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono font-bold uppercase focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: BLACKFRIDAY50">
                             <button type="button" id="generatePromoCodeBtn" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium flex items-center gap-2">
                                 <i class="fas fa-magic"></i> Générer
                             </button>
@@ -892,7 +892,7 @@
                     <!-- Type -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Type de remise <span class="text-red-500">*</span></label>
-                        <select id="promoType" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                        <select id="promoType" name="type" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
                             <option value="percentage">Pourcentage (%)</option>
                             <option value="fixed">Montant fixe (FCFA)</option>
                         </select>
@@ -901,51 +901,54 @@
                     <!-- Valeur -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Valeur <span class="text-red-500">*</span></label>
-                        <input type="number" id="promoValue" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 50">
+                        <input type="number" id="promoValue" name="valeur" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 50">
                     </div>
 
                     <!-- Montant minimum -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum d'achat (FCFA)</label>
-                        <input type="number" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 10000">
+                        <input type="number" id="promoMinAmount" name="montant_minimum" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 10000">
                     </div>
 
                     <!-- Utilisations max -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Nombre d'utilisations max</label>
-                        <input type="number" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 100">
+                        <input type="number" id="promoMaxUses" name="utilisations_max" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: 100">
                     </div>
 
                     <!-- Date expiration -->
                     <div class="md:col-span-2">
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Date d'expiration <span class="text-red-500">*</span></label>
-                        <input type="datetime-local" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                        <input type="datetime-local" id="promoExpiration" name="date_expiration" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                     </div>
 
                     <!-- Restriction catégorie -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Restreindre à une catégorie</label>
-                        <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                            <option>Toutes les catégories</option>
-                            <option>WordPress</option>
-                            <option>HTML</option>
-                            <option>PHP</option>
-                            <option>React</option>
-                            <option>PSD</option>
-                            <option>Plugin</option>
+                        <select id="promoCategorie" name="categorie_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <option value="">Toutes les catégories</option>
+                            <?php if (!empty($categories)): ?>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom_categorie']) ?></option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="" disabled>Aucune catégorie disponible</option>
+                            <?php endif; ?>
                         </select>
                     </div>
+
+                    
 
                     <!-- Restriction produit -->
                     <div>
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Restreindre à un produit</label>
-                        <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="ID ou nom du produit...">
+                        <input type="text" id="promoProduit" name="produit_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="ID du produit...">
                     </div>
 
                     <!-- Restriction utilisateur -->
                     <div class="md:col-span-2">
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Restreindre à un utilisateur spécifique</label>
-                        <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Email ou ID de l'utilisateur...">
+                        <input type="text" id="promoUtilisateur" name="utilisateur_id" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="ID de l'utilisateur...">
                         <p class="text-[10px] text-gray-400 mt-1">Laissez vide pour que le code soit utilisable par tous</p>
                     </div>
 
@@ -954,14 +957,14 @@
                         <label class="text-xs font-semibold text-gray-600 mb-1 block">Statut</label>
                         <div class="flex gap-2">
                             <label class="flex-1 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
-                                <input type="radio" name="promoStatus" value="active" checked class="w-4 h-4 text-[#0EA486]">
+                                <input type="radio" name="statut" value="active" checked class="w-4 h-4 text-[#0EA486]">
                                 <div>
                                     <p class="text-xs font-semibold text-emerald-700">Actif</p>
                                     <p class="text-[10px] text-emerald-600">Utilisable</p>
                                 </div>
                             </label>
                             <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer">
-                                <input type="radio" name="promoStatus" value="inactive" class="w-4 h-4 text-gray-500">
+                                <input type="radio" name="statut" value="inactive" class="w-4 h-4 text-gray-500">
                                 <div>
                                     <p class="text-xs font-semibold text-gray-600">Inactif</p>
                                     <p class="text-[10px] text-gray-500">Désactivé</p>
@@ -975,8 +978,8 @@
                     <button type="button" class="closePromoFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-save"></i> Enregistrer
+                    <button type="submit" id="promoSubmitBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
+                        <i class="fas fa-save"></i> <span id="promoSubmitText">Enregistrer</span>
                     </button>
                 </div>
             </form>
@@ -2473,75 +2476,120 @@ setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn')
     });
 
     // ============================================
-    // 4. SOUMETTRE LE FORMULAIRE (AJOUT/MODIFICATION)
-    // ============================================
-    document.querySelector('#promoFormModal form')?.addEventListener('submit', function(e) {
-        e.preventDefault();
+// SOUMETTRE LE FORMULAIRE (AJOUT/MODIFICATION)
+// ============================================
+document.getElementById('promoForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log('🔵 Formulaire soumis !');
+    
+    // Récupérer les valeurs
+    const code = document.getElementById('promoCode')?.value.trim() || '';
+    const type = document.getElementById('promoType')?.value || 'percentage';
+    const valeur = document.getElementById('promoValue')?.value || 0;
+    const montant_minimum = document.getElementById('promoMinAmount')?.value || 0;
+    const utilisations_max = document.getElementById('promoMaxUses')?.value || '';
+    const date_expiration = document.getElementById('promoExpiration')?.value || '';
+    const categorie_id = document.getElementById('promoCategorie')?.value || '';
+    const produit_id = document.getElementById('promoProduit')?.value || '';
+    const utilisateur_id = document.getElementById('promoUtilisateur')?.value || '';
+    const statut = document.querySelector('input[name="statut"]:checked')?.value || 'active';
 
-        const code = document.getElementById('promoCode').value.trim();
-        const type = document.getElementById('promoType').value;
-        const valeur = document.getElementById('promoValue').value;
-        const montant_minimum = this.querySelector('input[placeholder*="10000"]')?.value || 0;
-        const utilisations_max = this.querySelector('input[placeholder*="100"]')?.value || '';
-        const date_expiration = this.querySelector('input[type="datetime-local"]')?.value;
-        const statut = this.querySelector('input[name="promoStatus"]:checked')?.value || 'active';
+    // Validation
+    if (!code) {
+        showToast('Erreur', 'Le code est requis', 'error');
+        return;
+    }
+    if (!valeur || valeur <= 0) {
+        showToast('Erreur', 'La valeur doit être supérieure à 0', 'error');
+        return;
+    }
+    if (!date_expiration) {
+        showToast('Erreur', 'La date d\'expiration est requise', 'error');
+        return;
+    }
 
-        if (!code) {
-            showToast('Erreur', 'Le code est requis', 'error');
-            return;
-        }
-        if (!valeur || valeur <= 0) {
-            showToast('Erreur', 'La valeur doit être supérieure à 0', 'error');
-            return;
-        }
-        if (!date_expiration) {
-            showToast('Erreur', 'La date d\'expiration est requise', 'error');
-            return;
-        }
-
-        const submitBtn = this.querySelector('button[type="submit"]');
+    // Désactiver le bouton
+    const submitBtn = document.getElementById('promoSubmitBtn');
+    const submitText = document.getElementById('promoSubmitText');
+    
+    if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+    }
+    if (submitText) {
+        submitText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+    }
 
-        const formData = new FormData();
-        formData.append('code', code);
-        formData.append('type', type);
-        formData.append('valeur', valeur);
-        formData.append('montant_minimum', montant_minimum);
-        formData.append('utilisations_max', utilisations_max);
-        formData.append('date_expiration', date_expiration);
-        formData.append('statut', statut);
+    // 🔥 Créer le FormData correctement
+    const formData = new FormData();
+    formData.append('code', code);
+    formData.append('type', type);
+    formData.append('valeur', valeur);
+    formData.append('montant_minimum', montant_minimum);
+    formData.append('utilisations_max', utilisations_max);
+    formData.append('date_expiration', date_expiration);
+    formData.append('categorie_id', categorie_id);
+    formData.append('produit_id', produit_id);
+    formData.append('utilisateur_id', utilisateur_id);
+    formData.append('statut', statut);
 
-        const action = currentPromoId ? 'promo_edit' : 'promo_add';
-        if (currentPromoId) {
-            formData.append('id', currentPromoId);
-        }
+    // Déterminer l'action
+    const action = currentPromoId ? 'promo_edit' : 'promo_add';
+    if (currentPromoId) {
+        formData.append('id', currentPromoId);
+    }
 
-        fetch('api.php?url=' + action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                promoFormModal.classList.add('hidden');
-                promoFormModal.classList.remove('flex');
-                document.body.style.overflow = '';
-                showToast('Succès', data.message || 'Code promo enregistré', 'success');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast('Erreur', data.error || 'Erreur d\'enregistrement', 'error');
+    console.log('🔵 Action:', action);
+    console.log('🔵 Données envoyées:', Object.fromEntries(formData));
+
+    // Envoyer la requête
+    fetch('api.php?url=' + action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('🟢 Statut réponse:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('🟢 Réponse:', data);
+        
+        if (data.success) {
+            // Fermer le modal
+            const modal = document.getElementById('promoFormModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }
+            document.body.style.overflow = '';
+            
+            showToast('Succès', data.message || 'Code promo enregistré', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast('Erreur', data.error || 'Erreur d\'enregistrement', 'error');
+        }
+        
+        // Réactiver le bouton
+        if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion', 'error');
+        }
+        if (submitText) {
+            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+        }
+    })
+    .catch(error => {
+        console.error('🔴 Erreur:', error);
+        showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
+        
+        // Réactiver le bouton
+        if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
-        });
+        }
+        if (submitText) {
+            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+        }
     });
+});
 
     // ============================================
 // HISTORIQUE CODE PROMO - CORRIGÉ
