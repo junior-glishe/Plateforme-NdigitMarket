@@ -258,6 +258,21 @@ class NotificationModel {
         ]);
     }
 
+        /**
+     * Compter le nombre total de notifications
+     */
+    public function countAllNotifications() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM notifications");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
+    /**
+     * Compter le nombre total de notifications (alias)
+     */
+    public function countNotifications() {
+        return $this->countAllNotifications();
+    }
+
     /**
      * Notification sécurité - tentative suspecte
      */

@@ -44,23 +44,32 @@ class NotificationController {
      * Récupérer les notifications (API)
      */
     public function getNotifications() {
-        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
-        $unreadOnly = isset($_GET['unread']) && $_GET['unread'] === 'true';
-        
-        if ($unreadOnly) {
-            $notifications = $this->model->getUnreadNotifications($limit);
-        } else {
-            $notifications = $this->model->getAllNotifications($limit);
-        }
-        
-        $stats = $this->model->getNotificationStats();
-        
-        $this->jsonResponse([
-            'success' => true,
-            'data' => $notifications,
-            'stats' => $stats
-        ]);
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+    $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+    $offset = ($page - 1) * $limit;
+    
+    // Récupérer les notifications selon le filtre
+    if ($filter === 'unread') {
+        $notifications = $this->model->getUnreadNotifications($limit);
+        $total = $this->model->countUnreadNotifications();
+    } else {
+        $notifications = $this->model->getAllNotifications($limit, $offset);
+        $total = $this->model->countAllNotifications();
     }
+    
+    // Stats
+    $stats = $this->model->getNotificationStats();
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $notifications,
+        'total' => $total,
+        'page' => $page,
+        'limit' => $limit,
+        'stats' => $stats
+    ]);
+}
 
     /**
      * Marquer une notification comme lue

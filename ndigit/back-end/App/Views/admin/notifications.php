@@ -109,65 +109,40 @@
             </div>
 
             <!-- Liste des notifications -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                    <h4 class="text-sm font-semibold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-inbox text-[#0EA486]"></i> Notifications récentes
-                    </h4>
-                    <div class="flex gap-2">
-                        <select class="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                            <option>Toutes</option>
-                            <option>Non lues</option>
-                            <option>Vendeurs</option>
-                            <option>Produits</option>
-                            <option>Commandes</option>
-                            <option>Sécurité</option>
-                        </select>
-                    </div>
-                </div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h4 class="text-sm font-semibold text-[#0F172A] flex items-center gap-2">
+            <i class="fas fa-inbox text-[#0EA486]"></i> Notifications récentes
+        </h4>
+        <div class="flex gap-2">
+            <select id="notifFilter" class="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                <option value="all">Toutes</option>
+                <option value="unread">Non lues</option>
+                <option value="vendor_request">Vendeurs</option>
+                <option value="product_moderation">Produits</option>
+                <option value="order_high">Commandes</option>
+                <option value="order_problem">Commandes problématiques</option>
+                <option value="security_alert">Sécurité</option>
+                <option value="support_message">Support</option>
+            </select>
+        </div>
+    </div>
 
-                <div class="divide-y divide-gray-100">
-                    <!-- Notification 1 : Demande vendeur -->
-                    <div class="notif-item p-4 hover:bg-gray-50/50 transition cursor-pointer bg-blue-50/30 border-l-4 border-blue-500" data-type="vendor">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 flex-shrink-0">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-start justify-between gap-2 mb-1">
-                                    <div>
-                                        <h5 class="text-sm font-semibold text-[#0F172A]">Nouvelle demande vendeur</h5>
-                                        <p class="text-xs text-gray-500 mt-0.5"><strong class="text-[#0F172A]">...</strong> a soumis une demande pour ouvrir la boutique "<strong class="text-[#0F172A]">...</strong>"</p>
-                                    </div>
-                                    <span class="text-[10px] text-gray-400 whitespace-nowrap">...</span>
-                                </div>
-                                <div class="flex flex-wrap items-center gap-2 mt-2">
-                                    <span class="text-[10px] font-semibold text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full">
-                                        <i class="fas fa-hourglass-half mr-1"></i>En attente
-                                    </span>
-                                    <button class="openNotifDetailBtn text-[10px] font-semibold text-[#0EA486] hover:underline flex items-center gap-1">
-                                        <i class="fas fa-eye"></i> Voir détail
-                                    </button>
-                                    <button class="text-[10px] font-semibold text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                                        <i class="fas fa-check"></i> Marquer lu
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Conteneur des notifications (VIDE - Rempli par JS) -->
+    <div class="divide-y divide-gray-100" id="notificationsList">
+        <!-- Les notifications seront chargées par JS -->
+    </div>
 
-                    
-
-                <!-- Pagination -->
-                <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 bg-gray-50/50">
-                    <div class="text-xs text-gray-500">
-                        <span>Affichage de 6 notifications récentes</span>
-                    </div>
-                    <button class="text-xs font-semibold text-[#0EA486] hover:underline flex items-center gap-1">
-                        Voir toutes les notifications <i class="fas fa-arrow-right text-[10px]"></i>
-                    </button>
-                </div>
-            </div>
+    <!-- Pagination / Voir plus -->
+    <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 bg-gray-50/50">
+        <div class="text-xs text-gray-500">
+            <span id="notifCount">0 notification(s)</span>
+        </div>
+        <button id="loadMoreNotif" class="text-xs font-semibold text-[#0EA486] hover:underline flex items-center gap-1" style="display: none;">
+            Voir plus <i class="fas fa-arrow-down text-[10px]"></i>
+        </button>
+    </div>
+</div>
         </section>
 
         <!-- GESTION DES EMAILS TRANSACTIONNELS -->
@@ -243,12 +218,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            
-
-                           
-
-                            
-
+                        
                             <!-- Réinitialisation mot de passe -->
                             <tr class="hover:bg-gray-50/50 transition">
                                 <td class="px-4 py-3">
@@ -535,6 +505,50 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL : SUPPRIMER NOTIFICATION -->
+<div id="deleteNotifModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-trash text-red-500"></i> Supprimer la notification
+                </h3>
+                <p class="text-xs text-gray-400">Action irréversible</p>
+            </div>
+            <button class="closeDeleteNotifBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                <p class="text-sm text-red-700">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <strong>Attention :</strong> Cette action est irréversible. La notification sera définitivement supprimée.
+                </p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <p class="text-xs text-gray-500 mb-1">Notification à supprimer</p>
+                <p id="deleteNotifTitle" class="text-sm font-bold text-[#0F172A]">---</p>
+                <p id="deleteNotifId" class="text-[11px] text-gray-400 mt-1">ID: ---</p>
+            </div>
+
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Tapez "SUPPRIMER" pour confirmer</label>
+                <input type="text" id="deleteNotifConfirmInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:bg-white" placeholder="SUPPRIMER">
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeDeleteNotifBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                Annuler
+            </button>
+            <button id="confirmDeleteNotifBtn" class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition opacity-50 cursor-not-allowed" disabled>
+                <i class="fas fa-trash"></i> Supprimer définitivement
+            </button>
+        </div>
+    </div>
+</div>
 
     <!-- MODAL : DÉTAIL NOTIFICATION -->
     <div id="notifDetailModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1588,6 +1602,654 @@
                 document.body.style.overflow = '';
             }
         });
+
+
+
+
+
+
+
+
+
+// ============================================
+// NOTIFICATIONS - LISTE & ACTIONS (COMPLET)
+// ============================================
+(function() {
+    'use strict';
+
+    let currentPage = 1;
+    const limit = 10;
+    let currentFilter = 'all';
+    let isLoading = false;
+    let hasMore = true;
+    let totalNotifs = 0;
+    let deleteNotifId = null;
+
+    const container = document.getElementById('notificationsList');
+    const filterSelect = document.getElementById('notifFilter');
+    const notifCount = document.getElementById('notifCount');
+    const loadMoreBtn = document.getElementById('loadMoreNotif');
+
+    // ============================================
+    // CHARGEMENT DES NOTIFICATIONS
+    // ============================================
+    function loadNotifications(reset = true) {
+        if (isLoading) return;
+        if (!reset && !hasMore) {
+            loadMoreBtn.style.display = 'none';
+            return;
+        }
+
+        isLoading = true;
+        if (reset) {
+            currentPage = 1;
+            hasMore = true;
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-2xl text-[#0EA486] mb-2"></i>
+                    <p class="text-gray-400 text-sm">Chargement...</p>
+                </div>
+            `;
+        }
+
+        const params = new URLSearchParams({
+            page: currentPage,
+            limit: limit,
+            filter: currentFilter
+        });
+
+        fetch('api.php?url=notifications_list&' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notifications = data.data || [];
+                    totalNotifs = data.total || 0;
+                    
+                    if (reset) {
+                        renderNotifications(notifications);
+                    } else {
+                        appendNotifications(notifications);
+                    }
+                    
+                    const loadedCount = container.querySelectorAll('.notif-item').length;
+                    hasMore = loadedCount < totalNotifs;
+                    
+                    updateCount(loadedCount, totalNotifs);
+                    
+                    loadMoreBtn.style.display = hasMore ? 'inline-flex' : 'none';
+                    if (hasMore) {
+                        loadMoreBtn.innerHTML = `Voir plus (${totalNotifs - loadedCount} restantes) <i class="fas fa-arrow-down text-[10px]"></i>`;
+                    }
+                    
+                    if (data.stats) {
+                        updateStats(data.stats);
+                    }
+                } else {
+                    showError(data.error || 'Erreur de chargement');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion au serveur');
+            })
+            .finally(() => {
+                isLoading = false;
+            });
+    }
+
+    // ============================================
+    // RENDU DES NOTIFICATIONS
+    // ============================================
+    function renderNotifications(notifications) {
+        if (!notifications || notifications.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-400 text-sm">Aucune notification</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = notifications.map(notif => createNotifHTML(notif)).join('');
+        attachEvents();
+        updateCounters();
+    }
+
+    function appendNotifications(notifications) {
+        if (!notifications || notifications.length === 0) return;
+        const html = notifications.map(notif => createNotifHTML(notif)).join('');
+        container.insertAdjacentHTML('beforeend', html);
+        attachEvents();
+        updateCounters();
+    }
+
+    function createNotifHTML(notif) {
+        const config = getTypeConfig(notif.type);
+        const isRead = notif.est_lu == 1;
+        const readClass = isRead ? '' : 'bg-blue-50/30 border-l-4 ' + config.border;
+        const dateFormatted = formatDate(notif.created_at);
+
+        return `
+            <div class="notif-item p-4 hover:bg-gray-50/50 transition cursor-pointer ${readClass}" 
+                 data-id="${notif.id}"
+                 data-type="${notif.type}"
+                 data-lu="${notif.est_lu}">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 ${config.bg} rounded-xl flex items-center justify-center ${config.text} flex-shrink-0">
+                        <i class="fas ${config.icon}"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-2 mb-1">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <h5 class="text-sm font-semibold text-[#0F172A]">${escapeHtml(notif.title)}</h5>
+                                    ${notif.priorite === 'high' ? '<span class="text-[8px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded-full">URGENT</span>' : ''}
+                                </div>
+                                <p class="text-xs text-gray-500 mt-0.5">${escapeHtml(notif.message)}</p>
+                            </div>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">${dateFormatted}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                            <span class="text-[10px] font-semibold ${config.badge_class} px-2 py-0.5 rounded-full">
+                                <i class="fas fa-circle text-[6px] mr-1"></i>${config.badge}
+                            </span>
+                            ${!isRead ? '<span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full"><i class="fas fa-circle text-[6px] mr-1"></i>Nouveau</span>' : ''}
+                            <button class="openNotifDetailBtn text-[10px] font-semibold text-[#0EA486] hover:underline flex items-center gap-1" 
+                                    data-id="${notif.id}">
+                                <i class="fas fa-eye"></i> Voir détail
+                            </button>
+                            ${!isRead ? `<button class="markReadBtn text-[10px] font-semibold text-gray-500 hover:text-gray-700 flex items-center gap-1" 
+                                    data-id="${notif.id}">
+                                <i class="fas fa-check"></i> Marquer lu
+                            </button>` : ''}
+                            <button class="deleteNotifBtn text-[10px] font-semibold text-red-500 hover:text-red-700 flex items-center gap-1" 
+                                    data-id="${notif.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getTypeConfig(type) {
+        const configs = {
+            'vendor_request': {
+                bg: 'bg-yellow-100', text: 'text-yellow-600', icon: 'fa-user-plus',
+                border: 'border-yellow-500', badge: 'En attente', badge_class: 'text-yellow-700 bg-yellow-100'
+            },
+            'product_moderation': {
+                bg: 'bg-indigo-100', text: 'text-indigo-600', icon: 'fa-file-code',
+                border: 'border-indigo-500', badge: 'À modérer', badge_class: 'text-indigo-700 bg-indigo-100'
+            },
+            'order_high': {
+                bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'fa-shopping-cart',
+                border: 'border-emerald-500', badge: 'Commande importante', badge_class: 'text-emerald-700 bg-emerald-100'
+            },
+            'order_problem': {
+                bg: 'bg-red-100', text: 'text-red-600', icon: 'fa-exclamation-triangle',
+                border: 'border-red-500', badge: 'Problème', badge_class: 'text-red-700 bg-red-100'
+            },
+            'support_message': {
+                bg: 'bg-blue-100', text: 'text-blue-600', icon: 'fa-envelope',
+                border: 'border-blue-500', badge: 'Support', badge_class: 'text-blue-700 bg-blue-100'
+            },
+            'security_alert': {
+                bg: 'bg-purple-100', text: 'text-purple-600', icon: 'fa-shield-alt',
+                border: 'border-purple-500', badge: 'Alerte sécurité', badge_class: 'text-purple-700 bg-purple-100'
+            }
+        };
+        return configs[type] || {
+            bg: 'bg-gray-100', text: 'text-gray-600', icon: 'fa-bell',
+            border: 'border-gray-500', badge: 'Notification', badge_class: 'text-gray-700 bg-gray-100'
+        };
+    }
+
+    // ============================================
+    // COMPTEURS ET STATS
+    // ============================================
+    function updateCount(loaded, total) {
+        if (notifCount) {
+            notifCount.textContent = loaded + ' / ' + total + ' notification(s)';
+        }
+    }
+
+    function updateStats(stats) {
+        const totalNonLues = document.querySelector('.bg-red-50 + .text-2xl');
+        if (totalNonLues) totalNonLues.textContent = stats.unread || 0;
+        
+        const demandesVendeur = document.querySelectorAll('.bg-yellow-50 + .text-2xl');
+        if (demandesVendeur.length > 0) demandesVendeur[0].textContent = stats.vendor_request || 0;
+        
+        const commandes = document.querySelectorAll('.bg-blue-50 + .text-2xl');
+        if (commandes.length > 0) commandes[0].textContent = (stats.order_high || 0) + (stats.order_problem || 0);
+        
+        const alertesSecurite = document.querySelectorAll('.bg-purple-50 + .text-2xl');
+        if (alertesSecurite.length > 0) alertesSecurite[0].textContent = stats.security_alert || 0;
+    }
+
+    function updateCounters() {
+        const totalItems = container.querySelectorAll('.notif-item').length;
+        const unreadItems = container.querySelectorAll('.notif-item[data-lu="0"]').length;
+        
+        if (notifCount) {
+            notifCount.textContent = totalItems + ' notification(s)';
+        }
+        
+        const bellBadge = document.querySelector('#openNotifCenterBtn .absolute');
+        if (bellBadge) {
+            bellBadge.textContent = unreadItems > 0 ? unreadItems : '';
+            bellBadge.style.display = unreadItems > 0 ? 'flex' : 'none';
+        }
+        
+        const unreadStat = document.querySelector('.bg-red-50 + .text-2xl');
+        if (unreadStat) unreadStat.textContent = unreadItems;
+    }
+
+    // ============================================
+    // FORMATAGE
+    // ============================================
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000);
+
+        if (diff < 60) return 'À l\'instant';
+        if (diff < 3600) return 'Il y a ' + Math.floor(diff / 60) + ' min';
+        if (diff < 86400) return 'Il y a ' + Math.floor(diff / 3600) + ' h';
+        if (diff < 604800) return 'Il y a ' + Math.floor(diff / 86400) + ' j';
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function showError(message) {
+        container.innerHTML = `
+            <div class="text-center py-12 text-red-500">
+                <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                <p class="text-sm">${message}</p>
+                <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-[#0EA486] text-white rounded-lg text-sm">
+                    <i class="fas fa-redo mr-2"></i>Réessayer
+                </button>
+            </div>
+        `;
+    }
+
+    // ============================================
+    // ACTION 1 : MARQUER COMME LU
+    // ============================================
+    function markAsRead(id) {
+        const notifItem = document.querySelector(`.notif-item[data-id="${id}"]`);
+        const btn = document.querySelector(`.markReadBtn[data-id="${id}"]`);
+        
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+        }
+
+        fetch('api.php?url=notifications_mark_read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (notifItem) {
+                    notifItem.classList.remove('bg-blue-50/30', 'border-l-4');
+                    notifItem.dataset.lu = '1';
+                    notifItem.style.opacity = '0.7';
+                    
+                    const newBadge = notifItem.querySelector('.text-blue-600.bg-blue-50');
+                    if (newBadge) newBadge.remove();
+                    if (btn) btn.remove();
+                }
+                updateCounters();
+                showToast('Succès', 'Notification marquée comme lue', 'success');
+            } else {
+                showToast('Erreur', data.error || 'Erreur', 'error');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-check"></i> Marquer lu';
+                    btn.disabled = false;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check"></i> Marquer lu';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    // ============================================
+    // ACTION 2 : SUPPRIMER (AVEC MODAL)
+    // ============================================
+    function openDeleteNotifModal(id) {
+        const notifItem = document.querySelector(`.notif-item[data-id="${id}"]`);
+        if (!notifItem) {
+            showToast('Erreur', 'Notification non trouvée', 'error');
+            return;
+        }
+
+        const title = notifItem.querySelector('h5')?.textContent || 'Notification';
+        deleteNotifId = id;
+
+        const titleEl = document.getElementById('deleteNotifTitle');
+        const idEl = document.getElementById('deleteNotifId');
+        if (titleEl) titleEl.textContent = title;
+        if (idEl) idEl.textContent = 'ID: #' + id;
+
+        const input = document.getElementById('deleteNotifConfirmInput');
+        const confirmBtn = document.getElementById('confirmDeleteNotifBtn');
+        
+        if (input) input.value = '';
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        const modal = document.getElementById('deleteNotifModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteNotifModal() {
+        const modal = document.getElementById('deleteNotifModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        document.body.style.overflow = '';
+        deleteNotifId = null;
+    }
+
+    function confirmDeleteNotification(id) {
+        const notifItem = document.querySelector(`.notif-item[data-id="${id}"]`);
+        
+        if (notifItem) {
+            notifItem.style.opacity = '0.5';
+            notifItem.style.pointerEvents = 'none';
+        }
+
+        fetch('api.php?url=notifications_delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + id
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeDeleteNotifModal();
+                if (notifItem) {
+                    notifItem.style.transition = 'all 0.3s ease';
+                    notifItem.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        notifItem.remove();
+                        updateCounters();
+                        
+                        const remaining = container.querySelectorAll('.notif-item').length;
+                        if (remaining === 0) {
+                            container.innerHTML = `
+                                <div class="text-center py-12">
+                                    <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
+                                    <p class="text-gray-400 text-sm">Aucune notification</p>
+                                </div>
+                            `;
+                        }
+                    }, 300);
+                }
+                showToast('Succès', 'Notification supprimée', 'success');
+            } else {
+                showToast('Erreur', data.error || 'Erreur', 'error');
+                if (notifItem) {
+                    notifItem.style.opacity = '1';
+                    notifItem.style.pointerEvents = 'auto';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+            if (notifItem) {
+                notifItem.style.opacity = '1';
+                notifItem.style.pointerEvents = 'auto';
+            }
+        });
+    }
+
+    // Remplacer l'ancienne fonction deleteNotification
+    function deleteNotification(id) {
+        openDeleteNotifModal(id);
+    }
+
+    // ============================================
+    // ACTION 3 : VOIR DÉTAIL
+    // ============================================
+    function viewNotificationDetail(id) {
+        const notifItem = document.querySelector(`.notif-item[data-id="${id}"]`);
+        if (!notifItem) {
+            showToast('Erreur', 'Notification non trouvée', 'error');
+            return;
+        }
+
+        const title = notifItem.querySelector('h5')?.textContent || 'Notification';
+        const message = notifItem.querySelector('.text-gray-500')?.textContent || '';
+        const type = notifItem.dataset.type || 'general';
+        const date = notifItem.querySelector('.text-gray-400')?.textContent || '';
+        
+        const configs = {
+            'vendor_request': { icon: 'fa-user-plus', color: 'text-yellow-600', bg: 'bg-yellow-100', badge: 'Demande vendeur' },
+            'product_moderation': { icon: 'fa-file-code', color: 'text-indigo-600', bg: 'bg-indigo-100', badge: 'Modération produit' },
+            'order_high': { icon: 'fa-shopping-cart', color: 'text-emerald-600', bg: 'bg-emerald-100', badge: 'Commande importante' },
+            'order_problem': { icon: 'fa-exclamation-triangle', color: 'text-red-600', bg: 'bg-red-100', badge: 'Commande problématique' },
+            'support_message': { icon: 'fa-envelope', color: 'text-blue-600', bg: 'bg-blue-100', badge: 'Support' },
+            'security_alert': { icon: 'fa-shield-alt', color: 'text-purple-600', bg: 'bg-purple-100', badge: 'Alerte sécurité' }
+        };
+        const config = configs[type] || { icon: 'fa-bell', color: 'text-gray-600', bg: 'bg-gray-100', badge: 'Notification' };
+
+        const modal = document.getElementById('notifDetailModal');
+        if (!modal) {
+            showToast('Info', 'Détail de la notification #' + id, 'info');
+            return;
+        }
+
+        const titleEl = modal.querySelector('.bg-gradient-to-br .text-lg.font-bold');
+        if (titleEl) titleEl.textContent = title;
+        
+        const badgeEl = modal.querySelector('.bg-gradient-to-br .text-xs.text-gray-500');
+        if (badgeEl) badgeEl.textContent = config.badge;
+        
+        const iconContainer = modal.querySelector('.bg-gradient-to-br .w-14.h-14');
+        if (iconContainer) {
+            iconContainer.className = `w-14 h-14 ${config.bg} rounded-2xl flex items-center justify-center ${config.color} flex-shrink-0`;
+            iconContainer.innerHTML = `<i class="fas ${config.icon} text-xl"></i>`;
+        }
+        
+        const messageEl = modal.querySelector('.bg-white.rounded-2xl.p-4.border .text-sm.text-gray-600');
+        if (messageEl) messageEl.textContent = message;
+        
+        const idEl = document.getElementById('detailNotifId');
+        if (idEl) idEl.textContent = '#' + id;
+        
+        const dateEl = document.getElementById('detailNotifDate');
+        if (dateEl) dateEl.textContent = date;
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        const isRead = notifItem.dataset.lu === '1';
+        if (!isRead) {
+            markAsRead(id);
+        }
+    }
+
+    // ============================================
+    // ACTION 4 : MARQUER TOUTES COMME LUES
+    // ============================================
+    function markAllAsRead() {
+        fetch('api.php?url=notifications_mark_all_read', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                container.querySelectorAll('.notif-item[data-lu="0"]').forEach(item => {
+                    item.classList.remove('bg-blue-50/30', 'border-l-4');
+                    item.dataset.lu = '1';
+                    item.style.opacity = '0.7';
+                    
+                    const badge = item.querySelector('.text-blue-600.bg-blue-50');
+                    if (badge) badge.remove();
+                    
+                    const btn = item.querySelector('.markReadBtn');
+                    if (btn) btn.remove();
+                });
+                updateCounters();
+                showToast('Succès', data.message || 'Toutes marquées comme lues', 'success');
+            } else {
+                showToast('Erreur', data.error || 'Erreur', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+        });
+    }
+
+    // ============================================
+    // ATTACHER LES ÉVÉNEMENTS
+    // ============================================
+    function attachEvents() {
+        document.querySelectorAll('.markReadBtn').forEach(btn => {
+            btn.removeEventListener('click', handleMarkRead);
+            btn.addEventListener('click', handleMarkRead);
+        });
+
+        document.querySelectorAll('.deleteNotifBtn').forEach(btn => {
+            btn.removeEventListener('click', handleDelete);
+            btn.addEventListener('click', handleDelete);
+        });
+
+        document.querySelectorAll('.openNotifDetailBtn').forEach(btn => {
+            btn.removeEventListener('click', handleDetail);
+            btn.addEventListener('click', handleDetail);
+        });
+    }
+
+    function handleMarkRead(e) {
+        e.stopPropagation();
+        const id = this.dataset.id;
+        if (id) markAsRead(id);
+    }
+
+    function handleDelete(e) {
+        e.stopPropagation();
+        const id = this.dataset.id;
+        if (id) deleteNotification(id);
+    }
+
+    function handleDetail(e) {
+        e.stopPropagation();
+        const id = this.dataset.id;
+        if (id) viewNotificationDetail(id);
+    }
+
+    // ============================================
+    // ÉVÉNEMENTS DES MODALS
+    // ============================================
+    document.getElementById('deleteNotifConfirmInput')?.addEventListener('input', function() {
+        const confirmBtn = document.getElementById('confirmDeleteNotifBtn');
+        if (this.value === 'SUPPRIMER') {
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        } else {
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    });
+
+    document.getElementById('confirmDeleteNotifBtn')?.addEventListener('click', function() {
+        if (!this.disabled && deleteNotifId) {
+            confirmDeleteNotification(deleteNotifId);
+        }
+    });
+
+    document.querySelectorAll('.closeDeleteNotifBtn').forEach(btn => {
+        btn.addEventListener('click', closeDeleteNotifModal);
+    });
+
+    document.getElementById('deleteNotifModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteNotifModal();
+    });
+
+    // ============================================
+    // FILTRE
+    // ============================================
+    filterSelect.addEventListener('change', function() {
+        currentFilter = this.value;
+        currentPage = 1;
+        loadNotifications(true);
+    });
+
+    // ============================================
+    // VOIR PLUS
+    // ============================================
+    loadMoreBtn.addEventListener('click', function() {
+        if (!isLoading && hasMore) {
+            currentPage++;
+            loadNotifications(false);
+        }
+    });
+
+    // ============================================
+    // BOUTON "TOUT MARQUER COMME LU"
+    // ============================================
+    document.getElementById('markAllReadBtn')?.addEventListener('click', markAllAsRead);
+
+    // ============================================
+    // TOAST
+    // ============================================
+    function showToast(title, message, type = 'success') {
+        if (typeof window.showToast === 'function') {
+            window.showToast(title, message, type);
+        } else {
+            alert(title + ': ' + message);
+        }
+    }
+
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotifications(true);
+        });
+    } else {
+        loadNotifications(true);
+    }
+
+    console.log('✅ Notifications prêtes');
+
+})();
     </script>
 </body>
 </html>
