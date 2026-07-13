@@ -154,7 +154,7 @@ switch ($url) {
         $controller = new ContenuController($pdo);
         $controller->updateCodePromo();
         break;
-        
+
     case 'promo_list':
         require_once __DIR__ . '/../App/Controllers/Admin/ContenuController.php';
         $controller = new ContenuController($pdo);
@@ -178,12 +178,47 @@ switch ($url) {
         $controller = new ContenuController($pdo);
         $controller->getPromoHistorique();
         break;
+
+
+        // ============================================
+    // NOTIFICATIONS
+    // ============================================
         
-//     case 'notifications':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
+    case 'notifications':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->index();
+        break;
+
+    case 'notifications_list':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->getNotifications();
+        break;
+
+    case 'notifications_mark_read':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->markRead();
+        break;
+
+    case 'notifications_mark_all_read':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->markAllRead();
+        break;
+
+    case 'notifications_delete':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->delete();
+        break;
+
+    case 'notifications_settings':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->updateSettings();
+        break;
         
 //     case 'rapport_stats':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
