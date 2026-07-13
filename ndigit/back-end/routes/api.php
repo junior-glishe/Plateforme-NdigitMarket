@@ -172,6 +172,7 @@ switch ($url) {
         $controller = new ContenuController($pdo);
         $controller->getPromoHistorique();
         break;
+        
 //     case 'notifications':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
 //         $controller = new LoginController($pdo);

@@ -165,7 +165,7 @@ class ContenuController {
         
         // Nouvelle image ?
         if (!empty($_FILES['image']['name'])) {
-            $imageName = $this->uploadImage($_FILES['image']);
+            $imageName = $this->uploadImage($_FILES['image'], 'bannieres');
             if ($imageName) {
                 $data['image'] = $imageName;
                 // Supprimer l'ancienne image

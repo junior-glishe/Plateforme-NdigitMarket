@@ -129,7 +129,7 @@
                                         style="background: linear-gradient(135deg, <?= $banniere['couleur_1'] ?? '#6366f1' ?>, <?= $banniere['couleur_2'] ?? '#8b5cf6' ?>);">
                                         <div class="absolute inset-0 bg-black/20"></div>
                                         <?php if (!empty($banniere['image'])): ?>
-                                            <img src="/uploads/bannieres/<?= $banniere['image'] ?>" class="absolute inset-0 w-full h-full object-cover">
+                                            <img src="/back-end/uploads/bannieres/<?= $banniere['image'] ?>" class="absolute inset-0 w-full h-full object-cover">
                                         <?php endif; ?>
                                         <div class="relative text-center text-white px-4 z-10">
                                             <p class="text-xs font-bold uppercase tracking-wider"><?= htmlspecialchars($banniere['sous_titre'] ?? 'Promo') ?></p>
@@ -279,23 +279,23 @@
             </div>
         </div>
 
-            <!-- Filtres -->
+             <!-- Filtres -->
             <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-4">
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex-1 min-w-[220px] relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="text" placeholder="Rechercher un code promo..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                        <input type="text" id="promoSearchInput" placeholder="Rechercher un code promo..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                     </div>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les statuts</option>
-                        <option>Actifs</option>
-                        <option>Inactifs</option>
-                        <option>Expirés</option>
+                    <select id="promoStatusFilter" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les statuts</option>
+                        <option value="active">Actifs</option>
+                        <option value="inactive">Inactifs</option>
+                        <option value="expire">Expirés</option>
                     </select>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les types</option>
-                        <option>Pourcentage</option>
-                        <option>Montant fixe</option>
+                    <select id="promoTypeFilter" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les types</option>
+                        <option value="percentage">Pourcentage</option>
+                        <option value="fixed">Montant fixe</option>
                     </select>
                 </div>
             </div>
@@ -317,7 +317,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <?php if (!empty($codesPromo)): ?>
+                              <?php if (!empty($codesPromo)): ?>
                                 <?php foreach ($codesPromo as $promo): ?>
                                     <?php
                                         // Calcul du pourcentage d'utilisation
@@ -325,19 +325,31 @@
                                         $utilisationsActuelles = $promo['utilisations_actuelles'] ?? 0;
                                         $pourcentage = $utilisationsMax > 0 ? round(($utilisationsActuelles / $utilisationsMax) * 100) : 0;
                                         
-                                        // Statut du code
-                                        $statutClass = 'text-gray-500 bg-gray-100';
-                                        $statutText = 'Inactif';
-                                        if ($promo['statut'] === 'active') {
-                                            // Vérifier si le code est expiré
-                                            if (!empty($promo['date_expiration']) && strtotime($promo['date_expiration']) < time()) {
-                                                $statutClass = 'text-red-700 bg-red-100';
-                                                $statutText = 'Expiré';
-                                            } else {
-                                                $statutClass = 'text-emerald-700 bg-emerald-100';
-                                                $statutText = 'Actif';
-                                            }
-                                        }
+                                        // ============================================
+                                        // 🔥 STATUT DIRECTEMENT DEPUIS LA BASE 🔥
+                                        // ============================================
+                                        $statut = $promo['statut'] ?? 'inactive';
+                                        
+                                        // Classes CSS selon le statut en base
+                                        $statutClasses = [
+                                            'active' => 'text-emerald-700 bg-emerald-100',
+                                            'inactive' => 'text-gray-500 bg-gray-100',
+                                            'expire' => 'text-red-700 bg-red-100'
+                                        ];
+                                        $statutLabels = [
+                                            'active' => 'Actif',
+                                            'inactive' => 'Inactif',
+                                            'expire' => 'Expiré'
+                                        ];
+                                        $statutIcons = [
+                                            'active' => 'fa-check',
+                                            'inactive' => 'fa-pause',
+                                            'expire' => 'fa-times'
+                                        ];
+                                        
+                                        $statutClass = $statutClasses[$statut] ?? 'text-gray-500 bg-gray-100';
+                                        $statutText = $statutLabels[$statut] ?? $statut;
+                                        $statutIcon = $statutIcons[$statut] ?? 'fa-circle';
                                         
                                         // Type de remise
                                         $typeText = $promo['type'] === 'percentage' ? 'Pourcentage' : 'Montant fixe';
@@ -377,13 +389,18 @@
                                             <?= !empty($promo['date_expiration']) ? date('d/m/Y H:i', strtotime($promo['date_expiration'])) : '---' ?>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <span class="text-[10px] font-semibold <?= $statutClass ?> px-2 py-1 rounded-full"><?= $statutText ?></span>
+                                            <span class="text-[10px] font-semibold <?= $statutClass ?> px-2 py-1 rounded-full">
+                                                <i class="fas <?= $statutIcon ?> mr-1"></i>
+                                                <?= $statutText ?>
+                                            </span>
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="flex items-center justify-end gap-1">
                                                 <button class="openPromoHistoryBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" 
                                                         title="Historique"
-                                                        data-id="<?= $promo['id'] ?>">
+                                                        data-id="<?= $promo['id'] ?>"
+                                                        data-code="<?= htmlspecialchars($promo['code']) ?>"
+                                                        data-total="<?= $promo['utilisations_actuelles'] ?? 0 ?>">
                                                     <i class="fas fa-history text-xs"></i>
                                                 </button>
                                                 <button class="openPromoFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" 
@@ -395,9 +412,6 @@
                                                         data-montant-minimum="<?= $promo['montant_minimum'] ?? 0 ?>"
                                                         data-utilisations-max="<?= $promo['utilisations_max'] ?? '' ?>"
                                                         data-date-expiration="<?= $promo['date_expiration'] ?? '' ?>"
-                                                        data-categorie-id="<?= $promo['categorie_id'] ?? '' ?>"
-                                                        data-produit-id="<?= $promo['produit_id'] ?? '' ?>"
-                                                        data-utilisateur-id="<?= $promo['utilisateur_id'] ?? '' ?>"
                                                         data-statut="<?= $promo['statut'] ?? 'active' ?>">
                                                     <i class="fas fa-edit text-xs"></i>
                                                 </button>
@@ -969,76 +983,62 @@
         </div>
     </div>
 
-    <!-- MODAL : HISTORIQUE CODE PROMO -->
-    <div id="promoHistoryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-history text-blue-500"></i> Historique d'utilisation
-                    </h3>
-                    <p class="text-xs text-gray-400">Toutes les utilisations du code promo</p>
+        <!-- MODAL : HISTORIQUE CODE PROMO -->
+        <div id="promoHistoryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                            <i class="fas fa-history text-blue-500"></i> Historique d'utilisation
+                        </h3>
+                        <p class="text-xs text-gray-400">Toutes les utilisations du code promo</p>
+                    </div>
+                    <button class="closePromoHistoryBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <button class="closePromoHistoryBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
 
-            <div class="overflow-y-auto p-6 space-y-5">
-                <!-- En-tête code -->
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white">
-                            <i class="fas fa-ticket-alt text-2xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-lg font-bold font-mono text-[#0F172A]">...</h4>
-                            <p class="text-xs text-gray-500 mt-1">Type: ... · Valeur: ...</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-2xl font-bold text-[#0EA486]">...</p>
-                            <p class="text-xs text-gray-500">Utilisations</p>
+                <div class="overflow-y-auto p-6 space-y-5">
+                    <!-- En-tête code -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white">
+                                <i class="fas fa-ticket-alt text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 id="historyCodeName" class="text-lg font-bold font-mono text-[#0F172A]">---</h4>
+                                <p id="historyCodeInfo" class="text-xs text-gray-500 mt-1">Type: --- · Valeur: ---</p>
+                            </div>
+                            <div class="text-right">
+                                <p id="historyTotalUtilisations" class="text-2xl font-bold text-[#0EA486]">0</p>
+                                <p class="text-xs text-gray-500">Utilisations</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tableau historique -->
-                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 border-b border-gray-100">
-                                <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    <th class="px-4 py-3">Date</th>
-                                    <th class="px-4 py-3">Utilisateur</th>
-                                    <th class="px-4 py-3">Commande</th>
-                                    <th class="px-4 py-3">Montant initial</th>
-                                    <th class="px-4 py-3">Remise</th>
-                                    <th class="px-4 py-3">Montant final</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                    <td class="px-4 py-3">
-                                        <div>
-                                            <p class="text-xs font-semibold text-[#0F172A]">...</p>
-                                            <p class="text-[11px] text-gray-400">...</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-mono text-gray-600">...</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">... FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-bold text-red-600">-... FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-bold text-[#0EA486]">... FCFA</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <!-- Tableau historique -->
+                    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50 border-b border-gray-100">
+                                    <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        <th class="px-4 py-3">Date</th>
+                                        <th class="px-4 py-3">Utilisateur</th>
+                                        <th class="px-4 py-3">Commande</th>
+                                        <th class="px-4 py-3">Montant initial</th>
+                                        <th class="px-4 py-3">Remise</th>
+                                        <th class="px-4 py-3">Montant final</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody" class="divide-y divide-gray-100">
+                                    <!-- Les données seront chargées par JS -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- MODAL : TOGGLE CODE PROMO -->
     <div id="togglePromoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1225,6 +1225,135 @@ function formatDateForMySQL(datetime) {
     return datetime.replace('T', ' ') + ':00';
 }
 
+
+// ============================================
+// CODES PROMO - FILTRES UNIQUEMENT
+// ============================================
+(function() {
+    'use strict';
+
+    // Récupérer les éléments directement (sans vérification)
+    const searchInput = document.getElementById('promoSearchInput');
+    const statusFilter = document.getElementById('promoStatusFilter');
+    const typeFilter = document.getElementById('promoTypeFilter');
+    const promoList = document.getElementById('promoList');
+
+    // Si les éléments n'existent pas, on crée des sélecteurs alternatifs
+    function getElements() {
+        // Essayer avec les IDs
+        let search = document.getElementById('promoSearchInput');
+        let status = document.getElementById('promoStatusFilter');
+        let type = document.getElementById('promoTypeFilter');
+        let list = document.getElementById('promoList');
+
+        // Si les IDs ne fonctionnent pas, essayer avec les classes
+        if (!search) {
+            search = document.querySelector('.bg-white .flex-1 input[type="text"]');
+            console.log('🔵 Recherche par classe:', !!search);
+        }
+        if (!status) {
+            status = document.querySelector('.bg-white select:first-of-type');
+            console.log('🔵 Statut par classe:', !!status);
+        }
+        if (!type) {
+            type = document.querySelector('.bg-white select:last-of-type');
+            console.log('🔵 Type par classe:', !!type);
+        }
+        if (!list) {
+            list = document.querySelector('.space-y-3');
+            console.log('🔵 Liste par classe:', !!list);
+        }
+
+        return { search, status, type, list };
+    }
+
+    function applyFilters() {
+        const elements = getElements();
+        const searchInput = elements.search;
+        const statusFilter = elements.status;
+        const typeFilter = elements.type;
+        const promoList = elements.list;
+
+        if (!promoList) {
+            console.error('🔴 Liste introuvable');
+            return;
+        }
+
+        const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const status = statusFilter ? statusFilter.value : '';
+        const type = typeFilter ? typeFilter.value : '';
+
+        const cards = promoList.querySelectorAll('.promo-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            let show = true;
+            
+            if (search) {
+                const code = card.querySelector('.font-mono')?.textContent?.toLowerCase() || '';
+                if (!code.includes(search)) show = false;
+            }
+
+            if (show && status) {
+                const statusBadge = card.querySelector('.rounded-full');
+                if (statusBadge) {
+                    const statusText = statusBadge.textContent.trim().toLowerCase();
+                    const statusMap = {
+                        'active': 'actif',
+                        'inactive': 'inactif',
+                        'expire': 'expiré'
+                    };
+                    if (!statusText.includes(statusMap[status] || status)) show = false;
+                }
+            }
+
+            if (show && type) {
+                const typeBadge = card.querySelector('.bg-blue-100');
+                if (typeBadge) {
+                    const typeText = typeBadge.textContent.trim().toLowerCase();
+                    const typeMap = {
+                        'percentage': '%',
+                        'fixed': 'fcfa'
+                    };
+                    if (!typeText.includes(typeMap[type] || type)) show = false;
+                }
+            }
+
+            card.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        // Message "aucun résultat"
+        const existingMsg = promoList.querySelector('.no-results-msg');
+        if (visibleCount === 0 && cards.length > 0) {
+            if (!existingMsg) {
+                const msg = document.createElement('div');
+                msg.className = 'no-results-msg text-center py-12';
+                msg.innerHTML = `
+                    <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-400">Aucun code promo ne correspond à vos critères</p>
+                `;
+                promoList.appendChild(msg);
+            }
+        } else {
+            if (existingMsg) existingMsg.remove();
+        }
+    }
+
+    // Attendre que le DOM soit prêt
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = getElements();
+        
+        if (elements.search) elements.search.addEventListener('input', applyFilters);
+        if (elements.status) elements.status.addEventListener('change', applyFilters);
+        if (elements.type) elements.type.addEventListener('change', applyFilters);
+        
+        applyFilters();
+        console.log('✅ Filtres prêts');
+    });
+
+})();
+
 // ============================================
 // MODAL FORMULAIRE BANNIÈRE
 // ============================================
@@ -1303,7 +1432,7 @@ function formatDateForMySQL(datetime) {
             });
             
             if (data.image) {
-                imagePreviewImg.src = '/uploads/bannieres/' + data.image;
+                imagePreviewImg.src = '/back-end/uploads/bannieres/' + data.image;
                 imagePreview.classList.remove('hidden');
             }
             updatePreview();
@@ -2227,6 +2356,543 @@ setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn')
             showToast('Supprimé', 'Code promo supprimé avec succès', 'success');
         }
     });
+})();
+
+
+
+// ============================================
+// CODES PROMOTIONNELS - GESTION COMPLETE
+// ============================================
+(function() {
+    'use strict';
+
+    console.log('🔵 Script codes promo chargé');
+
+    // ============================================
+    // VARIABLES
+    // ============================================
+    let currentPromoId = null;
+    let currentPromoCode = null;
+    let currentAction = '';
+
+    // ============================================
+    // RÉFÉRENCES DES MODALS
+    // ============================================
+    const promoFormModal = document.getElementById('promoFormModal');
+    const promoHistoryModal = document.getElementById('promoHistoryModal');
+    const togglePromoModal = document.getElementById('togglePromoModal');
+    const deletePromoModal = document.getElementById('deletePromoModal');
+
+    // ============================================
+    // RÉFÉRENCES DES ÉLÉMENTS DU FORMULAIRE
+    // ============================================
+    const promoCodeInput = document.getElementById('promoCode');
+    const promoTypeSelect = document.getElementById('promoType');
+    const promoValueInput = document.getElementById('promoValue');
+
+    // ============================================
+    // 1. GENERER UN CODE PROMO
+    // ============================================
+    document.getElementById('generatePromoCodeBtn')?.addEventListener('click', function() {
+        fetch('api.php?url=promo_generate')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    promoCodeInput.value = data.code;
+                    showToast('Succès', 'Code généré: ' + data.code, 'success');
+                } else {
+                    showToast('Erreur', data.error || 'Erreur de génération', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Erreur de connexion', 'error');
+            });
+    });
+
+    // ============================================
+    // 2. OUVRIR LE MODAL DE FORMULAIRE (AJOUT/MODIFICATION)
+    // ============================================
+    document.querySelectorAll('#openPromoFormBtn, .openPromoFormBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const isEdit = this.classList.contains('openPromoFormBtn');
+            const title = document.getElementById('promoFormTitle');
+            const submitBtn = document.querySelector('#promoFormModal button[type="submit"]');
+            
+            if (isEdit) {
+                // Mode édition
+                title.textContent = 'Modifier le code promo';
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Modifier';
+                
+                // Remplir les champs
+                document.getElementById('promoCode').value = this.dataset.code || '';
+                document.getElementById('promoType').value = this.dataset.type || 'percentage';
+                document.getElementById('promoValue').value = this.dataset.valeur || '';
+                document.querySelector('#promoFormModal input[placeholder*="10000"]').value = this.dataset.montantMinimum || '';
+                document.querySelector('#promoFormModal input[placeholder*="100"]').value = this.dataset.utilisationsMax || '';
+                document.querySelector('#promoFormModal input[type="datetime-local"]').value = this.dataset.dateExpiration || '';
+                
+                // Statut
+                const status = this.dataset.statut || 'active';
+                document.querySelectorAll('#promoFormModal input[name="promoStatus"]').forEach(radio => {
+                    radio.checked = radio.value === status;
+                });
+                
+                currentPromoId = this.dataset.id;
+            } else {
+                // Mode ajout
+                title.textContent = 'Nouveau code promo';
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+                document.getElementById('promoFormModal').querySelector('form').reset();
+                currentPromoId = null;
+            }
+            
+            promoFormModal.classList.remove('hidden');
+            promoFormModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // ============================================
+    // 3. FERMER LE MODAL FORMULAIRE
+    // ============================================
+    document.querySelectorAll('.closePromoFormBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            promoFormModal.classList.add('hidden');
+            promoFormModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        });
+    });
+
+    promoFormModal?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 4. SOUMETTRE LE FORMULAIRE (AJOUT/MODIFICATION)
+    // ============================================
+    document.querySelector('#promoFormModal form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const code = document.getElementById('promoCode').value.trim();
+        const type = document.getElementById('promoType').value;
+        const valeur = document.getElementById('promoValue').value;
+        const montant_minimum = this.querySelector('input[placeholder*="10000"]')?.value || 0;
+        const utilisations_max = this.querySelector('input[placeholder*="100"]')?.value || '';
+        const date_expiration = this.querySelector('input[type="datetime-local"]')?.value;
+        const statut = this.querySelector('input[name="promoStatus"]:checked')?.value || 'active';
+
+        if (!code) {
+            showToast('Erreur', 'Le code est requis', 'error');
+            return;
+        }
+        if (!valeur || valeur <= 0) {
+            showToast('Erreur', 'La valeur doit être supérieure à 0', 'error');
+            return;
+        }
+        if (!date_expiration) {
+            showToast('Erreur', 'La date d\'expiration est requise', 'error');
+            return;
+        }
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        const formData = new FormData();
+        formData.append('code', code);
+        formData.append('type', type);
+        formData.append('valeur', valeur);
+        formData.append('montant_minimum', montant_minimum);
+        formData.append('utilisations_max', utilisations_max);
+        formData.append('date_expiration', date_expiration);
+        formData.append('statut', statut);
+
+        const action = currentPromoId ? 'promo_edit' : 'promo_add';
+        if (currentPromoId) {
+            formData.append('id', currentPromoId);
+        }
+
+        fetch('api.php?url=' + action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                promoFormModal.classList.add('hidden');
+                promoFormModal.classList.remove('flex');
+                document.body.style.overflow = '';
+                showToast('Succès', data.message || 'Code promo enregistré', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast('Erreur', data.error || 'Erreur d\'enregistrement', 'error');
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+        });
+    });
+
+    // ============================================
+// HISTORIQUE CODE PROMO - CORRIGÉ
+// ============================================
+document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const code = this.dataset.code || 'Code #' + id;
+        const total = this.dataset.total || 0;
+        
+        // 🔥 Remplir l'en-tête avec les données du bouton
+        document.getElementById('historyCodeName').textContent = code;
+        document.getElementById('historyCodeInfo').textContent = 'ID: ' + id;
+        document.getElementById('historyTotalUtilisations').textContent = total;
+
+        // Afficher le chargement
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                    <i class="fas fa-spinner fa-spin text-2xl block mb-2"></i>
+                    Chargement de l'historique...
+                </td>
+            </tr>
+        `;
+
+        document.getElementById('promoHistoryModal').classList.remove('hidden');
+        document.getElementById('promoHistoryModal').classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        // Fetch l'historique
+        fetch('api.php?url=promo_history&id=' + id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderHistorique(data.data);
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-red-500 text-sm">
+                                <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
+                                ${data.error || 'Erreur de chargement'}
+                            </td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-red-500 text-sm">
+                            <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
+                            Erreur de connexion
+                        </td>
+                    </tr>
+                `;
+            });
+    });
+});
+
+function renderHistorique(historique) {
+    const tbody = document.getElementById('historyTableBody');
+
+    if (!historique || historique.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                    <i class="fas fa-clock text-2xl block mb-2"></i>
+                    Aucune utilisation de ce code promo
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    let html = '';
+    historique.forEach(item => {
+        html += `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="px-4 py-3 text-xs text-gray-500">${formatDate(item.date_utilisation)}</td>
+                <td class="px-4 py-3">
+                    <div>
+                        <p class="text-xs font-semibold text-[#0F172A]">${item.utilisateur_nom || 'Anonyme'}</p>
+                        <p class="text-[11px] text-gray-400">${item.utilisateur_email || '---'}</p>
+                    </div>
+                </td>
+                <td class="px-4 py-3">
+                    <span class="text-xs font-mono text-gray-600">#${item.commande_id || '---'}</span>
+                </td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${formatNumber(item.montant_initial)} FCFA</td>
+                <td class="px-4 py-3 text-xs font-bold text-red-600">-${formatNumber(item.remise)} FCFA</td>
+                <td class="px-4 py-3 text-xs font-bold text-[#0EA486]">${formatNumber(item.montant_final)} FCFA</td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+}
+
+// ============================================
+// 6. FERMER LE MODAL HISTORIQUE
+// ============================================
+document.querySelectorAll('.closePromoHistoryBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.getElementById('promoHistoryModal').classList.add('hidden');
+        document.getElementById('promoHistoryModal').classList.remove('flex');
+        document.body.style.overflow = '';
+    });
+});
+
+document.getElementById('promoHistoryModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+        this.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+});
+
+// ============================================
+// FONCTIONS UTILITAIRES
+// ============================================
+function formatNumber(num) {
+    num = Number(num) || 0;
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '---';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+    // ============================================
+    // 7. TOGGLE STATUT DU CODE PROMO
+    // ============================================
+    document.querySelectorAll('.togglePromoBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const statut = this.dataset.statut;
+            const code = this.dataset.code;
+            
+            currentPromoId = id;
+            currentPromoCode = code;
+            currentAction = statut === 'active' ? 'inactive' : 'active';
+
+            const title = document.getElementById('togglePromoTitle');
+            const infoText = document.getElementById('togglePromoInfoText');
+            const confirmBtn = document.getElementById('confirmTogglePromoBtn');
+            const info = document.getElementById('togglePromoInfo');
+
+            if (statut === 'active') {
+                title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver le code promo';
+                infoText.textContent = 'Le code promo "' + code + '" ne sera plus utilisable par les clients.';
+                info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
+                confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+            } else {
+                title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer le code promo';
+                infoText.textContent = 'Le code promo "' + code + '" sera à nouveau utilisable par les clients.';
+                info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
+                confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+            }
+
+            togglePromoModal.classList.remove('hidden');
+            togglePromoModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // ============================================
+    // 8. FERMER LE MODAL TOGGLE
+    // ============================================
+    document.querySelectorAll('.closeTogglePromoBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            togglePromoModal.classList.add('hidden');
+            togglePromoModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        });
+    });
+
+    togglePromoModal?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 9. CONFIRMER LE TOGGLE
+    // ============================================
+    document.getElementById('confirmTogglePromoBtn')?.addEventListener('click', function() {
+        fetch('api.php?url=promo_toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + currentPromoId + '&statut=' + currentAction
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                togglePromoModal.classList.add('hidden');
+                togglePromoModal.classList.remove('flex');
+                document.body.style.overflow = '';
+                showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast('Erreur', data.error || 'Erreur', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+        });
+    });
+
+    // ============================================
+    // 10. SUPPRIMER UN CODE PROMO
+    // ============================================
+    document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentPromoId = this.dataset.id;
+            currentPromoCode = this.dataset.code;
+            
+            const input = document.getElementById('deletePromoConfirmInput');
+            const confirmBtn = document.getElementById('confirmDeletePromoBtn');
+            
+            input.value = '';
+            confirmBtn.disabled = true;
+            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            deletePromoModal.classList.remove('hidden');
+            deletePromoModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // ============================================
+    // 11. FERMER LE MODAL SUPPRESSION
+    // ============================================
+    document.querySelectorAll('.closeDeletePromoBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            deletePromoModal.classList.add('hidden');
+            deletePromoModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        });
+    });
+
+    deletePromoModal?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 12. CONFIRMER LA SUPPRESSION
+    // ============================================
+    document.getElementById('deletePromoConfirmInput')?.addEventListener('input', function() {
+        const confirmBtn = document.getElementById('confirmDeletePromoBtn');
+        if (this.value === 'SUPPRIMER') {
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            confirmBtn.disabled = true;
+            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    document.getElementById('confirmDeletePromoBtn')?.addEventListener('click', function() {
+        if (!this.disabled) {
+            fetch('api.php?url=promo_delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + currentPromoId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    deletePromoModal.classList.add('hidden');
+                    deletePromoModal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                    showToast('Succès', data.message || 'Code promo supprimé', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast('Erreur', data.error || 'Erreur', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Erreur de connexion', 'error');
+            });
+        }
+    });
+
+    // ============================================
+    // 13. ESC POUR FERMER TOUS LES MODALS
+    // ============================================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 14. FONCTIONS UTILITAIRES
+    // ============================================
+    function formatNumber(num) {
+        num = Number(num) || 0;
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function showToast(title, message, type = 'success') {
+        // Utilise ta fonction showToast existante
+        if (typeof window.showToast === 'function') {
+            window.showToast(title, message, type);
+        } else {
+            // Fallback
+            alert(title + ': ' + message);
+        }
+    }
+
+    console.log('✅ Script codes promo prêt');
+
 })();
 
 // ============================================

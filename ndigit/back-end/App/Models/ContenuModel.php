@@ -164,7 +164,7 @@ class ContenuModel {
     public function deleteBanniere($id) {
         $banniere = $this->getBanniereById($id);
         if ($banniere && $banniere['image']) {
-            $imagePath = __DIR__ . '/../../public/uploads/' . $banniere['image'];
+            $imagePath = __DIR__ . '/../../public/uploads/bannieres/' . $banniere['image'];
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
@@ -185,7 +185,7 @@ class ContenuModel {
                 SUM(clics) as clics
             FROM banniere_stats
             WHERE banniere_id = ? AND date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-            GROUP BY DATE(date)
+            GROUP BY DATE(date)  
             ORDER BY DATE(date) ASC
         ");
         $stmt->execute([$id]);
