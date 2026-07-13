@@ -196,7 +196,7 @@ $baseUrl = "/Plateforme-NdigitMarket/ndigit/back-end/routes/api.php?url=";
                 </a>
 
                 <a href="<?= $baseUrl ?>notifications" 
-                   class="sidebar-link <?= $currentPage === 'notifications' ? 'active' : '' ?>">
+                   class="sidebar-link <?= $currentPage === 'notificationsss' ? 'active' : '' ?>">
                     <i class="fas fa-bell"></i> Notifications
                 </a>
 

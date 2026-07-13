@@ -1,5 +1,4 @@
 <?php
-// App/Controllers/Admin/NotificationController.php
 
 require_once __DIR__ . '/../../Models/NotificationModel.php';
 
@@ -151,7 +150,7 @@ class NotificationController {
 
     private function render($view, $data = []) {
         extract($data);
-        $viewPath = __DIR__ . '/../Views/' . $view . '.php';
+        $viewPath = __DIR__ . '/../../Views/' . $view . '.php';
         if (file_exists($viewPath)) {
             include $viewPath;
         }

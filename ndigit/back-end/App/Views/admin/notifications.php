@@ -58,6 +58,13 @@
             </div>
 
             <!-- Stats notifications -->
+            <?php
+            // Récupérer les stats depuis le contrôleur
+            $totalNonLues = $stats['unread'] ?? 0;
+            $demandesVendeur = $stats['by_type']['vendor_request'] ?? 0;
+            $commandes = ($stats['by_type']['order_high'] ?? 0) + ($stats['by_type']['order_problem'] ?? 0);
+            $alertesSecurite = $stats['by_type']['security_alert'] ?? 0;
+            ?>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
@@ -66,7 +73,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">NON LUES</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $totalNonLues ?></p>
                     <p class="text-xs text-gray-400 mt-1">Notifications non lues</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -76,7 +83,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">VENDEURS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $demandesVendeur ?></p>
                     <p class="text-xs text-gray-400 mt-1">Demandes vendeur</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -86,8 +93,8 @@
                         </div>
                         <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">COMMANDES</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
-                    <p class="text-xs text-gray-400 mt-1">Nouvelles commandes</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $commandes ?></p>
+                    <p class="text-xs text-gray-400 mt-1">Commandes non traitées</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
@@ -96,7 +103,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">SÉCURITÉ</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $alertesSecurite ?></p>
                     <p class="text-xs text-gray-400 mt-1">Alertes sécurité</p>
                 </div>
             </div>

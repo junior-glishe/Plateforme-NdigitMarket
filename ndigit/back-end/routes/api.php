@@ -183,7 +183,6 @@ switch ($url) {
         // ============================================
     // NOTIFICATIONS
     // ============================================
-        
     case 'notifications':
         require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
         $controller = new NotificationController($pdo);
