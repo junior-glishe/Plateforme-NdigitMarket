@@ -132,199 +132,166 @@
     </div>
 </div>
             <!-- Graphiques principaux -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                <!-- Évolution des inscriptions -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                                <i class="fas fa-user-plus text-blue-500"></i> Évolution des inscriptions
-                            </h4>
-                            <p class="text-[11px] text-gray-400 mt-0.5">Nouveaux utilisateurs par période</p>
-                        </div>
-                        <div class="flex gap-1">
-                            <button class="chart-toggle-btn active px-2 py-1 text-[10px] font-semibold text-[#0EA486] bg-[#0EA486]/10 rounded" data-chart="inscriptions" data-period="week">Sem</button>
-                            <button class="chart-toggle-btn px-2 py-1 text-[10px] font-medium text-gray-500 hover:bg-gray-100 rounded" data-chart="inscriptions" data-period="month">Mois</button>
-                        </div>
-                    </div>
-                    <div class="h-64">
-                        <canvas id="inscriptionsChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Évolution des ventes -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                                <i class="fas fa-chart-area text-emerald-500"></i> Évolution des ventes
-                            </h4>
-                            <p class="text-[11px] text-gray-400 mt-0.5">Nombre de ventes et CA</p>
-                        </div>
-                        <div class="flex gap-1">
-                            <button class="chart-toggle-btn active px-2 py-1 text-[10px] font-semibold text-[#0EA486] bg-[#0EA486]/10 rounded" data-chart="ventes" data-period="week">Sem</button>
-                            <button class="chart-toggle-btn px-2 py-1 text-[10px] font-medium text-gray-500 hover:bg-gray-100 rounded" data-chart="ventes" data-period="month">Mois</button>
-                        </div>
-                    </div>
-                    <div class="h-64">
-                        <canvas id="ventesChart"></canvas>
-                    </div>
-                    <div class="flex items-center gap-4 mt-3 text-xs">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-[#0EA486] rounded"></span> CA (FCFA)</span>
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Ventes</span>
-                    </div>
-                </div>
+           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <!-- Évolution des inscriptions -->
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-user-plus text-blue-500"></i> Évolution des inscriptions
+                </h4>
+                <p class="text-[11px] text-gray-400 mt-0.5">Nouveaux utilisateurs par période</p>
             </div>
+                        <!-- Évolution des inscriptions -->
+            <div class="flex gap-1">
+                <a href="#" class="chart-period-link px-2 py-1 text-[10px] font-semibold <?= $chartPeriod === 'week' ? 'text-[#0EA486] bg-[#0EA486]/10' : 'text-gray-500' ?> rounded" data-period="week">
+                    Sem
+                </a>
+                <a href="#" class="chart-period-link px-2 py-1 text-[10px] font-medium <?= $chartPeriod === 'month' ? 'text-[#0EA486] bg-[#0EA486]/10' : 'text-gray-500' ?> hover:bg-gray-100 rounded" data-period="month">
+                    Mois
+                </a>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="inscriptionsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Évolution des ventes -->
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-chart-area text-emerald-500"></i> Évolution des ventes
+                </h4>
+                <p class="text-[11px] text-gray-400 mt-0.5">Nombre de ventes et CA</p>
+            </div>
+                        <!-- Évolution des ventes -->
+            <div class="flex gap-1">
+                <a href="#" class="chart-period-link px-2 py-1 text-[10px] <?= $chartPeriod === 'week' ? 'font-semibold text-[#0EA486] bg-[#0EA486]/10' : 'font-medium text-gray-500' ?> rounded" data-period="week">
+                    Sem
+                </a>
+                <a href="#" class="chart-period-link px-2 py-1 text-[10px] <?= $chartPeriod === 'month' ? 'font-semibold text-[#0EA486] bg-[#0EA486]/10' : 'font-medium text-gray-500' ?> hover:bg-gray-100 rounded" data-period="month">
+                    Mois
+                </a>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="ventesChart"></canvas>
+        </div>
+        <div class="flex items-center gap-4 mt-3 text-xs">
+            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-[#0EA486] rounded"></span> CA (FCFA)</span>
+            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Ventes</span>
+        </div>
+    </div>
+</div>
 
             <!-- Top produits et catégories -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                <!-- Produits les plus vendus -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-trophy text-amber-500"></i> Top produits vendus
-                        </h4>
-                        <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 font-bold text-xs">1</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-</p>
-                                <p class="text-[10px] text-gray-400">ventes</p>
-                            </div>
+            <!-- Top produits et catégories -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+    <!-- Produits les plus vendus -->
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                <i class="fas fa-trophy text-amber-500"></i> Top produits vendus
+            </h4>
+            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+        </div>
+        <div class="space-y-3">
+            <?php if (!empty($topProducts)): ?>
+                <?php foreach ($topProducts as $index => $product): ?>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 <?= $index === 0 ? 'bg-amber-100 text-amber-600' : ($index === 1 ? 'bg-gray-100 text-gray-600' : ($index === 2 ? 'bg-orange-100 text-orange-600' : 'bg-gray-50 text-gray-500')) ?> rounded-lg flex items-center justify-center font-bold text-xs">
+                            <?= $index + 1 ?>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 font-bold text-xs">2</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-</p>
-                                <p class="text-[10px] text-gray-400">ventes</p>
-                            </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-[#0F172A] truncate"><?= htmlspecialchars($product['nom'] ?? '-') ?></p>
+                            <p class="text-[10px] text-gray-400"><?= htmlspecialchars($product['vendeur'] ?? '-') ?></p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 font-bold text-xs">3</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-</p>
-                                <p class="text-[10px] text-gray-400">ventes</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">4</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-</p>
-                                <p class="text-[10px] text-gray-400">ventes</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">5</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-</p>
-                                <p class="text-[10px] text-gray-400">ventes</p>
-                            </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-[#0EA486]"><?= $product['ventes'] ?? 0 ?></p>
+                            <p class="text-[10px] text-gray-400">ventes</p>
                         </div>
                     </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center py-4 text-gray-400">
+                    <i class="fas fa-box-open text-2xl opacity-30"></i>
+                    <p class="text-xs mt-1">Aucun produit vendu</p>
                 </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                <!-- Produits les plus vus -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-eye text-blue-500"></i> Top produits vus
-                        </h4>
-                        <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-xs">1</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-blue-600">-</p>
-                                <p class="text-[10px] text-gray-400">vues</p>
-                            </div>
+    <!-- Produits les plus vus -->
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                <i class="fas fa-eye text-blue-500"></i> Top produits vus
+            </h4>
+            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+        </div>
+        <div class="space-y-3">
+            <?php if (!empty($topViewedProducts)): ?>
+                <?php foreach ($topViewedProducts as $index => $product): ?>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 <?= $index === 0 ? 'bg-blue-100 text-blue-600' : ($index === 1 ? 'bg-blue-50 text-blue-500' : ($index === 2 ? 'bg-blue-50 text-blue-500' : 'bg-gray-50 text-gray-500')) ?> rounded-lg flex items-center justify-center font-bold text-xs">
+                            <?= $index + 1 ?>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 font-bold text-xs">2</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-blue-600">-</p>
-                                <p class="text-[10px] text-gray-400">vues</p>
-                            </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-[#0F172A] truncate"><?= htmlspecialchars($product['nom'] ?? '-') ?></p>
+                            <p class="text-[10px] text-gray-400"><?= htmlspecialchars($product['vendeur'] ?? '-') ?></p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 font-bold text-xs">3</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-blue-600">-</p>
-                                <p class="text-[10px] text-gray-400">vues</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">4</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-blue-600">-</p>
-                                <p class="text-[10px] text-gray-400">vues</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">5</div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-semibold text-[#0F172A] truncate">-</p>
-                                <p class="text-[10px] text-gray-400">-</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-blue-600">-</p>
-                                <p class="text-[10px] text-gray-400">vues</p>
-                            </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-blue-600"><?= $product['vues'] ?? 0 ?></p>
+                            <p class="text-[10px] text-gray-400">vues</p>
                         </div>
                     </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center py-4 text-gray-400">
+                    <i class="fas fa-eye-slash text-2xl opacity-30"></i>
+                    <p class="text-xs mt-1">Aucune vue de produit</p>
                 </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                <!-- Catégories performantes -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-tags text-purple-500"></i> Top catégories
-                        </h4>
-                        <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+    <!-- Catégories performantes -->
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                <i class="fas fa-tags text-purple-500"></i> Top catégories
+            </h4>
+            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+        </div>
+        <div class="space-y-3">
+            <?php if (!empty($topCategories)): ?>
+                <?php 
+                $maxVentes = max(array_column($topCategories, 'ventes'));
+                $maxVentes = $maxVentes > 0 ? $maxVentes : 1;
+                ?>
+                <?php foreach ($topCategories as $index => $category): ?>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-[#0F172A]"><?= htmlspecialchars($category['nom'] ?? '-') ?></span>
+                            <span class="text-xs font-bold text-[#0EA486]"><?= $category['ventes'] ?? 0 ?> ventes</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                            <div class="bg-purple-500 h-full rounded-full transition-all duration-500" 
+                                 style="width: <?= max(5, ($category['ventes'] ?? 0) / $maxVentes * 100) ?>%;"></div>
+                        </div>
                     </div>
-                    <div class="h-48">
-                        <canvas id="categoriesChart"></canvas>
-                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="text-center py-4 text-gray-400">
+                    <i class="fas fa-tags text-2xl opacity-30"></i>
+                    <p class="text-xs mt-1">Aucune catégorie</p>
                 </div>
-            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
             <!-- Répartition géographique -->
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -1039,152 +1006,10 @@
             });
         })();
 
-        // Chart.js - Graphique inscriptions (vide)
-        (function() {
-            const ctx = document.getElementById('inscriptionsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-                    datasets: [{
-                        label: 'Inscriptions',
-                        data: [0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#3B82F6',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
-        })();
+        
+        
 
-        // Chart.js - Graphique ventes (vide)
-        (function() {
-            const ctx = document.getElementById('ventesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-                    datasets: [
-                        {
-                            label: 'CA (FCFA)',
-                            data: [0, 0, 0, 0, 0, 0, 0],
-                            borderColor: '#0EA486',
-                            backgroundColor: 'rgba(14, 164, 134, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointBackgroundColor: '#0EA486',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Ventes',
-                            data: [0, 0, 0, 0, 0, 0, 0],
-                            borderColor: '#3B82F6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.4,
-                            pointBackgroundColor: '#3B82F6',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { size: 10 } },
-                            position: 'left'
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } },
-                            position: 'right'
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
-        })();
-
-        // Chart.js - Graphique catégories (vide)
-        (function() {
-            const ctx = document.getElementById('categoriesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['WordPress', 'HTML', 'PHP', 'React', 'PSD', 'Plugin'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#3B82F6',
-                            '#F97316',
-                            '#8B5CF6',
-                            '#06B6D4',
-                            '#EC4899',
-                            '#F59E0B'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '65%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 10,
-                                font: { size: 10 },
-                                padding: 10
-                            }
-                        }
-                    }
-                }
-            });
-        })();
-
+        
         // Chart.js - Graphique géographique (vide)
         (function() {
             const ctx = document.getElementById('geoChart').getContext('2d');
@@ -1354,6 +1179,320 @@
                 document.body.style.overflow = '';
             }
         });
+
+
+// ============================================
+// GRAPHIQUES LINEAIRES PURS
+// ============================================
+
+// Données initiales PHP
+let chartData = <?= json_encode($chartData) ?>;
+
+// Variables pour les instances
+let inscriptionsChart = null;
+let ventesChart = null;
+let currentPeriod = 'week';
+
+// ============================================
+// 1. GRAPHIQUE DES INSCRIPTIONS - LINEAIRE PUR
+// ============================================
+function createInscriptionsChart(data) {
+    const canvas = document.getElementById('inscriptionsChart');
+    if (!canvas) return;
+    
+    if (inscriptionsChart) {
+        inscriptionsChart.destroy();
+        inscriptionsChart = null;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Gradient pour le remplissage
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.15)');
+    gradient.addColorStop(0.6, 'rgba(59, 130, 246, 0.05)');
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+    
+    inscriptionsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            datasets: [{
+                label: 'Inscriptions',
+                data: data.inscriptions || [0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#3B82F6',
+                backgroundColor: gradient,
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0, // 🔥 PAS DE LISSAGE
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#3B82F6',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1.5,
+                pointHoverBackgroundColor: '#1D4ED8',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2,
+                spanGaps: true,
+                stepped: false // 🔥 LINEAIRE
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    titleColor: '#0F172A',
+                    bodyColor: '#3B82F6',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 14, weight: '500' },
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { 
+                        color: 'rgba(0,0,0,0.05)',
+                        drawBorder: false,
+                        drawTicks: false
+                    },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter' },
+                        color: '#6B7280',
+                        padding: 10,
+                        stepSize: 1
+                    },
+                    border: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter' },
+                        color: '#6B7280',
+                        padding: 10
+                    },
+                    border: { display: false }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+}
+
+// ============================================
+// 2. GRAPHIQUE DES VENTES - 2 LINEAIRES
+// ============================================
+function createVentesChart(data) {
+    const canvas = document.getElementById('ventesChart');
+    if (!canvas) return;
+    
+    if (ventesChart) {
+        ventesChart.destroy();
+        ventesChart = null;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Gradient pour CA
+    const gradientCA = ctx.createLinearGradient(0, 0, 0, 300);
+    gradientCA.addColorStop(0, 'rgba(14, 164, 134, 0.15)');
+    gradientCA.addColorStop(0.6, 'rgba(14, 164, 134, 0.05)');
+    gradientCA.addColorStop(1, 'rgba(14, 164, 134, 0.0)');
+    
+    ventesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            datasets: [
+                {
+                    label: 'CA (FCFA)',
+                    data: data.ca || [0, 0, 0, 0, 0, 0, 0],
+                    borderColor: '#0EA486',
+                    backgroundColor: gradientCA,
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0, // 🔥 PAS DE LISSAGE
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#0EA486',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 1.5,
+                    pointHoverBackgroundColor: '#047857',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2,
+                    yAxisID: 'y',
+                    spanGaps: true,
+                    stepped: false // 🔥 LINEAIRE
+                },
+                {
+                    label: 'Ventes',
+                    data: data.ventes || [0, 0, 0, 0, 0, 0, 0],
+                    borderColor: '#3B82F6',
+                    borderWidth: 2.5,
+                    fill: false,
+                    tension: 0, // 🔥 PAS DE LISSAGE
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#3B82F6',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 1.5,
+                    pointHoverBackgroundColor: '#1D4ED8',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2,
+                    yAxisID: 'y1',
+                    spanGaps: true,
+                    stepped: false // 🔥 LINEAIRE
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: { size: 13, weight: '600', family: 'Inter' },
+                        color: '#0F172A',
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                        boxHeight: 8
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    titleColor: '#0F172A',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 14, weight: '500' },
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            if (context.dataset.label === 'CA (FCFA)') {
+                                return 'CA: ' + new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                            }
+                            return 'Ventes: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { 
+                        color: 'rgba(0,0,0,0.05)',
+                        drawBorder: false,
+                        drawTicks: false
+                    },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter' },
+                        color: '#0EA486',
+                        padding: 10,
+                        stepSize: 1
+                    },
+                    border: { display: false },
+                    position: 'left'
+                },
+                y1: {
+                    beginAtZero: true,
+                    grid: { display: false },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter' },
+                        color: '#3B82F6',
+                        padding: 10,
+                        stepSize: 1
+                    },
+                    border: { display: false },
+                    position: 'right'
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter' },
+                        color: '#6B7280',
+                        padding: 10
+                    },
+                    border: { display: false }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+}
+
+// ============================================
+// 3. CHARGER LES DONNÉES
+// ============================================
+function loadChartData(period) {
+    currentPeriod = period;
+    console.log('🔄 Chargement des données pour:', period);
+    
+    fetch('api.php?url=stats_chart_data&period=' + period)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                createInscriptionsChart(data.data);
+                createVentesChart(data.data);
+                showToast('Succès', 'Graphiques mis à jour', 'success');
+            } else {
+                console.error('❌ Erreur:', data.error);
+                showToast('Erreur', 'Impossible de charger les données', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Erreur fetch:', error);
+            showToast('Erreur', 'Erreur de connexion', 'error');
+        });
+}
+
+// ============================================
+// 4. INITIALISATION
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    createInscriptionsChart(chartData);
+    createVentesChart(chartData);
+    
+    document.querySelectorAll('.chart-period-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const period = this.dataset.period || 'week';
+            
+            if (period === currentPeriod) return;
+            
+            document.querySelectorAll('.chart-period-link').forEach(l => {
+                const isActive = l.dataset.period === period;
+                l.classList.toggle('text-[#0EA486]', isActive);
+                l.classList.toggle('bg-[#0EA486]/10', isActive);
+                l.classList.toggle('font-semibold', isActive);
+                l.classList.toggle('text-gray-500', !isActive);
+                l.classList.toggle('font-medium', !isActive);
+            });
+            
+            loadChartData(period);
+        });
+    });
+});
+
+console.log('✅ Graphiques linéaires prêts');
 
 
     </script>

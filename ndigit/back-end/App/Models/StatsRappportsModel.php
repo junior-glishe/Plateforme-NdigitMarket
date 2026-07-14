@@ -12,9 +12,6 @@ class StatsRappportsModel {
     // STATISTIQUES GÉNÉRALES
     // ============================================
 
-    /**
-     * Récupérer les statistiques générales
-     */
     public function getGeneralStats($period = 'month') {
         $stats = [
             'inscriptions' => 0,
@@ -31,7 +28,6 @@ class StatsRappportsModel {
         ];
 
         try {
-            // Nombre d'inscriptions (utilisateurs non admins)
             $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM utilisateur WHERE type != 'admin'");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $stats['inscriptions'] = (int)($result['total'] ?? 0);
@@ -40,7 +36,6 @@ class StatsRappportsModel {
         }
 
         try {
-            // Nombre de commandes (ventes)
             $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM commande");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $stats['ventes'] = (int)($result['total'] ?? 0);
@@ -49,7 +44,6 @@ class StatsRappportsModel {
         }
 
         try {
-            // Chiffre d'affaires (somme des prix des commandes)
             $stmt = $this->pdo->query("SELECT SUM(CAST(prix AS DECIMAL(10,2))) as total FROM commande");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $stats['ca'] = (float)($result['total'] ?? 0);
@@ -57,12 +51,10 @@ class StatsRappportsModel {
             error_log("Erreur CA: " . $e->getMessage());
         }
 
-        // Taux de conversion
         $stats['taux_conversion'] = $stats['inscriptions'] > 0 ? round(($stats['ventes'] / $stats['inscriptions']) * 100, 1) : 0;
 
-        // Calcul des évolutions (mois précédent vs mois actuel)
+        // Calcul des évolutions
         try {
-            // Évolution des inscriptions
             $stmt = $this->pdo->query("
                 SELECT COUNT(*) as total 
                 FROM utilisateur 
@@ -87,7 +79,6 @@ class StatsRappportsModel {
         }
 
         try {
-            // Évolution des ventes
             $stmt = $this->pdo->query("
                 SELECT COUNT(*) as total 
                 FROM commande 
@@ -110,7 +101,6 @@ class StatsRappportsModel {
         }
 
         try {
-            // Évolution du CA
             $stmt = $this->pdo->query("
                 SELECT SUM(CAST(prix AS DECIMAL(10,2))) as total 
                 FROM commande 
@@ -139,9 +129,6 @@ class StatsRappportsModel {
     // TOP PRODUITS
     // ============================================
 
-    /**
-     * Récupérer les top produits vendus
-     */
     public function getTopProducts($limit = 5) {
         try {
             $stmt = $this->pdo->prepare("
@@ -172,9 +159,6 @@ class StatsRappportsModel {
     // CATÉGORIES PERFORMANTES
     // ============================================
 
-    /**
-     * Récupérer les catégories les plus vendues
-     */
     public function getTopCategories() {
         try {
             $stmt = $this->pdo->query("
@@ -200,12 +184,8 @@ class StatsRappportsModel {
     // RÉPARTITION GÉOGRAPHIQUE
     // ============================================
 
-    /**
-     * Récupérer la répartition géographique des acheteurs
-     */
     public function getGeoDistribution() {
         try {
-            // Vérifier si la colonne pays existe
             $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
             if ($stmt->rowCount() > 0) {
                 $stmt = $this->pdo->query("
@@ -228,7 +208,6 @@ class StatsRappportsModel {
             error_log("Erreur geo: " . $e->getMessage());
         }
         
-        // Données par défaut
         return [
             ['pays' => 'Sénégal', 'total' => 0, 'pourcentage' => 0],
             ['pays' => 'Côte d\'Ivoire', 'total' => 0, 'pourcentage' => 0],
@@ -242,9 +221,6 @@ class StatsRappportsModel {
     // RAPPORTS
     // ============================================
 
-    /**
-     * Récupérer le rapport de ventes
-     */
     public function getSalesReport($startDate, $endDate) {
         try {
             $stmt = $this->pdo->prepare("
@@ -272,9 +248,6 @@ class StatsRappportsModel {
         }
     }
 
-    /**
-     * Récupérer le rapport financier
-     */
     public function getFinancialReport($startDate, $endDate) {
         try {
             $stmt = $this->pdo->prepare("
@@ -298,9 +271,6 @@ class StatsRappportsModel {
         }
     }
 
-    /**
-     * Récupérer le rapport utilisateurs
-     */
     public function getUsersReport($startDate, $endDate) {
         try {
             $stmt = $this->pdo->prepare("
@@ -319,9 +289,6 @@ class StatsRappportsModel {
         }
     }
 
-    /**
-     * Récupérer le rapport vendeurs
-     */
     public function getVendorsReport($startDate, $endDate) {
         try {
             $stmt = $this->pdo->prepare("
@@ -353,15 +320,11 @@ class StatsRappportsModel {
     // EXPORTS
     // ============================================
 
-    /**
-     * Exporter les données en CSV
-     */
     public function exportToCSV($data, $filename) {
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=' . $filename . '.csv');
         
         $output = fopen('php://output', 'w');
-        
         fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
         
         if (!empty($data)) {
@@ -375,54 +338,104 @@ class StatsRappportsModel {
         exit();
     }
 
-    /**
- * Récupérer les données d'évolution (7 derniers jours)
- */
-public function getEvolutionData() {
-    $data = [
-        'jours' => [],
-        'inscriptions' => [],
-        'ventes' => [],
-        'ca' => []
-    ];
+    // ============================================
+    // GRAPHIQUES - DONNÉES D'ÉVOLUTION
+    // ============================================
 
-    // 7 derniers jours
-    for ($i = 6; $i >= 0; $i--) {
-        $date = date('Y-m-d', strtotime("-$i days"));
-        $data['jours'][] = date('D', strtotime("-$i days"));
+    public function getChartData($period = 'week') {
+        $data = [
+            'labels' => [],
+            'inscriptions' => [],
+            'ventes' => [],
+            'ca' => []
+        ];
+
+        $days = $period === 'week' ? 7 : 30;
         
-        // Inscriptions du jour (si colonne created_at existe)
+        // Récupérer les commandes par jour
+        $commandesParJour = [];
         try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) as total 
-                FROM utilisateur 
-                WHERE type != 'admin' 
-                AND DATE(created_at) = ?
+            $stmt = $this->pdo->query("
+                SELECT 
+                    DATE(date_commande) as jour,
+                    COUNT(*) as total_ventes,
+                    SUM(CAST(prix AS DECIMAL(10,2))) as total_ca
+                FROM commande 
+                WHERE date_commande >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
+                GROUP BY DATE(date_commande)
             ");
-            $stmt->execute([$date]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $data['inscriptions'][] = (int)($result['total'] ?? 0);
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $commandesParJour[$row['jour']] = [
+                    'ventes' => (int)($row['total_ventes'] ?? 0),
+                    'ca' => (float)($row['total_ca'] ?? 0)
+                ];
+            }
         } catch (PDOException $e) {
-            $data['inscriptions'][] = rand(0, 20); // Données fictives si pas de colonne
+            error_log("Erreur commandes: " . $e->getMessage());
+        }
+        
+        // Récupérer les inscriptions par jour (si possible)
+        $inscriptionsParJour = [];
+        try {
+            $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'created_at'");
+            if ($stmt->rowCount() > 0) {
+                $stmt = $this->pdo->query("
+                    SELECT 
+                        DATE(created_at) as jour,
+                        COUNT(*) as total
+                    FROM utilisateur 
+                    WHERE type != 'admin'
+                    AND created_at >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
+                    GROUP BY DATE(created_at)
+                ");
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $inscriptionsParJour[$row['jour']] = (int)$row['total'];
+                }
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur inscriptions: " . $e->getMessage());
+        }
+        
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            
+            $data['labels'][] = $period === 'week' ? date('D', strtotime("-$i days")) : date('d/m', strtotime("-$i days"));
+            $data['inscriptions'][] = $inscriptionsParJour[$date] ?? 0;
+            $data['ventes'][] = $commandesParJour[$date]['ventes'] ?? 0;
+            $data['ca'][] = $commandesParJour[$date]['ca'] ?? 0;
         }
 
-        // Ventes du jour
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT COUNT(*) as total, SUM(CAST(prix AS DECIMAL(10,2))) as ca
-                FROM commande 
-                WHERE DATE(date_commande) = ?
-            ");
-            $stmt->execute([$date]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $data['ventes'][] = (int)($result['total'] ?? 0);
-            $data['ca'][] = (float)($result['ca'] ?? 0);
-        } catch (PDOException $e) {
-            $data['ventes'][] = rand(0, 15);
-            $data['ca'][] = rand(1000, 50000);
-        }
+        return $data;
     }
 
-    return $data;
+
+    /**
+ * Récupérer les top produits vus
+ */
+public function getTopViewedProducts($limit = 5) {
+    try {
+        // Si la table produit_views existe
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                p.id,
+                p.nom_article as nom,
+                p.prix,
+                p.image,
+                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
+                COUNT(pv.id) as vues
+            FROM produits p
+            LEFT JOIN produit_views pv ON pv.produit_id = p.id
+            LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
+            GROUP BY p.id
+            ORDER BY vues DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Si la table n'existe pas, retourner les produits sans les vues
+        error_log("Erreur top viewed: " . $e->getMessage());
+        return [];
+    }
 }
 }

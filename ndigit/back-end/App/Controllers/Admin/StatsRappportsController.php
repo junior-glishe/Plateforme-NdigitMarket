@@ -15,72 +15,70 @@ class StatsRappportsController {
     // ============================================
     // PAGE PRINCIPALE
     // ============================================
-public function index() {
+  public function index() {
     $period = $_GET['period'] ?? 'month';
+    $chartPeriod = $_GET['chart_period'] ?? 'week';
     
     // Récupérer les stats depuis le modèle
     $stats = $this->model->getGeneralStats($period);
     $topProducts = $this->model->getTopProducts(5);
+    $topViewedProducts = $this->model->getTopViewedProducts(5);
     $topCategories = $this->model->getTopCategories();
     $geoDistribution = $this->model->getGeoDistribution();
     
-    // Récupérer les données d'évolution
-    $evolutionData = $this->model->getEvolutionData();
+    // Récupérer les données pour les graphiques
+    $chartData = $this->model->getChartData($chartPeriod);
     
     $this->render('admin/rapport-stat', [
         'stats' => $stats,
         'topProducts' => $topProducts,
+        'topViewedProducts' => $topViewedProducts,
         'topCategories' => $topCategories,
         'geoDistribution' => $geoDistribution,
-        'evolutionData' => $evolutionData
+        'chartData' => $chartData,
+        'chartPeriod' => $chartPeriod
     ]);
 }
-
 
     // ============================================
     // API STATISTIQUES
     // ============================================
 
-    /**
-     * Récupérer les statistiques générales
-     */
     public function getGeneralStats() {
         $period = $_GET['period'] ?? 'month';
         $stats = $this->model->getGeneralStats($period);
         $this->jsonResponse(['success' => true, 'data' => $stats]);
     }
 
-    /**
-     * Récupérer les top produits
-     */
     public function getTopProducts() {
         $limit = (int)($_GET['limit'] ?? 5);
         $data = $this->model->getTopProducts($limit);
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
-    /**
-     * Récupérer les top produits vus
-     */
     public function getTopViewedProducts() {
         $limit = (int)($_GET['limit'] ?? 5);
         $data = $this->model->getTopViewedProducts($limit);
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
-    /**
-     * Récupérer les catégories performantes
-     */
     public function getTopCategories() {
         $data = $this->model->getTopCategories();
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
-    /**
-     * Récupérer la répartition géographique
-     */
     public function getGeoDistribution() {
         $data = $this->model->getGeoDistribution();
+        $this->jsonResponse(['success' => true, 'data' => $data]);
+    }
+
+    // ============================================
+    // API GRAPHIQUES - MISE À JOUR DYNAMIQUE
+    // ============================================
+
+    public function getChartDataAPI() {
+        $period = $_GET['period'] ?? 'week';
+        $data = $this->model->getChartData($period);
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
@@ -88,9 +86,6 @@ public function index() {
     // API RAPPORTS
     // ============================================
 
-    /**
-     * Générer un rapport de ventes
-     */
     public function generateSalesReport() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
@@ -108,12 +103,10 @@ public function index() {
             return;
         }
 
-        // Résumé
         $totalVentes = count($data);
         $caTotal = array_sum(array_column($data, 'prix'));
         $panierMoyen = $totalVentes > 0 ? round($caTotal / $totalVentes, 2) : 0;
         
-        // Meilleur jour
         $jours = [];
         foreach ($data as $row) {
             $jours[$row['date']] = ($jours[$row['date']] ?? 0) + $row['prix'];
@@ -133,9 +126,6 @@ public function index() {
         ]);
     }
 
-    /**
-     * Générer un rapport financier
-     */
     public function generateFinancialReport() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
@@ -153,7 +143,6 @@ public function index() {
             return;
         }
 
-        // Résumé
         $caTotal = array_sum(array_column($data, 'ca'));
         $commissionPlateforme = array_sum(array_column($data, 'commission_plateforme'));
         $commissionVendeurs = array_sum(array_column($data, 'commission_vendeurs'));
@@ -173,9 +162,6 @@ public function index() {
         ]);
     }
 
-    /**
-     * Générer un rapport utilisateurs
-     */
     public function generateUsersReport() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
@@ -193,7 +179,6 @@ public function index() {
             return;
         }
 
-        // Résumé
         $totalInscriptions = array_sum(array_column($data, 'inscriptions'));
         $totalConnexions = array_sum(array_column($data, 'connexions'));
         $totalAcheteurs = array_sum(array_column($data, 'acheteurs_actifs'));
@@ -213,9 +198,6 @@ public function index() {
         ]);
     }
 
-    /**
-     * Générer un rapport vendeurs
-     */
     public function generateVendorsReport() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
@@ -233,7 +215,6 @@ public function index() {
             return;
         }
 
-        // Résumé
         $totalVendeurs = count($data);
         $totalProduits = array_sum(array_column($data, 'produits'));
         $totalVentes = array_sum(array_column($data, 'ventes'));
@@ -257,9 +238,6 @@ public function index() {
     // EXPORT
     // ============================================
 
-    /**
-     * Exporter un rapport
-     */
     public function exportReport() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
@@ -309,7 +287,7 @@ public function index() {
         ]);
     }
 
-    // ==========================================   ==
+    // ============================================
     // FONCTIONS UTILITAIRES
     // ============================================
 
