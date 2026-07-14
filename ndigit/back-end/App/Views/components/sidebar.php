@@ -202,8 +202,8 @@ $baseUrl = "/Plateforme-NdigitMarket/ndigit/back-end/routes/api.php?url=";
 
                 <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analyse & Système</h4>
 
-                <a href="<?= $baseUrl ?>statistiques" 
-                   class="sidebar-link <?= $currentPage === 'statistiques' ? 'active' : '' ?>">
+                <a href="<?= $baseUrl ?>rapport-stat" 
+                   class="sidebar-link <?= $currentPage === 'rapport-stat' ? 'active' : '' ?>">
                     <i class="fas fa-chart-pie"></i> Statistique & rapport
                 </a>
 

@@ -238,61 +238,123 @@ switch ($url) {
         $controller = new NotificationController($pdo);        $controller->updateTemplate();
         break;
         
-// ============================================
-// CAMPAGNES EMAILS EN MASSE
-// ============================================
-case 'campaign_stats':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->getCampaignStats();
-    break;
+    // ============================================
+    // CAMPAGNES EMAILS EN MASSE
+    // ============================================
+    case 'campaign_stats':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->getCampaignStats();
+        break;
 
-case 'campaign_duplicate':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->duplicateCampaign();
-    break;
+    case 'campaign_duplicate':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->duplicateCampaign();
+        break;
 
-case 'campaign_cancel':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->cancelCampaign();
-    break;
+    case 'campaign_cancel':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->cancelCampaign();
+        break;
 
-case 'campaign_export_csv':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->exportCampaignCSV();
-    break;
+    case 'campaign_export_csv':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->exportCampaignCSV();
+        break;
 
-// ============================================
-// CAMPAGNES EMAILS EN MASSE - COMPOSER
-// ============================================
-case 'campaign_send':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->sendCampaign();
-    break;
+    // ============================================
+    // CAMPAGNES EMAILS EN MASSE - COMPOSER
+    // ============================================
+    case 'campaign_send':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->sendCampaign();
+        break;
 
-case 'campaign_test':
-    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
-    $controller = new NotificationController($pdo);
-    $controller->testCampaign();
-    break;
+    case 'campaign_test':
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);
+        $controller->testCampaign();
+        break;
 
 
-//     case 'rapport_stats':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
-        
-//     case 'avis_commentaires':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
-        
+    //    // ============================================
+    // STATISTIQUES ET RAPPORTS
+    // ============================================
+
+    case 'rapport-stat':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->index();
+        break;
+    // Statistiques générales
+    case 'stats_general':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->getGeneralStats();
+        break;
+
+    // Top produits
+    case 'stats_top_products':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->getTopProducts();
+        break;
+
+    // Top produits vus
+    case 'stats_top_viewed':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->getTopViewedProducts();
+        break;
+
+    // Top catégories
+    case 'stats_top_categories':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->getTopCategories();
+        break;
+
+    // Répartition géographique
+    case 'stats_geo':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->getGeoDistribution();
+        break;
+
+    // Rapports
+    case 'report_sales':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->generateSalesReport();
+        break;
+
+    case 'report_financial':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->generateFinancialReport();
+        break;
+
+    case 'report_users':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->generateUsersReport();
+        break;
+
+    case 'report_vendors':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->generateVendorsReport();
+        break;
+
+    case 'report_export':
+        require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+        $controller = new StatsRappportsController($pdo);
+        $controller->exportReport();
+        break;
 //    case 'parametres_systemes':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
 //         $controller = new LoginController($pdo);

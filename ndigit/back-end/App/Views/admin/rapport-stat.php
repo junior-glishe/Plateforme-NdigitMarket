@@ -61,58 +61,76 @@
                 </div>
             </div>
 
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                            <i class="fas fa-arrow-up text-[8px]"></i> 
-                        </span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">-</p>
-                    <p class="text-xs text-gray-400 mt-1">Inscriptions totales</p>
-                </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                            <i class="fas fa-arrow-up text-[8px]"></i> 
-                        </span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">-</p>
-                    <p class="text-xs text-gray-400 mt-1">Ventes totales</p>
-                </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
-                            <i class="fas fa-wallet"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                            <i class="fas fa-arrow-up text-[8px]"></i> 
-                        </span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">- FCFA</p>
-                    <p class="text-xs text-gray-400 mt-1">Chiffre d'affaires</p>
-                </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                            <i class="fas fa-percentage"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                            <i class="fas fa-arrow-down text-[8px]"></i> 
-                        </span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">-%</p>
-                    <p class="text-xs text-gray-400 mt-1">Taux de conversion</p>
-                </div>
+           <!-- KPI Cards avec données PHP -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+    <!-- Inscriptions -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                <i class="fas fa-users"></i>
             </div>
+            <span class="text-[10px] font-semibold <?= ($stats['evolution_inscriptions'] ?? 0) >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' ?> px-2 py-1 rounded-full">
+                <i class="fas fa-<?= ($stats['evolution_inscriptions'] ?? 0) >= 0 ? 'arrow-up' : 'arrow-down' ?> text-[8px]"></i> 
+                <?= abs($stats['evolution_inscriptions'] ?? 0) ?>%
+            </span>
+        </div>
+        <p class="text-2xl font-bold text-[#0F172A]">
+            <?= number_format($stats['inscriptions'] ?? 0, 0, ',', ' ') ?>
+        </p>
+        <p class="text-xs text-gray-400 mt-1">Inscriptions totales</p>
+    </div>
 
+    <!-- Ventes -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <span class="text-[10px] font-semibold <?= ($stats['evolution_ventes'] ?? 0) >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' ?> px-2 py-1 rounded-full">
+                <i class="fas fa-<?= ($stats['evolution_ventes'] ?? 0) >= 0 ? 'arrow-up' : 'arrow-down' ?> text-[8px]"></i> 
+                <?= abs($stats['evolution_ventes'] ?? 0) ?>%
+            </span>
+        </div>
+        <p class="text-2xl font-bold text-[#0F172A]">
+            <?= number_format($stats['ventes'] ?? 0, 0, ',', ' ') ?>
+        </p>
+        <p class="text-xs text-gray-400 mt-1">Ventes totales</p>
+    </div>
+
+    <!-- Chiffre d'affaires -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <span class="text-[10px] font-semibold <?= ($stats['evolution_ca'] ?? 0) >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' ?> px-2 py-1 rounded-full">
+                <i class="fas fa-<?= ($stats['evolution_ca'] ?? 0) >= 0 ? 'arrow-up' : 'arrow-down' ?> text-[8px]"></i> 
+                <?= abs($stats['evolution_ca'] ?? 0) ?>%
+            </span>
+        </div>
+        <p class="text-2xl font-bold text-[#0F172A]">
+            <?= number_format($stats['ca'] ?? 0, 0, ',', ' ') ?> FCFA
+        </p>
+        <p class="text-xs text-gray-400 mt-1">Chiffre d'affaires</p>
+    </div>
+
+    <!-- Taux de conversion -->
+    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <span class="text-[10px] font-semibold <?= ($stats['taux_conversion'] ?? 0) >= 50 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' ?> px-2 py-1 rounded-full">
+                <i class="fas fa-<?= ($stats['taux_conversion'] ?? 0) >= 50 ? 'arrow-up' : 'arrow-down' ?> text-[8px]"></i> 
+                <?= number_format($stats['taux_conversion'] ?? 0, 1) ?>%
+            </span>
+        </div>
+        <p class="text-2xl font-bold text-[#0F172A]">
+            <?= number_format($stats['taux_conversion'] ?? 0, 1) ?>%
+        </p>
+        <p class="text-xs text-gray-400 mt-1">Taux de conversion</p>
+    </div>
+</div>
             <!-- Graphiques principaux -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <!-- Évolution des inscriptions -->
@@ -1336,6 +1354,8 @@
                 document.body.style.overflow = '';
             }
         });
+
+
     </script>
 </body>
 </html>
