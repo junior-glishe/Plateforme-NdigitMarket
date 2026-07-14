@@ -1038,143 +1038,143 @@
         </div>
     </div>
 
-    <!-- MODAL : COMPOSER EMAIL EN MASSE -->
-    <div id="composeModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-pen text-[#0EA486]"></i> Composer un email en masse
-                    </h3>
-                    <p class="text-xs text-gray-400">Envoyer à une large audience</p>
-                </div>
-                <button class="closeComposeBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+<!-- MODAL : COMPOSER EMAIL EN MASSE -->
+<div id="composeModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-pen text-[#0EA486]"></i> Composer un email en masse
+                </h3>
+                <p class="text-xs text-gray-400">Envoyer à une large audience</p>
             </div>
+            <button class="closeComposeBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="flex-1 overflow-y-auto">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-0">
-                    <!-- Panneau gauche : Configuration -->
-                    <div class="lg:col-span-1 p-6 border-r border-gray-100 space-y-4 bg-gray-50/50">
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-2 block">Cible <span class="text-red-500">*</span></label>
-                            <div class="space-y-2">
-                                <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
-                                    <input type="radio" name="target" value="all" checked class="w-4 h-4 text-[#0EA486]">
-                                    <div class="flex-1">
-                                        <p class="text-xs font-semibold text-[#0F172A]">Tous les utilisateurs</p>
-                                        <p class="text-[10px] text-gray-400">... contacts</p>
-                                    </div>
-                                </label>
-                                <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
-                                    <input type="radio" name="target" value="vendors" class="w-4 h-4 text-[#0EA486]">
-                                    <div class="flex-1">
-                                        <p class="text-xs font-semibold text-[#0F172A]">Tous les vendeurs</p>
-                                        <p class="text-[10px] text-gray-400">... contacts</p>
-                                    </div>
-                                </label>
-                                <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
-                                    <input type="radio" name="target" value="buyers" class="w-4 h-4 text-[#0EA486]">
-                                    <div class="flex-1">
-                                        <p class="text-xs font-semibold text-[#0F172A]">Acheteurs actifs</p>
-                                        <p class="text-[10px] text-gray-400">... contacts</p>
-                                    </div>
-                                </label>
-                                <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
-                                    <input type="radio" name="target" value="custom" class="w-4 h-4 text-[#0EA486]">
-                                    <div class="flex-1">
-                                        <p class="text-xs font-semibold text-[#0F172A]">Liste personnalisée</p>
-                                        <p class="text-[10px] text-gray-400">Sélection manuelle</p>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Planification</label>
-                            <select class="w-full px-3 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option>Envoyer immédiatement</option>
-                                <option>Planifier pour plus tard</option>
-                            </select>
-                        </div>
-
-                        <div id="scheduleSection" class="hidden">
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Date et heure d'envoi</label>
-                            <input type="datetime-local" class="w-full px-3 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                        </div>
-
-                        <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
-                            <p class="text-[10px] text-blue-700">
-                                <i class="fas fa-info-circle mr-1"></i>
-                                <strong>Récapitulatif :</strong><br>
-                                <span class="font-semibold">...</span> destinataires · <span class="font-semibold">...</span>
-                            </p>
+        <div class="flex-1 overflow-y-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-0">
+                <!-- Panneau gauche : Configuration -->
+                <div class="lg:col-span-1 p-6 border-r border-gray-100 space-y-4 bg-gray-50/50">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-2 block">Cible <span class="text-red-500">*</span></label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
+                                <input type="radio" name="target" value="all" checked class="w-4 h-4 text-[#0EA486]">
+                                <div class="flex-1">
+                                    <p class="text-xs font-semibold text-[#0F172A]">Tous les utilisateurs</p>
+                                    <p class="text-[10px] text-gray-400">... contacts</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
+                                <input type="radio" name="target" value="vendors" class="w-4 h-4 text-[#0EA486]">
+                                <div class="flex-1">
+                                    <p class="text-xs font-semibold text-[#0F172A]">Tous les vendeurs</p>
+                                    <p class="text-[10px] text-gray-400">... contacts</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
+                                <input type="radio" name="target" value="buyers" class="w-4 h-4 text-[#0EA486]">
+                                <div class="flex-1">
+                                    <p class="text-xs font-semibold text-[#0F172A]">Acheteurs actifs</p>
+                                    <p class="text-[10px] text-gray-400">... contacts</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#0EA486] transition">
+                                <input type="radio" name="target" value="custom" class="w-4 h-4 text-[#0EA486]">
+                                <div class="flex-1">
+                                    <p class="text-xs font-semibold text-[#0F172A]">Liste personnalisée</p>
+                                    <p class="text-[10px] text-gray-400">Sélection manuelle</p>
+                                </div>
+                            </label>
                         </div>
                     </div>
 
-                    <!-- Panneau droit : Contenu -->
-                    <div class="lg:col-span-2 p-6 space-y-4">
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la campagne <span class="text-red-500">*</span></label>
-                            <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Promo Black Friday 2026">
-                        </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Planification</label>
+                        <select id="scheduleSelect" class="w-full px-3 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <option value="now">Envoyer immédiatement</option>
+                            <option value="later">Planifier pour plus tard</option>
+                        </select>
+                    </div>
 
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Objet <span class="text-red-500">*</span></label>
-                            <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Découvrez nos nouvelles offres !">
-                        </div>
+                    <div id="scheduleSection" class="hidden">
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Date et heure d'envoi</label>
+                        <input type="datetime-local" id="scheduleDate" class="w-full px-3 py-2.5 bg-white border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                    </div>
 
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Contenu <span class="text-red-500">*</span></label>
-                            <div class="border border-gray-100 rounded-xl overflow-hidden">
-                                <div class="bg-gray-50 px-3 py-2 border-b border-gray-100 flex items-center gap-1 text-xs text-gray-500 flex-wrap">
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-bold"></i></button>
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-italic"></i></button>
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-underline"></i></button>
-                                    <span class="w-px h-4 bg-gray-200 mx-1"></span>
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-link"></i></button>
-                                    <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-image"></i></button>
-                                    <span class="w-px h-4 bg-gray-200 mx-1"></span>
-                                    <button type="button" class="px-2 h-7 rounded hover:bg-gray-200 flex items-center justify-center text-[10px]">
-                                        <i class="fas fa-plus mr-1"></i> Variable
-                                    </button>
-                                </div>
-                                <textarea rows="10" class="w-full px-3 py-2.5 text-sm focus:outline-none resize-none" placeholder="Rédigez le contenu de votre email..."></textarea>
+                    <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                        <p class="text-[10px] text-blue-700">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <strong>Récapitulatif :</strong><br>
+                            <span class="font-semibold">...</span> destinataires · <span class="font-semibold">...</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panneau droit : Contenu -->
+                <div class="lg:col-span-2 p-6 space-y-4">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la campagne <span class="text-red-500">*</span></label>
+                        <input type="text" id="campaignName" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Promo Black Friday 2026">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Objet <span class="text-red-500">*</span></label>
+                        <input type="text" id="campaignSubject" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Découvrez nos nouvelles offres !">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Contenu <span class="text-red-500">*</span></label>
+                        <div class="border border-gray-100 rounded-xl overflow-hidden">
+                            <div class="bg-gray-50 px-3 py-2 border-b border-gray-100 flex items-center gap-1 text-xs text-gray-500 flex-wrap">
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-underline"></i></button>
+                                <span class="w-px h-4 bg-gray-200 mx-1"></span>
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-link"></i></button>
+                                <button type="button" class="w-7 h-7 rounded hover:bg-gray-200 flex items-center justify-center"><i class="fas fa-image"></i></button>
+                                <span class="w-px h-4 bg-gray-200 mx-1"></span>
+                                <button type="button" class="px-2 h-7 rounded hover:bg-gray-200 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-plus mr-1"></i> Variable
+                                </button>
                             </div>
+                            <textarea id="campaignContent" rows="10" class="w-full px-3 py-2.5 text-sm focus:outline-none resize-none" placeholder="Rédigez le contenu de votre email..."></textarea>
                         </div>
+                    </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-semibold text-gray-600 mb-1 block">Texte du bouton CTA</label>
-                                <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Découvrir">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-gray-600 mb-1 block">URL du bouton</label>
-                                <input type="url" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="https://...">
-                            </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Texte du bouton CTA</label>
+                            <input type="text" id="campaignBtnText" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Découvrir">
                         </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">URL du bouton</label>
+                            <input type="url" id="campaignBtnUrl" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="https://...">
+                        </div>
+                    </div>
 
-                        <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                            <button type="button" class="closeComposeBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                                Annuler
-                            </button>
-                            <button type="button" class="previewComposeBtn px-4 py-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold flex items-center gap-2">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                            <button type="button" class="testSendBtn px-4 py-2.5 rounded-xl bg-orange-100 hover:bg-orange-200 text-orange-700 text-sm font-semibold flex items-center gap-2">
-                                <i class="fas fa-paper-plane"></i> Test
-                            </button>
-                            <button type="submit" class="sendMassEmailBtn px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
-                                <i class="fas fa-paper-plane"></i> Envoyer
-                            </button>
-                        </div>
+                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                        <button type="button" class="closeComposeBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                            Annuler
+                        </button>
+                        <button type="button" class="previewComposeBtn px-4 py-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold flex items-center gap-2">
+                            <i class="fas fa-eye"></i> Aperçu
+                        </button>
+                        <button type="button" class="testSendBtn px-4 py-2.5 rounded-xl bg-orange-100 hover:bg-orange-200 text-orange-700 text-sm font-semibold flex items-center gap-2">
+                            <i class="fas fa-paper-plane"></i> Test
+                        </button>
+                        <button type="button" class="sendMassEmailBtn px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>   
 
     <!-- MODAL : CONFIRMATION ENVOI -->
     <div id="confirmSendModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -3093,7 +3093,6 @@
 })();
 
 
-
 // ============================================
 // COMPOSER UN EMAIL EN MASSE - ACTION
 // ============================================
@@ -3101,7 +3100,7 @@
     'use strict';
 
     const composeModal = document.getElementById('composeModal');
-    const sendBtn = document.querySelector('.sendMassEmailBtn'); // ← Utilisation de la classe
+    const sendBtn = document.querySelector('.sendMassEmailBtn');
     const scheduleSelect = document.getElementById('scheduleSelect');
     const scheduleSection = document.getElementById('scheduleSection');
     const scheduleDate = document.getElementById('scheduleDate');
@@ -3110,241 +3109,115 @@
     // 1. PLANIFICATION - TOGGLE
     // ============================================
     if (scheduleSelect && scheduleSection) {
-        scheduleSelect.removeEventListener('change', toggleSchedule);
-        scheduleSelect.addEventListener('change', toggleSchedule);
-    }
-
-    function toggleSchedule() {
-        const value = this.value;
-        if (value === 'Planifier pour plus tard' || value === 'later') {
-            scheduleSection.classList.remove('hidden');
-        } else {
-            scheduleSection.classList.add('hidden');
-        }
+        scheduleSelect.addEventListener('change', function() {
+            if (this.value === 'later') {
+                scheduleSection.classList.remove('hidden');
+            } else {
+                scheduleSection.classList.add('hidden');
+            }
+        });
     }
 
     // ============================================
     // 2. ENVOYER LA CAMPAGNE
     // ============================================
     if (sendBtn) {
-        sendBtn.removeEventListener('click', handleSend);
-        sendBtn.addEventListener('click', handleSend);
-    }
-
-    function handleSend(e) {
-        e.preventDefault();
-        
-        // Récupérer les valeurs avec les IDs
-        const nom = document.getElementById('campaignName')?.value?.trim() || '';
-        const sujet = document.getElementById('campaignSubject')?.value?.trim() || '';
-        const contenu = document.getElementById('campaignContent')?.value?.trim() || '';
-        const cible = document.querySelector('input[name="target"]:checked')?.value || 'all';
-        const bouton_texte = document.getElementById('campaignBtnText')?.value?.trim() || '';
-        const bouton_url = document.getElementById('campaignBtnUrl')?.value?.trim() || '#';
-        
-        // Planification
-        let date_planification = null;
-        if (scheduleSelect) {
-            const selectedValue = scheduleSelect.value;
-            if (selectedValue === 'Planifier pour plus tard' || selectedValue === 'later') {
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les valeurs avec les IDs
+            const nom = document.getElementById('campaignName')?.value?.trim() || '';
+            const sujet = document.getElementById('campaignSubject')?.value?.trim() || '';
+            const contenu = document.getElementById('campaignContent')?.value?.trim() || '';
+            const cible = document.querySelector('input[name="target"]:checked')?.value || 'all';
+            const bouton_texte = document.getElementById('campaignBtnText')?.value?.trim() || '';
+            const bouton_url = document.getElementById('campaignBtnUrl')?.value?.trim() || '#';
+            
+            // Planification
+            let date_planification = null;
+            if (scheduleSelect && scheduleSelect.value === 'later') {
                 date_planification = scheduleDate?.value || null;
                 if (!date_planification) {
                     showToast('Erreur', 'Veuillez sélectionner une date de planification', 'error');
                     return;
                 }
             }
-        }
 
-        // Validation
-        if (!nom) {
-            showToast('Erreur', 'Veuillez saisir un nom de campagne', 'error');
-            document.getElementById('campaignName')?.focus();
-            return;
-        }
-
-        if (!sujet) {
-            showToast('Erreur', 'Veuillez saisir un objet', 'error');
-            document.getElementById('campaignSubject')?.focus();
-            return;
-        }
-
-        if (!contenu) {
-            showToast('Erreur', 'Veuillez rédiger le contenu de l\'email', 'error');
-            document.getElementById('campaignContent')?.focus();
-            return;
-        }
-
-        // Désactiver le bouton
-        const originalHtml = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-        this.disabled = true;
-
-        // Préparer les données
-        const formData = new FormData();
-        formData.append('nom', nom);
-        formData.append('sujet', sujet);
-        formData.append('contenu', contenu);
-        formData.append('cible', cible);
-        formData.append('bouton_texte', bouton_texte);
-        formData.append('bouton_url', bouton_url);
-        if (date_planification) {
-            formData.append('date_planification', date_planification);
-        }
-
-        console.log('📤 Envoi de la campagne:', { 
-            nom, 
-            sujet, 
-            cible, 
-            bouton_texte, 
-            date_planification,
-            contenu: contenu.substring(0, 50) + '...'
-        });
-
-        // Envoyer la requête
-        fetch('api.php?url=campaign_send', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
+            // Validation
+            if (!nom) {
+                showToast('Erreur', 'Veuillez saisir un nom de campagne', 'error');
+                document.getElementById('campaignName')?.focus();
+                return;
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('📥 Réponse:', data);
-            
-            if (data.success) {
-                // Fermer le modal
-                if (composeModal) {
-                    composeModal.classList.add('hidden');
-                    composeModal.classList.remove('flex');
+
+            if (!sujet) {
+                showToast('Erreur', 'Veuillez saisir un objet', 'error');
+                document.getElementById('campaignSubject')?.focus();
+                return;
+            }
+
+            if (!contenu) {
+                showToast('Erreur', 'Veuillez rédiger le contenu de l\'email', 'error');
+                document.getElementById('campaignContent')?.focus();
+                return;
+            }
+
+            // Désactiver le bouton
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+            this.disabled = true;
+
+            // Préparer les données
+            const formData = new FormData();
+            formData.append('nom', nom);
+            formData.append('sujet', sujet);
+            formData.append('contenu', contenu);
+            formData.append('cible', cible);
+            formData.append('bouton_texte', bouton_texte);
+            formData.append('bouton_url', bouton_url);
+            if (date_planification) {
+                formData.append('date_planification', date_planification);
+            }
+
+            console.log('📤 Envoi de la campagne:', { nom, sujet, cible, bouton_texte, date_planification });
+
+            // Envoyer la requête
+            fetch('api.php?url=campaign_send', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('📥 Réponse:', data);
+                
+                if (data.success) {
+                    // Fermer le modal
+                    if (composeModal) {
+                        composeModal.classList.add('hidden');
+                        composeModal.classList.remove('flex');
+                    }
+                    document.body.style.overflow = '';
+                    
+                    showToast('Succès', data.message || 'Campagne créée avec succès', 'success');
+                    
+                    // Recharger la page après 2 secondes
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast('Erreur', data.error || 'Erreur lors de la création', 'error');
+                    this.innerHTML = originalHtml;
+                    this.disabled = false;
                 }
-                document.body.style.overflow = '';
-                
-                showToast('Succès', data.message || 'Campagne créée avec succès', 'success');
-                
-                // Recharger la page après 2 secondes
-                setTimeout(() => location.reload(), 2000);
-            } else {
-                showToast('Erreur', data.error || 'Erreur lors de la création', 'error');
+            })
+            .catch(error => {
+                console.error('❌ Erreur:', error);
+                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
                 this.innerHTML = originalHtml;
                 this.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('❌ Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion au serveur: ' + error.message, 'error');
-            this.innerHTML = originalHtml;
-            this.disabled = false;
+            });
         });
     }
 
-    // ============================================
-    // 3. APERÇU DE L'EMAIL
-    // ============================================
-    document.querySelector('.previewComposeBtn')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const sujet = document.getElementById('campaignSubject')?.value?.trim() || 'Sujet de l\'email';
-        const contenu = document.getElementById('campaignContent')?.value?.trim() || 'Contenu de l\'email';
-        const boutonTexte = document.getElementById('campaignBtnText')?.value?.trim() || 'Découvrir';
-        const boutonUrl = document.getElementById('campaignBtnUrl')?.value?.trim() || '#';
-
-        // Mettre à jour l'aperçu
-        const previewContainer = document.getElementById('emailPreviewContainer');
-        if (previewContainer) {
-            const previewEmail = previewContainer.querySelector('.bg-white');
-            if (previewEmail) {
-                const titleEl = previewEmail.querySelector('h3');
-                if (titleEl) titleEl.textContent = sujet;
-                
-                const contentEls = previewEmail.querySelectorAll('.text-gray-600');
-                const paragraphs = contenu.split('\n').filter(p => p.trim());
-                contentEls.forEach((el, index) => {
-                    if (index < paragraphs.length) {
-                        el.textContent = paragraphs[index];
-                    } else {
-                        el.textContent = '...';
-                    }
-                });
-                
-                const btnEl = previewEmail.querySelector('.bg-\\[\\#0EA486\\]');
-                if (btnEl) {
-                    btnEl.textContent = boutonTexte;
-                    btnEl.href = boutonUrl;
-                }
-            }
-        }
-
-        // Ouvrir le modal d'aperçu
-        const previewModal = document.getElementById('emailPreviewModal');
-        if (previewModal) {
-            previewModal.classList.remove('hidden');
-            previewModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        showToast('Aperçu', 'Aperçu de l\'email généré', 'info');
-    });
-
-    // ============================================
-    // 4. ENVOYER UN EMAIL DE TEST
-    // ============================================
-    document.querySelector('.testSendBtn')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const sujet = document.getElementById('campaignSubject')?.value?.trim() || 'Email de test';
-        const contenu = document.getElementById('campaignContent')?.value?.trim() || 'Contenu de l\'email de test';
-
-        if (!contenu || contenu === 'Contenu de l\'email de test') {
-            showToast('Erreur', 'Veuillez rédiger le contenu avant de tester', 'error');
-            document.getElementById('campaignContent')?.focus();
-            return;
-        }
-
-        const originalHtml = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
-        this.disabled = true;
-
-        const formData = new FormData();
-        formData.append('sujet', sujet);
-        formData.append('contenu', contenu);
-
-        fetch('api.php?url=campaign_test', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                showToast('Succès', 'Email de test envoyé avec succès', 'success');
-            } else {
-                showToast('Erreur', data.error || 'Erreur lors de l\'envoi du test', 'error');
-            }
-            this.innerHTML = originalHtml;
-            this.disabled = false;
-        })
-        .catch(error => {
-            console.error('❌ Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
-            this.innerHTML = originalHtml;
-            this.disabled = false;
-        });
-    });
-
-    // ============================================
-    // 5. INITIALISATION - VÉRIFICATION
-    // ============================================
     console.log('✅ Composer email - Prêt');
-    console.log('📝 Bouton Envoyer trouvé (classe .sendMassEmailBtn):', !!document.querySelector('.sendMassEmailBtn'));
-    console.log('📝 Sélecteur planification trouvé:', !!scheduleSelect);
-    console.log('📝 Section planification trouvée:', !!scheduleSection);
 
 })();
     </script>

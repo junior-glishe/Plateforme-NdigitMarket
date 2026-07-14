@@ -768,24 +768,63 @@ public function cancelCampaign($id) {
  * Créer une campagne d'emails en masse
  */
 public function createMassCampaign($data) {
-    $sql = "INSERT INTO mass_emails (
-        nom, sujet, contenu, cible, cible_label, cible_class,
-        bouton_texte, bouton_url, statut, date_planification
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Vérifier si la colonne desabonnes existe
+    $stmt = $this->pdo->query("SHOW COLUMNS FROM mass_emails LIKE 'desabonnes'");
+    $hasDesabonnes = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Vérifier si les colonnes bouton existent
+    $stmt = $this->pdo->query("SHOW COLUMNS FROM mass_emails LIKE 'bouton_texte'");
+    $hasBouton = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($hasDesabonnes && $hasBouton) {
+        $sql = "INSERT INTO mass_emails (
+            nom, sujet, contenu, bouton_texte, bouton_url,
+            cible, cible_label, cible_class,
+            statut, date_planification,
+            bg_color, text_color, icon, envoyes, ouverts, cliques, desabonnes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 0)";
+    } else if ($hasBouton) {
+        $sql = "INSERT INTO mass_emails (
+            nom, sujet, contenu, bouton_texte, bouton_url,
+            cible, cible_label, cible_class,
+            statut, date_planification,
+            bg_color, text_color, icon, envoyes, ouverts, cliques
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)";
+    } else {
+        $sql = "INSERT INTO mass_emails (
+            nom, sujet, contenu,
+            cible, cible_label, cible_class,
+            statut, date_planification,
+            bg_color, text_color, icon, envoyes, ouverts, cliques
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)";
+    }
     
     $stmt = $this->pdo->prepare($sql);
-    return $stmt->execute([
+    
+    // Préparer les paramètres
+    $params = [
         $data['nom'],
-        $data['sujet'],
-        $data['contenu'],
-        $data['cible'],
-        $data['cible_label'] ?? 'Tous',
-        $data['cible_class'] ?? 'text-blue-700 bg-blue-100',
-        $data['bouton_texte'] ?? '',
-        $data['bouton_url'] ?? '#',
-        'planifie',
-        isset($data['date_planification']) ? $data['date_planification'] : null
-    ]);
+        $data['sujet'] ?? '',
+        $data['contenu'] ?? '',
+    ];
+    
+    // Ajouter bouton si les colonnes existent
+    if ($hasBouton) {
+        $params[] = $data['bouton_texte'] ?? '';
+        $params[] = $data['bouton_url'] ?? '#';
+    }
+    
+    // Ajouter le reste des paramètres
+    $params[] = $data['cible'] ?? 'all';
+    $params[] = $data['cible_label'] ?? 'Tous les utilisateurs';
+    $params[] = $data['cible_class'] ?? 'text-blue-700 bg-blue-100';
+    $params[] = $data['statut'] ?? 'planifie';
+    $params[] = $data['date_planification'] ?? null;
+    $params[] = $data['bg_color'] ?? 'bg-gradient-to-br from-indigo-100 to-purple-100';
+    $params[] = $data['text_color'] ?? 'text-indigo-600';
+    $params[] = $data['icon'] ?? 'fa-envelope-open-text';
+    
+    return $stmt->execute($params);
 }
 
 
