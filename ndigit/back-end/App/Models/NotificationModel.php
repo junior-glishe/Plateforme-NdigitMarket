@@ -288,4 +288,170 @@ class NotificationModel {
             'source_id' => null
         ]);
     }
+
+    // ============================================
+// STATISTIQUES EMAILS
+// ============================================
+/**
+ * Compter le nombre d'emails envoyés ce mois
+ */
+public function countEmailsEnvoyes() {
+    $stmt = $this->pdo->query("
+        SELECT COUNT(*) as total 
+        FROM email_logs 
+        WHERE DATE(date_envoi) >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        AND statut = 'envoye'
+    ");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Calculer le taux d'ouverture moyen
+ */
+public function getTauxOuverture() {
+    $stmt = $this->pdo->query("
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN ouvert = 1 THEN 1 ELSE 0 END) as ouverts
+        FROM email_logs 
+        WHERE DATE(date_envoi) >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        AND statut = 'envoye'
+    ");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $total = $result['total'] ?? 0;
+    $ouverts = $result['ouverts'] ?? 0;
+    
+    return $total > 0 ? round(($ouverts / $total) * 100, 1) : 0;
+}
+
+/**
+ * Calculer le taux de clic moyen
+ */
+public function getTauxClic() {
+    $stmt = $this->pdo->query("
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN clic = 1 THEN 1 ELSE 0 END) as clics
+        FROM email_logs 
+        WHERE DATE(date_envoi) >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        AND statut = 'envoye'
+    ");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $total = $result['total'] ?? 0;
+    $clics = $result['clics'] ?? 0;
+    
+    return $total > 0 ? round(($clics / $total) * 100, 1) : 0;
+}
+
+/**
+ * Compter le nombre de templates d'emails
+ */
+public function countEmailTemplates() {
+    $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM email_templates WHERE statut = 'active'");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Récupérer tous les templates d'emails
+ */
+public function getAllEmailTemplates() {
+    $stmt = $this->pdo->query("
+        SELECT * FROM email_templates 
+        ORDER BY nom ASC
+    ");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Récupérer un template par son ID
+ */
+public function getEmailTemplateById($id) {
+    $stmt = $this->pdo->prepare("SELECT * FROM email_templates WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Mettre à jour un template
+ */
+public function updateEmailTemplate($id, $data) {
+    $sql = "UPDATE email_templates SET 
+                nom = ?,
+                slug = ?,
+                objet = ?,
+                contenu = ?,
+                bouton_texte = ?,
+                bouton_url = ?,
+                bg_color = ?,
+                text_color = ?,
+                icon = ?,
+                statut = ?
+            WHERE id = ?";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['nom'],
+        $data['slug'],
+        $data['objet'] ?? null,
+        $data['contenu'] ?? null,
+        $data['bouton_texte'] ?? null,
+        $data['bouton_url'] ?? null,
+        $data['bg_color'] ?? 'bg-amber-100',
+        $data['text_color'] ?? 'text-amber-600',
+        $data['icon'] ?? 'fa-envelope-open-text',
+        $data['statut'] ?? 'active',
+        $id
+    ]);
+}
+
+/**
+ * Changer le statut d'un template
+ */
+public function toggleEmailTemplateStatus($id, $statut) {
+    $stmt = $this->pdo->prepare("UPDATE email_templates SET statut = ? WHERE id = ?");
+    return $stmt->execute([$statut, $id]);
+}
+
+/**
+ * Récupérer les logs d'emails
+ */
+public function getEmailLogs($limit = 50) {
+    $stmt = $this->pdo->prepare("
+        SELECT * FROM email_logs 
+        ORDER BY date_envoi DESC 
+        LIMIT ?
+    ");
+    $stmt->execute([$limit]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Enregistrer un email envoyé
+ */
+public function logEmail($data) {
+    $sql = "INSERT INTO email_logs (
+                email, 
+                destinataire, 
+                sujet, 
+                statut, 
+                ouvert, 
+                clic, 
+                template_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['email'],
+        $data['destinataire'] ?? $data['email'],
+        $data['sujet'],
+        $data['statut'] ?? 'envoye',
+        $data['ouvert'] ?? 0,
+        $data['clic'] ?? 0,
+        $data['template_id'] ?? null
+    ]);
+}
 }

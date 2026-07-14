@@ -146,124 +146,166 @@
         </section>
 
         <!-- GESTION DES EMAILS TRANSACTIONNELS -->
-        <section class="mb-8">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fas fa-envelope-open-text text-[#0EA486]"></i> · Emails transactionnels
-                </h3>
-                <div class="flex gap-2">
-                    <button class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
-                        <i class="fas fa-history"></i> Historique d'envoi
-                    </button>
-                </div>
-            </div>
+<section class="mb-8">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+            <i class="fas fa-envelope-open-text text-[#0EA486]"></i> · Emails transactionnels
+        </h3>
+        <div class="flex gap-2">
+            <button id="openEmailHistoryBtn" class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
+                <i class="fas fa-history"></i> Historique d'envoi
+            </button>
+        </div>
+    </div>
 
-            <!-- Stats emails -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ENVOYÉS</span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
-                    <p class="text-xs text-gray-400 mt-1">Emails envoyés ce mois</p>
+    <!-- Stats emails -->
+    <?php
+    // Récupérer les stats des emails depuis le contrôleur
+    $emailStats = $stats['email'] ?? [
+        'envoyes' => 0,
+        'taux_ouverture' => 0,
+        'taux_clic' => 0,
+        'templates' => 0
+    ];
+    ?>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-paper-plane"></i>
                 </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">OUVERTS</span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...%</p>
-                    <p class="text-xs text-gray-400 mt-1">Taux d'ouverture moyen</p>
-                </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">CLICS</span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...%</p>
-                    <p class="text-xs text-gray-400 mt-1">Taux de clic moyen</p>
-                </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">TEMPLATES</span>
-                    </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
-                    <p class="text-xs text-gray-400 mt-1">Templates configurés</p>
-                </div>
+                <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ENVOYÉS</span>
             </div>
+            <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($emailStats['envoyes'] ?? 0, 0, ',', ' ') ?></p>
+            <p class="text-xs text-gray-400 mt-1">Emails envoyés ce mois</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">OUVERTS</span>
+            </div>
+            <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($emailStats['taux_ouverture'] ?? 0, 1) ?>%</p>
+            <p class="text-xs text-gray-400 mt-1">Taux d'ouverture moyen</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">CLICS</span>
+            </div>
+            <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($emailStats['taux_clic'] ?? 0, 1) ?>%</p>
+            <p class="text-xs text-gray-400 mt-1">Taux de clic moyen</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+                <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">TEMPLATES</span>
+            </div>
+            <p class="text-2xl font-bold text-[#0F172A]"><?= $emailStats['templates'] ?? 0 ?></p>
+            <p class="text-xs text-gray-400 mt-1">Templates configurés</p>
+        </div>
+    </div>
 
             <!-- Tableau templates -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 border-b border-gray-100">
-                            <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-4 py-3">Template</th>
-                                <th class="px-4 py-3">Déclencheur</th>
-                                <th class="px-4 py-3">Destinataire</th>
-                                <th class="px-4 py-3">Envoyés (30j)</th>
-                                <th class="px-4 py-3">Taux ouverture</th>
-                                <th class="px-4 py-3">Statut</th>
-                                <th class="px-4 py-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                        
-                            <!-- Réinitialisation mot de passe -->
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
-                                            <i class="fas fa-key text-xs"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">Réinitialisation mot de passe</p>
-                                            <p class="text-[10px] text-gray-400 font-mono">password_reset</p>
-                                        </div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-4 py-3">Template</th>
+                    <th class="px-4 py-3">Déclencheur</th>
+                    <th class="px-4 py-3">Destinataire</th>
+                    <th class="px-4 py-3">Envoyés (30j)</th>
+                    <th class="px-4 py-3">Taux ouverture</th>
+                    <th class="px-4 py-3">Statut</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <?php if (!empty($templates)): ?>
+                    <?php foreach ($templates as $template): ?>
+                        <tr class="hover:bg-gray-50/50 transition" data-id="<?= $template['id'] ?>">
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 <?= $template['bg_color'] ?? 'bg-amber-100' ?> rounded-lg flex items-center justify-center <?= $template['text_color'] ?? 'text-amber-600' ?>">
+                                        <i class="fas <?= $template['icon'] ?? 'fa-envelope-open-text' ?> text-xs"></i>
                                     </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-600">Demande reset password</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex gap-1">
-                                        <span class="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">Utilisateur</span>
-                                        <span class="text-[10px] font-semibold text-gray-700 bg-gray-100 px-2 py-1 rounded-full">Admin</span>
+                                    <div>
+                                        <p class="font-semibold text-[#0F172A] text-sm"><?= htmlspecialchars($template['nom']) ?></p>
+                                        <p class="text-[10px] text-gray-400 font-mono"><?= htmlspecialchars($template['slug']) ?></p>
                                     </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">...</td>
-                                <td class="px-4 py-3 text-xs font-semibold text-emerald-600">...%</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-check mr-1"></i>Actif
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openEmailPreviewBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Aperçu">
-                                            <i class="fas fa-eye text-xs"></i>
-                                        </button>
-                                        <button class="openEmailEditorBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" title="Modifier">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button class="toggleEmailBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center" title="Désactiver">
-                                            <i class="fas fa-toggle-on text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-xs text-gray-600"><?= htmlspecialchars($template['declencheur']) ?></td>
+                            <td class="px-4 py-3">
+                                <div class="flex flex-wrap gap-1">
+                                    <?php foreach ($template['destinataires'] ?? [] as $dest): ?>
+                                        <span class="text-[10px] font-semibold <?= $dest['class'] ?? 'text-blue-700 bg-blue-100' ?> px-2 py-1 rounded-full"><?= htmlspecialchars($dest['nom']) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $template['envoyes'] ?? 0 ?></td>
+                            <td class="px-4 py-3 text-xs font-semibold text-emerald-600"><?= $template['taux_ouverture'] ?? 0 ?>%</td>
+                            <td class="px-4 py-3">
+                                <?php $statut = $template['statut'] ?? 'active'; ?>
+                                <span class="text-[10px] font-semibold <?= $statut === 'active' ? 'text-emerald-700 bg-emerald-100' : 'text-gray-500 bg-gray-100' ?> px-2 py-1 rounded-full">
+                                    <i class="fas <?= $statut === 'active' ? 'fa-check' : 'fa-pause' ?> mr-1"></i>
+                                    <?= $statut === 'active' ? 'Actif' : 'Inactif' ?>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center justify-end gap-1">
+                                    <button class="openEmailPreviewBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" 
+                                            title="Aperçu"
+                                            data-id="<?= $template['id'] ?>"
+                                            data-nom="<?= htmlspecialchars($template['nom']) ?>"
+                                            data-slug="<?= htmlspecialchars($template['slug']) ?>"
+                                            data-objet="<?= htmlspecialchars($template['objet'] ?? '') ?>"
+                                            data-contenu="<?= htmlspecialchars($template['contenu'] ?? '') ?>"
+                                            data-bouton="<?= htmlspecialchars($template['bouton_texte'] ?? '') ?>"
+                                            data-url="<?= htmlspecialchars($template['bouton_url'] ?? '') ?>">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
+                                    <button class="openEmailEditorBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" 
+                                            title="Modifier"
+                                            data-id="<?= $template['id'] ?>"
+                                            data-nom="<?= htmlspecialchars($template['nom']) ?>"
+                                            data-slug="<?= htmlspecialchars($template['slug']) ?>"
+                                            data-objet="<?= htmlspecialchars($template['objet'] ?? '') ?>"
+                                            data-contenu="<?= htmlspecialchars($template['contenu'] ?? '') ?>"
+                                            data-bouton="<?= htmlspecialchars($template['bouton_texte'] ?? '') ?>"
+                                            data-url="<?= htmlspecialchars($template['bouton_url'] ?? '') ?>"
+                                            data-statut="<?= $template['statut'] ?? 'active' ?>">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button class="toggleEmailBtn w-8 h-8 rounded-lg <?= $statut === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center" 
+                                            title="<?= $statut === 'active' ? 'Désactiver' : 'Activer' ?>"
+                                            data-id="<?= $template['id'] ?>"
+                                            data-statut="<?= $statut ?>"
+                                            data-nom="<?= htmlspecialchars($template['nom']) ?>">
+                                        <i class="fas <?= $statut === 'active' ? 'fa-toggle-on' : 'fa-toggle-off' ?> text-xs"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
+                            <i class="fas fa-file-alt text-3xl block mb-2"></i>
+                            Aucun template configuré
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
         </section>
 
         <!-- ENVOI D'EMAILS EN MASSE -->
@@ -551,83 +593,86 @@
 </div>
 
     <!-- MODAL : DÉTAIL NOTIFICATION -->
-    <div id="notifDetailModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-bell text-[#0EA486]"></i> Détail de la notification
-                    </h3>
-                    <p class="text-xs text-gray-400">Informations complètes</p>
-                </div>
-                <button class="closeNotifDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+<div id="notifDetailModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-bell text-[#0EA486]"></i> Détail de la notification
+                </h3>
+                <p class="text-xs text-gray-400">Informations complètes</p>
             </div>
+            <button class="closeNotifDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="overflow-y-auto p-6 space-y-5">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0">
-                            <i class="fas fa-user-plus text-xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-lg font-bold text-[#0F172A]">Nouvelle demande vendeur</h4>
-                            <p class="text-xs text-gray-500 mt-1">Reçue le ...</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="text-[10px] font-semibold text-yellow-700 bg-yellow-100 px-2 py-1 rounded-full">
-                                    <i class="fas fa-hourglass-half mr-1"></i>En attente
-                                </span>
-                                <span class="text-[10px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                                    ID: ...
-                                </span>
-                            </div>
+        <div class="overflow-y-auto p-6 space-y-5">
+            <!-- En-tête -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-100">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0">
+                        <i class="fas fa-user-plus text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 id="detailNotifTitle" class="text-lg font-bold text-[#0F172A]">Nouvelle demande vendeur</h4>
+                        <p id="detailNotifDate" class="text-xs text-gray-500 mt-1">Reçue le ...</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span id="detailNotifBadge" class="text-[10px] font-semibold text-yellow-700 bg-yellow-100 px-2 py-1 rounded-full">
+                                <i class="fas fa-hourglass-half mr-1"></i>En attente
+                            </span>
+                            <span id="detailNotifId" class="text-[10px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                                ID: ...
+                            </span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-info-circle text-[#0EA486]"></i> Informations
-                    </h5>
-                    <div class="space-y-2 text-xs">
-                        <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Type</span>
-                            <span class="font-medium text-[#0F172A]">...</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Source</span>
-                            <span class="font-medium text-[#0F172A]">...</span>
-                        </div>
-                        <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Priorité</span>
-                            <span class="font-semibold text-yellow-600">...</span>
-                        </div>
-                        <div class="flex justify-between py-2">
-                            <span class="text-gray-500">Statut</span>
-                            <span class="font-medium text-blue-600">Non lue</span>
-                        </div>
+            <!-- 🔥 INFORMATIONS COMPLÈTES -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-[#0EA486]"></i> Informations
+                </h5>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Type</span>
+                        <span id="detailNotifType" class="font-medium text-[#0F172A]">---</span>
                     </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
-                        <i class="fas fa-align-left text-[#0EA486]"></i> Message
-                    </h5>
-                    <p class="text-sm text-gray-600 leading-relaxed">...</p>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Source</span>
+                        <span id="detailNotifSource" class="font-medium text-[#0F172A]">---</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Priorité</span>
+                        <span id="detailNotifPriorite" class="font-semibold text-yellow-600">---</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-500">Statut</span>
+                        <span id="detailNotifStatut" class="font-medium text-blue-600">Non lue</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-wrap items-center justify-end gap-2">
-                <button class="closeNotifDetailBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Fermer
-                </button>
-                <button class="px-4 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-arrow-right"></i> Traiter
-                </button>
+            <!-- Message -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-2 flex items-center gap-2">
+                    <i class="fas fa-align-left text-[#0EA486]"></i> Message
+                </h5>
+                <p id="detailNotifMessage" class="text-sm text-gray-600 leading-relaxed">...</p>
             </div>
         </div>
+
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-wrap items-center justify-end gap-2">
+            <button class="closeNotifDetailBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                Fermer
+            </button>
+            <button id="detailTraiterBtn" class="px-4 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                <i class="fas fa-arrow-right"></i> Traiter
+            </button>
+        </div>
     </div>
+</div>
 
     <!-- MODAL : PARAMÈTRES NOTIFICATIONS -->
     <div id="notifSettingsModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1610,7 +1655,6 @@
 
 
 
-
 // ============================================
 // NOTIFICATIONS - LISTE & ACTIONS (COMPLET)
 // ============================================
@@ -1734,7 +1778,8 @@
             <div class="notif-item p-4 hover:bg-gray-50/50 transition cursor-pointer ${readClass}" 
                  data-id="${notif.id}"
                  data-type="${notif.type}"
-                 data-lu="${notif.est_lu}">
+                 data-lu="${notif.est_lu}"
+                 data-priorite="${notif.priorite || 'medium'}">
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 ${config.bg} rounded-xl flex items-center justify-center ${config.text} flex-shrink-0">
                         <i class="fas ${config.icon}"></i>
@@ -2031,13 +2076,12 @@
         });
     }
 
-    // Remplacer l'ancienne fonction deleteNotification
     function deleteNotification(id) {
         openDeleteNotifModal(id);
     }
 
     // ============================================
-    // ACTION 3 : VOIR DÉTAIL
+    // ACTION 3 : VOIR DÉTAIL (CORRIGÉ)
     // ============================================
     function viewNotificationDetail(id) {
         const notifItem = document.querySelector(`.notif-item[data-id="${id}"]`);
@@ -2046,20 +2090,73 @@
             return;
         }
 
+        // Extraire les données
         const title = notifItem.querySelector('h5')?.textContent || 'Notification';
         const message = notifItem.querySelector('.text-gray-500')?.textContent || '';
         const type = notifItem.dataset.type || 'general';
         const date = notifItem.querySelector('.text-gray-400')?.textContent || '';
+        const isRead = notifItem.dataset.lu === '1';
+        const priorite = notifItem.dataset.priorite || 'medium';
         
+        // Configurations par type
         const configs = {
-            'vendor_request': { icon: 'fa-user-plus', color: 'text-yellow-600', bg: 'bg-yellow-100', badge: 'Demande vendeur' },
-            'product_moderation': { icon: 'fa-file-code', color: 'text-indigo-600', bg: 'bg-indigo-100', badge: 'Modération produit' },
-            'order_high': { icon: 'fa-shopping-cart', color: 'text-emerald-600', bg: 'bg-emerald-100', badge: 'Commande importante' },
-            'order_problem': { icon: 'fa-exclamation-triangle', color: 'text-red-600', bg: 'bg-red-100', badge: 'Commande problématique' },
-            'support_message': { icon: 'fa-envelope', color: 'text-blue-600', bg: 'bg-blue-100', badge: 'Support' },
-            'security_alert': { icon: 'fa-shield-alt', color: 'text-purple-600', bg: 'bg-purple-100', badge: 'Alerte sécurité' }
+            'vendor_request': { 
+                icon: 'fa-user-plus', 
+                color: 'text-yellow-600', 
+                bg: 'bg-yellow-100', 
+                badge: 'Demande vendeur',
+                source: 'Utilisateur',
+                label: 'Demande vendeur'
+            },
+            'product_moderation': { 
+                icon: 'fa-file-code', 
+                color: 'text-indigo-600', 
+                bg: 'bg-indigo-100', 
+                badge: 'Modération produit',
+                source: 'Produit',
+                label: 'Produit à modérer'
+            },
+            'order_high': { 
+                icon: 'fa-shopping-cart', 
+                color: 'text-emerald-600', 
+                bg: 'bg-emerald-100', 
+                badge: 'Commande importante',
+                source: 'Commande',
+                label: 'Commande'
+            },
+            'order_problem': { 
+                icon: 'fa-exclamation-triangle', 
+                color: 'text-red-600', 
+                bg: 'bg-red-100', 
+                badge: 'Commande problématique',
+                source: 'Commande',
+                label: 'Problème commande'
+            },
+            'support_message': { 
+                icon: 'fa-envelope', 
+                color: 'text-blue-600', 
+                bg: 'bg-blue-100', 
+                badge: 'Support',
+                source: 'Ticket support',
+                label: 'Message support'
+            },
+            'security_alert': { 
+                icon: 'fa-shield-alt', 
+                color: 'text-purple-600', 
+                bg: 'bg-purple-100', 
+                badge: 'Alerte sécurité',
+                source: 'Système',
+                label: 'Alerte sécurité'
+            }
         };
-        const config = configs[type] || { icon: 'fa-bell', color: 'text-gray-600', bg: 'bg-gray-100', badge: 'Notification' };
+        const config = configs[type] || { 
+            icon: 'fa-bell', 
+            color: 'text-gray-600', 
+            bg: 'bg-gray-100', 
+            badge: 'Notification',
+            source: 'Système',
+            label: 'Notification'
+        };
 
         const modal = document.getElementById('notifDetailModal');
         if (!modal) {
@@ -2067,34 +2164,82 @@
             return;
         }
 
-        const titleEl = modal.querySelector('.bg-gradient-to-br .text-lg.font-bold');
+        // Remplir le modal avec TOUTES les infos
+        const titleEl = document.getElementById('detailNotifTitle');
         if (titleEl) titleEl.textContent = title;
         
-        const badgeEl = modal.querySelector('.bg-gradient-to-br .text-xs.text-gray-500');
-        if (badgeEl) badgeEl.textContent = config.badge;
+        const dateEl = document.getElementById('detailNotifDate');
+        if (dateEl) dateEl.textContent = date || 'Reçue récemment';
         
+        const idEl = document.getElementById('detailNotifId');
+        if (idEl) idEl.textContent = 'ID: #' + id;
+        
+        const badgeEl = document.getElementById('detailNotifBadge');
+        if (badgeEl) {
+            badgeEl.innerHTML = `<i class="fas fa-circle text-[6px] mr-1"></i>${config.badge}`;
+            badgeEl.className = `text-[10px] font-semibold ${config.color.replace('text-', 'bg-').replace('text-yellow-600', 'bg-yellow-100 text-yellow-700').replace('text-indigo-600', 'bg-indigo-100 text-indigo-700').replace('text-emerald-600', 'bg-emerald-100 text-emerald-700').replace('text-red-600', 'bg-red-100 text-red-700').replace('text-blue-600', 'bg-blue-100 text-blue-700').replace('text-purple-600', 'bg-purple-100 text-purple-700').replace('text-gray-600', 'bg-gray-100 text-gray-700')} px-2 py-1 rounded-full`;
+        }
+        
+        // Icône
         const iconContainer = modal.querySelector('.bg-gradient-to-br .w-14.h-14');
         if (iconContainer) {
             iconContainer.className = `w-14 h-14 ${config.bg} rounded-2xl flex items-center justify-center ${config.color} flex-shrink-0`;
             iconContainer.innerHTML = `<i class="fas ${config.icon} text-xl"></i>`;
         }
         
-        const messageEl = modal.querySelector('.bg-white.rounded-2xl.p-4.border .text-sm.text-gray-600');
+        // Informations détaillées
+        const typeInfoEl = document.getElementById('detailNotifType');
+        if (typeInfoEl) typeInfoEl.textContent = config.label;
+        
+        const sourceEl = document.getElementById('detailNotifSource');
+        if (sourceEl) sourceEl.textContent = config.source;
+        
+        const prioriteLabels = { 'high': 'Haute', 'medium': 'Moyenne', 'low': 'Basse' };
+        const prioriteColors = { 'high': 'text-red-600', 'medium': 'text-yellow-600', 'low': 'text-gray-500' };
+        const prioriteEl = document.getElementById('detailNotifPriorite');
+        if (prioriteEl) {
+            prioriteEl.textContent = prioriteLabels[priorite] || 'Moyenne';
+            prioriteEl.className = `font-semibold ${prioriteColors[priorite] || 'text-yellow-600'}`;
+        }
+        
+        const statutEl = document.getElementById('detailNotifStatut');
+        if (statutEl) {
+            statutEl.textContent = isRead ? 'Lue' : 'Non lue';
+            statutEl.className = `font-medium ${isRead ? 'text-gray-500' : 'text-blue-600'}`;
+        }
+        
+        // Message
+        const messageEl = document.getElementById('detailNotifMessage');
         if (messageEl) messageEl.textContent = message;
-        
-        const idEl = document.getElementById('detailNotifId');
-        if (idEl) idEl.textContent = '#' + id;
-        
-        const dateEl = document.getElementById('detailNotifDate');
-        if (dateEl) dateEl.textContent = date;
+
+        // Bouton Traiter
+        const traiterBtn = document.getElementById('detailTraiterBtn');
+        if (traiterBtn) {
+            traiterBtn.dataset.id = id;
+            traiterBtn.onclick = function(e) {
+                const notifId = this.dataset.id;
+                showToast('Info', 'Traitement de la notification #' + notifId, 'info');
+                // TODO: Rediriger vers la page de traitement appropriée
+                closeModal('notifDetailModal');
+            };
+        }
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
         
-        const isRead = notifItem.dataset.lu === '1';
+        // Marquer automatiquement comme lu si non lue
         if (!isRead) {
             markAsRead(id);
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
         }
     }
 
@@ -2202,12 +2347,53 @@
     });
 
     // ============================================
-    // FILTRE
+    // FILTRE (UNIQUE VERSION)
     // ============================================
     filterSelect.addEventListener('change', function() {
-        currentFilter = this.value;
-        currentPage = 1;
-        loadNotifications(true);
+        const filterValue = this.value;
+        console.log('🔵 Filtre sélectionné:', filterValue);
+        
+        if (filterValue === 'all' || filterValue === 'unread') {
+            // Recharger via API
+            currentFilter = filterValue;
+            currentPage = 1;
+            loadNotifications(true);
+        } else {
+            // Filtre côté client
+            const items = container.querySelectorAll('.notif-item');
+            let visibleCount = 0;
+            
+            items.forEach(item => {
+                const type = item.dataset.type;
+                if (filterValue === type) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Mettre à jour le compteur
+            if (notifCount) {
+                notifCount.textContent = visibleCount + ' / ' + items.length + ' notification(s)';
+            }
+            
+            // Afficher un message si aucun résultat
+            const existingMsg = container.querySelector('.filter-no-results');
+            if (visibleCount === 0 && items.length > 0) {
+                if (!existingMsg) {
+                    const msg = document.createElement('div');
+                    msg.className = 'filter-no-results text-center py-12';
+                    msg.innerHTML = `
+                        <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-400 text-sm">Aucune notification de ce type</p>
+                    `;
+                    container.appendChild(msg);
+                }
+            } else {
+                if (existingMsg) existingMsg.remove();
+            }
+        }
     });
 
     // ============================================
@@ -2248,6 +2434,250 @@
     }
 
     console.log('✅ Notifications prêtes');
+
+})();
+
+// ============================================
+// EMAILS TRANSACTIONNELS - ACTIONS
+// ============================================
+(function() {
+    'use strict';
+
+    // ============================================
+    // 1. APERÇU DU TEMPLATE
+    // ============================================
+    document.querySelectorAll('.openEmailPreviewBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nom = this.dataset.nom || 'Template';
+            const objet = this.dataset.objet || '';
+            const contenu = this.dataset.contenu || '';
+            const bouton = this.dataset.bouton || 'Voir les offres';
+            const url = this.dataset.url || '#';
+            
+            // Remplir le modal d'aperçu
+            const modal = document.getElementById('emailPreviewModal');
+            if (modal) {
+                // Titre de l'email
+                const titleEl = modal.querySelector('.bg-gradient-to-r .text-xl.font-bold');
+                if (titleEl) titleEl.textContent = 'NDIGITMARKET';
+                
+                // Objet
+                const subjectEl = modal.querySelector('.bg-gradient-to-r .text-xs.text-white\\/80');
+                if (subjectEl) subjectEl.textContent = objet;
+                
+                // Titre principal
+                const mainTitle = modal.querySelector('.px-6.py-8 .text-lg.font-bold');
+                if (mainTitle) mainTitle.textContent = nom;
+                
+                // Contenu
+                const contentEl = modal.querySelector('.px-6.py-8 .text-sm.text-gray-600.leading-relaxed');
+                if (contentEl) contentEl.textContent = contenu;
+                
+                // Bouton CTA
+                const ctaBtn = modal.querySelector('.px-6.py-8 .inline-block');
+                if (ctaBtn) {
+                    ctaBtn.textContent = bouton;
+                    ctaBtn.href = url;
+                }
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    // ============================================
+    // 2. MODIFIER LE TEMPLATE
+    // ============================================
+    document.querySelectorAll('.openEmailEditorBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nom = this.dataset.nom || '';
+            const objet = this.dataset.objet || '';
+            const contenu = this.dataset.contenu || '';
+            const bouton = this.dataset.bouton || '';
+            const url = this.dataset.url || '';
+            const statut = this.dataset.statut || 'active';
+            
+            const modal = document.getElementById('emailEditorModal');
+            if (modal) {
+                // Remplir les champs
+                const inputs = modal.querySelectorAll('input');
+                if (inputs.length >= 4) {
+                    // Objet
+                    inputs[0].value = objet;
+                    // Titre principal
+                    inputs[1].value = nom;
+                    // Texte bouton
+                    inputs[2].value = bouton;
+                    // URL bouton
+                    inputs[3].value = url;
+                }
+                
+                // Contenu
+                const textarea = modal.querySelector('textarea');
+                if (textarea) textarea.value = contenu;
+                
+                // Statut du bouton
+                const statusRadios = modal.querySelectorAll('input[name="btnColor"]');
+                // ... selon ta logique
+                
+                // Stocker l'ID pour la sauvegarde
+                const submitBtn = modal.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.dataset.id = id;
+                    submitBtn.dataset.statut = statut;
+                }
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    // ============================================
+    // 3. TOGGLE STATUT DU TEMPLATE
+    // ============================================
+    document.querySelectorAll('.toggleEmailBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const statut = this.dataset.statut;
+            const nom = this.dataset.nom || 'Template';
+            const newStatut = statut === 'active' ? 'inactive' : 'active';
+            const action = newStatut === 'active' ? 'Activer' : 'Désactiver';
+
+            if (!confirm(`${action} le template "${nom}" ?`)) return;
+
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+            this.disabled = true;
+
+            fetch('api.php?url=email_template_toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + id + '&statut=' + newStatut
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof showToast === 'function') {
+                        showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                    }
+                    // Recharger la page pour voir les changements
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    if (typeof showToast === 'function') {
+                        showToast('Erreur', data.error || 'Erreur', 'error');
+                    }
+                    this.innerHTML = originalHtml;
+                    this.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Erreur', 'Erreur de connexion', 'error');
+                }
+                this.innerHTML = originalHtml;
+                this.disabled = false;
+            });
+        });
+    });
+
+    // ============================================
+    // 4. SAUVEGARDER LE TEMPLATE (Éditeur)
+    // ============================================
+    document.querySelector('#emailEditorModal button[type="submit"]')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        const id = this.dataset.id;
+        const modal = document.getElementById('emailEditorModal');
+        const inputs = modal.querySelectorAll('input');
+        const textarea = modal.querySelector('textarea');
+        
+        const data = {
+            id: id,
+            objet: inputs[0]?.value || '',
+            nom: inputs[1]?.value || '',
+            bouton_texte: inputs[2]?.value || '',
+            bouton_url: inputs[3]?.value || '',
+            contenu: textarea?.value || ''
+        };
+
+        const originalHtml = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        this.disabled = true;
+
+        const formData = new FormData();
+        formData.append('id', data.id);
+        formData.append('objet', data.objet);
+        formData.append('nom', data.nom);
+        formData.append('bouton_texte', data.bouton_texte);
+        formData.append('bouton_url', data.bouton_url);
+        formData.append('contenu', data.contenu);
+
+        fetch('api.php?url=email_template_update', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (typeof showToast === 'function') {
+                    showToast('Succès', data.message || 'Template mis à jour', 'success');
+                }
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                if (typeof showToast === 'function') {
+                    showToast('Erreur', data.error || 'Erreur', 'error');
+                }
+                this.innerHTML = originalHtml;
+                this.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            if (typeof showToast === 'function') {
+                showToast('Erreur', 'Erreur de connexion', 'error');
+            }
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+        });
+    });
+
+    // ============================================
+    // 5. FERMER LES MODALS
+    // ============================================
+    document.querySelectorAll('.closeEmailPreviewBtn, .closeEmailEditorBtn, .closeComposeBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('[id$="Modal"]');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+
+    // Fermer les modals en cliquant sur l'overlay
+    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+
+    console.log('✅ Emails transactionnels - Actions prêtes');
 
 })();
     </script>

@@ -218,7 +218,29 @@ switch ($url) {
         $controller = new NotificationController($pdo);
         $controller->updateSettings();
         break;
+
+        // ============================================
+    // EMAILS TRANSACTIONNELS
+    // ============================================
+    case 'email_templates_list':
+        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
+        $controller = new EmailController($pdo);
+        $controller->getTemplates();
+        break;
+
+    case 'email_template_toggle':
+        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
+        $controller = new EmailController($pdo);
+        $controller->toggleTemplate();
+        break;
+
+    case 'email_template_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
+        $controller = new EmailController($pdo);
+        $controller->updateTemplate();
+        break;
         
+
 //     case 'rapport_stats':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
 //         $controller = new LoginController($pdo);

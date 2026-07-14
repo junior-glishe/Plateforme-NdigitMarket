@@ -20,6 +20,18 @@ class NotificationController {
         $notifications = $this->model->getAllNotifications(50);
         $stats = $this->model->getNotificationStats();
         $settings = $this->model->getSettings();
+
+           // Stats emails
+    $emailStats = [
+        'envoyes' => $this->model->countEmailsEnvoyes(),
+        'taux_ouverture' => $this->model->getTauxOuverture(),
+        'taux_clic' => $this->model->getTauxClic(),
+        'templates' => $this->model->countEmailTemplates()
+    ];
+    
+    // Récupérer les templates
+    $templates = $this->model->getAllEmailTemplates();
+    
         
         // Compter par type pour les stats
         $stats['vendor_requests'] = $this->model->countByType('vendor_request');
@@ -32,7 +44,9 @@ class NotificationController {
         $this->render('admin/notifications', [
             'notifications' => $notifications,
             'stats' => $stats,
-            'settings' => $settings
+            'settings' => $settings,
+             'emailStats' => $emailStats,  // Ajout des stats emails
+        'templates' => $templates  
         ]);
     }
 

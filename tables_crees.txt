@@ -93,3 +93,39 @@ INSERT INTO notification_settings (type, activer, email_notification) VALUES
 ('order_problem', 1, 1),
 ('support_message', 1, 1),
 ('security_alert', 1, 1);
+
+
+
+-- Table des templates d'emails
+CREATE TABLE IF NOT EXISTS email_templates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    declencheur VARCHAR(255) NOT NULL,
+    objet VARCHAR(255) NOT NULL,
+    contenu TEXT NOT NULL,
+    bouton_texte VARCHAR(100) DEFAULT 'Voir les offres',
+    bouton_url VARCHAR(500) DEFAULT '#',
+    bg_color VARCHAR(50) DEFAULT 'bg-amber-100',
+    text_color VARCHAR(50) DEFAULT 'text-amber-600',
+    icon VARCHAR(50) DEFAULT 'fa-envelope-open-text',
+    statut ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_statut (statut)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table des logs d'emails
+CREATE TABLE IF NOT EXISTS email_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    template_id INT NULL,
+    destinataire VARCHAR(255) NOT NULL,
+    sujet VARCHAR(255) NOT NULL,
+    ouvert TINYINT(1) DEFAULT 0,
+    clic TINYINT(1) DEFAULT 0,
+    date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_destinataire (destinataire),
+    INDEX idx_date (date_envoi),
+    FOREIGN KEY (template_id) REFERENCES email_templates(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
