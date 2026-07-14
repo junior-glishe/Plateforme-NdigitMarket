@@ -53,27 +53,9 @@ class StatsRappportsModel {
 
         $stats['taux_conversion'] = $stats['inscriptions'] > 0 ? round(($stats['ventes'] / $stats['inscriptions']) * 100, 1) : 0;
 
-        // Calcul des évolutions
+        // Calcul des évolutions (sans created_at)
         try {
-            $stmt = $this->pdo->query("
-                SELECT COUNT(*) as total 
-                FROM utilisateur 
-                WHERE type != 'admin' 
-                AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            ");
-            $moisActuel = (int)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
-            $stmt = $this->pdo->query("
-                SELECT COUNT(*) as total 
-                FROM utilisateur 
-                WHERE type != 'admin' 
-                AND created_at BETWEEN DATE_SUB(CURDATE(), INTERVAL 60 DAY) AND DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            ");
-            $moisPrecedent = (int)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
-            if ($moisPrecedent > 0) {
-                $stats['evolution_inscriptions'] = round((($moisActuel - $moisPrecedent) / $moisPrecedent) * 100, 1);
-            }
+            $stats['evolution_inscriptions'] = 0;
         } catch (PDOException $e) {
             error_log("Erreur evolution inscriptions: " . $e->getMessage());
         }
@@ -155,6 +137,30 @@ class StatsRappportsModel {
         }
     }
 
+    public function getTopViewedProducts($limit = 5) {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    p.id,
+                    p.nom_article as nom,
+                    p.prix,
+                    p.image,
+                    CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
+                    0 as vues
+                FROM produits p
+                LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
+                GROUP BY p.id
+                ORDER BY p.id DESC
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur top viewed: " . $e->getMessage());
+            return [];
+        }
+    }
+
     // ============================================
     // CATÉGORIES PERFORMANTES
     // ============================================
@@ -187,34 +193,34 @@ class StatsRappportsModel {
     public function getGeoDistribution() {
         try {
             $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
-            if ($stmt->rowCount() > 0) {
-                $stmt = $this->pdo->query("
-                    SELECT 
-                        pays,
-                        COUNT(*) as total,
-                        ROUND((COUNT(*) / (SELECT COUNT(*) FROM utilisateur WHERE type != 'admin')) * 100, 1) as pourcentage
-                    FROM utilisateur
-                    WHERE type != 'admin'
-                    GROUP BY pays
-                    ORDER BY total DESC
-                    LIMIT 5
-                ");
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (!empty($result)) {
-                    return $result;
-                }
+            $hasPaysColumn = $stmt->rowCount() > 0;
+            
+            if (!$hasPaysColumn) {
+                return [];
             }
+            
+            $stmt = $this->pdo->query("
+                SELECT 
+                    pays,
+                    COUNT(*) as total,
+                    ROUND((COUNT(*) / (SELECT COUNT(*) FROM utilisateur WHERE type != 'admin')) * 100, 1) as pourcentage
+                FROM utilisateur
+                WHERE type != 'admin' AND pays IS NOT NULL AND pays != ''
+                GROUP BY pays
+                ORDER BY total DESC
+                LIMIT 5
+            ");
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (!empty($result)) {
+                return $result;
+            }
+            
         } catch (PDOException $e) {
             error_log("Erreur geo: " . $e->getMessage());
         }
         
-        return [
-            ['pays' => 'Sénégal', 'total' => 0, 'pourcentage' => 0],
-            ['pays' => 'Côte d\'Ivoire', 'total' => 0, 'pourcentage' => 0],
-            ['pays' => 'Cameroun', 'total' => 0, 'pourcentage' => 0],
-            ['pays' => 'Mali', 'total' => 0, 'pourcentage' => 0],
-            ['pays' => 'Autres', 'total' => 0, 'pourcentage' => 0]
-        ];
+        return [];
     }
 
     // ============================================
@@ -352,7 +358,6 @@ class StatsRappportsModel {
 
         $days = $period === 'week' ? 7 : 30;
         
-        // Récupérer les commandes par jour
         $commandesParJour = [];
         try {
             $stmt = $this->pdo->query("
@@ -374,68 +379,238 @@ class StatsRappportsModel {
             error_log("Erreur commandes: " . $e->getMessage());
         }
         
-        // Récupérer les inscriptions par jour (si possible)
-        $inscriptionsParJour = [];
-        try {
-            $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'created_at'");
-            if ($stmt->rowCount() > 0) {
-                $stmt = $this->pdo->query("
-                    SELECT 
-                        DATE(created_at) as jour,
-                        COUNT(*) as total
-                    FROM utilisateur 
-                    WHERE type != 'admin'
-                    AND created_at >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
-                    GROUP BY DATE(created_at)
-                ");
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $inscriptionsParJour[$row['jour']] = (int)$row['total'];
-                }
-            }
-        } catch (PDOException $e) {
-            error_log("Erreur inscriptions: " . $e->getMessage());
-        }
-        
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = date('Y-m-d', strtotime("-$i days"));
-            
             $data['labels'][] = $period === 'week' ? date('D', strtotime("-$i days")) : date('d/m', strtotime("-$i days"));
-            $data['inscriptions'][] = $inscriptionsParJour[$date] ?? 0;
             $data['ventes'][] = $commandesParJour[$date]['ventes'] ?? 0;
             $data['ca'][] = $commandesParJour[$date]['ca'] ?? 0;
+            $data['inscriptions'][] = 0;
         }
 
         return $data;
     }
 
+    // ============================================
+    // RAPPORTS EXPORTABLES - MÉTHODES
+    // ============================================
 
-    /**
- * Récupérer les top produits vus
- */
-public function getTopViewedProducts($limit = 5) {
-    try {
-        // Si la table produit_views existe
+    public function getCategoriesList() {
+        $stmt = $this->pdo->query("SELECT id, nom_categorie FROM categories ORDER BY nom_categorie");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVendorsList() {
+        $stmt = $this->pdo->query("
+            SELECT u.id_uti as id, CONCAT(u.prenom, ' ', u.nom) as nom 
+            FROM utilisateur u 
+            WHERE u.type = 'vendor' 
+            ORDER BY u.nom
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getSalesReportData($startDate = null, $endDate = null, $categorie = null, $vendeur = null) {
+        if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
+        if (!$endDate) $endDate = date('Y-m-d');
+        
+        $sql = "
+            SELECT 
+                DATE(c.date_commande) as date,
+                p.nom_article as produit,
+                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
+                cat.nom_categorie as categorie,
+                c.prix,
+                ROUND(CAST(c.prix AS DECIMAL(10,2)) * 0.1, 2) as commission,
+                'livree' as statut
+            FROM commande c
+            JOIN produits p ON p.id = c.id_article
+            JOIN utilisateur u ON u.id_uti = p.id_vendeur
+            JOIN categories cat ON cat.id = p.categorie_id
+            WHERE c.date_commande BETWEEN ? AND ?
+        ";
+        
+        $params = [$startDate . ' 00:00:00', $endDate . ' 23:59:59'];
+        
+        if ($categorie && $categorie !== 'Toutes les catégories' && $categorie !== 'all') {
+            $sql .= " AND cat.nom_categorie = ?";
+            $params[] = $categorie;
+        }
+        
+        if ($vendeur && $vendeur !== 'Tous les vendeurs' && $vendeur !== 'all') {
+            $sql .= " AND u.id_uti = ?";
+            $params[] = $vendeur;
+        }
+        
+        $sql .= " ORDER BY c.date_commande DESC LIMIT 100";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getSalesReportSummary($startDate = null, $endDate = null) {
+        if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
+        if (!$endDate) $endDate = date('Y-m-d');
+        
         $stmt = $this->pdo->prepare("
             SELECT 
-                p.id,
-                p.nom_article as nom,
-                p.prix,
-                p.image,
-                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
-                COUNT(pv.id) as vues
-            FROM produits p
-            LEFT JOIN produit_views pv ON pv.produit_id = p.id
-            LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
-            GROUP BY p.id
-            ORDER BY vues DESC
-            LIMIT ?
+                COUNT(*) as total_ventes,
+                SUM(CAST(prix AS DECIMAL(10,2))) as ca_total,
+                AVG(CAST(prix AS DECIMAL(10,2))) as panier_moyen
+            FROM commande
+            WHERE date_commande BETWEEN ? AND ?
         ");
-        $stmt->execute([$limit]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        // Si la table n'existe pas, retourner les produits sans les vues
-        error_log("Erreur top viewed: " . $e->getMessage());
-        return [];
+        $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $stmt = $this->pdo->prepare("
+            SELECT DATE(date_commande) as meilleur_jour, COUNT(*) as total
+            FROM commande
+            WHERE date_commande BETWEEN ? AND ?
+            GROUP BY DATE(date_commande)
+            ORDER BY total DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        $meilleurJour = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return [
+            'total_ventes' => (int)($result['total_ventes'] ?? 0),
+            'ca_total' => (float)($result['ca_total'] ?? 0),
+            'panier_moyen' => (float)($result['panier_moyen'] ?? 0),
+            'meilleur_jour' => $meilleurJour['meilleur_jour'] ?? '-'
+        ];
     }
-}
+
+    public function getFinancialReportData($startDate = null, $endDate = null) {
+        if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
+        if (!$endDate) $endDate = date('Y-m-d');
+        
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                DATE_FORMAT(c.date_commande, '%Y-%m') as mois,
+                SUM(CAST(c.prix AS DECIMAL(10,2))) as ca,
+                SUM(CAST(c.prix AS DECIMAL(10,2)) * 0.1) as commission_plateforme,
+                SUM(CAST(c.prix AS DECIMAL(10,2)) * 0.85) as commission_vendeurs,
+                SUM(CAST(c.prix AS DECIMAL(10,2)) * 0.05) as versements,
+                SUM(CAST(c.prix AS DECIMAL(10,2)) * 0) as solde_du
+            FROM commande c
+            WHERE c.date_commande BETWEEN ? AND ?
+            GROUP BY DATE_FORMAT(c.date_commande, '%Y-%m')
+            ORDER BY mois DESC
+        ");
+        $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFinancialReportSummary($startDate = null, $endDate = null) {
+        if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
+        if (!$endDate) $endDate = date('Y-m-d');
+        
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                SUM(CAST(prix AS DECIMAL(10,2))) as ca_total,
+                SUM(CAST(prix AS DECIMAL(10,2)) * 0.1) as commission_plateforme,
+                SUM(CAST(prix AS DECIMAL(10,2)) * 0.85) as commission_vendeurs,
+                SUM(CAST(prix AS DECIMAL(10,2)) * 0.05) as versements,
+                SUM(CAST(prix AS DECIMAL(10,2)) * 0) as solde_du
+            FROM commande
+            WHERE date_commande BETWEEN ? AND ?
+        ");
+        $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return [
+            'ca_total' => (float)($result['ca_total'] ?? 0),
+            'commission_plateforme' => (float)($result['commission_plateforme'] ?? 0),
+            'commission_vendeurs' => (float)($result['commission_vendeurs'] ?? 0),
+            'versements' => (float)($result['versements'] ?? 0),
+            'solde_du' => (float)($result['solde_du'] ?? 0)
+        ];
+    }
+
+    public function getUsersReportData($startDate = null, $endDate = null) {
+        $stmt = $this->pdo->query("
+            SELECT 
+                type,
+                COUNT(*) as total,
+                SUM(CASE WHEN statut = 'actif' THEN 1 ELSE 0 END) as actifs
+            FROM utilisateur
+            GROUP BY type
+        ");
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $data = [];
+        foreach ($result as $row) {
+            $data[] = [
+                'date' => 'Total',
+                'inscriptions' => (int)($row['total'] ?? 0),
+                'connexions' => (int)($row['actifs'] ?? 0),
+                'acheteurs_actifs' => $row['type'] === 'user' ? (int)($row['actifs'] ?? 0) : 0,
+                'desabonnements' => $row['type'] === 'user' ? (int)(($row['total'] ?? 0) - ($row['actifs'] ?? 0)) : 0
+            ];
+        }
+        return $data;
+    }
+
+    public function getUsersReportSummary($startDate = null, $endDate = null) {
+        $stmt = $this->pdo->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN statut = 'actif' THEN 1 ELSE 0 END) as actifs,
+                SUM(CASE WHEN type = 'user' THEN 1 ELSE 0 END) as users,
+                SUM(CASE WHEN type = 'user' AND statut = 'actif' THEN 1 ELSE 0 END) as users_actifs
+            FROM utilisateur
+        ");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $total = (int)($result['total'] ?? 0);
+        $actifs = (int)($result['actifs'] ?? 0);
+        $usersActifs = (int)($result['users_actifs'] ?? 0);
+        
+        return [
+            'total_inscriptions' => $total,
+            'total_connexions' => $actifs,
+            'total_acheteurs' => $usersActifs,
+            'total_desabonnements' => $total - $actifs,
+            'taux_retention' => $total > 0 ? round(($actifs / $total) * 100, 1) : 0
+        ];
+    }
+
+    public function getVendorsReportData($startDate = null, $endDate = null) {
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                u.id_uti as id,
+                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as nom,
+                u.email,
+                COUNT(DISTINCT p.id) as produits,
+                COUNT(c.a) as ventes,
+                SUM(CAST(c.prix AS DECIMAL(10,2))) as ca,
+                SUM(CAST(c.prix AS DECIMAL(10,2)) * 0.85) as commission,
+                AVG(r.note) as note_moyenne
+            FROM utilisateur u
+            LEFT JOIN produits p ON p.id_vendeur = u.id_uti
+            LEFT JOIN commande c ON c.id_article = p.id
+            LEFT JOIN reviews r ON r.produit_id = p.id
+            WHERE u.type = 'vendor'
+            GROUP BY u.id_uti
+            ORDER BY ca DESC
+            LIMIT 20
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVendorsReportSummary($startDate = null, $endDate = null) {
+        $data = $this->getVendorsReportData();
+        $totalVendeurs = count($data);
+        
+        return [
+            'total_vendeurs' => (int)$totalVendeurs,
+            'total_produits' => (int)array_sum(array_column($data, 'produits')),
+            'total_ventes' => (int)array_sum(array_column($data, 'ventes')),
+            'total_ca' => (float)array_sum(array_column($data, 'ca')),
+            'revenu_moyen' => $totalVendeurs > 0 ? round(array_sum(array_column($data, 'ca')) / $totalVendeurs, 2) : 0
+        ];
+    }
 }

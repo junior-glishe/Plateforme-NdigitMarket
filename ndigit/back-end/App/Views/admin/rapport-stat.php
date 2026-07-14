@@ -293,7 +293,7 @@
     </div>
 </div>
 
-            <!-- Répartition géographique -->
+                        <!-- Répartition géographique -->
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
                     <div>
@@ -309,87 +309,47 @@
                         <canvas id="geoChart"></canvas>
                     </div>
                     <div class="space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">🇸🇳</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#0F172A]">Sénégal</p>
-                                    <p class="text-[10px] text-gray-400">- acheteurs</p>
+                        <?php 
+                        $emojiMap = [
+                            'Sénégal' => '🇸🇳',
+                            'Côte d\'Ivoire' => '🇨🇮',
+                            'Cameroun' => '🇨🇲',
+                            'Mali' => '🇲🇱',
+                            'Autres' => '🌍'
+                        ];
+                        $totalAcheteurs = array_sum(array_column($geoDistribution, 'total'));
+                        $totalAcheteurs = $totalAcheteurs > 0 ? $totalAcheteurs : 1;
+                        ?>
+                        
+                        <?php foreach ($geoDistribution as $country): ?>
+                            <?php 
+                            $nom = $country['pays'] ?? 'Autres';
+                            $total = $country['total'] ?? 0;
+                            $pourcentage = $country['pourcentage'] ?? 0;
+                            $emoji = $emojiMap[$nom] ?? '🌍';
+                            ?>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xl"><?= $emoji ?></span>
+                                    <div>
+                                        <p class="text-xs font-semibold text-[#0F172A]"><?= htmlspecialchars($nom) ?></p>
+                                        <p class="text-[10px] text-gray-400"><?= number_format($total, 0, ',', ' ') ?> acheteurs</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-[#0EA486]"><?= number_format($pourcentage, 1) ?>%</p>
+                                    <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
+                                        <div class="bg-[#0EA486] h-full rounded-full" style="width: <?= min($pourcentage, 100) ?>%;"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-%</p>
-                                <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                    <div class="bg-[#0EA486] h-full rounded-full" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">🇨🇮</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#0F172A]">Côte d'Ivoire</p>
-                                    <p class="text-[10px] text-gray-400">- acheteurs</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-%</p>
-                                <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                    <div class="bg-[#0EA486] h-full rounded-full" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">🇨🇲</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#0F172A]">Cameroun</p>
-                                    <p class="text-[10px] text-gray-400">- acheteurs</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-%</p>
-                                <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                    <div class="bg-[#0EA486] h-full rounded-full" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">🇲🇱</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#0F172A]">Mali</p>
-                                    <p class="text-[10px] text-gray-400">- acheteurs</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-%</p>
-                                <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                    <div class="bg-[#0EA486] h-full rounded-full" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="text-xl">🌍</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-[#0F172A]">Autres pays</p>
-                                    <p class="text-[10px] text-gray-400">- acheteurs</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-[#0EA486]">-%</p>
-                                <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                    <div class="bg-[#0EA486] h-full rounded-full" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!--  RAPPORTS EXPORTABLES -->
+                <!--  RAPPORTS EXPORTABLES -->
         <section class="mb-8">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
@@ -420,18 +380,20 @@
                 <div class="report-tab-content p-5" data-tab="sales">
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div class="flex flex-wrap items-center gap-2">
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                             <span class="text-xs text-gray-400">à</span>
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d') ?>">
                             <select class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option>Toutes les catégories</option>
-                                <option>WordPress</option>
-                                <option>HTML</option>
-                                <option>PHP</option>
-                                <option>React</option>
+                                <option value="all">Toutes les catégories</option>
+                                <?php foreach ($categoriesList as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom_categorie']) ?></option>
+                                <?php endforeach; ?>
                             </select>
                             <select class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option>Tous les vendeurs</option>
+                                <option value="all">Tous les vendeurs</option>
+                                <?php foreach ($vendorsList as $v): ?>
+                                    <option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['nom']) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="flex gap-2">
@@ -454,19 +416,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                             <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Total ventes</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($salesSummary['total_ventes'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
                             <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CA total</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($salesSummary['ca_total'] ?? 0) ?> FCFA</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                             <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Panier moyen</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($salesSummary['panier_moyen'] ?? 0) ?> FCFA</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
                             <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Meilleur jour</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= $salesSummary['meilleur_jour'] ?? '-' ?></p>
                         </div>
                     </div>
 
@@ -485,19 +447,30 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3 text-xs text-gray-500">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs text-gray-600">-</td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded-full">-</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">- FCFA</td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">-</span>
-                                    </td>
-                                </tr>
+                                <?php if (!empty($salesData)): ?>
+                                    <?php foreach ($salesData as $row): ?>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="px-4 py-3 text-xs text-gray-500"><?= $row['date'] ?? '-' ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= htmlspecialchars($row['produit'] ?? '-') ?></td>
+                                            <td class="px-4 py-3 text-xs text-gray-600"><?= htmlspecialchars($row['vendeur'] ?? '-') ?></td>
+                                            <td class="px-4 py-3">
+                                                <span class="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded-full"><?= htmlspecialchars($row['categorie'] ?? '-') ?></span>
+                                            </td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= number_format($row['prix'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]"><?= number_format($row['commission'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3">
+                                                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full"><?= $row['statut'] ?? '-' ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                            <i class="fas fa-inbox text-3xl block mb-2"></i>
+                                            Aucune donnée de vente
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -507,9 +480,9 @@
                 <div class="report-tab-content hidden p-5" data-tab="financial">
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div class="flex flex-wrap items-center gap-2">
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                             <span class="text-xs text-gray-400">à</span>
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="flex gap-2">
                             <button class="generateReportBtn px-3 py-2 rounded-lg bg-[#0EA486] hover:bg-[#0c8f75] text-white text-xs font-semibold flex items-center gap-2">
@@ -530,19 +503,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
                             <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CA total</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($financialSummary['ca_total'] ?? 0) ?> FCFA</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                             <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Commission plateforme</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($financialSummary['commission_plateforme'] ?? 0) ?> FCFA</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                             <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Commission vendeurs</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($financialSummary['commission_vendeurs'] ?? 0) ?> FCFA</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-100">
                             <p class="text-[10px] text-orange-600 font-semibold uppercase mb-1">Versements effectués</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($financialSummary['versements'] ?? 0) ?> FCFA</p>
                         </div>
                     </div>
 
@@ -559,14 +532,25 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-purple-600">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-blue-600">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-orange-600">- FCFA</td>
-                                </tr>
+                                <?php if (!empty($financialData)): ?>
+                                    <?php foreach ($financialData as $row): ?>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $row['mois'] ?? '-' ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= number_format($row['ca'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]"><?= number_format($row['commission_plateforme'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-purple-600"><?= number_format($row['commission_vendeurs'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-blue-600"><?= number_format($row['versements'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-orange-600"><?= number_format($row['solde_du'] ?? 0) ?> FCFA</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                            <i class="fas fa-inbox text-3xl block mb-2"></i>
+                                            Aucune donnée financière
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -576,9 +560,9 @@
                 <div class="report-tab-content hidden p-5" data-tab="users">
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div class="flex flex-wrap items-center gap-2">
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                             <span class="text-xs text-gray-400">à</span>
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="flex gap-2">
                             <button class="generateReportBtn px-3 py-2 rounded-lg bg-[#0EA486] hover:bg-[#0c8f75] text-white text-xs font-semibold flex items-center gap-2">
@@ -599,19 +583,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                             <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Nouvelles inscriptions</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($usersSummary['total_inscriptions'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
                             <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">Utilisateurs actifs</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($usersSummary['total_connexions'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                             <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Acheteurs</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($usersSummary['total_acheteurs'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
                             <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Taux rétention</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-%</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($usersSummary['taux_retention'] ?? 0, 1) ?>%</p>
                         </div>
                     </div>
 
@@ -627,13 +611,24 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-blue-600">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-emerald-600">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-red-600">-</td>
-                                </tr>
+                                <?php if (!empty($usersData)): ?>
+                                    <?php foreach ($usersData as $row): ?>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $row['date'] ?? '-' ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-blue-600"><?= $row['inscriptions'] ?? 0 ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $row['connexions'] ?? 0 ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-emerald-600"><?= $row['acheteurs_actifs'] ?? 0 ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-red-600"><?= $row['desabonnements'] ?? 0 ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                            <i class="fas fa-inbox text-3xl block mb-2"></i>
+                                            Aucune donnée utilisateur
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -643,9 +638,9 @@
                 <div class="report-tab-content hidden p-5" data-tab="vendors">
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                         <div class="flex flex-wrap items-center gap-2">
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                             <span class="text-xs text-gray-400">à</span>
-                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                            <input type="date" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="flex gap-2">
                             <button class="generateReportBtn px-3 py-2 rounded-lg bg-[#0EA486] hover:bg-[#0c8f75] text-white text-xs font-semibold flex items-center gap-2">
@@ -666,19 +661,19 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
                             <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">Vendeurs actifs</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($vendorsSummary['total_vendeurs'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                             <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Nouveaux vendeurs</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($vendorsSummary['total_produits'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                             <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Produits publiés</p>
-                            <p class="text-xl font-bold text-[#0F172A]">-</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($vendorsSummary['total_ventes'] ?? 0) ?></p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
                             <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Revenu moyen</p>
-                            <p class="text-xl font-bold text-[#0F172A]">- FCFA</p>
+                            <p class="text-xl font-bold text-[#0F172A]"><?= number_format($vendorsSummary['revenu_moyen'] ?? 0) ?> FCFA</p>
                         </div>
                     </div>
 
@@ -695,25 +690,36 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-lg flex items-center justify-center text-emerald-500">
-                                                <i class="fas fa-store text-xs"></i>
-                                            </div>
-                                            <span class="text-xs font-semibold text-[#0F172A]">-</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">-</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">- FCFA</td>
-                                    <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">- FCFA</td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-semibold text-amber-600">
-                                            <i class="fas fa-star text-[10px]"></i> -
-                                        </span>
-                                    </td>
-                                </tr>
+                                <?php if (!empty($vendorsData)): ?>
+                                    <?php foreach ($vendorsData as $row): ?>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-lg flex items-center justify-center text-emerald-500">
+                                                        <i class="fas fa-store text-xs"></i>
+                                                    </div>
+                                                    <span class="text-xs font-semibold text-[#0F172A]"><?= htmlspecialchars($row['nom'] ?? '-') ?></span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $row['produits'] ?? 0 ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= $row['ventes'] ?? 0 ?></td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= number_format($row['ca'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]"><?= number_format($row['commission'] ?? 0) ?> FCFA</td>
+                                            <td class="px-4 py-3">
+                                                <span class="text-xs font-semibold text-amber-600">
+                                                    <i class="fas fa-star text-[10px]"></i> <?= $row['note_moyenne'] ? number_format($row['note_moyenne'], 1) : '-' ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                            <i class="fas fa-inbox text-3xl block mb-2"></i>
+                                            Aucun vendeur
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -1495,6 +1501,343 @@ document.addEventListener('DOMContentLoaded', function() {
 console.log('✅ Graphiques linéaires prêts');
 
 
+
+// ============================================
+// RAPPORTS EXPORTABLES
+// ============================================
+
+(function() {
+    'use strict';
+
+    // ============================================
+    // 1. RAPPORT DE VENTES
+    // ============================================
+    function loadSalesReport() {
+        const container = document.querySelector('.report-tab-content[data-tab="sales"]');
+        if (!container) return;
+        
+        const startDate = container.querySelector('input[type="date"]:first-child')?.value || '';
+        const endDate = container.querySelector('input[type="date"]:nth-child(3)')?.value || '';
+        const categorie = container.querySelector('select:first-child')?.value || '';
+        const vendeur = container.querySelector('select:last-child')?.value || '';
+        
+        const formData = new FormData();
+        formData.append('start_date', startDate);
+        formData.append('end_date', endDate);
+        formData.append('categorie', categorie);
+        formData.append('vendeur', vendeur);
+        
+        fetch('api.php?url=report_sales_generate', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateSalesReport(data.data, data.summary);
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+
+    function updateSalesReport(data, summary) {
+        // Mettre à jour les KPI cards
+        const container = document.querySelector('.report-tab-content[data-tab="sales"]');
+        if (!container) return;
+        
+        const kpis = container.querySelectorAll('.grid-cols-2.md\\:grid-cols-4 .p-4 .text-xl');
+        if (kpis.length >= 4) {
+            kpis[0].textContent = summary?.total_ventes || 0;
+            kpis[1].textContent = (summary?.ca_total || 0).toLocaleString('fr-FR') + ' FCFA';
+            kpis[2].textContent = (summary?.panier_moyen || 0).toLocaleString('fr-FR') + ' FCFA';
+            kpis[3].textContent = summary?.meilleur_jour || '-';
+        }
+        
+        // Mettre à jour le tableau
+        const tbody = container.querySelector('tbody');
+        if (!tbody || !data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-inbox text-3xl block mb-2"></i>
+                        Aucune donnée pour cette période
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = data.map(row => `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="px-4 py-3 text-xs text-gray-500">${row.date || '-'}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${escapeHtml(row.produit || '-')}</td>
+                <td class="px-4 py-3 text-xs text-gray-600">${escapeHtml(row.vendeur || '-')}</td>
+                <td class="px-4 py-3">
+                    <span class="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-1 rounded-full">${escapeHtml(row.categorie || '-')}</span>
+                </td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${(row.prix || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">${(row.commission || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3">
+                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">${row.statut || '-'}</span>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ============================================
+    // 2. RAPPORT FINANCIER
+    // ============================================
+    function loadFinancialReport() {
+        const container = document.querySelector('.report-tab-content[data-tab="financial"]');
+        if (!container) return;
+        
+        const startDate = container.querySelector('input[type="date"]:first-child')?.value || '';
+        const endDate = container.querySelector('input[type="date"]:nth-child(3)')?.value || '';
+        
+        fetch(`api.php?url=report_financial_data&start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateFinancialReport(data.data, data.summary);
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+
+    function updateFinancialReport(data, summary) {
+        const container = document.querySelector('.report-tab-content[data-tab="financial"]');
+        if (!container) return;
+        
+        // Mettre à jour les KPI cards
+        const kpis = container.querySelectorAll('.grid-cols-2.md\\:grid-cols-4 .p-4 .text-xl');
+        if (kpis.length >= 4) {
+            kpis[0].textContent = (summary?.ca_total || 0).toLocaleString('fr-FR') + ' FCFA';
+            kpis[1].textContent = (summary?.commission_plateforme || 0).toLocaleString('fr-FR') + ' FCFA';
+            kpis[2].textContent = (summary?.commission_vendeurs || 0).toLocaleString('fr-FR') + ' FCFA';
+            kpis[3].textContent = (summary?.versements || 0).toLocaleString('fr-FR') + ' FCFA';
+        }
+        
+        // Mettre à jour le tableau
+        const tbody = container.querySelector('tbody');
+        if (!tbody || !data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-inbox text-3xl block mb-2"></i>
+                        Aucune donnée financière
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = data.map(row => `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${row.mois || '-'}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${(row.ca || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">${(row.commission_plateforme || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-purple-600">${(row.commission_vendeurs || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-blue-600">${(row.versements || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-orange-600">${(row.solde_du || 0).toLocaleString('fr-FR')} FCFA</td>
+            </tr>
+        `).join('');
+    }
+
+    // ============================================
+    // 3. RAPPORT UTILISATEURS
+    // ============================================
+    function loadUsersReport() {
+        const container = document.querySelector('.report-tab-content[data-tab="users"]');
+        if (!container) return;
+        
+        const startDate = container.querySelector('input[type="date"]:first-child')?.value || '';
+        const endDate = container.querySelector('input[type="date"]:nth-child(3)')?.value || '';
+        
+        fetch(`api.php?url=report_users_data&start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateUsersReport(data.data, data.summary);
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+
+    function updateUsersReport(data, summary) {
+        const container = document.querySelector('.report-tab-content[data-tab="users"]');
+        if (!container) return;
+        
+        const kpis = container.querySelectorAll('.grid-cols-2.md\\:grid-cols-4 .p-4 .text-xl');
+        if (kpis.length >= 4) {
+            kpis[0].textContent = summary?.total_inscriptions || 0;
+            kpis[1].textContent = summary?.total_connexions || 0;
+            kpis[2].textContent = summary?.total_acheteurs || 0;
+            kpis[3].textContent = (summary?.taux_retention || 0) + '%';
+        }
+        
+        const tbody = container.querySelector('tbody');
+        if (!tbody || !data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-inbox text-3xl block mb-2"></i>
+                        Aucune donnée utilisateur
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = data.map(row => `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${row.date || '-'}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-blue-600">${row.inscriptions || 0}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${row.connexions || 0}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-emerald-600">${row.acheteurs_actifs || 0}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-red-600">${row.desabonnements || 0}</td>
+            </tr>
+        `).join('');
+    }
+
+    // ============================================
+    // 4. RAPPORT VENDEURS
+    // ============================================
+    function loadVendorsReport() {
+        const container = document.querySelector('.report-tab-content[data-tab="vendors"]');
+        if (!container) return;
+        
+        const startDate = container.querySelector('input[type="date"]:first-child')?.value || '';
+        const endDate = container.querySelector('input[type="date"]:nth-child(3)')?.value || '';
+        
+        fetch(`api.php?url=report_vendors_data&start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateVendorsReport(data.data, data.summary);
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+
+    function updateVendorsReport(data, summary) {
+        const container = document.querySelector('.report-tab-content[data-tab="vendors"]');
+        if (!container) return;
+        
+        const kpis = container.querySelectorAll('.grid-cols-2.md\\:grid-cols-4 .p-4 .text-xl');
+        if (kpis.length >= 4) {
+            kpis[0].textContent = summary?.total_vendeurs || 0;
+            kpis[1].textContent = summary?.total_produits || 0;
+            kpis[2].textContent = summary?.total_ventes || 0;
+            kpis[3].textContent = (summary?.revenu_moyen || 0).toLocaleString('fr-FR') + ' FCFA';
+        }
+        
+        const tbody = container.querySelector('tbody');
+        if (!tbody || !data || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
+                        <i class="fas fa-inbox text-3xl block mb-2"></i>
+                        Aucun vendeur
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = data.map(row => `
+            <tr class="hover:bg-gray-50/50 transition">
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-lg flex items-center justify-center text-emerald-500">
+                            <i class="fas fa-store text-xs"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-[#0F172A]">${escapeHtml(row.nom || '-')}</span>
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${row.produits || 0}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${row.ventes || 0}</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">${(row.ca || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3 text-xs font-semibold text-[#0EA486]">${(row.commission || 0).toLocaleString('fr-FR')} FCFA</td>
+                <td class="px-4 py-3">
+                    <span class="text-xs font-semibold text-amber-600">
+                        <i class="fas fa-star text-[10px]"></i> ${row.note_moyenne ? Number(row.note_moyenne).toFixed(1) : '-'}
+                    </span>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ============================================
+    // 5. UTILITAIRES
+    // ============================================
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ============================================
+    // 6. ÉVÉNEMENTS DES BOUTONS
+    // ============================================
+    document.querySelectorAll('.generateReportBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tab = this.closest('.report-tab-content');
+            if (!tab) return;
+            
+            const tabName = tab.dataset.tab;
+            
+            switch(tabName) {
+                case 'sales':
+                    loadSalesReport();
+                    break;
+                case 'financial':
+                    loadFinancialReport();
+                    break;
+                case 'users':
+                    loadUsersReport();
+                    break;
+                case 'vendors':
+                    loadVendorsReport();
+                    break;
+            }
+            
+            showToast('Rapport généré', 'Les données ont été mises à jour', 'success');
+        });
+    });
+
+    // ============================================
+    // 7. EXPORT DES RAPPORTS
+    // ============================================
+    document.querySelectorAll('.exportReportBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const format = this.dataset.format || 'csv';
+            const tab = this.closest('.report-tab-content');
+            if (!tab) return;
+            
+            const tabName = tab.dataset.tab;
+            const startDate = tab.querySelector('input[type="date"]:first-child')?.value || '';
+            const endDate = tab.querySelector('input[type="date"]:nth-child(3)')?.value || '';
+            
+            // Ouvrir le modal d'export
+            const modal = document.getElementById('exportModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    // ============================================
+    // 8. INITIALISATION - Charger les données par défaut
+    // ============================================
+    // Charger le rapport de ventes par défaut
+    setTimeout(() => {
+        loadSalesReport();
+    }, 500);
+
+})();
     </script>
 </body>
 </html>

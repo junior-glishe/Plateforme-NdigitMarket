@@ -332,29 +332,29 @@ switch ($url) {
         $controller->getGeoDistribution();
         break;
 
-    // Rapports
-    case 'report_sales':
+        // Rapports exportables
+    case 'report_sales_generate':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
         $controller->generateSalesReport();
         break;
 
-    case 'report_financial':
+    case 'report_financial_data':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
-        $controller->generateFinancialReport();
+        $controller->getFinancialReportData();
         break;
 
-    case 'report_users':
+    case 'report_users_data':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
-        $controller->generateUsersReport();
+        $controller->getUsersReportData();
         break;
 
-    case 'report_vendors':
+    case 'report_vendors_data':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
-        $controller->generateVendorsReport();
+        $controller->getVendorsReportData();
         break;
 
     case 'report_export':

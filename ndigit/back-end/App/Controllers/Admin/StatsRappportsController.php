@@ -15,19 +15,29 @@ class StatsRappportsController {
     // ============================================
     // PAGE PRINCIPALE
     // ============================================
-  public function index() {
+   public function index() {
     $period = $_GET['period'] ?? 'month';
     $chartPeriod = $_GET['chart_period'] ?? 'week';
     
-    // Récupérer les stats depuis le modèle
+    // Récupérer les stats générales
     $stats = $this->model->getGeneralStats($period);
     $topProducts = $this->model->getTopProducts(5);
     $topViewedProducts = $this->model->getTopViewedProducts(5);
     $topCategories = $this->model->getTopCategories();
     $geoDistribution = $this->model->getGeoDistribution();
-    
-    // Récupérer les données pour les graphiques
     $chartData = $this->model->getChartData($chartPeriod);
+    
+    // Récupérer les données des rapports
+    $salesData = $this->model->getSalesReportData();
+    $salesSummary = $this->model->getSalesReportSummary();
+    $financialData = $this->model->getFinancialReportData();
+    $financialSummary = $this->model->getFinancialReportSummary();
+    $usersData = $this->model->getUsersReportData();
+    $usersSummary = $this->model->getUsersReportSummary();
+    $vendorsData = $this->model->getVendorsReportData();
+    $vendorsSummary = $this->model->getVendorsReportSummary();
+    $categoriesList = $this->model->getCategoriesList();
+    $vendorsList = $this->model->getVendorsList();
     
     $this->render('admin/rapport-stat', [
         'stats' => $stats,
@@ -36,7 +46,17 @@ class StatsRappportsController {
         'topCategories' => $topCategories,
         'geoDistribution' => $geoDistribution,
         'chartData' => $chartData,
-        'chartPeriod' => $chartPeriod
+        'chartPeriod' => $chartPeriod,
+        'salesData' => $salesData,
+        'salesSummary' => $salesSummary,
+        'financialData' => $financialData,
+        'financialSummary' => $financialSummary,
+        'usersData' => $usersData,
+        'usersSummary' => $usersSummary,
+        'vendorsData' => $vendorsData,
+        'vendorsSummary' => $vendorsSummary,
+        'categoriesList' => $categoriesList,
+        'vendorsList' => $vendorsList
     ]);
 }
 
@@ -305,4 +325,90 @@ class StatsRappportsController {
         echo json_encode($data);
         exit();
     }
+
+
+
+
+    // ============================================
+// RAPPORTS EXPORTABLES
+// ============================================
+
+/**
+ * Récupérer les données pour le rapport financier
+ */
+public function getFinancialReportData() {
+    $startDate = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));
+    $endDate = $_GET['end_date'] ?? date('Y-m-d');
+    
+    $data = $this->model->getFinancialReport($startDate, $endDate);
+    
+    $summary = [
+        'ca_total' => array_sum(array_column($data, 'ca')),
+        'commission_plateforme' => array_sum(array_column($data, 'commission_plateforme')),
+        'commission_vendeurs' => array_sum(array_column($data, 'commission_vendeurs')),
+        'versements' => array_sum(array_column($data, 'versements')),
+        'solde_du' => array_sum(array_column($data, 'solde_du'))
+    ];
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $data,
+        'summary' => $summary
+    ]);
+}
+
+/**
+ * Récupérer les données pour le rapport utilisateurs
+ */
+public function getUsersReportData() {
+    $startDate = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));
+    $endDate = $_GET['end_date'] ?? date('Y-m-d');
+    
+    $data = $this->model->getUsersReport($startDate, $endDate);
+    
+    $summary = [
+        'total_inscriptions' => array_sum(array_column($data, 'inscriptions')),
+        'total_connexions' => array_sum(array_column($data, 'connexions')),
+        'total_acheteurs' => array_sum(array_column($data, 'acheteurs_actifs')),
+        'total_desabonnements' => array_sum(array_column($data, 'desabonnements')),
+        'taux_retention' => 0
+    ];
+    
+    $totalInscriptions = $summary['total_inscriptions'];
+    $totalDesabonnements = $summary['total_desabonnements'];
+    $summary['taux_retention'] = $totalInscriptions > 0 ? round((($totalInscriptions - $totalDesabonnements) / $totalInscriptions) * 100, 1) : 0;
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $data,
+        'summary' => $summary
+    ]);
+}
+
+/**
+ * Récupérer les données pour le rapport vendeurs
+ */
+public function getVendorsReportData() {
+    $startDate = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));
+    $endDate = $_GET['end_date'] ?? date('Y-m-d');
+    
+    $data = $this->model->getVendorsReport($startDate, $endDate);
+    
+    $summary = [
+        'total_vendeurs' => count($data),
+        'total_produits' => array_sum(array_column($data, 'produits')),
+        'total_ventes' => array_sum(array_column($data, 'ventes')),
+        'total_ca' => array_sum(array_column($data, 'ca')),
+        'revenu_moyen' => 0
+    ];
+    
+    $totalVendeurs = $summary['total_vendeurs'];
+    $summary['revenu_moyen'] = $totalVendeurs > 0 ? round($summary['total_ca'] / $totalVendeurs, 2) : 0;
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $data,
+        'summary' => $summary
+    ]);
+}
 }
