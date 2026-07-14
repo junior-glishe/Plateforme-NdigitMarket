@@ -223,23 +223,62 @@ switch ($url) {
     // EMAILS TRANSACTIONNELS
     // ============================================
     case 'email_templates_list':
-        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
-        $controller = new EmailController($pdo);
-        $controller->getTemplates();
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);        $controller->getTemplates();
         break;
 
     case 'email_template_toggle':
-        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
-        $controller = new EmailController($pdo);
-        $controller->toggleTemplate();
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);        $controller->toggleTemplate();
         break;
 
     case 'email_template_update':
-        require_once __DIR__ . '/../App/Controllers/Admin/EmailController.php';
-        $controller = new EmailController($pdo);
-        $controller->updateTemplate();
+        require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+        $controller = new NotificationController($pdo);        $controller->updateTemplate();
         break;
         
+// ============================================
+// CAMPAGNES EMAILS EN MASSE
+// ============================================
+case 'campaign_stats':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->getCampaignStats();
+    break;
+
+case 'campaign_duplicate':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->duplicateCampaign();
+    break;
+
+case 'campaign_cancel':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->cancelCampaign();
+    break;
+
+case 'campaign_export_csv':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->exportCampaignCSV();
+    break;
+
+// ============================================
+// CAMPAGNES EMAILS EN MASSE - COMPOSER
+// ============================================
+case 'campaign_send':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->sendCampaign();
+    break;
+
+case 'campaign_test':
+    require_once __DIR__ . '/../App/Controllers/Admin/NotificationController.php';
+    $controller = new NotificationController($pdo);
+    $controller->testCampaign();
+    break;
+
 
 //     case 'rapport_stats':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';

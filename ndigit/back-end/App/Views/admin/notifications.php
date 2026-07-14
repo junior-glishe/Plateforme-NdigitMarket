@@ -317,7 +317,7 @@
                     <i class="fas fa-paper-plane text-[#0EA486]"></i> · Envoi d'emails en masse
                 </h3>
                 <div class="flex gap-2">
-                    <button class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
+                    <button id="openHistoryMassBtn" class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
                         <i class="fas fa-history"></i> Historique des envois
                     </button>
                     <button id="openComposeBtn" class="px-4 py-2 rounded-lg bg-[#0EA486] hover:bg-[#0c8f75] text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition">
@@ -326,7 +326,18 @@
                 </div>
             </div>
 
-            <!-- Stats envois masse -->
+            <?php
+        // 🔥 Au lieu de $massStats = $emailStats['mass'] ?? [...]
+        // Utilise directement :
+        if (!isset($massStats)) {
+            $massStats = [
+                'campagnes' => 0,
+                'taux_ouverture' => 0,
+                'taux_clic' => 0,
+                'planifies' => 0
+            ];
+        }
+        ?>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
@@ -335,7 +346,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">ENVOIS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($massStats['campagnes'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Campagnes envoyées</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -345,7 +356,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">OUVERTS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...%</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($massStats['taux_ouverture'] ?? 0, 1) ?>%</p>
                     <p class="text-xs text-gray-400 mt-1">Taux d'ouverture</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -355,7 +366,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">CLICS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...%</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($massStats['taux_clic'] ?? 0, 1) ?>%</p>
                     <p class="text-xs text-gray-400 mt-1">Taux de clic</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -365,7 +376,7 @@
                         </div>
                         <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">PLANIFIÉS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($massStats['planifies'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Envois programmés</p>
                 </div>
             </div>
@@ -392,105 +403,109 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center text-indigo-600">
-                                            <i class="fas fa-envelope-open-text text-xs"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">...</p>
-                                            <p class="text-[10px] text-gray-400">...</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">...</span>
-                                </td>
-                                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">...</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-semibold text-emerald-600">...%</span>
-                                        <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
-                                            <div class="bg-emerald-500 h-full rounded-full" style="width: 0%;"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-semibold text-purple-600">...%</span>
-                                        <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
-                                            <div class="bg-purple-500 h-full rounded-full" style="width: 0%;"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-check mr-1"></i>Envoyé
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openCampaignStatsBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Statistiques">
-                                            <i class="fas fa-chart-line text-xs"></i>
-                                        </button>
-                                        <button class="w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" title="Dupliquer">
-                                            <i class="fas fa-copy text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php if (!empty($campagnes)): ?>
+                                <?php foreach ($campagnes as $campagne): ?>
+                                    <?php
+                                        $statut = $campagne['statut'] ?? 'envoye';
+                                        $statutClasses = [
+                                            'envoye' => 'text-emerald-700 bg-emerald-100',
+                                            'planifie' => 'text-orange-700 bg-orange-100',
+                                            'erreur' => 'text-red-700 bg-red-100'
+                                        ];
+                                        $statutIcons = [
+                                            'envoye' => 'fa-check',
+                                            'planifie' => 'fa-clock',
+                                            'erreur' => 'fa-times'
+                                        ];
+                                        $statutLabels = [
+                                            'envoye' => 'Envoyé',
+                                            'planifie' => 'Planifié',
+                                            'erreur' => 'Erreur'
+                                        ];
+                                        $statutClass = $statutClasses[$statut] ?? 'text-gray-700 bg-gray-100';
+                                        $statutIcon = $statutIcons[$statut] ?? 'fa-circle';
+                                        $statutLabel = $statutLabels[$statut] ?? $statut;
+                                        
+                                        $tauxOuverture = ($campagne['envoyes'] ?? 0) > 0 ? round(($campagne['ouverts'] ?? 0) / ($campagne['envoyes'] ?? 1) * 100, 1) : 0;
+                                        $tauxClic = ($campagne['envoyes'] ?? 0) > 0 ? round(($campagne['cliques'] ?? 0) / ($campagne['envoyes'] ?? 1) * 100, 1) : 0;
+                                    ?>
+                                    <tr class="hover:bg-gray-50/50 transition" data-id="<?= $campagne['id'] ?>">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 <?= $campagne['bg_color'] ?? 'bg-gradient-to-br from-indigo-100 to-purple-100' ?> rounded-lg flex items-center justify-center <?= $campagne['text_color'] ?? 'text-indigo-600' ?>">
+                                                    <i class="fas <?= $campagne['icon'] ?? 'fa-envelope-open-text' ?> text-xs"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-[#0F172A] text-sm"><?= htmlspecialchars($campagne['nom'] ?? 'Sans nom') ?></p>
+                                                    <p class="text-[10px] text-gray-400"><?= htmlspecialchars($campagne['sujet'] ?? '') ?></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $campagne['cible_class'] ?? 'text-blue-700 bg-blue-100' ?> px-2 py-1 rounded-full">
+                                                <?= htmlspecialchars($campagne['cible_label'] ?? 'Tous') ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]"><?= number_format($campagne['envoyes'] ?? 0, 0, ',', ' ') ?></td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs font-semibold text-emerald-600"><?= $tauxOuverture ?>%</span>
+                                                <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
+                                                    <div class="bg-emerald-500 h-full rounded-full" style="width: <?= min($tauxOuverture, 100) ?>%;"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs font-semibold text-purple-600"><?= $tauxClic ?>%</span>
+                                                <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
+                                                    <div class="bg-purple-500 h-full rounded-full" style="width: <?= min($tauxClic, 100) ?>%;"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-gray-500">
+                                            <?= !empty($campagne['date_envoi']) ? date('d/m/Y H:i', strtotime($campagne['date_envoi'])) : '---' ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $statutClass ?> px-2 py-1 rounded-full">
+                                                <i class="fas <?= $statutIcon ?> mr-1"></i><?= $statutLabel ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center justify-end gap-1">
+                                                <button class="openCampaignStatsBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" 
+                                                        title="Statistiques"
+                                                        data-id="<?= $campagne['id'] ?>"
+                                                        data-nom="<?= htmlspecialchars($campagne['nom'] ?? '') ?>">
+                                                    <i class="fas fa-chart-line text-xs"></i>
+                                                </button>
+                                                <button class="openCampaignDuplicateBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" 
+                                                        title="Dupliquer"
+                                                        data-id="<?= $campagne['id'] ?>">
+                                                    <i class="fas fa-copy text-xs"></i>
+                                                </button>
+                                                <?php if ($statut === 'planifie'): ?>
+                                                    <button class="openCampaignCancelBtn w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center" 
+                                                            title="Annuler"
+                                                            data-id="<?= $campagne['id'] ?>"
+                                                            data-nom="<?= htmlspecialchars($campagne['nom'] ?? '') ?>">
+                                                        <i class="fas fa-times text-xs"></i>
+                                                    </button>
 
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-lg flex items-center justify-center text-emerald-600">
-                                            <i class="fas fa-envelope-open-text text-xs"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">...</p>
-                                            <p class="text-[10px] text-gray-400">...</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">...</span>
-                                </td>
-                                <td class="px-4 py-3 text-xs font-semibold text-[#0F172A]">...</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-semibold text-emerald-600">...%</span>
-                                        <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
-                                            <div class="bg-emerald-500 h-full rounded-full" style="width: 0%;"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs font-semibold text-purple-600">...%</span>
-                                        <div class="flex-1 bg-gray-100 rounded-full h-1.5 w-12">
-                                            <div class="bg-purple-500 h-full rounded-full" style="width: 0%;"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-orange-700 bg-orange-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-clock mr-1"></i>Planifié
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Modifier">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center" title="Annuler">
-                                            <i class="fas fa-times text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                                    
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                        <i class="fas fa-paper-plane text-3xl block mb-2"></i>
+                                        Aucune campagne envoyée
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -550,6 +565,40 @@
         </div>
     </div>
 
+    <!-- MODAL : CONFIRMER ACTION CAMPAGNE -->
+<div id="confirmCampaignModal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+                <h3 id="confirmCampaignTitle" class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i id="confirmCampaignIcon" class="fas fa-info-circle text-blue-500"></i>
+                    <span id="confirmCampaignLabel">Confirmer l'action</span>
+                </h3>
+                <p class="text-xs text-gray-400">Vérifiez avant de continuer</p>
+            </div>
+            <button class="closeConfirmCampaignBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div id="confirmCampaignMessage" class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Êtes-vous sûr de vouloir effectuer cette action ?
+                </p>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeConfirmCampaignBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                Annuler
+            </button>
+            <button id="confirmCampaignActionBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                <i class="fas fa-check"></i> Confirmer
+            </button>
+        </div>
+    </div>
+</div>
+
     <!-- MODAL : SUPPRIMER NOTIFICATION -->
 <div id="deleteNotifModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
@@ -590,6 +639,8 @@
             <button id="confirmDeleteNotifBtn" class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition opacity-50 cursor-not-allowed" disabled>
                 <i class="fas fa-trash"></i> Supprimer définitivement
             </button>
+
+            
         </div>
     </div>
 </div>
@@ -1202,32 +1253,45 @@
                             <p class="text-xs text-gray-500 mt-1">Envoyée le ...</p>
                         </div>
                         <div class="flex gap-2">
-                            <button class="px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-medium flex items-center gap-2">
-                                <i class="fas fa-file-csv"></i> Export CSV
-                            </button>
+                             <!-- Dans la colonne Actions de la campagne -->
+                          <button class="exportCsvBtn w-8 h-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center" 
+                                title="Exporter CSV"
+                                data-id="<?= $campagne['id'] ?>">
+                            <i class="fas fa-file-csv text-xs"></i>
+                        </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Stats cards -->
+                                <!-- Stats cards -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                         <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Envoyés</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                        <p id="statsEnvoyes" class="text-2xl font-bold text-[#0F172A]">...</p>
                     </div>
                     <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
                         <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">Ouverts</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">...</p>
-                        <p class="text-[10px] text-emerald-600 mt-1">...%</p>
+                        <p id="statsOuverts" class="text-2xl font-bold text-[#0F172A]">...</p>
+                        <p id="statsTauxOuverture" class="text-[10px] text-emerald-600 mt-1">...%</p>
                     </div>
                     <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
                         <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Cliqués</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">...</p>
-                        <p class="text-[10px] text-purple-600 mt-1">...%</p>
+                        <p id="statsClics" class="text-2xl font-bold text-[#0F172A]">...</p>
+                        <p id="statsTauxClic" class="text-[10px] text-purple-600 mt-1">...%</p>
                     </div>
                     <div class="p-4 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-100">
                         <p class="text-[10px] text-red-600 font-semibold uppercase mb-1">Désabonnés</p>
-                        <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                        <p id="statsDesabonnes" class="text-2xl font-bold text-[#0F172A]">...</p>
+                    </div>
+                </div>
+
+                <!-- Graphique -->
+                <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
+                    </h5>
+                    <div id="campaignChart" class="flex items-end justify-between gap-2 h-40">
+                        <!-- Graphique généré par JS -->
                     </div>
                 </div>
 
@@ -2440,226 +2504,504 @@
 })();
 
 // ============================================
-// EMAILS TRANSACTIONNELS - ACTIONS
+// ENVOI D'EMAILS EN MASSE - ACTIONS AVEC MODALS
 // ============================================
 (function() {
     'use strict';
 
+    let currentCampaignId = null;
+    let currentCampaignNom = null;
+    let currentActionType = null;
+
     // ============================================
-    // 1. APERÇU DU TEMPLATE
+    // 1. STATISTIQUES DE LA CAMPAGNE
     // ============================================
-    document.querySelectorAll('.openEmailPreviewBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
+    document.querySelectorAll('.openCampaignStatsBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
             const id = this.dataset.id;
-            const nom = this.dataset.nom || 'Template';
-            const objet = this.dataset.objet || '';
-            const contenu = this.dataset.contenu || '';
-            const bouton = this.dataset.bouton || 'Voir les offres';
-            const url = this.dataset.url || '#';
+            const nom = this.dataset.nom || 'Campagne';
             
-            // Remplir le modal d'aperçu
-            const modal = document.getElementById('emailPreviewModal');
-            if (modal) {
-                // Titre de l'email
-                const titleEl = modal.querySelector('.bg-gradient-to-r .text-xl.font-bold');
-                if (titleEl) titleEl.textContent = 'NDIGITMARKET';
-                
-                // Objet
-                const subjectEl = modal.querySelector('.bg-gradient-to-r .text-xs.text-white\\/80');
-                if (subjectEl) subjectEl.textContent = objet;
-                
-                // Titre principal
-                const mainTitle = modal.querySelector('.px-6.py-8 .text-lg.font-bold');
-                if (mainTitle) mainTitle.textContent = nom;
-                
-                // Contenu
-                const contentEl = modal.querySelector('.px-6.py-8 .text-sm.text-gray-600.leading-relaxed');
-                if (contentEl) contentEl.textContent = contenu;
-                
-                // Bouton CTA
-                const ctaBtn = modal.querySelector('.px-6.py-8 .inline-block');
-                if (ctaBtn) {
-                    ctaBtn.textContent = bouton;
-                    ctaBtn.href = url;
-                }
-                
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-            }
-        });
-    });
-
-    // ============================================
-    // 2. MODIFIER LE TEMPLATE
-    // ============================================
-    document.querySelectorAll('.openEmailEditorBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const nom = this.dataset.nom || '';
-            const objet = this.dataset.objet || '';
-            const contenu = this.dataset.contenu || '';
-            const bouton = this.dataset.bouton || '';
-            const url = this.dataset.url || '';
-            const statut = this.dataset.statut || 'active';
+            console.log('📊 Stats - ID:', id, 'Nom:', nom);
             
-            const modal = document.getElementById('emailEditorModal');
-            if (modal) {
-                // Remplir les champs
-                const inputs = modal.querySelectorAll('input');
-                if (inputs.length >= 4) {
-                    // Objet
-                    inputs[0].value = objet;
-                    // Titre principal
-                    inputs[1].value = nom;
-                    // Texte bouton
-                    inputs[2].value = bouton;
-                    // URL bouton
-                    inputs[3].value = url;
-                }
-                
-                // Contenu
-                const textarea = modal.querySelector('textarea');
-                if (textarea) textarea.value = contenu;
-                
-                // Statut du bouton
-                const statusRadios = modal.querySelectorAll('input[name="btnColor"]');
-                // ... selon ta logique
-                
-                // Stocker l'ID pour la sauvegarde
-                const submitBtn = modal.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.dataset.id = id;
-                    submitBtn.dataset.statut = statut;
-                }
-                
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
+            if (!id) {
+                showToast('Erreur', 'ID de campagne manquant', 'error');
+                return;
             }
-        });
-    });
 
-    // ============================================
-    // 3. TOGGLE STATUT DU TEMPLATE
-    // ============================================
-    document.querySelectorAll('.toggleEmailBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const statut = this.dataset.statut;
-            const nom = this.dataset.nom || 'Template';
-            const newStatut = statut === 'active' ? 'inactive' : 'active';
-            const action = newStatut === 'active' ? 'Activer' : 'Désactiver';
+            const modal = document.getElementById('campaignStatsModal');
+            if (!modal) {
+                showToast('Erreur', 'Modal de statistiques non trouvé', 'error');
+                return;
+            }
 
-            if (!confirm(`${action} le template "${nom}" ?`)) return;
+            // Mettre à jour le nom
+            const titleEl = modal.querySelector('.bg-gradient-to-br h4');
+            if (titleEl) titleEl.textContent = nom;
+            
+            const dateEl = modal.querySelector('.bg-gradient-to-br p');
+            if (dateEl) {
+                const now = new Date();
+                dateEl.textContent = `Envoyée le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}`;
+            }
 
-            const originalHtml = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
-            this.disabled = true;
-
-            fetch('api.php?url=email_template_toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + id + '&statut=' + newStatut
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (typeof showToast === 'function') {
-                        showToast('Succès', data.message || 'Statut mis à jour', 'success');
-                    }
-                    // Recharger la page pour voir les changements
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    if (typeof showToast === 'function') {
-                        showToast('Erreur', data.error || 'Erreur', 'error');
-                    }
-                    this.innerHTML = originalHtml;
-                    this.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                if (typeof showToast === 'function') {
-                    showToast('Erreur', 'Erreur de connexion', 'error');
-                }
-                this.innerHTML = originalHtml;
-                this.disabled = false;
+            // Réinitialiser les stats
+            ['statsEnvoyes', 'statsOuverts', 'statsTauxOuverture', 'statsClics', 'statsTauxClic', 'statsDesabonnes'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '...';
             });
+
+            // Réinitialiser le graphique
+            const chartContainer = document.getElementById('campaignChart');
+            if (chartContainer) {
+                chartContainer.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2 text-[#0EA486]"></i>
+                            <p class="text-sm">Chargement...</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Réinitialiser les top clics
+            const topClicksContainer = document.querySelector('.bg-white.rounded-2xl.p-5.border.border-gray-100:last-child .space-y-2');
+            if (topClicksContainer) {
+                topClicksContainer.innerHTML = `
+                    <div class="text-center py-4 text-gray-400">
+                        <i class="fas fa-spinner fa-spin text-2xl opacity-30"></i>
+                        <p class="text-sm mt-1">Chargement...</p>
+                    </div>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            // Appel API
+            const apiUrl = 'api.php?url=campaign_stats&id=' + id;
+            console.log('📡 Appel API:', apiUrl);
+            
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📊 Données reçues:', data);
+                    if (data.success && data.data) {
+                        renderCampaignStats(data.data);
+                    } else {
+                        showToast('Erreur', data.error || 'Erreur de chargement', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Erreur:', error);
+                    showToast('Erreur', 'Erreur de connexion', 'error');
+                });
         });
     });
 
-    // ============================================
-    // 4. SAUVEGARDER LE TEMPLATE (Éditeur)
-    // ============================================
-    document.querySelector('#emailEditorModal button[type="submit"]')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        const id = this.dataset.id;
-        const modal = document.getElementById('emailEditorModal');
-        const inputs = modal.querySelectorAll('input');
-        const textarea = modal.querySelector('textarea');
+    function renderCampaignStats(data) {
+        console.log('🟢 Rendu des stats:', data);
         
-        const data = {
-            id: id,
-            objet: inputs[0]?.value || '',
-            nom: inputs[1]?.value || '',
-            bouton_texte: inputs[2]?.value || '',
-            bouton_url: inputs[3]?.value || '',
-            contenu: textarea?.value || ''
+        const elements = {
+            statsEnvoyes: document.getElementById('statsEnvoyes'),
+            statsOuverts: document.getElementById('statsOuverts'),
+            statsTauxOuverture: document.getElementById('statsTauxOuverture'),
+            statsClics: document.getElementById('statsClics'),
+            statsTauxClic: document.getElementById('statsTauxClic'),
+            statsDesabonnes: document.getElementById('statsDesabonnes')
+        };
+        
+        if (elements.statsEnvoyes) elements.statsEnvoyes.textContent = formatNumber(data.envoyes || 0);
+        if (elements.statsOuverts) elements.statsOuverts.textContent = formatNumber(data.ouverts || 0);
+        if (elements.statsTauxOuverture) elements.statsTauxOuverture.textContent = (data.taux_ouverture || 0) + '%';
+        if (elements.statsClics) elements.statsClics.textContent = formatNumber(data.cliques || 0);
+        if (elements.statsTauxClic) elements.statsTauxClic.textContent = (data.taux_clic || 0) + '%';
+        if (elements.statsDesabonnes) elements.statsDesabonnes.textContent = formatNumber(data.desabonnes || 0);
+        
+        // Graphique
+        const chartContainer = document.getElementById('campaignChart');
+        if (chartContainer && data.chart && data.chart.length > 0) {
+            updateChart(chartContainer, data.chart);
+        } else if (chartContainer) {
+            chartContainer.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                    <div class="text-center">
+                        <i class="fas fa-chart-simple text-3xl mb-2 opacity-30"></i>
+                        <p class="text-sm">Aucune donnée</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Top clics
+        const topClicksContainer = document.querySelector('.bg-white.rounded-2xl.p-5.border.border-gray-100:last-child .space-y-2');
+        if (topClicksContainer) {
+            const topLinks = data.top_links || [];
+            if (topLinks.length > 0) {
+                topClicksContainer.innerHTML = topLinks.map(link => `
+                    <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                        <span class="text-xs font-mono text-gray-600 flex-1 truncate">${escapeHtml(link.url || link.lien || 'Lien')}</span>
+                        <span class="text-xs font-semibold text-[#0F172A]">${formatNumber(link.clics || 0)} clics</span>
+                    </div>
+                `).join('');
+            } else {
+                topClicksContainer.innerHTML = `
+                    <div class="text-center py-4 text-gray-400">
+                        <i class="fas fa-link text-2xl opacity-30"></i>
+                        <p class="text-sm mt-1">Aucun lien cliqué</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function updateChart(container, chartData) {
+        const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+        const maxVues = Math.max(...chartData.map(d => d.ouverts || 0), 1);
+        const maxClics = Math.max(...chartData.map(d => d.cliques || 0), 1);
+
+        let html = '';
+        chartData.forEach((dayData, index) => {
+            const jour = jours[index % 7];
+            const hauteurVues = Math.max(5, ((dayData.ouverts || 0) / maxVues) * 100);
+            const hauteurClics = Math.max(5, ((dayData.cliques || 0) / maxClics) * 100);
+
+            html += `
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <div class="w-full bg-emerald-500 rounded-t-lg transition-all duration-500" 
+                         style="height: ${hauteurVues}%; min-height: 5px;"></div>
+                    <div class="w-full bg-purple-500 rounded-t-lg transition-all duration-500" 
+                         style="height: ${hauteurClics}%; min-height: 5px;"></div>
+                    <span class="text-[10px] text-gray-400">${jour}</span>
+                    <span class="text-[8px] text-gray-300">${dayData.ouverts || 0}/${dayData.cliques || 0}</span>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // ============================================
+    // 2. DUPLIQUER UNE CAMPAGNE - RÉVISÉ
+    // ============================================
+    function setupDuplicateButtons() {
+        const buttons = document.querySelectorAll('.openCampaignDuplicateBtn');
+        console.log('🔵 Boutons Dupliquer trouvés:', buttons.length);
+        
+        buttons.forEach(btn => {
+            // Supprimer les anciens écouteurs pour éviter les doublons
+            btn.removeEventListener('click', handleDuplicate);
+            btn.addEventListener('click', handleDuplicate);
+        });
+    }
+
+    function handleDuplicate(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const btn = this;
+        const id = btn.dataset.id;
+        console.log('📋 Dupliquer - ID:', id);
+        
+        if (!id) {
+            showToast('Erreur', 'ID de campagne manquant', 'error');
+            return;
+        }
+        
+        // Récupérer le nom depuis la ligne du tableau
+        const row = btn.closest('tr');
+        let nom = btn.dataset.nom;
+        if (!nom && row) {
+            const nomEl = row.querySelector('td:first-child .font-semibold');
+            if (nomEl) nom = nomEl.textContent.trim();
+        }
+        nom = nom || 'Campagne';
+        
+        console.log('📋 Dupliquer - Nom:', nom);
+        
+        currentCampaignId = id;
+        currentCampaignNom = nom;
+        currentActionType = 'duplicate';
+        
+        showConfirmModal('duplicate', nom);
+    }
+
+    // ============================================
+    // 3. ANNULER UNE CAMPAGNE - RÉVISÉ
+    // ============================================
+    function setupCancelButtons() {
+        const buttons = document.querySelectorAll('.openCampaignCancelBtn');
+        console.log('🔴 Boutons Annuler trouvés:', buttons.length);
+        
+        buttons.forEach(btn => {
+            btn.removeEventListener('click', handleCancel);
+            btn.addEventListener('click', handleCancel);
+        });
+    }
+
+    function handleCancel(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const btn = this;
+        const id = btn.dataset.id;
+        console.log('❌ Annuler - ID:', id);
+        
+        if (!id) {
+            showToast('Erreur', 'ID de campagne manquant', 'error');
+            return;
+        }
+        
+        // Récupérer le nom depuis la ligne du tableau
+        const row = btn.closest('tr');
+        let nom = btn.dataset.nom;
+        if (!nom && row) {
+            const nomEl = row.querySelector('td:first-child .font-semibold');
+            if (nomEl) nom = nomEl.textContent.trim();
+        }
+        nom = nom || 'Campagne';
+        
+        console.log('❌ Annuler - Nom:', nom);
+        
+        currentCampaignId = id;
+        currentCampaignNom = nom;
+        currentActionType = 'cancel';
+        
+        showConfirmModal('cancel', nom);
+    }
+
+    // ============================================
+    // 4. AFFICHER LE MODAL DE CONFIRMATION
+    // ============================================
+    function showConfirmModal(action, nom) {
+        console.log('🟡 Affichage modal:', action, nom);
+        
+        const modal = document.getElementById('confirmCampaignModal');
+        if (!modal) {
+            console.error('Modal non trouvé!');
+            showToast('Erreur', 'Modal de confirmation non trouvé', 'error');
+            return;
+        }
+
+        const configs = {
+            duplicate: {
+                icon: 'fa-copy',
+                color: 'text-blue-500',
+                bg: 'bg-blue-500 hover:bg-blue-600',
+                title: 'Dupliquer la campagne',
+                label: 'Dupliquer',
+                msgClass: 'text-blue-700',
+                msgIcon: 'fa-info-circle',
+                message: `La campagne "<strong>${escapeHtml(nom)}</strong>" sera dupliquée avec toutes ses configurations.`,
+                btnText: '<i class="fas fa-copy"></i> Dupliquer'
+            },
+            cancel: {
+                icon: 'fa-times-circle',
+                color: 'text-orange-500',
+                bg: 'bg-orange-500 hover:bg-orange-600',
+                title: 'Annuler la campagne',
+                label: 'Annuler',
+                msgClass: 'text-orange-700',
+                msgIcon: 'fa-exclamation-triangle',
+                message: `La campagne "<strong>${escapeHtml(nom)}</strong>" sera annulée et ne sera pas envoyée.`,
+                btnText: '<i class="fas fa-times"></i> Annuler'
+            }
         };
 
+        const config = configs[action];
+        if (!config) {
+            console.error('Configuration inconnue:', action);
+            return;
+        }
+
+        // Mettre à jour le titre
+        const titleEl = document.getElementById('confirmCampaignTitle');
+        if (titleEl) {
+            titleEl.innerHTML = `
+                <i class="fas ${config.icon} ${config.color}"></i>
+                <span>${config.title}</span>
+            `;
+        }
+        
+        // Mettre à jour l'icône
+        const iconEl = document.getElementById('confirmCampaignIcon');
+        if (iconEl) {
+            iconEl.className = `fas ${config.icon} text-2xl ${config.color}`;
+        }
+        
+        // Mettre à jour le label
+        const labelEl = document.getElementById('confirmCampaignLabel');
+        if (labelEl) {
+            labelEl.textContent = config.label;
+        }
+        
+        // Mettre à jour le message
+        const msgEl = document.getElementById('confirmCampaignMessage');
+        if (msgEl) {
+            msgEl.innerHTML = `
+                <p class="text-sm ${config.msgClass}">
+                    <i class="fas ${config.msgIcon} mr-2"></i>
+                    ${config.message}
+                </p>
+            `;
+        }
+        
+        // Mettre à jour le bouton d'action
+        const actionBtn = document.getElementById('confirmCampaignActionBtn');
+        if (actionBtn) {
+            actionBtn.innerHTML = config.btnText;
+            actionBtn.className = `px-5 py-2.5 rounded-xl ${config.bg} text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition`;
+            // Réinitialiser l'état du bouton
+            actionBtn.disabled = false;
+        }
+
+        // Afficher le modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // ============================================
+    // 5. CONFIRMER L'ACTION
+    // ============================================
+    document.getElementById('confirmCampaignActionBtn')?.addEventListener('click', function() {
+        const id = currentCampaignId;
+        const action = currentActionType;
+
+        console.log('🟢 Confirmation - Action:', action, 'ID:', id);
+
+        if (!id) {
+            showToast('Erreur', 'ID de campagne manquant', 'error');
+            return;
+        }
+
+        if (!action) {
+            showToast('Erreur', 'Action non spécifiée', 'error');
+            return;
+        }
+
+        const urls = {
+            duplicate: 'api.php?url=campaign_duplicate',
+            cancel: 'api.php?url=campaign_cancel'
+        };
+
+        const successMessages = {
+            duplicate: 'Campagne dupliquée avec succès',
+            cancel: 'Campagne annulée avec succès'
+        };
+
+        const url = urls[action];
+        const successMsg = successMessages[action];
+
+        if (!url) {
+            showToast('Erreur', 'Action inconnue: ' + action, 'error');
+            return;
+        }
+
+        // Désactiver le bouton pendant le traitement
         const originalHtml = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
         this.disabled = true;
 
-        const formData = new FormData();
-        formData.append('id', data.id);
-        formData.append('objet', data.objet);
-        formData.append('nom', data.nom);
-        formData.append('bouton_texte', data.bouton_texte);
-        formData.append('bouton_url', data.bouton_url);
-        formData.append('contenu', data.contenu);
+        console.log('📡 Envoi requête:', url, 'ID:', id);
 
-        fetch('api.php?url=email_template_update', {
+        fetch(url, {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id=' + encodeURIComponent(id)
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('📡 Réponse HTTP:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('📡 Réponse JSON:', data);
             if (data.success) {
-                if (typeof showToast === 'function') {
-                    showToast('Succès', data.message || 'Template mis à jour', 'success');
+                // Fermer le modal
+                const modal = document.getElementById('confirmCampaignModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
                 }
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
                 document.body.style.overflow = '';
+                
+                showToast('Succès', data.message || successMsg, 'success');
+                
+                // Recharger la page après un court délai
                 setTimeout(() => location.reload(), 1000);
             } else {
-                if (typeof showToast === 'function') {
-                    showToast('Erreur', data.error || 'Erreur', 'error');
-                }
+                showToast('Erreur', data.error || 'Erreur lors de l\'opération', 'error');
+                // Réactiver le bouton
                 this.innerHTML = originalHtml;
                 this.disabled = false;
             }
         })
         .catch(error => {
-            console.error('Erreur:', error);
-            if (typeof showToast === 'function') {
-                showToast('Erreur', 'Erreur de connexion', 'error');
-            }
+            console.error('❌ Erreur fetch:', error);
+            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+            // Réactiver le bouton
             this.innerHTML = originalHtml;
             this.disabled = false;
         });
     });
 
     // ============================================
-    // 5. FERMER LES MODALS
+    // 6. FERMER LE MODAL DE CONFIRMATION
     // ============================================
-    document.querySelectorAll('.closeEmailPreviewBtn, .closeEmailEditorBtn, .closeComposeBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modal = this.closest('[id$="Modal"]');
+    document.querySelectorAll('.closeConfirmCampaignBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = document.getElementById('confirmCampaignModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+            // Réinitialiser les variables
+            currentCampaignId = null;
+            currentCampaignNom = null;
+            currentActionType = null;
+        });
+    });
+
+    document.getElementById('confirmCampaignModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
+            document.body.style.overflow = '';
+            currentCampaignId = null;
+            currentCampaignNom = null;
+            currentActionType = null;
+        }
+    });
+
+    // ============================================
+    // 7. EXPORT CSV
+    // ============================================
+    document.querySelectorAll('.exportCsvBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const id = this.dataset.id || '';
+            if (id) {
+                window.location.href = 'api.php?url=campaign_export_csv&id=' + id;
+            } else {
+                showToast('Erreur', 'ID de campagne manquant', 'error');
+            }
+        });
+    });
+
+    // ============================================
+    // 8. FERMER LE MODAL DE STATISTIQUES
+    // ============================================
+    document.querySelectorAll('.closeCampaignStatsBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = document.getElementById('campaignStatsModal');
             if (modal) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
@@ -2668,18 +3010,341 @@
         });
     });
 
-    // Fermer les modals en cliquant sur l'overlay
-    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-                this.classList.remove('flex');
-                document.body.style.overflow = '';
+    document.getElementById('campaignStatsModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 9. FONCTIONS UTILITAIRES
+    // ============================================
+    function formatNumber(num) {
+        num = Number(num) || 0;
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function showToast(title, message, type = 'success') {
+        // Utiliser la fonction globale si disponible
+        if (typeof window.showToast === 'function') {
+            window.showToast(title, message, type);
+            return;
+        }
+        
+        // Fallback: afficher une alerte
+        console.log(`[${type}] ${title}: ${message}`);
+        alert(`${title}\n${message}`);
+    }
+
+    // ============================================
+    // 10. INITIALISATION - RÉINITIALISER LES ÉCOUTEURS
+    // ============================================
+    function init() {
+        console.log('🚀 Initialisation des actions campagnes...');
+        
+        // Configurer les boutons de duplication
+        setupDuplicateButtons();
+        
+        // Configurer les boutons d'annulation
+        setupCancelButtons();
+        
+        console.log('✅ Initialisation terminée');
+        console.log('📊 Boutons Dupliquer:', document.querySelectorAll('.openCampaignDuplicateBtn').length);
+        console.log('📊 Boutons Annuler:', document.querySelectorAll('.openCampaignCancelBtn').length);
+    }
+
+    // Exécuter l'initialisation
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Réinitialiser les écouteurs après un rechargement partiel (AJAX)
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            // Vérifier si de nouveaux boutons ont été ajoutés
+            const hasNewButtons = document.querySelectorAll('.openCampaignDuplicateBtn, .openCampaignCancelBtn').length > 0;
+            if (hasNewButtons) {
+                console.log('🔄 Nouveaux boutons détectés, réinitialisation...');
+                setupDuplicateButtons();
+                setupCancelButtons();
             }
+        });
+        
+        // Observer le corps du document pour les changements
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    console.log('✅ Envoi d\'emails en masse - Actions prêtes');
+
+})();
+
+
+
+// ============================================
+// COMPOSER UN EMAIL EN MASSE - ACTION
+// ============================================
+(function() {
+    'use strict';
+
+    const composeModal = document.getElementById('composeModal');
+    const sendBtn = document.querySelector('.sendMassEmailBtn'); // ← Utilisation de la classe
+    const scheduleSelect = document.getElementById('scheduleSelect');
+    const scheduleSection = document.getElementById('scheduleSection');
+    const scheduleDate = document.getElementById('scheduleDate');
+
+    // ============================================
+    // 1. PLANIFICATION - TOGGLE
+    // ============================================
+    if (scheduleSelect && scheduleSection) {
+        scheduleSelect.removeEventListener('change', toggleSchedule);
+        scheduleSelect.addEventListener('change', toggleSchedule);
+    }
+
+    function toggleSchedule() {
+        const value = this.value;
+        if (value === 'Planifier pour plus tard' || value === 'later') {
+            scheduleSection.classList.remove('hidden');
+        } else {
+            scheduleSection.classList.add('hidden');
+        }
+    }
+
+    // ============================================
+    // 2. ENVOYER LA CAMPAGNE
+    // ============================================
+    if (sendBtn) {
+        sendBtn.removeEventListener('click', handleSend);
+        sendBtn.addEventListener('click', handleSend);
+    }
+
+    function handleSend(e) {
+        e.preventDefault();
+        
+        // Récupérer les valeurs avec les IDs
+        const nom = document.getElementById('campaignName')?.value?.trim() || '';
+        const sujet = document.getElementById('campaignSubject')?.value?.trim() || '';
+        const contenu = document.getElementById('campaignContent')?.value?.trim() || '';
+        const cible = document.querySelector('input[name="target"]:checked')?.value || 'all';
+        const bouton_texte = document.getElementById('campaignBtnText')?.value?.trim() || '';
+        const bouton_url = document.getElementById('campaignBtnUrl')?.value?.trim() || '#';
+        
+        // Planification
+        let date_planification = null;
+        if (scheduleSelect) {
+            const selectedValue = scheduleSelect.value;
+            if (selectedValue === 'Planifier pour plus tard' || selectedValue === 'later') {
+                date_planification = scheduleDate?.value || null;
+                if (!date_planification) {
+                    showToast('Erreur', 'Veuillez sélectionner une date de planification', 'error');
+                    return;
+                }
+            }
+        }
+
+        // Validation
+        if (!nom) {
+            showToast('Erreur', 'Veuillez saisir un nom de campagne', 'error');
+            document.getElementById('campaignName')?.focus();
+            return;
+        }
+
+        if (!sujet) {
+            showToast('Erreur', 'Veuillez saisir un objet', 'error');
+            document.getElementById('campaignSubject')?.focus();
+            return;
+        }
+
+        if (!contenu) {
+            showToast('Erreur', 'Veuillez rédiger le contenu de l\'email', 'error');
+            document.getElementById('campaignContent')?.focus();
+            return;
+        }
+
+        // Désactiver le bouton
+        const originalHtml = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+        this.disabled = true;
+
+        // Préparer les données
+        const formData = new FormData();
+        formData.append('nom', nom);
+        formData.append('sujet', sujet);
+        formData.append('contenu', contenu);
+        formData.append('cible', cible);
+        formData.append('bouton_texte', bouton_texte);
+        formData.append('bouton_url', bouton_url);
+        if (date_planification) {
+            formData.append('date_planification', date_planification);
+        }
+
+        console.log('📤 Envoi de la campagne:', { 
+            nom, 
+            sujet, 
+            cible, 
+            bouton_texte, 
+            date_planification,
+            contenu: contenu.substring(0, 50) + '...'
+        });
+
+        // Envoyer la requête
+        fetch('api.php?url=campaign_send', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📥 Réponse:', data);
+            
+            if (data.success) {
+                // Fermer le modal
+                if (composeModal) {
+                    composeModal.classList.add('hidden');
+                    composeModal.classList.remove('flex');
+                }
+                document.body.style.overflow = '';
+                
+                showToast('Succès', data.message || 'Campagne créée avec succès', 'success');
+                
+                // Recharger la page après 2 secondes
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de la création', 'error');
+                this.innerHTML = originalHtml;
+                this.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('❌ Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion au serveur: ' + error.message, 'error');
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+        });
+    }
+
+    // ============================================
+    // 3. APERÇU DE L'EMAIL
+    // ============================================
+    document.querySelector('.previewComposeBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const sujet = document.getElementById('campaignSubject')?.value?.trim() || 'Sujet de l\'email';
+        const contenu = document.getElementById('campaignContent')?.value?.trim() || 'Contenu de l\'email';
+        const boutonTexte = document.getElementById('campaignBtnText')?.value?.trim() || 'Découvrir';
+        const boutonUrl = document.getElementById('campaignBtnUrl')?.value?.trim() || '#';
+
+        // Mettre à jour l'aperçu
+        const previewContainer = document.getElementById('emailPreviewContainer');
+        if (previewContainer) {
+            const previewEmail = previewContainer.querySelector('.bg-white');
+            if (previewEmail) {
+                const titleEl = previewEmail.querySelector('h3');
+                if (titleEl) titleEl.textContent = sujet;
+                
+                const contentEls = previewEmail.querySelectorAll('.text-gray-600');
+                const paragraphs = contenu.split('\n').filter(p => p.trim());
+                contentEls.forEach((el, index) => {
+                    if (index < paragraphs.length) {
+                        el.textContent = paragraphs[index];
+                    } else {
+                        el.textContent = '...';
+                    }
+                });
+                
+                const btnEl = previewEmail.querySelector('.bg-\\[\\#0EA486\\]');
+                if (btnEl) {
+                    btnEl.textContent = boutonTexte;
+                    btnEl.href = boutonUrl;
+                }
+            }
+        }
+
+        // Ouvrir le modal d'aperçu
+        const previewModal = document.getElementById('emailPreviewModal');
+        if (previewModal) {
+            previewModal.classList.remove('hidden');
+            previewModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        showToast('Aperçu', 'Aperçu de l\'email généré', 'info');
+    });
+
+    // ============================================
+    // 4. ENVOYER UN EMAIL DE TEST
+    // ============================================
+    document.querySelector('.testSendBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const sujet = document.getElementById('campaignSubject')?.value?.trim() || 'Email de test';
+        const contenu = document.getElementById('campaignContent')?.value?.trim() || 'Contenu de l\'email de test';
+
+        if (!contenu || contenu === 'Contenu de l\'email de test') {
+            showToast('Erreur', 'Veuillez rédiger le contenu avant de tester', 'error');
+            document.getElementById('campaignContent')?.focus();
+            return;
+        }
+
+        const originalHtml = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+        this.disabled = true;
+
+        const formData = new FormData();
+        formData.append('sujet', sujet);
+        formData.append('contenu', contenu);
+
+        fetch('api.php?url=campaign_test', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast('Succès', 'Email de test envoyé avec succès', 'success');
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de l\'envoi du test', 'error');
+            }
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+        })
+        .catch(error => {
+            console.error('❌ Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
+            this.innerHTML = originalHtml;
+            this.disabled = false;
         });
     });
 
-    console.log('✅ Emails transactionnels - Actions prêtes');
+    // ============================================
+    // 5. INITIALISATION - VÉRIFICATION
+    // ============================================
+    console.log('✅ Composer email - Prêt');
+    console.log('📝 Bouton Envoyer trouvé (classe .sendMassEmailBtn):', !!document.querySelector('.sendMassEmailBtn'));
+    console.log('📝 Sélecteur planification trouvé:', !!scheduleSelect);
+    console.log('📝 Section planification trouvée:', !!scheduleSection);
 
 })();
     </script>

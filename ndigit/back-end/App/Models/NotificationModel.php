@@ -143,36 +143,6 @@ class NotificationModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // ============================================
-    // PARAMÈTRES DES NOTIFICATIONS
-    // ============================================
-
-    /**
-     * Récupérer les paramètres
-     */
-    public function getSettings() {
-        $stmt = $this->pdo->query("SELECT * FROM notification_settings");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Mettre à jour un paramètre
-     */
-    public function updateSetting($type, $data) {
-        $sql = "UPDATE notification_settings SET 
-                    activer = ?,
-                    email_notification = ?,
-                    seuil_commande = ?
-                WHERE type = ?";
-        
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['activer'] ?? 1,
-            $data['email_notification'] ?? 1,
-            $data['seuil_commande'] ?? null,
-            $type
-        ]);
-    }
 
     // ============================================
     // FONCTIONS DE CRÉATION AUTOMATIQUE
@@ -293,7 +263,7 @@ class NotificationModel {
 // STATISTIQUES EMAILS
 // ============================================
 /**
- * Compter le nombre d'emails envoyés ce mois
+ * Compter le nombre d'emails envoyés ce mois (transactionnels)
  */
 public function countEmailsEnvoyes() {
     $stmt = $this->pdo->query("
@@ -301,10 +271,16 @@ public function countEmailsEnvoyes() {
         FROM email_logs 
         WHERE DATE(date_envoi) >= DATE_FORMAT(NOW(), '%Y-%m-01')
         AND statut = 'envoye'
+        AND (type = 'transactionnel' OR type IS NULL)
     ");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result['total'] ?? 0;
 }
+public function deleteCampaign($id) {
+    $stmt = $this->pdo->prepare("DELETE FROM mass_emails WHERE id = ?");
+    return $stmt->execute([$id]);
+}
+
 
 /**
  * Calculer le taux d'ouverture moyen
@@ -454,4 +430,431 @@ public function logEmail($data) {
         $data['template_id'] ?? null
     ]);
 }
+
+// ============================================
+// EMAILS TRANSACTIONNELS - API
+// ============================================
+
+/**
+ * Récupérer tous les templates (API)
+ */
+public function getTemplates() {
+    $templates = $this->model->getAllEmailTemplates();
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $templates
+    ]);
+}
+
+/**
+ * Changer le statut d'un template
+ */
+public function toggleTemplate() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $id = (int)($_POST['id'] ?? 0);
+    $statut = $_POST['statut'] ?? 'active';
+    
+    if (!$id || !in_array($statut, ['active', 'inactive'])) {
+        $this->jsonResponse(['error' => 'Données invalides'], 400);
+        return;
+    }
+    
+    if ($this->model->toggleEmailTemplateStatus($id, $statut)) {
+        $this->jsonResponse(['success' => true, 'message' => 'Statut du template mis à jour']);
+    } else {
+        $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+    }
+}
+
+/**
+ * Mettre à jour un template
+ */
+public function updateTemplate() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $id = (int)($_POST['id'] ?? 0);
+    if (!$id) {
+        $this->jsonResponse(['error' => 'ID manquant'], 400);
+        return;
+    }
+    
+    $nom = trim($_POST['nom'] ?? '');
+    if (empty($nom)) {
+        $this->jsonResponse(['error' => 'Le nom est requis'], 400);
+        return;
+    }
+    
+    $data = [
+        'nom' => $nom,
+        'slug' => $this->generateSlug($nom),
+        'objet' => $_POST['objet'] ?? '',
+        'contenu' => $_POST['contenu'] ?? '',
+        'bouton_texte' => $_POST['bouton_texte'] ?? '',
+        'bouton_url' => $_POST['bouton_url'] ?? '#',
+        'bg_color' => $_POST['bg_color'] ?? 'bg-amber-100',
+        'text_color' => $_POST['text_color'] ?? 'text-amber-600',
+        'icon' => $_POST['icon'] ?? 'fa-envelope-open-text',
+        'statut' => $_POST['statut'] ?? 'active'
+    ];
+    
+    if ($this->model->updateEmailTemplate($id, $data)) {
+        $this->jsonResponse(['success' => true, 'message' => 'Template mis à jour avec succès']);
+    } else {
+        $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+    }
+}
+
+/**
+ * Récupérer les statistiques d'une campagne
+ */
+public function getCampaignStats($id) {
+    // Récupérer la campagne
+    $stmt = $this->pdo->prepare("SELECT * FROM mass_emails WHERE id = ?");
+    $stmt->execute([$id]);
+    $campagne = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$campagne) {
+        return [
+            'id' => $id,
+            'nom' => 'Campagne',
+            'envoyes' => 0,
+            'ouverts' => 0,
+            'cliques' => 0,
+            'desabonnes' => 0,
+            'taux_ouverture' => 0,
+            'taux_clic' => 0,
+            'chart' => [],
+            'top_links' => []
+        ];
+    }
+    
+    // Compter les logs dans email_logs
+    $stmt = $this->pdo->prepare("
+        SELECT 
+            COUNT(*) as total_envoyes,
+            SUM(CASE WHEN ouvert = 1 THEN 1 ELSE 0 END) as total_ouverts,
+            SUM(CASE WHEN clic = 1 THEN 1 ELSE 0 END) as total_cliques
+        FROM email_logs 
+        WHERE campagne_id = ? AND type = 'masse'
+    ");
+    $stmt->execute([$id]);
+    $logs = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $total = $logs['total_envoyes'] ?? 0;
+    $ouverts = $logs['total_ouverts'] ?? 0;
+    $cliques = $logs['total_cliques'] ?? 0;
+    
+    // Mettre à jour les compteurs dans mass_emails
+    if ($total > 0) {
+        $stmt = $this->pdo->prepare("UPDATE mass_emails SET envoyes = ?, ouverts = ?, cliques = ? WHERE id = ?");
+        $stmt->execute([$total, $ouverts, $cliques, $id]);
+    }
+    
+    $taux_ouverture = $total > 0 ? round(($ouverts / $total) * 100, 1) : 0;
+    $taux_clic = $total > 0 ? round(($cliques / $total) * 100, 1) : 0;
+    
+    // Données du graphique (7 derniers jours)
+    $stmt = $this->pdo->prepare("
+        SELECT 
+            DATE(date_envoi) as jour,
+            COUNT(*) as ouverts,
+            SUM(clic) as cliques
+        FROM email_logs
+        WHERE campagne_id = ? AND type = 'masse' 
+        AND date_envoi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(date_envoi)
+        ORDER BY DATE(date_envoi) ASC
+    ");
+    $stmt->execute([$id]);
+    $chart = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Formater les données du graphique
+    $formattedChart = [];
+    $joursMap = [];
+    foreach ($chart as $row) {
+        $joursMap[$row['jour']] = ['ouverts' => $row['ouverts'], 'cliques' => $row['cliques']];
+    }
+    
+    // Compléter avec les 7 derniers jours
+    for ($i = 6; $i >= 0; $i--) {
+        $date = date('Y-m-d', strtotime("-$i days"));
+        $formattedChart[] = [
+            'jour' => $date,
+            'ouverts' => $joursMap[$date]['ouverts'] ?? 0,
+            'cliques' => $joursMap[$date]['cliques'] ?? 0
+        ];
+    }
+    
+    return [
+        'id' => $campagne['id'],
+        'nom' => $campagne['nom'],
+        'envoyes' => $total,
+        'ouverts' => $ouverts,
+        'cliques' => $cliques,
+        'desabonnes' => 0,
+        'taux_ouverture' => $taux_ouverture,
+        'taux_clic' => $taux_clic,
+        'chart' => $formattedChart,
+        'top_links' => []
+    ];
+}
+
+/**
+ * Générer un slug à partir d'un nom
+ */
+private function generateSlug($text) {
+    $text = mb_strtolower($text);
+    $text = preg_replace('/[^a-z0-9-]/', '-', $text);
+    $text = preg_replace('/-+/', '-', $text);
+    return trim($text, '-');
+}
+
+// ============================================
+// STATISTIQUES ENVOIS EN MASSE
+// ============================================
+
+/**
+ * Compter le nombre de campagnes envoyées
+ */
+public function countMassCampaigns() {
+    $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM mass_emails WHERE statut = 'envoye'");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Compter le nombre de campagnes planifiées
+ */
+public function countMassPlanifies() {
+    $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM mass_emails WHERE statut = 'planifie'");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Taux d'ouverture des campagnes
+ */
+public function getMassTauxOuverture() {
+    $stmt = $this->pdo->query("
+        SELECT 
+            SUM(envoyes) as total_envoyes,
+            SUM(ouverts) as total_ouverts
+        FROM mass_emails 
+        WHERE statut = 'envoye'
+    ");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $total = $result['total_envoyes'] ?? 0;
+    $ouverts = $result['total_ouverts'] ?? 0;
+    
+    return $total > 0 ? round(($ouverts / $total) * 100, 1) : 0;
+}
+
+/**
+ * Taux de clic des campagnes
+ */
+public function getMassTauxClic() {
+    $stmt = $this->pdo->query("
+        SELECT 
+            SUM(envoyes) as total_envoyes,
+            SUM(cliques) as total_cliques
+        FROM mass_emails 
+        WHERE statut = 'envoye'
+    ");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $total = $result['total_envoyes'] ?? 0;
+    $cliques = $result['total_cliques'] ?? 0;
+    
+    return $total > 0 ? round(($cliques / $total) * 100, 1) : 0;
+}
+
+/**
+ * Récupérer les campagnes récentes
+ */
+public function getRecentMassCampaigns($limit = 10) {
+    $stmt = $this->pdo->prepare("
+        SELECT * FROM mass_emails 
+        ORDER BY date_envoi DESC 
+        LIMIT ?
+    ");
+    $stmt->execute([$limit]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+// ============================================
+// CAMPAGNES EMAILS EN MASSE
+// ============================================
+
+
+/**
+ * Enregistrer un log d'email en masse
+ */
+public function logMassEmail($data) {
+    $sql = "INSERT INTO email_logs (
+                campagne_id, 
+                email, 
+                destinataire, 
+                sujet, 
+                statut, 
+                ouvert, 
+                clic, 
+                desabonne,
+                type,
+                template_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['campagne_id'],
+        $data['email'],
+        $data['email'],
+        $data['sujet'],
+        'envoye',
+        $data['ouvert'] ?? 0,
+        $data['clic'] ?? 0,
+        $data['desabonne'] ?? 0,
+        'masse',
+        null
+    ]);
+}
+
+public function duplicateCampaign($id) {
+    $stmt = $this->pdo->prepare("SELECT * FROM mass_emails WHERE id = ?");
+    $stmt->execute([$id]);
+    $source = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$source) return false;
+    
+    $sql = "INSERT INTO mass_emails (
+        nom, sujet, contenu, cible, cible_label, cible_class,
+        bg_color, text_color, icon, statut, envoyes, ouverts, cliques
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $source['nom'] . ' (Copie)',
+        $source['sujet'],
+        $source['contenu'],
+        $source['cible'],
+        $source['cible_label'],
+        $source['cible_class'],
+        $source['bg_color'] ?? 'bg-gradient-to-br from-indigo-100 to-purple-100',
+        $source['text_color'] ?? 'text-indigo-600',
+        $source['icon'] ?? 'fa-envelope-open-text',
+        'planifie',
+        0, 0, 0
+    ]);
+}
+
+/**
+ * Annuler une campagne planifiée
+ */
+
+public function cancelCampaign($id) {
+    $stmt = $this->pdo->prepare("UPDATE mass_emails SET statut = 'erreur' WHERE id = ? AND statut = 'planifie'");
+    return $stmt->execute([$id]);
+}
+
+/**
+ * Créer une campagne d'emails en masse
+ */
+public function createMassCampaign($data) {
+    $sql = "INSERT INTO mass_emails (
+        nom, sujet, contenu, cible, cible_label, cible_class,
+        bouton_texte, bouton_url, statut, date_planification
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['nom'],
+        $data['sujet'],
+        $data['contenu'],
+        $data['cible'],
+        $data['cible_label'] ?? 'Tous',
+        $data['cible_class'] ?? 'text-blue-700 bg-blue-100',
+        $data['bouton_texte'] ?? '',
+        $data['bouton_url'] ?? '#',
+        'planifie',
+        isset($data['date_planification']) ? $data['date_planification'] : null
+    ]);
+}
+
+
+
+/**
+ * Récupérer les données d'export CSV
+ */
+
+public function getCampaignExportData($id) {
+    $stmt = $this->pdo->prepare("
+        SELECT 
+            email,
+            ouvert,
+            clic,
+            date_envoi
+        FROM email_logs
+        WHERE campagne_id = ?
+        ORDER BY date_envoi DESC
+    ");
+    $stmt->execute([$id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Enregistrer un clic sur un lien
+ */
+public function logMassEmailClick($data) {
+    $sql = "INSERT INTO mass_email_clics (
+        campagne_id, email, lien, date_clic
+    ) VALUES (?, ?, ?, NOW())";
+    
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        $data['campagne_id'],
+        $data['email'],
+        $data['lien']
+    ]);
+}
+
+// Ajoutez cette méthode dans votre NotificationModel.php, après les méthodes CRUD
+
+    // ============================================
+    // PARAMÈTRES DES NOTIFICATIONS
+    // ============================================
+
+    /**
+     * Récupérer les paramètres
+     */
+    public function getSettings() {
+        $stmt = $this->pdo->query("SELECT * FROM notification_settings");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Mettre à jour un paramètre
+     */
+    public function updateSetting($type, $data) {
+        $sql = "UPDATE notification_settings SET 
+                    activer = ?,
+                    email_notification = ?,
+                    seuil_commande = ?
+                WHERE type = ?";
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([
+            $data['activer'] ?? 1,
+            $data['email_notification'] ?? 1,
+            $data['seuil_commande'] ?? null,
+            $type
+        ]);
+    }
 }

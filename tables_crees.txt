@@ -129,3 +129,39 @@ CREATE TABLE IF NOT EXISTS email_logs (
     FOREIGN KEY (template_id) REFERENCES email_templates(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+CREATE TABLE mass_emails (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    sujet VARCHAR(255) NOT NULL,
+    contenu TEXT NOT NULL,
+    cible VARCHAR(50) NOT NULL,
+    cible_label VARCHAR(100),
+    cible_class VARCHAR(50),
+    envoyes INT DEFAULT 0,
+    ouverts INT DEFAULT 0,
+    cliques INT DEFAULT 0,
+    statut ENUM('envoye', 'planifie', 'erreur') DEFAULT 'planifie',
+    bg_color VARCHAR(50) DEFAULT 'bg-gradient-to-br from-indigo-100 to-purple-100',
+    text_color VARCHAR(50) DEFAULT 'text-indigo-600',
+    icon VARCHAR(50) DEFAULT 'fa-envelope-open-text',
+    date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_planification TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_statut (statut),
+    INDEX idx_date (date_envoi)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- Table des clics sur les liens
+CREATE TABLE mass_email_clics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    campagne_id INT NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    lien VARCHAR(500) NOT NULL,
+    date_clic TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_campagne (campagne_id),
+    INDEX idx_email (email),
+    FOREIGN KEY (campagne_id) REFERENCES mass_emails(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
