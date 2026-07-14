@@ -212,8 +212,8 @@ $baseUrl = "/Plateforme-NdigitMarket/ndigit/back-end/routes/api.php?url=";
                     <i class="fas fa-comment-dots"></i> Avis / Commentaire
                 </a>
 
-                <a href="<?= $baseUrl ?>parametres" 
-                   class="sidebar-link <?= $currentPage === 'parametres' ? 'active' : '' ?>">
+                <a href="<?= $baseUrl ?>parametres-systeme" 
+                   class="sidebar-link <?= $currentPage === 'parametres-systeme' ? 'active' : '' ?>">
                     <i class="fas fa-cog"></i> Paramètre système
                 </a>
 

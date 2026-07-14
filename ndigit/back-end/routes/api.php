@@ -362,12 +362,83 @@ switch ($url) {
         $controller = new StatsRappportsController($pdo);
         $controller->exportReport();
         break;
-//    case 'parametres_systemes':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
         
+            
+    // ============================================
+    // PARAMÈTRES SYSTÈME
+    // ============================================
+
+    // Page des paramètres
+    case 'parametres-systeme':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->index();
+        break;
+
+    // API - Paramètres généraux
+    case 'settings_general_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->updateGeneralSettings();
+        break;
+
+    // API - Configuration paiements
+    case 'settings_payment_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->updatePaymentSettings();
+        break;
+
+    // API - Configuration SMTP
+    case 'settings_smtp_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->updateSmtpSettings();
+        break;
+
+    // API - Test SMTP
+    case 'settings_smtp_test':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->testSmtp();
+        break;
+
+    // API - Créer administrateur
+    case 'settings_admin_create':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->createAdmin();
+        break;
+
+    // API - Mettre à jour administrateur
+    case 'settings_admin_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->updateAdmin();
+        break;
+
+    // API - Désactiver administrateur
+    case 'settings_admin_disable':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->disableAdmin();
+        break;
+
+    // API - Réactiver administrateur
+    case 'settings_admin_enable':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->enableAdmin();
+        break;
+
+    // API - Réinitialiser mot de passe admin
+    case 'settings_admin_reset_password':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->resetAdminPassword();
+        break;
+
+
 //    case 'logs_audits':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';
 //         $controller = new LoginController($pdo);
