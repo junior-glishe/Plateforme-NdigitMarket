@@ -517,53 +517,45 @@
         </footer>
     </main>
 
-    <!-- MODAL : PANNEAU NOTIFICATIONS (cloche) -->
-    <div id="notifPanel" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" id="notifPanelOverlay"></div>
-        <div class="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-bell text-[#0EA486]"></i> Notifications
-                    </h3>
-                    <p class="text-xs text-gray-400">Toutes vos notifications</p>
-                </div>
-                <button id="closeNotifPanelBtn" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+   <!-- MODAL : PANNEAU NOTIFICATIONS (cloche) -->
+<div id="notifPanel" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" id="notifPanelOverlay"></div>
+    <div class="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-bell text-[#0EA486]"></i> Notifications
+                </h3>
+                <p class="text-xs text-gray-400">Toutes vos notifications</p>
             </div>
+            <button id="closeNotifPanelBtn" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-            <div class="border-b border-gray-100 px-4 py-2 flex gap-2">
-                <button class="notif-filter-btn active px-3 py-1.5 text-xs font-semibold text-[#0EA486] bg-[#0EA486]/10 rounded-lg">Toutes</button>
-                <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg">Non lues</button>
-                <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg">Vendeurs</button>
-                <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg">Commandes</button>
-                <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg">Sécurité</button>
-            </div>
+        <div class="border-b border-gray-100 px-4 py-2 flex gap-2 flex-wrap">
+            <button class="notif-filter-btn active px-3 py-1.5 text-xs font-semibold text-[#0EA486] bg-[#0EA486]/10 rounded-lg" data-filter="all">Toutes</button>
+            <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg" data-filter="unread">Non lues</button>
+            <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg" data-filter="vendors">Vendeurs</button>
+            <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg" data-filter="orders">Commandes</button>
+            <button class="notif-filter-btn px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-100 rounded-lg" data-filter="security">Sécurité</button>
+        </div>
 
-            <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
-                <!-- Notification exemple -->
-                <div class="notif-item p-4 hover:bg-gray-50/50 transition cursor-pointer bg-blue-50/30 border-l-4 border-blue-500">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 flex-shrink-0">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h5 class="text-sm font-semibold text-[#0F172A]">Nouvelle demande vendeur</h5>
-                            <p class="text-xs text-gray-500 mt-0.5">...</p>
-                            <span class="text-[10px] text-gray-400 mt-1 block">...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-                <button class="w-full px-4 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center justify-center gap-2 transition">
-                    <i class="fas fa-check-double"></i> Tout marquer comme lu
-                </button>
+        <!-- CONTENEUR AVEC ID POUR LES NOTIFICATIONS -->
+        <div id="panelNotificationsContainer" class="flex-1 overflow-y-auto divide-y divide-gray-100">
+            <div class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-2xl text-[#0EA486] mb-2"></i>
+                <p class="text-gray-400 text-sm">Chargement...</p>
             </div>
         </div>
+
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+            <button id="markAllPanelBtn" class="w-full px-4 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center justify-center gap-2 transition">
+                <i class="fas fa-check-double"></i> Tout marquer comme lu
+            </button>
+        </div>
     </div>
+</div>
 
     <!-- MODAL : CONFIRMER ACTION CAMPAGNE -->
 <div id="confirmCampaignModal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -3220,6 +3212,556 @@
     console.log('✅ Composer email - Prêt');
 
 })();
-    </script>
+
+// ============================================
+// NOTIFICATIONS - PANEL & ACTIONS (CORRIGÉ)
+// ============================================
+(function() {
+    'use strict';
+
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifPanelOverlay');
+    const openBtn = document.getElementById('openNotifCenterBtn');
+    const closeBtn = document.getElementById('closeNotifPanelBtn');
+    const filterBtns = document.querySelectorAll('.notif-filter-btn');
+    // CORRECTION : Utiliser l'ID au lieu du sélecteur CSS invalide
+    const markAllBtn = document.getElementById('markAllPanelBtn');
+
+    // ============================================
+    // 1. OUVRIR / FERMER LE PANNEAU
+    // ============================================
+    if (openBtn && panel) {
+        openBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    if (closeBtn && panel) {
+        closeBtn.addEventListener('click', function() {
+            panel.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    }
+
+    if (overlay && panel) {
+        overlay.addEventListener('click', function() {
+            panel.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && panel && !panel.classList.contains('hidden')) {
+            panel.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 2. FILTRES DES NOTIFICATIONS
+    // ============================================
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => {
+                b.classList.remove('active', 'text-[#0EA486]', 'bg-[#0EA486]/10', 'font-semibold');
+                b.classList.add('text-gray-500', 'font-medium');
+            });
+            
+            this.classList.add('active', 'text-[#0EA486]', 'bg-[#0EA486]/10', 'font-semibold');
+            this.classList.remove('text-gray-500', 'font-medium');
+
+            const filter = this.dataset.filter || 'all';
+            const event = new CustomEvent('panelFilterChange', { detail: { filter: filter } });
+            document.dispatchEvent(event);
+        });
+    });
+
+    // ============================================
+    // 3. TOUT MARQUER COMME LU
+    // ============================================
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function() {
+            const event = new CustomEvent('markAllPanelRead');
+            document.dispatchEvent(event);
+        });
+    }
+
+    console.log('✅ Panel & Actions - Corrigé');
+
+})();
+
+// ============================================
+// PARAMÈTRES NOTIFICATIONS
+// ============================================
+(function() {
+    'use strict';
+
+    const settingsModal = document.getElementById('notifSettingsModal');
+    const openSettingsBtn = document.getElementById('openNotifSettingsBtn');
+    const closeSettingsBtns = document.querySelectorAll('.closeNotifSettingsBtn');
+    const saveSettingsBtn = document.querySelector('.saveNotifSettingsBtn');
+
+    // ============================================
+    // 1. OUVRIR / FERMER
+    // ============================================
+    if (openSettingsBtn && settingsModal) {
+        openSettingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            settingsModal.classList.remove('hidden');
+            settingsModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    closeSettingsBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            settingsModal.classList.add('hidden');
+            settingsModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        });
+    });
+
+    if (settingsModal) {
+        settingsModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                settingsModal.classList.add('hidden');
+                settingsModal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Fermer avec ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && settingsModal && !settingsModal.classList.contains('hidden')) {
+            settingsModal.classList.add('hidden');
+            settingsModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // ============================================
+    // 2. SAUVEGARDER LES PARAMÈTRES
+    // ============================================
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', function() {
+            // Récupérer les valeurs des checkboxes
+            const checkboxes = settingsModal.querySelectorAll('input[type="checkbox"]');
+            const settings = {};
+            
+            checkboxes.forEach((cb, index) => {
+                const label = cb.closest('label');
+                const labelText = label?.querySelector('.text-sm')?.textContent?.trim() || 'Option ' + (index + 1);
+                settings[labelText] = cb.checked;
+            });
+
+            // Récupérer les autres valeurs
+            const seuilInput = settingsModal.querySelector('input[type="number"]');
+            const emailSelect = settingsModal.querySelector('select');
+            
+            if (seuilInput) {
+                settings['seuil_commande'] = seuilInput.value;
+            }
+            
+            if (emailSelect) {
+                settings['email_notifications'] = emailSelect.value;
+            }
+
+            console.log('📝 Paramètres sauvegardés:', settings);
+
+            // Ici tu peux faire un appel API pour sauvegarder
+            // fetch('api.php?url=notifications_settings', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(settings)
+            // })
+
+            // Fermer le modal
+            settingsModal.classList.add('hidden');
+            settingsModal.classList.remove('flex');
+            document.body.style.overflow = '';
+            
+            showToast('Succès', 'Paramètres enregistrés avec succès', 'success');
+        });
+    }
+
+    console.log('✅ Paramètres notifications prêt');
+
+})();
+
+
+// ============================================
+// NOTIFICATIONS - PANEL DE LA CLOCHE (INDÉPENDANT)
+// ============================================
+(function() {
+    'use strict';
+
+    console.log('🔔 Initialisation du panneau cloche...');
+
+    const panel = document.getElementById('notifPanel');
+    const openBtn = document.getElementById('openNotifCenterBtn');
+    const closeBtn = document.getElementById('closeNotifPanelBtn');
+    const overlay = document.getElementById('notifPanelOverlay');
+    const container = document.getElementById('panelNotificationsContainer');
+    const markAllBtn = document.getElementById('markAllPanelBtn');
+    const filterBtns = document.querySelectorAll('.notif-filter-btn');
+
+    let currentFilter = 'all';
+    let allNotifications = [];
+    let isPanelOpen = false;
+
+    if (!panel || !container) {
+        console.error('❌ Éléments du panel non trouvés !');
+        return;
+    }
+
+    // ============================================
+    // 1. OUVRIR - CLIC SUR LA CLOCHE
+    // ============================================
+    if (openBtn) {
+        openBtn.removeEventListener('click', handleOpen);
+        openBtn.addEventListener('click', handleOpen);
+    }
+
+    function handleOpen(e) {
+        e.stopPropagation();
+        console.log('🔔 Clic sur la cloche !');
+        panel.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        isPanelOpen = true;
+        loadNotifications();
+    }
+
+    // ============================================
+    // 2. FERMER
+    // ============================================
+    function closePanel() {
+        panel.classList.add('hidden');
+        document.body.style.overflow = '';
+        isPanelOpen = false;
+    }
+
+    if (closeBtn) {
+        closeBtn.removeEventListener('click', closePanel);
+        closeBtn.addEventListener('click', closePanel);
+    }
+
+    if (overlay) {
+        overlay.removeEventListener('click', closePanel);
+        overlay.addEventListener('click', closePanel);
+    }
+
+    document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleEscape);
+
+    function handleEscape(e) {
+        if (e.key === 'Escape' && panel && !panel.classList.contains('hidden')) {
+            closePanel();
+        }
+    }
+
+    // ============================================
+    // 3. CHARGER LES NOTIFICATIONS
+    // ============================================
+    function loadNotifications() {
+        if (!container) {
+            console.error('❌ Container non trouvé !');
+            return;
+        }
+
+        console.log('🔄 Chargement des notifications...');
+
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <i class="fas fa-spinner fa-spin text-2xl text-[#0EA486] mb-2"></i>
+                <p class="text-gray-400 text-sm">Chargement...</p>
+            </div>
+        `;
+
+        fetch('api.php?url=notifications_list&limit=50')
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('📥 Données reçues:', data);
+                if (data.success) {
+                    allNotifications = data.data || [];
+                    renderNotifications();
+                    updateBadge();
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-red-500">
+                            <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                            <p class="text-sm">${data.error || 'Erreur de chargement'}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erreur:', error);
+                container.innerHTML = `
+                    <div class="text-center py-12 text-red-500">
+                        <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
+                        <p class="text-sm">Erreur de connexion</p>
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-[#0EA486] text-white rounded-lg text-sm">
+                            <i class="fas fa-redo mr-2"></i>Réessayer
+                        </button>
+                    </div>
+                `;
+            });
+    }
+
+    // ============================================
+    // 4. AFFICHER LES NOTIFICATIONS
+    // ============================================
+    function renderNotifications() {
+        if (!container) return;
+
+        let filtered = allNotifications;
+
+        switch(currentFilter) {
+            case 'unread':
+                filtered = allNotifications.filter(n => n.est_lu == 0);
+                break;
+            case 'vendors':
+                filtered = allNotifications.filter(n => n.type === 'vendor_request');
+                break;
+            case 'orders':
+                filtered = allNotifications.filter(n => n.type === 'order_high' || n.type === 'order_problem');
+                break;
+            case 'security':
+                filtered = allNotifications.filter(n => n.type === 'security_alert');
+                break;
+            default:
+                filtered = allNotifications;
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-400 text-sm">Aucune notification</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(notif => createNotifHTML(notif)).join('');
+        updateBadge();
+    }
+
+    function createNotifHTML(notif) {
+        const config = getTypeConfig(notif.type);
+        const isRead = notif.est_lu == 1;
+        const readClass = isRead ? '' : 'bg-blue-50/30 border-l-4 ' + config.border;
+        const dateFormatted = formatDate(notif.created_at);
+
+        return `
+            <div class="notif-item p-4 hover:bg-gray-50/50 transition cursor-pointer ${readClass}" 
+                 data-id="${notif.id}"
+                 data-type="${notif.type}"
+                 data-lu="${notif.est_lu}"
+                 data-priorite="${notif.priorite || 'medium'}">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 ${config.bg} rounded-xl flex items-center justify-center ${config.text} flex-shrink-0">
+                        <i class="fas ${config.icon}"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-start justify-between gap-2 mb-1">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2">
+                                    <h5 class="text-sm font-semibold text-[#0F172A]">${escapeHtml(notif.title)}</h5>
+                                    ${notif.priorite === 'high' ? '<span class="text-[8px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded-full">URGENT</span>' : ''}
+                                </div>
+                                <p class="text-xs text-gray-500 mt-0.5">${escapeHtml(notif.message)}</p>
+                            </div>
+                            <span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">${dateFormatted}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                            <span class="text-[10px] font-semibold ${config.badge_class} px-2 py-0.5 rounded-full">
+                                <i class="fas fa-circle text-[6px] mr-1"></i>${config.badge}
+                            </span>
+                            ${!isRead ? '<span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full"><i class="fas fa-circle text-[6px] mr-1"></i>Nouveau</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function getTypeConfig(type) {
+        const configs = {
+            'vendor_request': {
+                bg: 'bg-yellow-100', text: 'text-yellow-600', icon: 'fa-user-plus',
+                border: 'border-yellow-500', badge: 'En attente', badge_class: 'text-yellow-700 bg-yellow-100'
+            },
+            'order_high': {
+                bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'fa-shopping-cart',
+                border: 'border-emerald-500', badge: 'Commande importante', badge_class: 'text-emerald-700 bg-emerald-100'
+            },
+            'order_problem': {
+                bg: 'bg-red-100', text: 'text-red-600', icon: 'fa-exclamation-triangle',
+                border: 'border-red-500', badge: 'Problème', badge_class: 'text-red-700 bg-red-100'
+            },
+            'support_message': {
+                bg: 'bg-blue-100', text: 'text-blue-600', icon: 'fa-envelope',
+                border: 'border-blue-500', badge: 'Support', badge_class: 'text-blue-700 bg-blue-100'
+            },
+            'security_alert': {
+                bg: 'bg-purple-100', text: 'text-purple-600', icon: 'fa-shield-alt',
+                border: 'border-purple-500', badge: 'Alerte sécurité', badge_class: 'text-purple-700 bg-purple-100'
+            }
+        };
+        return configs[type] || {
+            bg: 'bg-gray-100', text: 'text-gray-600', icon: 'fa-bell',
+            border: 'border-gray-500', badge: 'Notification', badge_class: 'text-gray-700 bg-gray-100'
+        };
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '---';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000);
+        if (diff < 60) return 'À l\'instant';
+        if (diff < 3600) return 'Il y a ' + Math.floor(diff / 60) + ' min';
+        if (diff < 86400) return 'Il y a ' + Math.floor(diff / 3600) + ' h';
+        if (diff < 604800) return 'Il y a ' + Math.floor(diff / 86400) + ' j';
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ============================================
+    // 5. FILTRES
+    // ============================================
+    filterBtns.forEach(btn => {
+        btn.removeEventListener('click', handleFilter);
+        btn.addEventListener('click', handleFilter);
+    });
+
+    function handleFilter() {
+        filterBtns.forEach(b => {
+            b.classList.remove('active', 'text-[#0EA486]', 'bg-[#0EA486]/10', 'font-semibold');
+            b.classList.add('text-gray-500', 'font-medium');
+        });
+        
+        this.classList.add('active', 'text-[#0EA486]', 'bg-[#0EA486]/10', 'font-semibold');
+        this.classList.remove('text-gray-500', 'font-medium');
+
+        currentFilter = this.dataset.filter || 'all';
+        renderNotifications();
+    }
+
+    // ============================================
+    // 6. MARQUER UNE NOTIFICATION COMME LUE
+    // ============================================
+    function markAsRead(id) {
+        const item = container?.querySelector(`.notif-item[data-id="${id}"]`);
+        if (!item || item.dataset.lu === '1') return;
+
+        item.dataset.lu = '1';
+        item.classList.remove('bg-blue-50/30', 'border-l-4', 'border-blue-500');
+        item.style.opacity = '0.7';
+
+        const badge = item.querySelector('.text-blue-600.bg-blue-50');
+        if (badge) badge.remove();
+
+        updateBadge();
+
+        fetch('api.php?url=notifications_mark_read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + id
+        }).catch(error => console.error('Erreur:', error));
+    }
+
+    // ============================================
+    // 7. TOUT MARQUER COMME LU
+    // ============================================
+    if (markAllBtn) {
+        markAllBtn.removeEventListener('click', handleMarkAll);
+        markAllBtn.addEventListener('click', handleMarkAll);
+    }
+
+    function handleMarkAll() {
+        const items = container?.querySelectorAll('.notif-item[data-lu="0"]') || [];
+        if (items.length === 0) {
+            showToast('Info', 'Aucune notification non lue', 'info');
+            return;
+        }
+
+        items.forEach(item => {
+            item.dataset.lu = '1';
+            item.classList.remove('bg-blue-50/30', 'border-l-4', 'border-blue-500');
+            item.style.opacity = '0.7';
+            const badge = item.querySelector('.text-blue-600.bg-blue-50');
+            if (badge) badge.remove();
+        });
+
+        updateBadge();
+
+        fetch('api.php?url=notifications_mark_all_read', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Succès', items.length + ' notification(s) marquée(s) comme lue(s)', 'success');
+                loadNotifications();
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+
+    // ============================================
+    // 8. CLIC SUR UNE NOTIFICATION
+    // ============================================
+    document.removeEventListener('click', handleNotificationClick);
+    document.addEventListener('click', handleNotificationClick);
+
+    function handleNotificationClick(e) {
+        const item = e.target.closest('.notif-item');
+        if (item && panel && !panel.classList.contains('hidden')) {
+            const id = item.dataset.id;
+            if (id) markAsRead(id);
+        }
+    }
+
+    // ============================================
+    // 9. METTRE À JOUR LE BADGE
+    // ============================================
+    function updateBadge() {
+        const unreadCount = document.querySelectorAll('.notif-item[data-lu="0"]').length;
+        const badge = document.querySelector('#openNotifCenterBtn .absolute');
+        
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.textContent = '';
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    // ============================================
+    // 10. INITIALISATION
+    // ============================================
+    console.log('✅ Panneau cloche prêt');
+    updateBadge();
+
+})();
+
+</script>
 </body>
 </html>
