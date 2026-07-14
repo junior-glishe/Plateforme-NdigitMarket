@@ -158,16 +158,18 @@
         </div>
     </div>
 
-    <!-- Stats emails -->
-    <?php
-    // Récupérer les stats des emails depuis le contrôleur
-    $emailStats = $stats['email'] ?? [
-        'envoyes' => 0,
-        'taux_ouverture' => 0,
-        'taux_clic' => 0,
-        'templates' => 0
-    ];
-    ?>
+            <!-- Stats emails -->
+        <?php
+        // Les stats sont déjà passées directement par le contrôleur
+        if (!isset($emailStats)) {
+            $emailStats = [
+                'envoyes' => 0,
+                'taux_ouverture' => 0,
+                'taux_clic' => 0,
+                'templates' => 0
+            ];
+        }
+        ?>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
             <div class="flex items-center justify-between mb-2">
