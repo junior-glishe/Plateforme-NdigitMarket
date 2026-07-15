@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion </title>
-    <link rel="stylesheet" href="../assets/CSS/style.css">
-    <link rel="icon" type="image/png" href="/ndigitmarket/assets/images/favi.png">
+    <link rel="stylesheet" href="../public/assets/CSS/style.css">
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
     <meta name="description" content="Connectez-vous à votre espace .">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -161,7 +161,7 @@ $adminModel = new AdminModel();
                     <div class="flex justify-center mb-4">
                         <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center overflow-hidden">
                             <img
-                                src="<?= $baseUrl ?>/assets/images/favi.png"
+                                src="<?= $baseUrl ?>/public/assets/images/favi.png"
                                 alt="icon"
                                 class="w-8 h-8 object-contain">
                         </div>
@@ -238,7 +238,7 @@ $adminModel = new AdminModel();
         </div>
         <div class="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gray-900">
             <img
-                src="<?= $baseUrl ?>/assets/IMAGE/LOGO.svg"
+                src="<?= $baseUrl ?>/public/assets/IMAGE/LOGO.svg"
                 alt="NDIGITMARKET Logo"
                 class="w-2/3 h-auto object-contain">
             <div class="absolute inset-0 bg-black/10"></div>
@@ -269,7 +269,7 @@ $adminModel = new AdminModel();
             }
         });
     </script>
-    <script src="../assets/JS/script.js"></script>
+    <script src="../public/assets/JS/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
