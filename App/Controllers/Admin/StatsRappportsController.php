@@ -56,7 +56,8 @@ class StatsRappportsController {
         'vendorsData' => $vendorsData,
         'vendorsSummary' => $vendorsSummary,
         'categoriesList' => $categoriesList,
-        'vendorsList' => $vendorsList
+        'vendorsList' => $vendorsList,
+        'currentPage' => 'rapport-stat'
     ]);
 }
 

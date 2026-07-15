@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$base = defined('BASE_URL') ? BASE_URL : '';
+$base = defined('BASE_URL') ? BASE_URL : '/back-end';
 $currentPage = 'profil';
 
 $adminEmail = $_SESSION['email'] ?? $_SESSION['user']['email'] ?? '';
@@ -40,9 +40,9 @@ if (!$admin) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Profil</title>
-    <link rel="icon" type="image/png" href="<?= $base ?>/assets/images/favi.png">
+    <link rel="icon" type="image/png" href="<?= $base ?>/public/assets/images/favi.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="<?= $base ?>/assets/CSS/app.css">
+    <link rel="stylesheet" href="<?= $base ?>/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
@@ -627,7 +627,7 @@ if (!$admin) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // ===== CONFIG =====
-        const BASE = window.NDIGIT_BASE_URL || '/ndigitmarket';
+        const BASE = window.NDIGIT_BASE_URL || '/back-end';
 
         // ===== TOAST =====
         function showToast(message, type) {

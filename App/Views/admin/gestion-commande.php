@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Gestion des Commandes</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="/ndigitmarket/assets/images/favi.png">
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
 
-    <link rel="stylesheet" href="../assets/CSS/app.css">
+    <link rel="stylesheet" href="/back-end/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -375,31 +375,6 @@
     </div>
 
     <script>
-        // Sidebar mobile
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            if (!sidebar || !overlay || !hamburger) return;
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-            });
-            overlay.addEventListener('click', closeSidebar);
-        })();
-
         // Charger les produits et clients dans les selects
         (function() {
             const productSelect = document.getElementById('productSelect');

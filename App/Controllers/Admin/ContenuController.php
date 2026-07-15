@@ -71,7 +71,8 @@ class ContenuController {
             'codesPromo' => $codesPromo,
             'statsBannieres' => $statsBannieres,
             'statsPromo' => $statsPromo,
-            'categories' => $categories
+            'categories' => $categories,
+            'currentPage' => 'contenus'
         ]);
     }
 

@@ -9,7 +9,7 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../public/assets/CSS/app.css">
+    <link rel="stylesheet" href="/back-end/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                
+
                 <div class="w-9 h-9 rounded-full bg-[#0EA486] text-white flex items-center justify-center font-semibold text-sm">
                     A
                 </div>
@@ -386,37 +386,7 @@
         </div>
     </div>
 
-    <script src="<?= (defined('BASE_URL') ? BASE_URL : '/back-end') ?>/public/assets/js/tinymce/tinymce.min.js"></script>
     <script>
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-            });
-            overlay.addEventListener('click', closeSidebar);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
-            });
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768 && sidebar.classList.contains('open')) closeSidebar();
-            });
-        })();
-
         // Gestion du modal formulaire
         (function() {
             const modal = document.getElementById('formModal');

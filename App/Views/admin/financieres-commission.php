@@ -5,9 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Gestion Financière</title>
-    <link rel="icon" type="image/png" href="/ndigitmarket/assets/images/favi.png">
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/CSS/app.css">
+    <link rel="stylesheet" href="/back-end/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -492,7 +492,7 @@
                 <button data-close-modal class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-6 space-y-3">
-                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/index.php?route=admin/exportFinancialReport&type=vendors') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
+                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '/back-end') . '/index.php?route=admin/exportFinancialReport&type=vendors') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600"><i class="fas fa-store"></i></div>
                         <div>
@@ -501,7 +501,7 @@
                         </div>
                     </div>
                 </a>
-                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/index.php?route=admin/exportFinancialReport&type=categories') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
+                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '/back-end') . '/index.php?route=admin/exportFinancialReport&type=categories') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600"><i class="fas fa-tags"></i></div>
                         <div>
@@ -510,7 +510,7 @@
                         </div>
                     </div>
                 </a>
-                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/index.php?route=admin/exportFinancialReport&type=refunds') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
+                <a href="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '/back-end') . '/index.php?route=admin/exportFinancialReport&type=refunds') ?>" class="block p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600"><i class="fas fa-undo"></i></div>
                         <div>
@@ -541,31 +541,6 @@
             const number = Number.parseFloat(value || 0);
             return number.toLocaleString() + ' FCFA';
         };
-
-        // Sidebar mobile
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            if (!sidebar || !overlay || !hamburger) return;
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-            });
-            overlay.addEventListener('click', closeSidebar);
-        })();
 
         // Propagation ID + data-field
         (function() {

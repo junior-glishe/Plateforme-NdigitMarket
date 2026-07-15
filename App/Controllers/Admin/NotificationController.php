@@ -59,7 +59,8 @@ $campagnes = $this->model->getRecentMassCampaigns(10);
              'emailStats' => $emailStats,  // Ajout des stats emails
             'templates' => $templates,
             'massStats' => $massStats,      // Ajout
-            'campagnes' => $campagnes    
+            'campagnes' => $campagnes,
+            'currentPage' => 'notifications' 
         ]);
     }
 

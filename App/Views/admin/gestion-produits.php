@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Produits & Templates</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="/ndigitmarket/assets/images/favi.png">
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
 
-    <link rel="stylesheet" href="../assets/CSS/app.css">
+    <link rel="stylesheet" href="/back-end/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -161,7 +161,7 @@
                     <?php
                     $exportParams = $_GET;
                     $exportParams['route'] = 'admin/exportProducts';
-                    $exportUrl = (defined('BASE_URL') ? BASE_URL : '/ndigitmarket') . '/index.php?' . http_build_query($exportParams);
+                    $exportUrl = (defined('BASE_URL') ? BASE_URL : '/back-end') . '/index.php?' . http_build_query($exportParams);
                     ?>
                     <button type="button" data-open-modal="productHistoryModal"
                         class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
@@ -719,34 +719,6 @@
     </div>
 
     <script>
-        // Sidebar mobile
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            if (!sidebar || !overlay || !hamburger) return;
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-            });
-            overlay.addEventListener('click', closeSidebar);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
-            });
-        })();
-
         // Propagation de l'ID entre modales + gestion du mode (create/edit)
         (function() {
             document.body.addEventListener('click', function(e) {
@@ -910,7 +882,7 @@
                     return;
                 }
 
-                const baseUrl = window.NDIGIT_BASE_URL || '/ndigitmarket';
+                const baseUrl = window.NDIGIT_BASE_URL || '/back-end';
 
                 // Nom + ID
                 document.getElementById('apercuNom').textContent = payload.nom_article || '—';
@@ -1039,7 +1011,7 @@
                 }
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
-                    const url = (window.NDIGIT_BASE_URL || '/ndigitmarket') +
+                    const url = (window.NDIGIT_BASE_URL || '/back-end') +
                         '/index.php?route=admin/searchVendors&q=' + encodeURIComponent(q);
                     fetch(url, {
                             headers: {

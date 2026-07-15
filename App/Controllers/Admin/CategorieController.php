@@ -40,7 +40,8 @@ class CategorieController {
         'stats' => $stats,
         'icons' => $icons,
         'colors' => $colors,
-        'categoryDetail' => $categoryDetail  // 👈 AJOUTER CETTE LIGNE
+        'categoryDetail' => $categoryDetail,
+        'currentPage' => 'categories'  // 👈 AJOUTER CETTE LIGNE
     ]);
 }
         private function render($view, $data = [])

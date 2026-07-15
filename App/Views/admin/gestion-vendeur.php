@@ -5,11 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Gestion des Vendeurs</title>
-    <link rel="icon" type="image/png" href="/ndigitmarket/assets/images/favi.png">
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/CSS/app.css">
+    <link rel="stylesheet" href="/back-end/public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
@@ -180,7 +180,7 @@
                     <?php
                     $vendorExportParams = $_GET;
                     $vendorExportParams['route'] = 'admin/exportVendors';
-                    $vendorExportUrl = (defined('BASE_URL') ? BASE_URL : '/ndigitmarket') . '/index.php?' . http_build_query($vendorExportParams);
+                    $vendorExportUrl = (defined('BASE_URL') ? BASE_URL : '/back-end') . '/index.php?' . http_build_query($vendorExportParams);
                     ?>
                     <a href="<?= htmlspecialchars($vendorExportUrl) ?>"
                         class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
@@ -334,7 +334,7 @@
                     <i class="fas fa-coins text-[#0EA486]"></i> · Gestion des commissions et versements
                 </h3>
                 <div class="flex gap-2">
-                    <a href="<?= (defined('BASE_URL') ? BASE_URL : '/ndigitmarket') ?>/index.php?route=admin/exportVendorPayments"
+                    <a href="<?= (defined('BASE_URL') ? BASE_URL : '/back-end') ?>/index.php?route=admin/exportVendorPayments"
                         class="px-3 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium flex items-center gap-2">
                         <i class="fas fa-file-csv"></i> Export versements CSV
                     </a>
@@ -887,37 +887,6 @@
     </div>
 
     <script>
-        // Sidebar mobile (indépendant du système de modales de admin.js)
-        (function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const hamburger = document.getElementById('hamburgerBtn');
-            if (!sidebar || !overlay || !hamburger) return;
-
-            function openSidebar() {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            hamburger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-            });
-            overlay.addEventListener('click', closeSidebar);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
-            });
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 768 && sidebar.classList.contains('open')) closeSidebar();
-            });
-        })();
-
         // NB : ouverture/fermeture des modales (data-open-modal/data-close-modal), actions
         // AJAX (data-action / data-ajax / data-confirm), recherche (data-search-input),
         // filtres (data-filter), bulk (data-bulk-*) et pagination (data-paginate) sont

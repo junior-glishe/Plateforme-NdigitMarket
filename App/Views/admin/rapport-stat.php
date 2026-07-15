@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NDIGITMARKET Admin · Statistiques & Rapports</title>
+    <link rel="icon" type="image/png" href="/back-end/public/assets/images/favi.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/CSS/app.css">
+    <link rel="stylesheet" href="../public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,10 +33,10 @@
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <button class="relative w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
+                <!-- <button class="relative w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
                     <i class="fas fa-bell text-gray-600"></i>
                     <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                </button> -->
                 <div class="w-9 h-9 rounded-full bg-[#0EA486] text-white flex items-center justify-center font-semibold text-sm">
                     A
                 </div>
@@ -195,7 +196,7 @@
             <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                 <i class="fas fa-trophy text-amber-500"></i> Top produits vendus
             </h4>
-            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+            <!-- <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button> -->
         </div>
         <div class="space-y-3">
             <?php if (!empty($topProducts)): ?>
@@ -263,7 +264,7 @@
             <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                 <i class="fas fa-tags text-purple-500"></i> Top catégories
             </h4>
-            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+            <!-- <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button> -->
         </div>
         <div class="space-y-3">
             <?php if (!empty($topCategories)): ?>
@@ -302,7 +303,7 @@
                         </h4>
                         <p class="text-[11px] text-gray-400 mt-0.5">Distribution par pays</p>
                     </div>
-                    <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir détails</button>
+                    <!-- <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir détails</button> -->
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div class="h-64">

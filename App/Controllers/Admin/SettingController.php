@@ -39,7 +39,8 @@ class SettingController {
             'settings' => $settings,
             'admins' => $admins,
             'adminStats' => $adminStats,
-            'lastConnection' => $lastConnection
+            'lastConnection' => $lastConnection,
+            'currentPage' => 'parametres-systeme'
         ]);
     }
 
