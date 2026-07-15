@@ -93,15 +93,28 @@ class StatsRappportsController {
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
+
+
     // ============================================
     // API GRAPHIQUES - MISE À JOUR DYNAMIQUE
     // ============================================
 
-    public function getChartDataAPI() {
-        $period = $_GET['period'] ?? 'week';
-        $data = $this->model->getChartData($period);
-        $this->jsonResponse(['success' => true, 'data' => $data]);
+public function getChartDataAPI() {
+    $period = $_GET['period'] ?? 'week';
+    
+    // Valider la période
+    $allowed = ['week', 'month', 'quarter', 'year'];
+    if (!in_array($period, $allowed)) {
+        $period = 'week';
     }
+    
+    $data = $this->model->getChartData($period);
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $data
+    ]);
+}
 
     // ============================================
     // API RAPPORTS

@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    
 </head>
 <body>
     <div id="overlay" class="overlay"></div>
@@ -230,7 +232,7 @@
             <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                 <i class="fas fa-eye text-blue-500"></i> Top produits vus
             </h4>
-            <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button>
+            <!-- <button class="text-xs text-[#0EA486] hover:underline font-medium">Voir tout</button> -->
         </div>
         <div class="space-y-3">
             <?php if (!empty($topViewedProducts)): ?>
@@ -294,7 +296,7 @@
     </div>
 </div>
 
-                        <!-- Répartition géographique -->
+            <!-- Répartition géographique -->
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
                     <div>
@@ -349,6 +351,8 @@
                 </div>
             </div>
         </section>
+
+        
 
                 <!--  RAPPORTS EXPORTABLES -->
         <section class="mb-8">
@@ -1017,47 +1021,6 @@
         
 
         
-        // Chart.js - Graphique géographique (vide)
-        (function() {
-            const ctx = document.getElementById('geoChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Sénégal', 'Côte d\'Ivoire', 'Cameroun', 'Mali', 'Autres'],
-                    datasets: [{
-                        label: 'Acheteurs (%)',
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#0EA486',
-                            '#0EA486',
-                            '#0EA486',
-                            '#0EA486',
-                            '#0EA486'
-                        ],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        }
-                    }
-                }
-            });
-        })();
 
         // Chart toggle buttons
         (function() {
@@ -1188,8 +1151,10 @@
         });
 
 
+
+
 // ============================================
-// GRAPHIQUES LINEAIRES PURS
+// GRAPHIQUES LINEAIRES - VERSION CORRIGÉE
 // ============================================
 
 // Données initiales PHP
@@ -1198,11 +1163,13 @@ let chartData = <?= json_encode($chartData) ?>;
 // Variables pour les instances
 let inscriptionsChart = null;
 let ventesChart = null;
-let currentPeriod = 'week';
+let currentPeriod = 'month';
+let isLoading = false;
 
 // ============================================
-// 1. GRAPHIQUE DES INSCRIPTIONS - LINEAIRE PUR
+// 1. CRÉATION DES GRAPHIQUES
 // ============================================
+
 function createInscriptionsChart(data) {
     const canvas = document.getElementById('inscriptionsChart');
     if (!canvas) return;
@@ -1214,6 +1181,10 @@ function createInscriptionsChart(data) {
     
     const ctx = canvas.getContext('2d');
     
+    // Vérifier que les données existent
+    const labels = data?.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const inscriptions = data?.inscriptions || [0, 0, 0, 0, 0, 0, 0];
+    
     // Gradient pour le remplissage
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, 'rgba(59, 130, 246, 0.15)');
@@ -1223,15 +1194,15 @@ function createInscriptionsChart(data) {
     inscriptionsChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            labels: labels,
             datasets: [{
                 label: 'Inscriptions',
-                data: data.inscriptions || [0, 0, 0, 0, 0, 0, 0],
+                data: inscriptions,
                 borderColor: '#3B82F6',
                 backgroundColor: gradient,
                 borderWidth: 2.5,
                 fill: true,
-                tension: 0, // 🔥 PAS DE LISSAGE
+                tension: 0,
                 pointRadius: 3,
                 pointHoverRadius: 6,
                 pointBackgroundColor: '#3B82F6',
@@ -1241,7 +1212,7 @@ function createInscriptionsChart(data) {
                 pointHoverBorderColor: '#ffffff',
                 pointHoverBorderWidth: 2,
                 spanGaps: true,
-                stepped: false // 🔥 LINEAIRE
+                stepped: false
             }]
         },
         options: {
@@ -1259,7 +1230,12 @@ function createInscriptionsChart(data) {
                     padding: 12,
                     titleFont: { size: 13, weight: '600' },
                     bodyFont: { size: 14, weight: '500' },
-                    displayColors: false
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `Inscriptions: ${context.parsed.y}`;
+                        }
+                    }
                 }
             },
             scales: {
@@ -1296,9 +1272,6 @@ function createInscriptionsChart(data) {
     });
 }
 
-// ============================================
-// 2. GRAPHIQUE DES VENTES - 2 LINEAIRES
-// ============================================
 function createVentesChart(data) {
     const canvas = document.getElementById('ventesChart');
     if (!canvas) return;
@@ -1310,6 +1283,10 @@ function createVentesChart(data) {
     
     const ctx = canvas.getContext('2d');
     
+    const labels = data?.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const ca = data?.ca || [0, 0, 0, 0, 0, 0, 0];
+    const ventes = data?.ventes || [0, 0, 0, 0, 0, 0, 0];
+    
     // Gradient pour CA
     const gradientCA = ctx.createLinearGradient(0, 0, 0, 300);
     gradientCA.addColorStop(0, 'rgba(14, 164, 134, 0.15)');
@@ -1319,16 +1296,16 @@ function createVentesChart(data) {
     ventesChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.labels || ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            labels: labels,
             datasets: [
                 {
                     label: 'CA (FCFA)',
-                    data: data.ca || [0, 0, 0, 0, 0, 0, 0],
+                    data: ca,
                     borderColor: '#0EA486',
                     backgroundColor: gradientCA,
                     borderWidth: 2.5,
                     fill: true,
-                    tension: 0, // 🔥 PAS DE LISSAGE
+                    tension: 0,
                     pointRadius: 3,
                     pointHoverRadius: 6,
                     pointBackgroundColor: '#0EA486',
@@ -1339,15 +1316,15 @@ function createVentesChart(data) {
                     pointHoverBorderWidth: 2,
                     yAxisID: 'y',
                     spanGaps: true,
-                    stepped: false // 🔥 LINEAIRE
+                    stepped: false
                 },
                 {
                     label: 'Ventes',
-                    data: data.ventes || [0, 0, 0, 0, 0, 0, 0],
+                    data: ventes,
                     borderColor: '#3B82F6',
                     borderWidth: 2.5,
                     fill: false,
-                    tension: 0, // 🔥 PAS DE LISSAGE
+                    tension: 0,
                     pointRadius: 3,
                     pointHoverRadius: 6,
                     pointBackgroundColor: '#3B82F6',
@@ -1358,7 +1335,7 @@ function createVentesChart(data) {
                     pointHoverBorderWidth: 2,
                     yAxisID: 'y1',
                     spanGaps: true,
-                    stepped: false // 🔥 LINEAIRE
+                    stepped: false
                 }
             ]
         },
@@ -1411,7 +1388,11 @@ function createVentesChart(data) {
                         font: { size: 12, family: 'Inter' },
                         color: '#0EA486',
                         padding: 10,
-                        stepSize: 1
+                        callback: function(value) {
+                            if (value >= 1000000) return (value / 1000000) + 'M';
+                            if (value >= 1000) return (value / 1000) + 'k';
+                            return value;
+                        }
                     },
                     border: { display: false },
                     position: 'left'
@@ -1447,59 +1428,251 @@ function createVentesChart(data) {
 }
 
 // ============================================
-// 3. CHARGER LES DONNÉES
+// 2. CHARGEMENT DES DONNÉES
 // ============================================
-function loadChartData(period) {
+
+async function loadChartData(period) {
+    if (isLoading) return;
+    isLoading = true;
+    
     currentPeriod = period;
     console.log('🔄 Chargement des données pour:', period);
     
-    fetch('api.php?url=stats_chart_data&period=' + period)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                createInscriptionsChart(data.data);
-                createVentesChart(data.data);
-                showToast('Succès', 'Graphiques mis à jour', 'success');
-            } else {
-                console.error('❌ Erreur:', data.error);
-                showToast('Erreur', 'Impossible de charger les données', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('❌ Erreur fetch:', error);
-            showToast('Erreur', 'Erreur de connexion', 'error');
-        });
+    // Mettre à jour le select
+    const periodSelect = document.getElementById('periodSelect');
+    if (periodSelect) {
+        periodSelect.value = period;
+    }
+    
+    // Mettre à jour les liens
+    document.querySelectorAll('.chart-period-link').forEach(link => {
+        const isActive = link.dataset.period === period;
+        link.classList.toggle('text-[#0EA486]', isActive);
+        link.classList.toggle('bg-[#0EA486]/10', isActive);
+        link.classList.toggle('font-semibold', isActive);
+        link.classList.toggle('text-gray-500', !isActive);
+        link.classList.toggle('font-medium', !isActive);
+    });
+    
+    // Afficher le chargement
+    showLoadingState(true);
+    
+    try {
+        // Construire l'URL API
+        const apiUrl = `/back-end/routes/api.php?url=stats_chart_data&period=${period}`;
+        console.log('📡 Appel API:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('📊 Données reçues:', result);
+        
+        if (result.success && result.data) {
+            // Vérifier que les données sont valides
+            const data = result.data;
+            
+            // S'assurer que les tableaux existent
+            data.labels = data.labels || [];
+            data.inscriptions = data.inscriptions || [];
+            data.ventes = data.ventes || [];
+            data.ca = data.ca || [];
+            
+            // Mettre à jour les graphiques
+            createInscriptionsChart(data);
+            createVentesChart(data);
+            
+            showToast('Succès', 'Graphiques mis à jour ✅', 'success');
+        } else {
+            throw new Error(result.message || 'Données invalides');
+        }
+    } catch (error) {
+        console.error('❌ Erreur:', error);
+        showToast('Erreur', error.message || 'Impossible de charger les données', 'error');
+        
+        // Données de secours
+        const fallbackData = getFallbackData(period);
+        createInscriptionsChart(fallbackData);
+        createVentesChart(fallbackData);
+    } finally {
+        showLoadingState(false);
+        isLoading = false;
+    }
 }
 
 // ============================================
-// 4. INITIALISATION
+// 3. DONNÉES DE SECOURS
 // ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    createInscriptionsChart(chartData);
-    createVentesChart(chartData);
+
+function getFallbackData(period) {
+    const labels = {
+        'week': ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        'month': Array.from({length: 30}, (_, i) => `${i+1}/` + new Date().getMonth() + 1),
+        'quarter': ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+        'year': ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
+    };
     
+    const count = labels[period]?.length || 7;
+    
+    return {
+        labels: labels[period] || labels.week,
+        inscriptions: Array(count).fill(0),
+        ventes: Array(count).fill(0),
+        ca: Array(count).fill(0)
+    };
+}
+
+// ============================================
+// 4. GESTION DES ÉTATS
+// ============================================
+
+function showLoadingState(isLoading) {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+        canvas.style.opacity = isLoading ? '0.5' : '1';
+        canvas.style.transition = 'opacity 0.3s';
+    });
+    
+    document.querySelectorAll('.chart-period-link, #periodSelect, button').forEach(el => {
+        el.style.pointerEvents = isLoading ? 'none' : 'auto';
+        el.style.opacity = isLoading ? '0.6' : '1';
+    });
+}
+
+// ============================================
+// 5. TOAST NOTIFICATIONS
+// ============================================
+
+function showToast(title, message, type = 'info') {
+    let toast = document.getElementById('chartToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'chartToast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border-left: 4px solid #0EA486;
+            z-index: 9999;
+            max-width: 350px;
+            font-family: Inter, sans-serif;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            opacity: 0;
+        `;
+        document.body.appendChild(toast);
+    }
+    
+    const colors = {
+        success: '#0EA486',
+        error: '#EF4444',
+        info: '#3B82F6',
+        warning: '#F59E0B'
+    };
+    
+    toast.style.borderLeftColor = colors[type] || colors.info;
+    toast.innerHTML = `
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-size:20px;">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
+            <div>
+                <div style="font-weight:600; font-size:14px; color:#0F172A;">${title}</div>
+                <div style="font-size:12px; color:#6B7280; margin-top:2px;">${message}</div>
+            </div>
+        </div>
+    `;
+    
+    toast.style.transform = 'translateX(0)';
+    toast.style.opacity = '1';
+    
+    clearTimeout(toast._hideTimeout);
+    toast._hideTimeout = setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+    }, 3000);
+}
+
+// ============================================
+// 6. INITIALISATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initialisation des graphiques...');
+    
+    // Déterminer la période initiale
+    const periodSelect = document.getElementById('periodSelect');
+    const initialPeriod = periodSelect ? periodSelect.value : 'month';
+    currentPeriod = initialPeriod;
+    
+    // Initialiser les graphiques avec les données PHP
+    if (chartData && chartData.labels) {
+        console.log('📊 Données initiales PHP:', chartData);
+        createInscriptionsChart(chartData);
+        createVentesChart(chartData);
+    } else {
+        // Utiliser des données de secours
+        const fallback = getFallbackData(initialPeriod);
+        createInscriptionsChart(fallback);
+        createVentesChart(fallback);
+    }
+    
+    // Mettre à jour l'état des liens
+    document.querySelectorAll('.chart-period-link').forEach(link => {
+        const isActive = link.dataset.period === initialPeriod;
+        link.classList.toggle('text-[#0EA486]', isActive);
+        link.classList.toggle('bg-[#0EA486]/10', isActive);
+        link.classList.toggle('font-semibold', isActive);
+        link.classList.toggle('text-gray-500', !isActive);
+        link.classList.toggle('font-medium', !isActive);
+    });
+    
+    // Événement sur le select
+    if (periodSelect) {
+        periodSelect.addEventListener('change', function() {
+            const period = this.value;
+            if (period !== currentPeriod) {
+                loadChartData(period);
+            }
+        });
+    }
+    
+    // Événement sur les liens
     document.querySelectorAll('.chart-period-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const period = this.dataset.period || 'week';
-            
-            if (period === currentPeriod) return;
-            
-            document.querySelectorAll('.chart-period-link').forEach(l => {
-                const isActive = l.dataset.period === period;
-                l.classList.toggle('text-[#0EA486]', isActive);
-                l.classList.toggle('bg-[#0EA486]/10', isActive);
-                l.classList.toggle('font-semibold', isActive);
-                l.classList.toggle('text-gray-500', !isActive);
-                l.classList.toggle('font-medium', !isActive);
-            });
-            
-            loadChartData(period);
+            if (period !== currentPeriod) {
+                loadChartData(period);
+            }
         });
     });
+    
+    // Événement sur le bouton d'actualisation
+    const refreshBtn = document.querySelector('button .fa-sync-alt')?.closest('button');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            loadChartData(currentPeriod);
+        });
+    }
+    
+    console.log('✅ Graphiques prêts - Période:', initialPeriod);
 });
 
-console.log('✅ Graphiques linéaires prêts');
+// Exposer pour débogage
+window.chartManager = {
+    loadChartData,
+    currentPeriod: () => currentPeriod,
+    setPeriod: (period) => loadChartData(period),
+    refresh: () => loadChartData(currentPeriod)
+};
+
+console.log('💡 Utilise window.chartManager.setPeriod("month") pour changer la période');
 
 
 
@@ -1839,6 +2012,232 @@ console.log('✅ Graphiques linéaires prêts');
     }, 500);
 
 })();
+
+
+// ============================================
+// GRAPHIQUE GÉOGRAPHIQUE - DYNAMIQUE
+// ============================================
+
+let geoChart = null;
+let currentGeoPeriod = 'all';
+
+/**
+ * Créer ou mettre à jour le graphique géographique
+ */
+function createGeoChart(data) {
+    const canvas = document.getElementById('geoChart');
+    if (!canvas) return;
+    
+    // Détruire l'ancien graphique s'il existe
+    if (geoChart) {
+        geoChart.destroy();
+        geoChart = null;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Vérifier les données
+    const labels = data?.labels || ['Sénégal', 'Côte d\'Ivoire', 'Cameroun', 'Mali', 'Autres'];
+    const values = data?.values || [0, 0, 0, 0, 0];
+    const pourcentages = data?.pourcentages || [0, 0, 0, 0, 0];
+    
+    // Couleurs pour les barres
+    const colors = [
+        '#0EA486',
+        '#0EA486',
+        '#0EA486',
+        '#0EA486',
+        '#0EA486'
+    ];
+    
+    // Créer le graphique
+    geoChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Acheteurs (%)',
+                data: values,
+                backgroundColor: colors,
+                borderColor: colors.map(c => c),
+                borderWidth: 0,
+                borderRadius: 8,
+                barThickness: 30
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { 
+                    display: false 
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    titleColor: '#0F172A',
+                    bodyColor: '#0EA486',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 14, weight: '500' },
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const pourcentage = pourcentages[index] || 0;
+                            const valeur = context.parsed.x;
+                            return `${valeur} utilisateurs (${pourcentage}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { 
+                        color: 'rgba(0,0,0,0.05)',
+                        drawBorder: false
+                    },
+                    ticks: { 
+                        font: { size: 11, family: 'Inter' },
+                        color: '#6B7280',
+                        padding: 10
+                    },
+                    border: { display: false }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { 
+                        font: { size: 12, family: 'Inter', weight: '500' },
+                        color: '#0F172A',
+                        padding: 10
+                    },
+                    border: { display: false }
+                }
+            },
+            interaction: {
+                intersect: true,
+                mode: 'index'
+            }
+        }
+    });
+    
+    console.log('✅ Graphique géographique créé');
+}
+
+/**
+ * Charger les données géographiques depuis l'API
+ */
+async function loadGeoData() {
+    try {
+        console.log('🔄 Chargement des données géographiques...');
+        
+        const apiUrl = `/back-end/routes/api.php?url=stats_geo_distribution`;
+        console.log('📡 Appel API:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('📊 Données géo reçues:', result);
+        
+        if (result.success && result.data) {
+            // Mettre à jour le graphique
+            createGeoChart(result.data);
+            
+            // Mettre à jour le texte récapitulatif (optionnel)
+            updateGeoSummary(result.data);
+            
+            showToast('Succès', 'Données géographiques mises à jour ✅', 'success');
+        } else {
+            throw new Error(result.message || 'Données invalides');
+        }
+    } catch (error) {
+        console.error('❌ Erreur chargement géo:', error);
+        showToast('Erreur', 'Impossible de charger les données géographiques', 'error');
+        
+        // Données de secours
+        const fallbackData = {
+            labels: ['Sénégal', 'Côte d\'Ivoire', 'Cameroun', 'Mali', 'Autres'],
+            values: [0, 0, 0, 0, 0],
+            pourcentages: [0, 0, 0, 0, 0]
+        };
+        createGeoChart(fallbackData);
+    }
+}
+
+/**
+ * Mettre à jour le résumé géographique
+ */
+function updateGeoSummary(data) {
+    const summaryEl = document.getElementById('geoSummary');
+    if (!summaryEl) return;
+    
+    if (!data || !data.labels || data.labels.length === 0) {
+        summaryEl.innerHTML = 'Aucune donnée géographique disponible';
+        return;
+    }
+    
+    // Trouver le pays avec le plus d'utilisateurs
+    const maxIndex = data.values.indexOf(Math.max(...data.values));
+    const topPays = data.labels[maxIndex] || 'Inconnu';
+    const topValue = data.values[maxIndex] || 0;
+    const topPercent = data.pourcentages[maxIndex] || 0;
+    
+    // Calculer le total
+    const total = data.values.reduce((a, b) => a + b, 0);
+    
+    summaryEl.innerHTML = `
+        <div class="flex items-center gap-4 text-xs">
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 bg-[#0EA486] rounded-full"></span>
+                <span class="font-medium">Total:</span>
+                <span class="text-gray-600">${total} utilisateurs</span>
+            </span>
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 bg-[#0EA486] rounded-full"></span>
+                <span class="font-medium">Top:</span>
+                <span class="text-gray-600">${topPays} (${topValue} - ${topPercent}%)</span>
+            </span>
+        </div>
+    `;
+}
+
+/**
+ * Initialiser le graphique géographique
+ */
+function initGeoChart() {
+    console.log('🚀 Initialisation du graphique géographique...');
+    
+    // Vérifier si les données PHP sont disponibles
+    if (typeof geoData !== 'undefined' && geoData && geoData.labels) {
+        console.log('📊 Données PHP géo disponibles');
+        createGeoChart(geoData);
+        updateGeoSummary(geoData);
+    } else {
+        // Charger depuis l'API
+        loadGeoData();
+    }
+}
+
+// Exposer les fonctions
+window.geoChartManager = {
+    loadGeoData,
+    refresh: loadGeoData,
+    createGeoChart
+};
+
+// Initialiser au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    // Attendre un peu pour s'assurer que tout est chargé
+    setTimeout(initGeoChart, 500);
+});
     </script>
 </body>
 </html>

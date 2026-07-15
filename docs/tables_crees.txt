@@ -219,3 +219,183 @@ CREATE TABLE IF NOT EXISTS settings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+
+
+
+
+
+-- ============================================
+-- AJOUT DES COLONNES MANQUANTES
+-- ============================================
+
+-- 1. Ajouter date_inscription et created_at à utilisateur
+ALTER TABLE utilisateur 
+ADD COLUMN IF NOT EXISTS date_inscription TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- 2. Ajouter quantite et statut à commande
+ALTER TABLE commande 
+ADD COLUMN IF NOT EXISTS quantite INT DEFAULT 1,
+ADD COLUMN IF NOT EXISTS statut VARCHAR(50) DEFAULT 'livree';
+
+-- 3. Vérifier que date_ajout existe dans produits (elle existe déjà normalement)
+-- Si elle n'existe pas, l'ajouter
+ALTER TABLE produits 
+ADD COLUMN IF NOT EXISTS date_ajout TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- 4. Vérifier les colonnes ajoutées
+SELECT '✅ Colonnes ajoutées avec succès !' as message;
+SHOW COLUMNS FROM utilisateur LIKE 'date_inscription';
+SHOW COLUMNS FROM commande LIKE 'quantite';
+SHOW COLUMNS FROM commande LIKE 'statut';
+
+-- ============================================
+-- INSERTIONS DES DONNÉES DE TEST
+-- ADAPTÉES À TA STRUCTURE DE TABLES
+-- ============================================
+
+-- 1. Insérer des utilisateurs (avec les colonnes de ta table)
+INSERT INTO utilisateur (nom, prenom, email, mdp, type, statut, pays, date_inscription) 
+SELECT 
+    CONCAT('Test', n) as nom,
+    CONCAT('User', n) as prenom,
+    CONCAT('user', n, '@test.com') as email,
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' as mdp,
+    CASE WHEN n % 5 = 0 THEN 'vendor' ELSE 'user' END as type,
+    CASE WHEN n % 10 = 0 THEN 'inactif' ELSE 'actif' END as statut,
+    CASE 
+        WHEN n % 5 = 0 THEN 'France'
+        WHEN n % 5 = 1 THEN 'Sénégal'
+        WHEN n % 5 = 2 THEN 'Côte d\'Ivoire'
+        WHEN n % 5 = 3 THEN 'Cameroun'
+        ELSE 'Mali'
+    END as pays,
+    DATE_SUB(CURDATE(), INTERVAL FLOOR(RAND() * 30) DAY) as date_inscription
+FROM (
+    SELECT @n := @n + 1 AS n
+    FROM information_schema.tables, (SELECT @n := 0) t
+    LIMIT 50
+) numbers;
+
+-- 2. Insérer des catégories
+INSERT IGNORE INTO categories (nom_categorie, description, statut, created_at) VALUES
+('Électronique', 'Produits électroniques et gadgets', 'active', NOW()),
+('Mode', 'Vêtements et accessoires de mode', 'active', NOW()),
+('Maison', 'Décoration et équipement maison', 'active', NOW()),
+('Sport', 'Équipements sportifs et fitness', 'active', NOW()),
+('Livres', 'Livres et magazines', 'active', NOW()),
+('Beauté', 'Produits de beauté et soins', 'active', NOW()),
+('Alimentation', 'Produits alimentaires', 'active', NOW()),
+('Jouets', 'Jouets et jeux', 'active', NOW());
+
+-- 3. Insérer des produits (avec TOUTES les colonnes de ta table)
+INSERT INTO produits (
+    nom_article, 
+    prix, 
+    prix_reduction, 
+    image, 
+    fichier, 
+    categorie_id, 
+    sous_categorie,
+    description, 
+    apercue,
+    id_vendeur, 
+    statut, 
+    commentaire,
+    date_ajout,
+    auteur
+)
+SELECT 
+    CONCAT('Produit ', n) as nom_article,
+    ROUND(5000 + RAND() * 45000, 0) as prix,
+    0 as prix_reduction,
+    'default.jpg' as image,
+    '' as fichier,
+    (SELECT id FROM categories ORDER BY RAND() LIMIT 1) as categorie_id,
+    NULL as sous_categorie,
+    CONCAT('Description du produit ', n) as description,
+    CONCAT('Aperçu du produit ', n) as apercue,
+    (SELECT id_uti FROM utilisateur WHERE type = 'vendor' ORDER BY RAND() LIMIT 1) as id_vendeur,
+    CASE WHEN RAND() > 0.2 THEN 'approuve' ELSE 'en_attente' END as statut,
+    NULL as commentaire,
+    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) as date_ajout,
+    CONCAT('Auteur ', n) as auteur
+FROM (
+    SELECT @n := @n + 1 AS n
+    FROM information_schema.tables, (SELECT @n := 0) t
+    LIMIT 30
+) numbers;
+
+-- 4. Insérer des commandes (avec les colonnes de ta table)
+INSERT INTO commande (
+    commande_id, 
+    id_client, 
+    email, 
+    id_article, 
+    image, 
+    prix, 
+    fichier, 
+    date_commande,
+    quantite,
+    statut
+)
+SELECT 
+    CONCAT('CMD-', DATE_FORMAT(NOW(), '%Y%m%d'), '-', LPAD(n, 4, '0')) as commande_id,
+    (SELECT id_uti FROM utilisateur WHERE type = 'user' ORDER BY RAND() LIMIT 1) as id_client,
+    (SELECT email FROM utilisateur WHERE type = 'user' ORDER BY RAND() LIMIT 1) as email,
+    (SELECT id FROM produits ORDER BY RAND() LIMIT 1) as id_article,
+    'default.jpg' as image,
+    ROUND(5000 + RAND() * 45000, 0) as prix,
+    '' as fichier,
+    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) as date_commande,
+    FLOOR(1 + RAND() * 3) as quantite,
+    CASE WHEN RAND() > 0.2 THEN 'livree' ELSE 'en_attente' END as statut
+FROM (
+    SELECT @n := @n + 1 AS n
+    FROM information_schema.tables, (SELECT @n := 0) t
+    LIMIT 100
+) numbers;
+
+-- 5. Insérer des reviews (avec les colonnes de ta table)
+INSERT INTO reviews (
+    produit_id, 
+    user_id, 
+    commande_id,
+    note, 
+    titre, 
+    commentaire, 
+    statut, 
+    date_creation
+)
+SELECT 
+    (SELECT id FROM produits ORDER BY RAND() LIMIT 1) as produit_id,
+    (SELECT id_uti FROM utilisateur WHERE type = 'user' ORDER BY RAND() LIMIT 1) as user_id,
+    NULL as commande_id,
+    FLOOR(3 + RAND() * 2) as note,
+    CONCAT('Avis sur le produit') as titre,
+    CONCAT('Très bon produit, je recommande ! (Avis ', n, ')') as commentaire,
+    CASE WHEN RAND() > 0.2 THEN 'approuve' ELSE 'en_attente' END as statut,
+    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 15) DAY) as date_creation
+FROM (
+    SELECT @n := @n + 1 AS n
+    FROM information_schema.tables, (SELECT @n := 0) t
+    LIMIT 20
+) numbers;
+
+-- 6. Mettre à jour les statuts des commandes
+UPDATE commande SET statut = 'livree' WHERE date_commande < DATE_SUB(NOW(), INTERVAL 7 DAY);
+UPDATE commande SET statut = 'en_attente' WHERE statut IS NULL OR statut = '';
+
+-- 7. Mettre à jour les quantités si NULL
+UPDATE commande SET quantite = 1 WHERE quantite IS NULL;
+
+-- 8. Mettre à jour les dates d'inscription si NULL
+UPDATE utilisateur SET date_inscription = DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) WHERE date_inscription IS NULL;
+
+
+
+
+

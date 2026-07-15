@@ -330,7 +330,7 @@ switch ($url) {
         break;
 
     // Répartition géographique
-    case 'stats_geo':
+    case 'stats_geo_distribution':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
         $controller->getGeoDistribution();

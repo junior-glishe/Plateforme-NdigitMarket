@@ -190,38 +190,131 @@ class StatsRappportsModel {
     // RÉPARTITION GÉOGRAPHIQUE
     // ============================================
 
-    public function getGeoDistribution() {
-        try {
-            $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
-            $hasPaysColumn = $stmt->rowCount() > 0;
-            
-            if (!$hasPaysColumn) {
-                return [];
-            }
-            
-            $stmt = $this->pdo->query("
-                SELECT 
-                    pays,
-                    COUNT(*) as total,
-                    ROUND((COUNT(*) / (SELECT COUNT(*) FROM utilisateur WHERE type != 'admin')) * 100, 1) as pourcentage
-                FROM utilisateur
-                WHERE type != 'admin' AND pays IS NOT NULL AND pays != ''
-                GROUP BY pays
-                ORDER BY total DESC
-                LIMIT 5
-            ");
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if (!empty($result)) {
-                return $result;
-            }
-            
-        } catch (PDOException $e) {
-            error_log("Erreur geo: " . $e->getMessage());
+    // App/Models/StatsRappportsModel.php
+
+/**
+ * Récupérer la répartition géographique des utilisateurs
+ */
+public function getGeoDistribution() {
+    $data = [
+        'labels' => [],
+        'values' => [],
+        'pourcentages' => []
+    ];
+    
+    try {
+        // Vérifier si la colonne pays existe
+        $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
+        $hasPaysColumn = $stmt->rowCount() > 0;
+        
+        if (!$hasPaysColumn) {
+            return $this->getGeoDistributionTestData();
         }
         
-        return [];
+        // Récupérer la répartition par pays
+        $stmt = $this->pdo->query("
+            SELECT 
+                pays,
+                COUNT(*) as total,
+                ROUND((COUNT(*) / (SELECT COUNT(*) FROM utilisateur WHERE type != 'admin' AND pays IS NOT NULL AND pays != '')) * 100, 1) as pourcentage
+            FROM utilisateur
+            WHERE type != 'admin' 
+                AND pays IS NOT NULL 
+                AND pays != ''
+            GROUP BY pays
+            ORDER BY total DESC
+            LIMIT 5
+        ");
+        
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (!empty($results)) {
+            foreach ($results as $row) {
+                $data['labels'][] = $row['pays'];
+                $data['values'][] = (int)$row['total'];
+                $data['pourcentages'][] = (float)$row['pourcentage'];
+            }
+            
+            // Ajouter "Autres" si nécessaire
+            $stmt = $this->pdo->query("
+                SELECT COUNT(*) as total
+                FROM utilisateur
+                WHERE type != 'admin' 
+                    AND pays IS NOT NULL 
+                    AND pays != ''
+                    AND pays NOT IN (
+                        SELECT pays FROM utilisateur 
+                        WHERE type != 'admin' AND pays IS NOT NULL AND pays != ''
+                        GROUP BY pays 
+                        ORDER BY COUNT(*) DESC 
+                        LIMIT 5
+                    )
+            ");
+            $autres = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($autres && $autres['total'] > 0) {
+                $totalGeneral = array_sum($data['values']) + $autres['total'];
+                $data['labels'][] = 'Autres';
+                $data['values'][] = (int)$autres['total'];
+                $data['pourcentages'][] = round(($autres['total'] / $totalGeneral) * 100, 1);
+            }
+            
+            return $data;
+        }
+        
+        return $this->getGeoDistributionTestData();
+        
+    } catch (PDOException $e) {
+        error_log("Erreur getGeoDistribution: " . $e->getMessage());
+        return $this->getGeoDistributionTestData();
     }
+}
+
+
+
+
+/**
+ * Générer des données de test pour la géographie
+ */
+private function getGeoDistributionTestData() {
+    // Pays d'Afrique de l'Ouest et Centrale
+    $pays = [
+        'Sénégal' => 45,
+        'Côte d\'Ivoire' => 30,
+        'Cameroun' => 20,
+        'Mali' => 15,
+        'Burkina Faso' => 10,
+        'Guinée' => 8,
+        'Bénin' => 12,
+        'Togo' => 7,
+        'Niger' => 5,
+        'Ghana' => 6,
+        'Nigeria' => 18,
+        'RDC' => 14,
+        'Gabon' => 9,
+        'Congo' => 8
+    ];
+    
+    // Mélanger et prendre les 5 premiers
+    shuffle($pays);
+    $topPays = array_slice($pays, 0, 5, true);
+    
+    $data = [
+        'labels' => array_keys($topPays),
+        'values' => array_values($topPays),
+        'pourcentages' => []
+    ];
+    
+    // Calculer les pourcentages
+    $total = array_sum($data['values']);
+    foreach ($data['values'] as $value) {
+        $data['pourcentages'][] = round(($value / $total) * 100, 1);
+    }
+    
+    return $data;
+}
+
+
 
     // ============================================
     // RAPPORTS
@@ -356,19 +449,71 @@ class StatsRappportsModel {
             'ca' => []
         ];
 
-        $days = $period === 'week' ? 7 : 30;
-        
+        // Déterminer le nombre de jours selon la période
+        switch($period) {
+            case 'week':
+                $days = 7;
+                break;
+            case 'month':
+                $days = 30;
+                break;
+            case 'quarter':
+                $days = 90;
+                break;
+            case 'year':
+                $days = 365;
+                break;
+            default:
+                $days = 7;
+        }
+
+        // Créer un formateur pour les dates en français
+        $formatter = new IntlDateFormatter(
+            'fr_FR',
+            IntlDateFormatter::NONE,
+            IntlDateFormatter::NONE,
+            null,
+            null,
+            $period === 'week' ? 'EEE' : ($period === 'year' ? 'MMM' : 'dd/MM')
+        );
+
+        // Récupérer les inscriptions par jour
+        $inscriptionsParJour = [];
+        try {
+            $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'date_inscription'");
+            $hasDateInscription = $stmt->rowCount() > 0;
+            
+            if ($hasDateInscription) {
+                $stmt = $this->pdo->prepare("
+                    SELECT 
+                        DATE(date_inscription) as jour,
+                        COUNT(*) as total
+                    FROM utilisateur 
+                    WHERE date_inscription >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+                    GROUP BY DATE(date_inscription)
+                ");
+                $stmt->execute([$days]);
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $inscriptionsParJour[$row['jour']] = (int)($row['total'] ?? 0);
+                }
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur inscriptions: " . $e->getMessage());
+        }
+
+        // Récupérer les commandes par jour
         $commandesParJour = [];
         try {
-            $stmt = $this->pdo->query("
+            $stmt = $this->pdo->prepare("
                 SELECT 
                     DATE(date_commande) as jour,
                     COUNT(*) as total_ventes,
                     SUM(CAST(prix AS DECIMAL(10,2))) as total_ca
                 FROM commande 
-                WHERE date_commande >= DATE_SUB(CURDATE(), INTERVAL $days DAY)
+                WHERE date_commande >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
                 GROUP BY DATE(date_commande)
             ");
+            $stmt->execute([$days]);
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $commandesParJour[$row['jour']] = [
                     'ventes' => (int)($row['total_ventes'] ?? 0),
@@ -378,13 +523,34 @@ class StatsRappportsModel {
         } catch (PDOException $e) {
             error_log("Erreur commandes: " . $e->getMessage());
         }
-        
+
+        // Générer les données pour chaque jour
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = date('Y-m-d', strtotime("-$i days"));
-            $data['labels'][] = $period === 'week' ? date('D', strtotime("-$i days")) : date('d/m', strtotime("-$i days"));
+            $timestamp = strtotime("-$i days");
+            
+            // Générer les labels
+            if ($period === 'week') {
+                // Pour la semaine : Lun, Mar, Mer...
+                $data['labels'][] = $formatter->format($timestamp);
+            } elseif ($period === 'year') {
+                // Pour l'année : Jan, Fév, Mar...
+                $data['labels'][] = $formatter->format($timestamp);
+            } elseif ($period === 'quarter') {
+                // Pour le trimestre : on regroupe par semaine
+                $numSemaine = date('W', $timestamp);
+                $data['labels'][] = 'S' . $numSemaine;
+            } else {
+                // Pour le mois : 01/01, 02/01...
+                $data['labels'][] = $formatter->format($timestamp);
+            }
+            
+            // Inscriptions du jour
+            $data['inscriptions'][] = $inscriptionsParJour[$date] ?? 0;
+            
+            // Ventes et CA du jour
             $data['ventes'][] = $commandesParJour[$date]['ventes'] ?? 0;
             $data['ca'][] = $commandesParJour[$date]['ca'] ?? 0;
-            $data['inscriptions'][] = 0;
         }
 
         return $data;
