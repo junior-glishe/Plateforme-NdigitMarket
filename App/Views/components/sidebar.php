@@ -1,5 +1,5 @@
 <?php
-// define('BASE_URL', '/ndigitmarket');
+$baseUrl = '/back-end';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -137,7 +137,7 @@ $userPermissions = \App\Core\Auth::permissions();
 
         <nav class="space-y-0.5">
             <?php if (\App\Core\Auth::hasPermission('dashboard.view')): ?>
-                <a href="<?= BASE_URL ?>/index.php?route=admin/dashboard"
+                <a href="<?= $baseUrl ?>/index.php?route=admin/dashboard"
                     class="sidebar-link <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
                     <i class="fas fa-th-large"></i> Tableau de bord
                 </a>

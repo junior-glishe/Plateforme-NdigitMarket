@@ -6,13 +6,16 @@
  * par email et la mise à jour du mot de passe hashé.
  */
 
+
+
 declare(strict_types=1);
 
 namespace App\Models;
 
 use PDO;
 
-class AdminModel extends BaseModel
+require_once __DIR__ . '/BaseModel.php';
+class AdminModel extends \App\Models\BaseModel
 {
     protected string $table = 'admin';
     protected string $primaryKey = 'id_gestion';

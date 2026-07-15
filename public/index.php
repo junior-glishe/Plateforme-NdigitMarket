@@ -31,7 +31,7 @@
 <body class="bg-gradient-custom min-h-screen">
 
     <?php
-    $baseUrl = '/ndigitmarket';
+    $baseUrl = '/back-end';
 
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -75,10 +75,12 @@
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../App/Core/Autoloader.php';
+require_once __DIR__ . '/../App/Models/AdminModel.php';
+require_once __DIR__ . '/../App/Core/Permission.php';
+require_once __DIR__ . '/../App/Middleware/AdminMiddleware.php';
 
-$adminModel = new \App\Models\AdminModel();
-
-                $adminModel = new AdminModel();
+$adminModel = new AdminModel();
+                $adminModel = new \App\Models\AdminModel();
                 $admin = $adminModel->findByEmail($email);
 
                 if ($admin) {
