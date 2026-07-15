@@ -1,28 +1,43 @@
 <?php
-
 namespace App\Models;
 
 use PDO;
 
-class User
+class User extends BaseModel
 {
-    private PDO $db;
+    protected string $table = 'utilisateur';
+    protected string $primaryKey = 'id_uti';
 
-    public function __construct(PDO $db)
-    {
-        $this->db = $db;
-    }
-
+    /**
+     * Compatibilité avec AuthController : recherche par email
+     * dans la table `admin` (compte administrateur historique).
+     */
     public function findByEmail(string $email)
     {
-        $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare("SELECT * FROM admin WHERE email = :email LIMIT 1");
+        $stmt->execute([':email' => $email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return null;
 
+        // Normalisation vers un format commun
+        return [
+            'id'       => $row['id_gestion'] ?? $row['id'] ?? null,
+            'name'     => trim(($row['prenom'] ?? '') . ' ' . ($row['nom'] ?? '')),
+            'email'    => $row['email'],
+            'password' => $row['mdp'] ?? '',
+            'role'     => $row['role'] ?? 'admin',
+            'status'   => $row['statut'] ?? 'active',
+        ];
+    }
+
+    public function search(string $q): array
+    {
+        $like = '%' . $q . '%';
+        $sql = "SELECT * FROM utilisateur
+                WHERE nom LIKE :q OR prenom LIKE :q OR email LIKE :q
+                ORDER BY id_uti DESC";
         $stmt = $this->db->prepare($sql);
-
-        $stmt->execute([
-            ':email' => $email
-        ]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([':q' => $like]);
+        return $stmt->fetchAll();
     }
 }
