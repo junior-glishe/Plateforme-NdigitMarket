@@ -128,7 +128,7 @@ $userPermissions = \App\Core\Auth::permissions();
     <div class="p-6">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-10 h-10 bg-[#0EA486]/10 rounded-xl flex items-center justify-center overflow-hidden">
-                <img src="<?= $baseUrl ?>/assets/images/favi.png" alt="NDIGITMARKET" class="w-8 h-8 object-contain">
+                <img src="<?= $baseUrl ?>/public/assets/images/favi.png" alt="NDIGITMARKET" class="w-8 h-8 object-contain">
             </div>
             <div>
                 <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">NDIGITMARKET</h1>
@@ -345,4 +345,4 @@ $userPermissions = \App\Core\Auth::permissions();
     window.NDIGIT_$baseUrl = <?= json_encode($__base) ?>;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="<?= $__base ?>/assets/JS/admin.js" defer></script>
+<script src="<?= $__base ?>/public/assets/JS/admin.js" defer></script>
