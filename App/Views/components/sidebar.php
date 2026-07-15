@@ -7,6 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Charger le helper de vues pour les permissions
 require_once __DIR__ . '/../../Core/ViewHelper.php';
+require_once __DIR__ . '/../../Core/Auth.php';
 
 // Importer les fonctions helper
 use function App\Core\can;
@@ -127,7 +128,7 @@ $userPermissions = \App\Core\Auth::permissions();
     <div class="p-6">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-10 h-10 bg-[#0EA486]/10 rounded-xl flex items-center justify-center overflow-hidden">
-                <img src="<?= BASE_URL ?>/assets/images/favi.png" alt="NDIGITMARKET" class="w-8 h-8 object-contain">
+                <img src="<?= $baseUrl ?>/assets/images/favi.png" alt="NDIGITMARKET" class="w-8 h-8 object-contain">
             </div>
             <div>
                 <h1 class="text-xl font-extrabold text-[#0F172A] tracking-tight">NDIGITMARKET</h1>
@@ -195,14 +196,14 @@ $userPermissions = \App\Core\Auth::permissions();
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('advertisements.view')): ?>
-                    <a href="<?= $baseUrl ?>/index.php?route=admin/contenus"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=contenus"
                         class="sidebar-link <?= $currentPage === 'contenus' ? 'active' : '' ?>">
                         <i class="fas fa-newspaper"></i> Contenus
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('notifications.view')): ?>
-                    <a href="<?= $baseUrl ?>/index.php?route=admin/notifications"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=notifications"
                         class="sidebar-link <?= $currentPage === 'notifications' ? 'active' : '' ?>">
                         <i class="fas fa-bell"></i> Notifications
                     </a>
@@ -222,21 +223,21 @@ $userPermissions = \App\Core\Auth::permissions();
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('reviews.view')): ?>
-                    <a href="<?= $baseUrl ?>/index.php?route=admin/avis-commentaires"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=categories"
                         class="sidebar-link <?= $currentPage === 'avis-commentaires' ? 'active' : '' ?>">
                         <i class="fas fa-comment-dots"></i> Avis / Commentaire
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('settings.view')): ?>
-                    <a href="<?= $baseUrl ?>/index.php?route=admin/parametres-systeme"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=parametres-systeme"
                         class="sidebar-link <?= $currentPage === 'parametres-systeme' ? 'active' : '' ?>">
                         <i class="fas fa-cog"></i> Paramètre système
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('logs.view')): ?>
-                    <a href="<?= $baseUrl ?>/index.php?route=admin/logs-audit"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=categories"
                         class="sidebar-link <?= $currentPage === 'logs-audit' ? 'active' : '' ?>">
                         <i class="fas fa-history"></i> Logs & audit trail
                     </a>
@@ -338,10 +339,10 @@ $userPermissions = \App\Core\Auth::permissions();
 </script>
 <?php // Assets globaux admin (chargés une seule fois par page) 
 ?>
-<?php $__base = defined('BASE_URL') ? BASE_URL : ''; ?>
+<?php $__base = defined('$baseUrl') ? $baseUrl : ''; ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script>
-    window.NDIGIT_BASE_URL = <?= json_encode($__base) ?>;
+    window.NDIGIT_$baseUrl = <?= json_encode($__base) ?>;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= $__base ?>/assets/JS/admin.js" defer></script>

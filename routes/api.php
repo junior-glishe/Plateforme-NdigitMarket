@@ -5,6 +5,10 @@ session_start();
 
 require_once __DIR__ . '/../config/database.php';
 
+// Récupérer la connexion PDO
+$pdo = Database::getConnection();
+
+
 $url = $_GET['url'] ?? 'dashboard';
 
 switch ($url) {

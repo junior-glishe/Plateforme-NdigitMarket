@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Core;
-
+require_once __DIR__ . '/Permission.php';
 class Auth
 {
     public static function check(): bool
