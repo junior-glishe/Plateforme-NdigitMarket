@@ -147,28 +147,28 @@ $userPermissions = \App\Core\Auth::permissions();
                 <h4 class="mt-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gestion</h4>
 
                 <?php if (\App\Core\Auth::hasPermission('users.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/gestion-utilisateurs"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/gestion-utilisateurs"
                         class="sidebar-link <?= $currentPage === 'gestion-utilisateurs' ? 'active' : '' ?>">
                         <i class="fas fa-users"></i> Gestion utilisateur
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('vendors.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/gestion-vendeur"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/gestion-vendeur"
                         class="sidebar-link <?= $currentPage === 'gestion-vendeur' ? 'active' : '' ?>">
                         <i class="fas fa-store"></i> Gestion vendeur
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('products.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/gestion-produits"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/gestion-produits"
                         class="sidebar-link <?= $currentPage === 'gestion-produits' ? 'active' : '' ?>">
                         <i class="fas fa-file-code"></i> Produits & Templates
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('orders.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/gestion-commande"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/gestion-commande"
                         class="sidebar-link <?= $currentPage === 'gestion-commande' ? 'active' : '' ?>">
                         <i class="fas fa-shopping-cart"></i> Gestion commande
                     </a>
@@ -181,28 +181,28 @@ $userPermissions = \App\Core\Auth::permissions();
                 </h4>
 
                 <?php if (\App\Core\Auth::hasPermission('finance.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/financieres-commission"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/financieres-commission"
                         class="sidebar-link <?= $currentPage === 'financieres-commission' ? 'active' : '' ?>">
                         <i class="fas fa-coins"></i> Financières & commission
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('categories.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/categorie"
-                        class="sidebar-link <?= $currentPage === 'categorie' ? 'active' : '' ?>">
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=categories"
+                        class="sidebar-link <?= $currentPage === 'categories' ? 'active' : '' ?>">
                         <i class="fas fa-tags"></i> Catégorie
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('advertisements.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/contenus"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/contenus"
                         class="sidebar-link <?= $currentPage === 'contenus' ? 'active' : '' ?>">
                         <i class="fas fa-newspaper"></i> Contenus
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('notifications.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/notifications"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/notifications"
                         class="sidebar-link <?= $currentPage === 'notifications' ? 'active' : '' ?>">
                         <i class="fas fa-bell"></i> Notifications
                     </a>
@@ -215,28 +215,28 @@ $userPermissions = \App\Core\Auth::permissions();
                 </h4>
 
                 <?php if (\App\Core\Auth::hasPermission('statistics.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/rapport-stat"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=rapport-stat"
                         class="sidebar-link <?= $currentPage === 'rapport-stat' ? 'active' : '' ?>">
                         <i class="fas fa-chart-pie"></i> Statistique & rapport
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('reviews.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/avis-commentaires"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/avis-commentaires"
                         class="sidebar-link <?= $currentPage === 'avis-commentaires' ? 'active' : '' ?>">
                         <i class="fas fa-comment-dots"></i> Avis / Commentaire
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('settings.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/parametres-systeme"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/parametres-systeme"
                         class="sidebar-link <?= $currentPage === 'parametres-systeme' ? 'active' : '' ?>">
                         <i class="fas fa-cog"></i> Paramètre système
                     </a>
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('logs.view')): ?>
-                    <a href="<?= BASE_URL ?>/index.php?route=admin/logs-audit"
+                    <a href="<?= $baseUrl ?>/index.php?route=admin/logs-audit"
                         class="sidebar-link <?= $currentPage === 'logs-audit' ? 'active' : '' ?>">
                         <i class="fas fa-history"></i> Logs & audit trail
                     </a>
@@ -248,7 +248,7 @@ $userPermissions = \App\Core\Auth::permissions();
                     Mon Compte
                 </h4>
 
-                <a href="<?= BASE_URL ?>/index.php?route=admin/profil"
+                <a href="<?= $baseUrl ?>/index.php?route=admin/profil"
                     class="sidebar-link <?= $currentPage === 'profil' ? 'active' : '' ?>">
                     <i class="fas fa-user-circle"></i> Profil
                 </a>
@@ -265,7 +265,7 @@ $userPermissions = \App\Core\Auth::permissions();
                         <p class="text-[11px] text-gray-400"><?= htmlspecialchars($role ?? 'Invité') ?></p>
                     </div>
                 </div>
-                <a href="<?= BASE_URL ?>/index.php?route=logout"
+                <a href="<?= $baseUrl ?>/index.php?route=logout"
                     class="text-xs text-gray-300 hover:text-white transition flex items-center gap-2">
                     <i class="fas fa-sign-out-alt"></i> Déconnexion
                 </a>
