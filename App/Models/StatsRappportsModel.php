@@ -190,10 +190,8 @@ class StatsRappportsModel {
     // RÉPARTITION GÉOGRAPHIQUE
     // ============================================
 
-    // App/Models/StatsRappportsModel.php
-
 /**
- * Récupérer la répartition géographique des utilisateurs
+ * Récupérer la répartition géographique des utilisateurs depuis la BDD
  */
 public function getGeoDistribution() {
     $data = [
@@ -208,10 +206,10 @@ public function getGeoDistribution() {
         $hasPaysColumn = $stmt->rowCount() > 0;
         
         if (!$hasPaysColumn) {
-            return $this->getGeoDistributionTestData();
+            return $data;
         }
         
-        // Récupérer la répartition par pays
+        // Récupérer TOUS les pays d'abord
         $stmt = $this->pdo->query("
             SELECT 
                 pays,
@@ -223,95 +221,52 @@ public function getGeoDistribution() {
                 AND pays != ''
             GROUP BY pays
             ORDER BY total DESC
-            LIMIT 5
         ");
         
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $allResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        if (!empty($results)) {
-            foreach ($results as $row) {
-                $data['labels'][] = $row['pays'];
-                $data['values'][] = (int)$row['total'];
-                $data['pourcentages'][] = (float)$row['pourcentage'];
-            }
-            
-            // Ajouter "Autres" si nécessaire
-            $stmt = $this->pdo->query("
-                SELECT COUNT(*) as total
-                FROM utilisateur
-                WHERE type != 'admin' 
-                    AND pays IS NOT NULL 
-                    AND pays != ''
-                    AND pays NOT IN (
-                        SELECT pays FROM utilisateur 
-                        WHERE type != 'admin' AND pays IS NOT NULL AND pays != ''
-                        GROUP BY pays 
-                        ORDER BY COUNT(*) DESC 
-                        LIMIT 5
-                    )
-            ");
-            $autres = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($autres && $autres['total'] > 0) {
-                $totalGeneral = array_sum($data['values']) + $autres['total'];
-                $data['labels'][] = 'Autres';
-                $data['values'][] = (int)$autres['total'];
-                $data['pourcentages'][] = round(($autres['total'] / $totalGeneral) * 100, 1);
-            }
-            
+        // Si pas de résultats, retourner des données vides
+        if (empty($allResults)) {
             return $data;
         }
         
-        return $this->getGeoDistributionTestData();
+        // Prendre les 5 premiers pays
+        $topResults = array_slice($allResults, 0, 5);
+        $topPays = [];
+        
+        foreach ($topResults as $row) {
+            // Ne pas inclure "Autres" dans le top 5 s'il existe
+            if ($row['pays'] === 'Autres') {
+                continue;
+            }
+            $data['labels'][] = $row['pays'];
+            $data['values'][] = (int)$row['total'];
+            $data['pourcentages'][] = (float)$row['pourcentage'];
+            $topPays[] = $row['pays'];
+        }
+        
+        // Calculer le total des autres pays (ceux qui ne sont pas dans le top 5 et qui ne sont pas "Autres")
+        $totalAutres = 0;
+        foreach ($allResults as $row) {
+            if (!in_array($row['pays'], $topPays) && $row['pays'] !== 'Autres') {
+                $totalAutres += (int)$row['total'];
+            }
+        }
+        
+        // Ajouter "Autres" si le total est > 0
+        if ($totalAutres > 0) {
+            $totalGeneral = array_sum($data['values']) + $totalAutres;
+            $data['labels'][] = 'Autres';
+            $data['values'][] = $totalAutres;
+            $data['pourcentages'][] = round(($totalAutres / $totalGeneral) * 100, 1);
+        }
+        
+        return $data;
         
     } catch (PDOException $e) {
         error_log("Erreur getGeoDistribution: " . $e->getMessage());
-        return $this->getGeoDistributionTestData();
+        return $data;
     }
-}
-
-
-
-
-/**
- * Générer des données de test pour la géographie
- */
-private function getGeoDistributionTestData() {
-    // Pays d'Afrique de l'Ouest et Centrale
-    $pays = [
-        'Sénégal' => 45,
-        'Côte d\'Ivoire' => 30,
-        'Cameroun' => 20,
-        'Mali' => 15,
-        'Burkina Faso' => 10,
-        'Guinée' => 8,
-        'Bénin' => 12,
-        'Togo' => 7,
-        'Niger' => 5,
-        'Ghana' => 6,
-        'Nigeria' => 18,
-        'RDC' => 14,
-        'Gabon' => 9,
-        'Congo' => 8
-    ];
-    
-    // Mélanger et prendre les 5 premiers
-    shuffle($pays);
-    $topPays = array_slice($pays, 0, 5, true);
-    
-    $data = [
-        'labels' => array_keys($topPays),
-        'values' => array_values($topPays),
-        'pourcentages' => []
-    ];
-    
-    // Calculer les pourcentages
-    $total = array_sum($data['values']);
-    foreach ($data['values'] as $value) {
-        $data['pourcentages'][] = round(($value / $total) * 100, 1);
-    }
-    
-    return $data;
 }
 
 

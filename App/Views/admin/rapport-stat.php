@@ -190,7 +190,6 @@
 </div>
 
             <!-- Top produits et catégories -->
-            <!-- Top produits et catégories -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
     <!-- Produits les plus vendus -->
     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -311,43 +310,62 @@
                     <div class="h-64">
                         <canvas id="geoChart"></canvas>
                     </div>
-                    <div class="space-y-2">
-                        <?php 
-                        $emojiMap = [
-                            'Sénégal' => '🇸🇳',
-                            'Côte d\'Ivoire' => '🇨🇮',
-                            'Cameroun' => '🇨🇲',
-                            'Mali' => '🇲🇱',
-                            'Autres' => '🌍'
-                        ];
-                        $totalAcheteurs = array_sum(array_column($geoDistribution, 'total'));
-                        $totalAcheteurs = $totalAcheteurs > 0 ? $totalAcheteurs : 1;
-                        ?>
-                        
-                        <?php foreach ($geoDistribution as $country): ?>
-                            <?php 
-                            $nom = $country['pays'] ?? 'Autres';
-                            $total = $country['total'] ?? 0;
-                            $pourcentage = $country['pourcentage'] ?? 0;
-                            $emoji = $emojiMap[$nom] ?? '🌍';
-                            ?>
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xl"><?= $emoji ?></span>
-                                    <div>
-                                        <p class="text-xs font-semibold text-[#0F172A]"><?= htmlspecialchars($nom) ?></p>
-                                        <p class="text-[10px] text-gray-400"><?= number_format($total, 0, ',', ' ') ?> acheteurs</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-xs font-bold text-[#0EA486]"><?= number_format($pourcentage, 1) ?>%</p>
-                                    <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
-                                        <div class="bg-[#0EA486] h-full rounded-full" style="width: <?= min($pourcentage, 100) ?>%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <div class="space-y-2">
+            <?php 
+            $emojiMap = [
+                'Sénégal' => '🇸🇳',
+                'Côte d\'Ivoire' => '🇨🇮',
+                'Cameroun' => '🇨🇲',
+                'Mali' => '🇲🇱',
+                'Burkina Faso' => '🇧🇫',
+                'Guinée' => '🇬🇳',
+                'Bénin' => '🇧🇯',
+                'Togo' => '🇹🇬',
+                'Niger' => '🇳🇪',
+                'RDC' => '🇨🇩',
+                'Gabon' => '🇬🇦',
+                'Congo' => '🇨🇬',
+                'Autres' => '🌍'
+            ];
+            
+            // Vérifier si les données existent avec les bonnes clés
+            $labels = $geoDistribution['labels'] ?? [];
+            $values = $geoDistribution['values'] ?? [];
+            $pourcentages = $geoDistribution['pourcentages'] ?? [];
+            
+            // Si les données sont vides, afficher un message
+            if (empty($labels)): ?>
+                <div class="text-center py-8 text-gray-400">
+                    <i class="fas fa-globe-africa text-4xl mb-3 block"></i>
+                    <p class="text-sm font-medium">Aucune donnée géographique disponible</p>
+                    <p class="text-xs mt-1">Les utilisateurs n'ont pas encore renseigné leur pays</p>
+                </div>
+            <?php else: 
+                $totalAcheteurs = array_sum($values);
+                $totalAcheteurs = $totalAcheteurs > 0 ? $totalAcheteurs : 1;
+                
+                foreach ($labels as $index => $nom): 
+                    $total = $values[$index] ?? 0;
+                    $pourcentage = $pourcentages[$index] ?? 0;
+                    $emoji = $emojiMap[$nom] ?? '🌍';
+            ?>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl"><?= $emoji ?></span>
+                        <div>
+                            <p class="text-xs font-semibold text-[#0F172A]"><?= htmlspecialchars($nom) ?></p>
+                            <p class="text-[10px] text-gray-400"><?= number_format($total, 0, ',', ' ') ?> acheteurs</p>
+                        </div>
                     </div>
+                    <div class="text-right">
+                        <p class="text-xs font-bold text-[#0EA486]"><?= number_format($pourcentage, 1) ?>%</p>
+                        <div class="w-20 bg-gray-200 rounded-full h-1.5 mt-1">
+                            <div class="bg-[#0EA486] h-full rounded-full transition-all duration-500" style="width: <?= min($pourcentage, 100) ?>%;"></div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; endif; ?>
+        </div>
                 </div>
             </div>
         </section>
