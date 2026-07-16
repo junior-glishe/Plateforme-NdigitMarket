@@ -270,15 +270,16 @@ public function getAdmins() {
     }
 }
 
+
 /**
- * Récupérer les logs avec filtres (version améliorée)
+ * Récupérer les logs avec filtres (version corrigée)
  */
 public function getLogs($filters = [], $limit = 25, $offset = 0) {
     try {
         $sql = "SELECT * FROM admin_logs WHERE 1=1";
         $params = [];
         
-        // Recherche textuelle
+        // 🔥 CORRECTION: Recherche textuelle
         if (!empty($filters['search'])) {
             $sql .= " AND (action LIKE :search 
                           OR action_description LIKE :search 
@@ -289,31 +290,25 @@ public function getLogs($filters = [], $limit = 25, $offset = 0) {
             $params[':search'] = '%' . $filters['search'] . '%';
         }
         
-        // Type d'action
+        // 🔥 CORRECTION: Type d'action
         if (!empty($filters['action'])) {
             $sql .= " AND action = :action";
             $params[':action'] = $filters['action'];
         }
         
-        // Administrateur
+        // 🔥 CORRECTION: Administrateur (admin_id)
         if (!empty($filters['admin_id'])) {
             $sql .= " AND admin_id = :admin_id";
             $params[':admin_id'] = $filters['admin_id'];
         }
         
-        // Niveau
+        // 🔥 CORRECTION: Niveau
         if (!empty($filters['level'])) {
             $sql .= " AND level = :level";
             $params[':level'] = $filters['level'];
         }
         
-        // Statut
-        if (!empty($filters['status'])) {
-            $sql .= " AND status = :status";
-            $params[':status'] = $filters['status'];
-        }
-        
-        // Période
+        // 🔥 CORRECTION: Période
         if (!empty($filters['period'])) {
             switch($filters['period']) {
                 case 'today':

@@ -159,39 +159,42 @@
                     </div>
                     
                     <!-- Type d'action -->
-                    <select id="filterAction" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option value="">Tous les types d'actions</option>
-                        <?php foreach ($actionTypes as $action): ?>
-                            <option value="<?= htmlspecialchars($action) ?>"><?= htmlspecialchars($action) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    
                     <!-- Administrateur -->
                     <select id="filterAdmin" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
                         <option value="">Tous les administrateurs</option>
                         <?php foreach ($admins as $admin): ?>
-                            <option value="<?= $admin['id_gestion'] ?>">
+                            <option value="<?= $admin['id_gestion'] ?>" <?= (isset($filters['admin_id']) && $filters['admin_id'] == $admin['id_gestion']) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($admin['nom']) ?> (<?= htmlspecialchars($admin['email']) ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    
-                    <!-- Période -->
-                    <select id="filterPeriod" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option value="">Toutes les périodes</option>
-                        <option value="today">Aujourd'hui</option>
-                        <option value="7days">7 derniers jours</option>
-                        <option value="30days">30 derniers jours</option>
-                        <option value="month">Ce mois</option>
-                        <option value="custom">Personnalisé</option>
+
+                    <!-- Type d'action -->
+                    <select id="filterAction" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les types d'actions</option>
+                        <?php foreach ($actionTypes as $action): ?>
+                            <option value="<?= htmlspecialchars($action) ?>" <?= (isset($filters['action']) && $filters['action'] == $action) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($action) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
-                    
+
                     <!-- Niveau -->
                     <select id="filterLevel" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
                         <option value="">Tous les niveaux</option>
-                        <option value="info">Info</option>
-                        <option value="warning">Warning</option>
-                        <option value="critical">Critical</option>
+                        <option value="info" <?= (isset($filters['level']) && $filters['level'] == 'info') ? 'selected' : '' ?>>Info</option>
+                        <option value="warning" <?= (isset($filters['level']) && $filters['level'] == 'warning') ? 'selected' : '' ?>>Warning</option>
+                        <option value="critical" <?= (isset($filters['level']) && $filters['level'] == 'critical') ? 'selected' : '' ?>>Critical</option>
+                    </select>
+
+                    <!-- Période -->
+                    <select id="filterPeriod" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Toutes les périodes</option>
+                        <option value="today" <?= (isset($filters['period']) && $filters['period'] == 'today') ? 'selected' : '' ?>>Aujourd'hui</option>
+                        <option value="7days" <?= (isset($filters['period']) && $filters['period'] == '7days') ? 'selected' : '' ?>>7 derniers jours</option>
+                        <option value="30days" <?= (isset($filters['period']) && $filters['period'] == '30days') ? 'selected' : '' ?>>30 derniers jours</option>
+                        <option value="month" <?= (isset($filters['period']) && $filters['period'] == 'month') ? 'selected' : '' ?>>Ce mois</option>
+                        <option value="custom">Personnalisé</option>
                     </select>
                     
                     <!-- Boutons -->
@@ -1140,9 +1143,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-
 // ============================================
-// GESTION DES FILTRES - LOGS
+// GESTION DES FILTRES - LOGS (CORRIGÉ)
 // ============================================
 
 (function() {
@@ -1173,18 +1175,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Appliquer les filtres et recharger les données
+     * 🔥 CORRECTION: Appliquer les filtres - Garder l'URL de base
      */
     function applyFilters() {
         const filters = getFilters();
-        const params = new URLSearchParams(filters);
         
-        // Ajouter la page
-        params.set('page', 1);
-        params.set('limit', 25);
+        // 🔥 Construire l'URL avec les filtres
+        let url = window.location.pathname + '?url=logs-audit';
         
-        // Rediriger vers la même page avec les filtres
-        window.location.href = window.location.pathname + '?url=logs-audit&' + params.toString();
+        // Ajouter chaque filtre à l'URL
+        for (const [key, value] of Object.entries(filters)) {
+            if (value) {
+                url += '&' + key + '=' + encodeURIComponent(value);
+            }
+        }
+        
+        // Ajouter la page et la limite
+        url += '&page=1&limit=25';
+        
+        // Rediriger
+        window.location.href = url;
     }
 
     /**
@@ -1217,33 +1227,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
 
     // Bouton Appliquer
-    applyBtn.addEventListener('click', applyFilters);
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            applyFilters();
+        });
+    }
 
     // Bouton Réinitialiser
-    resetBtn.addEventListener('click', resetFilters);
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            resetFilters();
+        });
+    }
 
     // Recherche en temps réel
-    searchInput.addEventListener('input', handleSearch);
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+    }
 
-    // Filtres au changement (sauf recherche)
-    filterAction.addEventListener('change', applyFilters);
-    filterAdmin.addEventListener('change', applyFilters);
-    filterPeriod.addEventListener('change', applyFilters);
-    filterLevel.addEventListener('change', applyFilters);
+    // Filtres au changement
+    if (filterAction) filterAction.addEventListener('change', applyFilters);
+    if (filterAdmin) filterAdmin.addEventListener('change', applyFilters);
+    if (filterPeriod) filterPeriod.addEventListener('change', applyFilters);
+    if (filterLevel) filterLevel.addEventListener('change', applyFilters);
 
     // Touche Entrée pour la recherche
-    searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            clearTimeout(searchTimeout);
-            applyFilters();
-        }
-    });
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                applyFilters();
+            }
+        });
+    }
 
     console.log('✅ Filtres initialisés');
 
 })();
-       
 
 
 
