@@ -393,19 +393,20 @@ switch ($url) {
         $controller->updatePaymentSettings();
         break;
 
-    // API - Configuration SMTP
+    // Mettre à jour les paramètres SMTP
     case 'settings_smtp_update':
         require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
         $controller = new SettingController($pdo);
         $controller->updateSmtpSettings();
         break;
 
-    // API - Test SMTP
+    // Tester SMTP
     case 'settings_smtp_test':
         require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
         $controller = new SettingController($pdo);
         $controller->testSmtp();
         break;
+
 
     // API - Créer administrateur
     case 'settings_admin_create':

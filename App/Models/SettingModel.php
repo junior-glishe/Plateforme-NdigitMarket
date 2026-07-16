@@ -17,33 +17,18 @@ class SettingModel {
      */
     public function getAllSettings() {
         try {
-            $stmt = $this->pdo->query("SELECT * FROM settings");
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->pdo->query("SELECT setting_key, setting_value FROM settings");
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Transformer en tableau clé-valeur
             $settings = [];
-            foreach ($result as $row) {
+            foreach ($results as $row) {
                 $settings[$row['setting_key']] = $row['setting_value'];
             }
+            
             return $settings;
         } catch (PDOException $e) {
-            error_log("Erreur get all settings: " . $e->getMessage());
+            error_log("Erreur getAllSettings: " . $e->getMessage());
             return [];
-        }
-    }
-
-    /**
-     * Récupérer un paramètre par sa clé
-     */
-    public function getSetting($key) {
-        try {
-            $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-            $stmt->execute([$key]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result['setting_value'] ?? null;
-        } catch (PDOException $e) {
-            error_log("Erreur get setting: " . $e->getMessage());
-            return null;
         }
     }
 
@@ -53,13 +38,16 @@ class SettingModel {
     public function updateSetting($key, $value) {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO settings (setting_key, setting_value, updated_at) 
-                VALUES (?, ?, NOW()) 
-                ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()
+                INSERT INTO settings (setting_key, setting_value) 
+                VALUES (:key, :value) 
+                ON DUPLICATE KEY UPDATE setting_value = :value
             ");
-            return $stmt->execute([$key, $value, $value]);
+            return $stmt->execute([
+                ':key' => $key,
+                ':value' => $value
+            ]);
         } catch (PDOException $e) {
-            error_log("Erreur update setting: " . $e->getMessage());
+            error_log("Erreur updateSetting: " . $e->getMessage());
             return false;
         }
     }
@@ -69,25 +57,38 @@ class SettingModel {
      */
     public function updateSettings($data) {
         try {
-            $this->pdo->beginTransaction();
-            
+            $success = true;
             foreach ($data as $key => $value) {
-                $stmt = $this->pdo->prepare("
-                    INSERT INTO settings (setting_key, setting_value, updated_at) 
-                    VALUES (?, ?, NOW()) 
-                    ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()
-                ");
-                $stmt->execute([$key, $value, $value]);
+                if (!$this->updateSetting($key, $value)) {
+                    $success = false;
+                }
             }
-            
-            $this->pdo->commit();
-            return true;
-        } catch (PDOException $e) {
-            $this->pdo->rollBack();
-            error_log("Erreur update settings: " . $e->getMessage());
+            return $success;
+        } catch (Exception $e) {
+            error_log("Erreur updateSettings: " . $e->getMessage());
             return false;
         }
     }
+
+    /**
+     * Récupérer un paramètre spécifique
+     */
+    public function getSetting($key) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = :key");
+            $stmt->execute([':key' => $key]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['setting_value'] : null;
+        } catch (PDOException $e) {
+            error_log("Erreur getSetting: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+
+    
+
+   
 
     // ============================================
     // ADMINISTRATEURS
@@ -228,68 +229,137 @@ class SettingModel {
     // TABLE DES PARAMÈTRES
     // ============================================
 
-    /**
-     * Créer la table settings si elle n'existe pas
-     */
-    public function createSettingsTable() {
-        $sql = "
-            CREATE TABLE IF NOT EXISTS settings (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                setting_key VARCHAR(100) UNIQUE NOT NULL,
-                setting_value TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-        ";
-        try {
-            $this->pdo->exec($sql);
-            return true;
-        } catch (PDOException $e) {
-            error_log("Erreur create settings table: " . $e->getMessage());
-            return false;
+    // App/Models/SettingModel.php
+
+/**
+ * Récupérer les paramètres SMTP depuis la BDD
+ */
+public function getSmtpSettings() {
+    try {
+        $stmt = $this->pdo->query("
+            SELECT setting_key, setting_value 
+            FROM settings 
+            WHERE setting_key LIKE 'smtp_%'
+        ");
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $settings = [];
+        foreach ($results as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
         }
+        
+        return $settings;
+    } catch (PDOException $e) {
+        error_log("Erreur getSmtpSettings: " . $e->getMessage());
+        return [];
     }
+}
 
-    /**
-     * Initialiser les paramètres par défaut
-     */
-    public function initDefaultSettings() {
-        $defaults = [
-            'site_name' => 'NDIGITMARKET',
-            'site_tagline' => 'Le marketplace digital de référence en Afrique',
-            'site_email' => 'contact@ndigitmarket.com',
-            'site_currency' => 'FCFA',
-            'commission_rate' => '10',
-            'min_withdrawal' => '5000',
-            'min_order_amount' => '500',
-            'max_order_amount' => '5000000',
-            'refund_days' => '7',
-            'vendor_payout_days' => '30',
-            'maintenance_mode' => '0',
-            'maintenance_message' => 'Nous effectuons une maintenance. Le site sera bientôt de retour...',
-            'facebook_url' => '',
-            'twitter_url' => '',
-            'instagram_url' => '',
-            'linkedin_url' => '',
-            'smtp_host' => 'smtp.gmail.com',
-            'smtp_port' => '587',
-            'smtp_username' => 'noreply@ndigitmarket.com',
-            'smtp_password' => '',
-            'smtp_encryption' => 'tls',
-            'smtp_from_email' => 'noreply@ndigitmarket.com',
-            'smtp_from_name' => 'NDIGITMARKET',
-            'fedapay_public_key' => 'pub_test_xxxxxxxxxx',
-            'fedapay_secret_key' => 'sec_test_xxxxxxxxxx',
-            'fedapay_mode' => 'test',
-            'payment_mobile_money' => '1',
-            'payment_card' => '1',
-            'payment_bank_transfer' => '0',
-            'payment_paypal' => '0'
-        ];
-
-        foreach ($defaults as $key => $value) {
-            $this->updateSetting($key, $value);
+/**
+ * Mettre à jour les paramètres SMTP
+ */
+public function updateSmtpSettings($data) {
+    try {
+        foreach ($data as $key => $value) {
+            // Nettoyer la valeur
+            $value = trim($value);
+            
+            // Mettre à jour avec UPDATE direct
+            $stmt = $this->pdo->prepare("
+                UPDATE settings 
+                SET setting_value = :value, updated_at = NOW() 
+                WHERE setting_key = :key
+            ");
+            $stmt->execute([
+                ':key' => $key,
+                ':value' => $value
+            ]);
         }
         return true;
+        
+    } catch (PDOException $e) {
+        error_log("Erreur updateSmtpSettings: " . $e->getMessage());
+        return false;
     }
+}
+
+
+
+
+
+
+
+// App/Models/SettingModel.php
+
+/**
+ * Tester la configuration SMTP
+ */
+public function testSmtp($toEmail, $message = '') {
+    try {
+        // Récupérer les paramètres SMTP depuis la BDD
+        $smtp = $this->getSmtpSettings();
+        
+        // Vérifier que la configuration est complète
+        if (empty($smtp['smtp_host']) || empty($smtp['smtp_username']) || empty($smtp['smtp_password'])) {
+            return ['success' => false, 'error' => 'Configuration SMTP incomplète'];
+        }
+        
+        // Charger PHPMailer
+        require_once __DIR__ . '/../../vendor/autoload.php';
+        
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        
+        // Configuration SMTP
+        $mail->isSMTP();
+        $mail->Host = $smtp['smtp_host'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $smtp['smtp_username'];
+        $mail->Password = $smtp['smtp_password'];
+        $mail->SMTPSecure = $smtp['smtp_encryption'] === 'SSL' ? 'ssl' : ($smtp['smtp_encryption'] === 'TLS' ? 'tls' : '');
+        $mail->Port = (int)($smtp['smtp_port'] ?? 587);
+        $mail->CharSet = 'UTF-8';
+        
+        // Expéditeur
+        $fromEmail = $smtp['smtp_from_email'] ?? $smtp['smtp_username'];
+        $fromName = $smtp['smtp_from_name'] ?? 'NDIGITMARKET';
+        $mail->setFrom($fromEmail, $fromName);
+        $mail->addReplyTo($fromEmail, $fromName);
+        
+        // Destinataire
+        $mail->addAddress($toEmail);
+        
+        // Contenu
+        $mail->isHTML(true);
+        $mail->Subject = 'Test SMTP - NDIGITMARKET';
+        
+        // Corps du message
+        $body = "Bonjour,\n\n";
+        $body .= "Ceci est un email de test envoyé depuis la plateforme NDIGITMARKET.\n\n";
+        $body .= "La configuration SMTP fonctionne correctement.\n\n";
+        if (!empty($message)) {
+            $body .= "Message personnel :\n" . $message . "\n\n";
+        }
+        $body .= "---\n";
+        $body .= "Serveur : " . $smtp['smtp_host'] . "\n";
+        $body .= "Port : " . $smtp['smtp_port'] . "\n";
+        $body .= "Sécurité : " . $smtp['smtp_encryption'] . "\n";
+        $body .= "Expéditeur : " . $fromEmail . "\n\n";
+        $body .= "© " . date('Y') . " NDIGITMARKET";
+        
+        $mail->Body = nl2br($body);
+        $mail->AltBody = $body;
+        
+        // Envoyer
+        $mail->send();
+        
+        return ['success' => true, 'message' => 'Email envoyé avec succès'];
+        
+    } catch (\PHPMailer\PHPMailer\Exception $e) {
+        error_log("Erreur SMTP test: " . $e->getMessage());
+        return ['success' => false, 'error' => $e->getMessage()];
+    } catch (Exception $e) {
+        error_log("Erreur SMTP test: " . $e->getMessage());
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
 }

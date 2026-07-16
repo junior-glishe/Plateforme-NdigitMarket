@@ -43,45 +43,56 @@
         </header>
 
         <!-- PARAMÈTRES GÉNÉRAUX -->
+       <!-- ============================================
+     PARAMÈTRES GÉNÉRAUX
+     ============================================ -->
         <section class="mb-8">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
                     <i class="fas fa-sliders-h text-[#0EA486]"></i> · Paramètres généraux
                 </h3>
+                <span class="text-[10px] text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                    <i class="fas fa-sync-alt mr-1"></i> Dernière mise à jour: <span id="lastUpdate">...</span>
+                </span>
             </div>
 
-            <form id="generalSettingsForm" class="space-y-4">
+            <form id="generalSettingsForm" class="space-y-4" method="POST" action="/back-end/routes/api.php?url=settings_general_update">
+                <input type="hidden" name="_method" value="POST">
+                
                 <!-- Infos plateforme -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-building text-[#0EA486]"></i> Informations de la plateforme
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la plateforme <span class="text-red-500">*</span></label>
-                            <input type="text" value="NDIGITMARKET" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="text" name="site_name" id="site_name" value="<?= htmlspecialchars($settings['site_name'] ?? 'market') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Tagline / Slogan</label>
-                            <input type="text" value="Le marketplace digital de référence en Afrique" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="text" name="site_tagline" id="site_tagline" value="<?= htmlspecialchars($settings['site_tagline'] ?? 'Le en Afrique') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Email de contact officiel <span class="text-red-500">*</span></label>
-                            <input type="email" value="contact@ndigitmarket.com" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="email" name="site_email" id="site_email" value="<?= htmlspecialchars($settings['site_email'] ?? 'contact@ndigitmarket.com') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Devise principale <span class="text-red-500">*</span></label>
-                            <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option selected>FCFA (Franc CFA)</option>
-                                <option>EUR (Euro)</option>
-                                <option>USD (Dollar)</option>
+                            <select name="currency" id="currency" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] transition">
+                                <option value="FCFA" <?= ($settings['currency'] ?? 'FCFA') === 'FCFA' ? 'selected' : '' ?>>FCFA (Franc CFA)</option>
+                                <option value="EUR" <?= ($settings['currency'] ?? 'FCFA') === 'EUR' ? 'selected' : '' ?>>EUR (Euro)</option>
+                                <option value="USD" <?= ($settings['currency'] ?? 'FCFA') === 'USD' ? 'selected' : '' ?>>USD (Dollar)</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <!-- Logo et Favicon -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-image text-[#0EA486]"></i> Logo et Favicon
                     </h4>
@@ -89,13 +100,14 @@
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Logo principal</label>
                             <div class="flex items-center gap-3">
-                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-2xl">
-                                    N
+                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm">
+                                    <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
                                 </div>
                                 <div class="flex-1">
                                     <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
                                         <p class="text-[10px] text-gray-500">PNG, SVG · max 500 KB</p>
+                                        <input type="file" name="logo" accept="image/png,image/svg+xml" class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -103,13 +115,14 @@
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Favicon</label>
                             <div class="flex items-center gap-3">
-                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                                    N
+                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                                    <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
                                 </div>
                                 <div class="flex-1">
                                     <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
                                         <p class="text-[10px] text-gray-500">ICO, PNG · 32x32 ou 64x64</p>
+                                        <input type="file" name="favicon" accept="image/png,image/x-icon" class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -118,40 +131,44 @@
                 </div>
 
                 <!-- Réseaux sociaux -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-share-alt text-[#0EA486]"></i> Réseaux sociaux
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="relative">
+                        <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">
                                 <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook
                             </label>
-                            <input type="url" placeholder="https://facebook.com/..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="url" name="facebook_url" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>" placeholder="https://facebook.com/..." 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">
                                 <i class="fab fa-twitter text-sky-500 mr-1"></i> Twitter / X
                             </label>
-                            <input type="url" placeholder="https://twitter.com/..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="url" name="twitter_url" value="<?= htmlspecialchars($settings['twitter_url'] ?? '') ?>" placeholder="https://twitter.com/..." 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">
                                 <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram
                             </label>
-                            <input type="url" placeholder="https://instagram.com/..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="url" name="instagram_url" value="<?= htmlspecialchars($settings['instagram_url'] ?? '') ?>" placeholder="https://instagram.com/..." 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">
                                 <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
                             </label>
-                            <input type="url" placeholder="https://linkedin.com/..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="url" name="linkedin_url" value="<?= htmlspecialchars($settings['linkedin_url'] ?? '') ?>" placeholder="https://linkedin.com/..." 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                     </div>
                 </div>
 
                 <!-- Mode maintenance -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-tools text-[#0EA486]"></i> Mode maintenance
                     </h4>
@@ -166,17 +183,17 @@
                                     <p class="text-[11px] text-gray-400">Le site sera inaccessible aux visiteurs</p>
                                 </div>
                             </div>
-                            <input type="checkbox" id="maintenanceToggle" class="w-5 h-5 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]">
+                            <input type="checkbox" name="maintenance_mode" id="maintenanceToggle" class="w-5 h-5 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]" <?= ($settings['maintenance_mode'] ?? 0) ? 'checked' : '' ?>>
                         </label>
-                        <div id="maintenanceMessageSection" class="hidden">
+                        <div id="maintenanceMessageSection" class="<?= ($settings['maintenance_mode'] ?? 0) ? '' : 'hidden' ?>">
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Message personnalisé de maintenance</label>
-                            <textarea rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Nous effectuons une maintenance. Le site sera bientôt de retour..."></textarea>
+                            <textarea name="maintenance_message" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Nous effectuons une maintenance. Le site sera bientôt de retour..."><?= htmlspecialchars($settings['maintenance_message'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- Commission et retraits -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-percentage text-[#0EA486]"></i> Commissions et retraits
                     </h4>
@@ -184,24 +201,27 @@
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Commission plateforme (%) <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="number" value="10" min="0" max="100" class="w-full px-3 py-2.5 pr-10 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="number" name="commission_rate" value="<?= htmlspecialchars($settings['commission_rate'] ?? 10) ?>" min="0" max="100" step="0.1" 
+                                    class="w-full px-3 py-2.5 pr-10 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">%</span>
                             </div>
                             <p class="text-[10px] text-gray-400 mt-1">Pourcentage retenu sur chaque vente</p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de retrait vendeur (FCFA) <span class="text-red-500">*</span></label>
-                            <input type="number" value="5000" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="min_withdrawal" value="<?= htmlspecialchars($settings['min_withdrawal'] ?? 5000) ?>" min="0" step="100" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                             <p class="text-[10px] text-gray-400 mt-1">Montant minimum pour qu'un vendeur puisse retirer</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-2">
-                    <button type="button" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                        Annuler
+                <!-- Boutons -->
+                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
+                        <i class="fas fa-undo mr-1"></i> Annuler
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
                         <i class="fas fa-save"></i> Enregistrer les paramètres
                     </button>
                 </div>
@@ -371,44 +391,57 @@
                 </h3>
             </div>
 
-            <form id="smtpSettingsForm" class="space-y-4">
+            <form id="smtpSettingsForm"  method="POST" class="space-y-4">
+                <?php 
+                $smtp = $smtpSettings ?? [];
+                ?>
+                
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                             <i class="fas fa-server text-[#0EA486]"></i> Serveur SMTP
                         </h4>
-                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                            <i class="fas fa-check mr-1"></i>Configuré
+                        <span class="text-[10px] font-semibold <?= !empty($smtp['smtp_host']) ? 'text-emerald-700 bg-emerald-100' : 'text-amber-700 bg-amber-100' ?> px-2 py-1 rounded-full">
+                            <i class="fas fa-<?= !empty($smtp['smtp_host']) ? 'check' : 'exclamation-triangle' ?> mr-1"></i>
+                            <?= !empty($smtp['smtp_host']) ? 'Configuré' : 'Non configuré' ?>
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-2">
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Serveur SMTP <span class="text-red-500">*</span></label>
-                            <input type="text" value="smtp.gmail.com" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="text" name="smtp_host" id="smtp_host" value="<?= htmlspecialchars($smtp['smtp_host'] ?? '') ?>" 
+                                placeholder="ex: smtp.gmail.com"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Port <span class="text-red-500">*</span></label>
-                            <input type="number" value="587" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="smtp_port" id="smtp_port" value="<?= htmlspecialchars($smtp['smtp_port'] ?? '') ?>" 
+                                placeholder="587"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom d'utilisateur <span class="text-red-500">*</span></label>
-                            <input type="text" value="noreply@ndigitmarket.com" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="text" name="smtp_username" id="smtp_username" value="<?= htmlspecialchars($smtp['smtp_username'] ?? '') ?>" 
+                                placeholder="noreply@domaine.com"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mot de passe <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" id="smtpPassword" value="xxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                                <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="smtpPassword">
+                                <input type="password" id="smtp_password" name="smtp_password" value="<?= htmlspecialchars($smtp['smtp_password'] ?? '') ?>" 
+                                    placeholder="••••••••"
+                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="smtp_password">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Sécurité</label>
-                            <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option>TLS (recommandé)</option>
-                                <option>SSL</option>
-                                <option>Aucune</option>
+                            <select name="smtp_encryption" id="smtp_encryption" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
+                                <option value="TLS" <?= ($smtp['smtp_encryption'] ?? '') === 'TLS' ? 'selected' : '' ?>>TLS (recommandé)</option>
+                                <option value="SSL" <?= ($smtp['smtp_encryption'] ?? '') === 'SSL' ? 'selected' : '' ?>>SSL</option>
+                                <option value="none" <?= ($smtp['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>Aucune</option>
                             </select>
                         </div>
                     </div>
@@ -421,11 +454,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Email expéditeur <span class="text-red-500">*</span></label>
-                            <input type="email" value="noreply@ndigitmarket.com" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="email" name="smtp_from_email" id="smtp_from_email" value="<?= htmlspecialchars($smtp['smtp_from_email'] ?? '') ?>" 
+                                placeholder="noreply@domaine.com"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom affiché <span class="text-red-500">*</span></label>
-                            <input type="text" value="NDIGITMARKET" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="text" name="smtp_from_name" id="smtp_from_name" value="<?= htmlspecialchars($smtp['smtp_from_name'] ?? '') ?>" 
+                                placeholder="Nom de l'entreprise"
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                     </div>
                 </div>
@@ -434,7 +471,7 @@
                     <button type="button" id="testSmtpBtn" class="px-4 py-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold flex items-center gap-2">
                         <i class="fas fa-paper-plane"></i> Tester l'envoi
                     </button>
-                    <button type="button" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
                     </button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
@@ -642,44 +679,45 @@
 
     <!-- MODAL : TEST ENVOI SMTP -->
     <div id="testSmtpModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-paper-plane text-blue-500"></i> Tester l'envoi SMTP
-                    </h3>
-                    <p class="text-xs text-gray-400">Envoyer un email de test</p>
-                </div>
-                <button class="closeTestSmtpBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-paper-plane text-blue-500"></i> Tester l'envoi SMTP
+                </h3>
+                <p class="text-xs text-gray-400">Envoyer un email de test</p>
             </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <p class="text-sm text-blue-700">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Un email de test sera envoyé à l'adresse indiquée pour vérifier la configuration SMTP.
-                    </p>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Email destinataire <span class="text-red-500">*</span></label>
-                    <input type="email" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="votre@email.com">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Message (optionnel)</label>
-                    <textarea rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Message personnalisé..."></textarea>
-                </div>
+            <button class="closeTestSmtpBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100" id="testSmtpInfo">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Un email de test sera envoyé à l'adresse indiquée pour vérifier la configuration SMTP.
+                </p>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeTestSmtpBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Annuler
-                </button>
-                <button id="sendTestEmailBtn" class="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-paper-plane"></i> Envoyer le test
-                </button>
+            <div id="testSmtpResult" class="hidden rounded-xl p-4 border"></div>
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Email destinataire <span class="text-red-500">*</span></label>
+                <input type="email" id="testEmailInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="votre@email.com">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Message (optionnel)</label>
+                <textarea id="testMessageInput" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Message personnalisé..."></textarea>
             </div>
         </div>
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeTestSmtpBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                Annuler
+            </button>
+            <button id="sendTestEmailBtn" class="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-paper-plane"></i> Envoyer le test
+            </button>
+        </div>
     </div>
+</div>
 
     <!-- MODAL : CRÉER / MODIFIER ADMIN -->
     <div id="adminFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1109,39 +1147,8 @@
             e.preventDefault();
             showToast('Paiements enregistrés', 'La configuration des paiements a été mise à jour', 'success');
         });
-
-        document.getElementById('smtpSettingsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('SMTP enregistré', 'La configuration email a été mise à jour', 'success');
-        });
-
         // Modal test SMTP
-        (function() {
-            const modal = document.getElementById('testSmtpModal');
-            const openBtn = document.getElementById('testSmtpBtn');
-            const closeBtns = document.querySelectorAll('.closeTestSmtpBtn');
-            const sendBtn = document.getElementById('sendTestEmailBtn');
-
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            openBtn.addEventListener('click', openModal);
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            sendBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Email de test envoyé', 'Vérifiez votre boîte de réception', 'success');
-            });
-        })();
+        
 
         // Modal admin form (create/edit)
         (function() {
@@ -1298,6 +1305,428 @@
                 document.body.style.overflow = '';
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ============================================
+// GESTION DES PARAMÈTRES SYSTÈME
+// ============================================
+
+(function() {
+    'use strict';
+
+    const form = document.getElementById('generalSettingsForm');
+    const maintenanceToggle = document.getElementById('maintenanceToggle');
+    const maintenanceSection = document.getElementById('maintenanceMessageSection');
+
+    // ============================================
+    // 1. AFFICHAGE/MASQUAGE DU MESSAGE DE MAINTENANCE
+    // ============================================
+    if (maintenanceToggle && maintenanceSection) {
+        maintenanceToggle.addEventListener('change', function() {
+            if (this.checked) {
+                maintenanceSection.classList.remove('hidden');
+                maintenanceSection.style.display = 'block';
+            } else {
+                maintenanceSection.classList.add('hidden');
+                maintenanceSection.style.display = 'none';
+            }
+        });
+    }
+
+    // ============================================
+    // 2. ENVOI DU FORMULAIRE
+    // ============================================
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(this);
+            
+            // Désactiver le bouton
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+            
+            showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
+            
+            // Envoyer la requête
+            fetch('/back-end/routes/api.php?url=settings_general_update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
+                    
+                    // Mettre à jour la date
+                    const lastUpdate = document.getElementById('lastUpdate');
+                    if (lastUpdate) {
+                        const now = new Date();
+                        lastUpdate.textContent = now.toLocaleString('fr-FR');
+                    }
+                    
+                    // Recharger la page après 2s
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    }
+
+    // ============================================
+    // 3. GESTION DES FICHIERS (Logo/Favicon)
+    // ============================================
+    document.querySelectorAll('.border-dashed').forEach(container => {
+        container.addEventListener('click', function() {
+            const input = this.querySelector('input[type="file"]');
+            if (input) input.click();
+        });
+        
+        container.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+        });
+        
+        container.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+        });
+        
+        container.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+            const input = this.querySelector('input[type="file"]');
+            if (input && e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                // Afficher le nom du fichier
+                const label = this.querySelector('p');
+                if (label) {
+                    label.textContent = '📎 ' + e.dataTransfer.files[0].name;
+                }
+            }
+        });
+    });
+
+    // Afficher le nom du fichier sélectionné
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const container = this.closest('.border-dashed');
+            const label = container?.querySelector('p');
+            if (label && this.files.length > 0) {
+                label.textContent = '📎 ' + this.files[0].name;
+            }
+        });
+    });
+
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================
+// GESTION SMTP - Enregistrement & Test
+// ============================================
+
+(function() {
+    'use strict';
+
+    // ============================================
+    // 1. ENREGISTREMENT DES PARAMÈTRES SMTP
+    // ============================================
+    const smtpForm = document.getElementById('smtpSettingsForm');
+    
+    if (smtpForm) {
+        smtpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les données du formulaire
+            const formData = new FormData(this);
+            
+            // Afficher un toast de chargement
+            showToast('Enregistrement', 'Mise à jour des paramètres SMTP...', 'info');
+            
+            // Désactiver le bouton
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+            
+            // Envoyer la requête
+            fetch('/back-end/routes/api.php?url=settings_smtp_update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Succès', 'Paramètres SMTP enregistrés ', 'success');
+                    
+                    // Mettre à jour le statut
+                    const statusBadge = document.querySelector('.bg-amber-100, .bg-emerald-100');
+                    if (statusBadge) {
+                        const host = document.getElementById('smtp_host').value;
+                        if (host) {
+                            statusBadge.className = 'text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full';
+                            statusBadge.innerHTML = '<i class="fas fa-check mr-1"></i> Configuré';
+                        }
+                    }
+                } else {
+                    showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Impossible d\'enregistrer les paramètres', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+            });
+        });
+    }
+
+    // ============================================
+    // 2. TEST SMTP - MODAL
+    // ============================================
+    const modal = document.getElementById('testSmtpModal');
+    const openBtn = document.getElementById('testSmtpBtn');
+    const closeBtns = document.querySelectorAll('.closeTestSmtpBtn');
+    const sendBtn = document.getElementById('sendTestEmailBtn');
+    const testEmailInput = document.getElementById('testEmailInput');
+    const testMessageInput = document.getElementById('testMessageInput');
+    const testResult = document.getElementById('testSmtpResult');
+    const testInfo = document.getElementById('testSmtpInfo');
+
+    function openModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        // Réinitialiser
+        testResult.classList.add('hidden');
+        testInfo.classList.remove('hidden');
+        testEmailInput.value = '';
+        testMessageInput.value = '';
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // ESC pour fermer
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // ============================================
+    // 3. ENVOI DU TEST SMTP
+    // ============================================
+    if (sendBtn) {
+        sendBtn.addEventListener('click', function() {
+            const email = testEmailInput.value.trim();
+            const message = testMessageInput.value.trim();
+            
+            if (!email) {
+                showToast('Erreur', 'Veuillez saisir un email destinataire', 'error');
+                testEmailInput.focus();
+                return;
+            }
+            
+            if (!email.includes('@') || !email.includes('.')) {
+                showToast('Erreur', 'Email invalide', 'error');
+                testEmailInput.focus();
+                return;
+            }
+            
+            // Désactiver le bouton
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+            
+            // Afficher le résultat
+            testResult.classList.remove('hidden');
+            testResult.className = 'rounded-xl p-4 border border-blue-200 bg-blue-50';
+            testResult.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Envoi en cours...';
+            testInfo.classList.add('hidden');
+            
+            // Préparer les données
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('message', message);
+            
+            // Envoyer la requête
+            fetch('/back-end/routes/api.php?url=settings_smtp_test', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    testResult.className = 'rounded-xl p-4 border border-green-200 bg-green-50';
+                    testResult.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-green-600 text-xl mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-green-800"> Test réussi !</p>
+                                <p class="text-sm text-green-700">${data.message || 'Email envoyé avec succès'}</p>
+                                <p class="text-xs text-green-600 mt-1">Destinataire: ${email}</p>
+                            </div>
+                        </div>
+                    `;
+                    showToast('Succès', 'Email de test envoyé ', 'success');
+                } else {
+                    testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
+                    testResult.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-red-800">❌ Erreur</p>
+                                <p class="text-sm text-red-700">${data.error || 'Erreur lors de l\'envoi'}</p>
+                                <p class="text-xs text-red-600 mt-1">Vérifiez votre configuration SMTP</p>
+                            </div>
+                        </div>
+                    `;
+                    showToast('Erreur', data.error || 'Erreur lors de l\'envoi', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
+                testResult.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold text-red-800">❌ Erreur serveur</p>
+                            <p class="text-sm text-red-700">Impossible de contacter le serveur</p>
+                        </div>
+                    </div>
+                `;
+                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
+            });
+        });
+    }
+
+    // ============================================
+    // 4. TOGGLE PASSWORD
+    // ============================================
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if (input) {
+                const type = input.type === 'password' ? 'text' : 'password';
+                input.type = type;
+                this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            }
+        });
+    });
+
+})();
     </script>
 </body>
 </html>

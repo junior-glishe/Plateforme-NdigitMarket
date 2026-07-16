@@ -16,13 +16,11 @@ class SettingController {
     // PAGE PRINCIPALE
     // ============================================
 
-    public function index() {
-        // S'assurer que la table settings existe
-        $this->model->createSettingsTable();
-        $this->model->initDefaultSettings();
-        
+    public function index() {        
         // Récupérer tous les paramètres
         $settings = $this->model->getAllSettings();
+
+         $smtpSettings = $this->model->getSmtpSettings();
         
         // Récupérer les administrateurs
         $admins = $this->model->getAdmins();
@@ -40,6 +38,7 @@ class SettingController {
             'admins' => $admins,
             'adminStats' => $adminStats,
             'lastConnection' => $lastConnection,
+            'smtpSettings' => $smtpSettings, 
             'currentPage' => 'parametres-systeme'
         ]);
     }
@@ -48,36 +47,54 @@ class SettingController {
     // API PARAMÈTRES GÉNÉRAUX
     // ============================================
 
-    /**
-     * Mettre à jour les paramètres généraux
-     */
-    public function updateGeneralSettings() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
+        /**
+         * Mettre à jour les paramètres généraux
+         */
+        public function updateGeneralSettings() {
+            // 🔥 Vérifier la méthode
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->jsonResponse([
+                    'success' => false, 
+                    'error' => 'Méthode non autorisée. Utilisez POST.'
+                ], 405);
+                return;
+            }
 
-        $data = [
-            'site_name' => $_POST['site_name'] ?? 'NDIGITMARKET',
-            'site_tagline' => $_POST['site_tagline'] ?? '',
-            'site_email' => $_POST['site_email'] ?? '',
-            'site_currency' => $_POST['site_currency'] ?? 'FCFA',
-            'facebook_url' => $_POST['facebook_url'] ?? '',
-            'twitter_url' => $_POST['twitter_url'] ?? '',
-            'instagram_url' => $_POST['instagram_url'] ?? '',
-            'linkedin_url' => $_POST['linkedin_url'] ?? '',
-            'maintenance_mode' => isset($_POST['maintenance_mode']) ? '1' : '0',
-            'maintenance_message' => $_POST['maintenance_message'] ?? '',
-            'commission_rate' => $_POST['commission_rate'] ?? '10',
-            'min_withdrawal' => $_POST['min_withdrawal'] ?? '5000'
-        ];
+            // 🔥 Récupérer les données avec les bons noms de champs
+            $data = [
+                'site_name' => trim($_POST['site_name'] ?? 'NDIGITMARKET'),
+                'site_tagline' => trim($_POST['site_tagline'] ?? ''),
+                'site_email' => trim($_POST['contact_email'] ?? trim($_POST['site_email'] ?? '')), // 🔥 CORRECTION ICI
+                'site_currency' => $_POST['currency'] ?? 'FCFA',
+                'facebook_url' => trim($_POST['facebook_url'] ?? ''),
+                'twitter_url' => trim($_POST['twitter_url'] ?? ''),
+                'instagram_url' => trim($_POST['instagram_url'] ?? ''),
+                'linkedin_url' => trim($_POST['linkedin_url'] ?? ''),
+                'maintenance_mode' => isset($_POST['maintenance_mode']) ? '1' : '0',
+                'maintenance_message' => trim($_POST['maintenance_message'] ?? ''),
+                'commission_rate' => $_POST['commission_rate'] ?? '10',
+                'min_withdrawal' => $_POST['min_withdrawal'] ?? '5000'
+            ];
 
-        if ($this->model->updateSettings($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Paramètres généraux mis à jour']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+            // 🔥 Debug - afficher les données reçues
+            error_log("📊 Données reçues pour mise à jour: " . print_r($data, true));
+
+            // Mettre à jour
+            $result = $this->model->updateSettings($data);
+
+            if ($result) {
+                $this->jsonResponse([
+                    'success' => true, 
+                    'message' => 'Paramètres généraux mis à jour avec succès',
+                    'data' => $data
+                ]);
+            } else {
+                $this->jsonResponse([
+                    'success' => false,
+                    'error' => 'Erreur lors de la mise à jour des paramètres'
+                ], 500);
+            }
         }
-    }
 
     // ============================================
     // API CONFIGURATION PAIEMENTS
@@ -117,56 +134,69 @@ class SettingController {
     // API CONFIGURATION SMTP
     // ============================================
 
-    /**
-     * Mettre à jour la configuration SMTP
-     */
-    public function updateSmtpSettings() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
+        /**
+         * API - Mettre à jour les paramètres SMTP
+         */
+
+        public function updateSmtpSettings() {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+                return;
+            }
+            
+            // DEBUG - Voir les données POST reçues
+            error_log("=== SMTP POST DATA ===");
+            error_log(print_r($_POST, true));
+            
+            $data = [
+                'smtp_host' => trim($_POST['smtp_host'] ?? ''),
+                'smtp_port' => trim($_POST['smtp_port'] ?? ''),
+                'smtp_username' => trim($_POST['smtp_username'] ?? ''),
+                'smtp_password' => trim($_POST['smtp_password'] ?? ''),
+                'smtp_encryption' => trim($_POST['smtp_encryption'] ?? 'TLS'),
+                'smtp_from_email' => trim($_POST['smtp_from_email'] ?? ''),
+                'smtp_from_name' => trim($_POST['smtp_from_name'] ?? '')
+            ];
+            
+            $result = $this->model->updateSmtpSettings($data);
+            
+            if ($result) {
+                $this->jsonResponse(['success' => true, 'message' => 'Paramètres SMTP mis à jour']);
+            } else {
+                $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour des paramètres'], 500);
+            }
         }
-
-        $data = [
-            'smtp_host' => $_POST['smtp_host'] ?? '',
-            'smtp_port' => $_POST['smtp_port'] ?? '587',
-            'smtp_username' => $_POST['smtp_username'] ?? '',
-            'smtp_password' => $_POST['smtp_password'] ?? '',
-            'smtp_encryption' => $_POST['smtp_encryption'] ?? 'tls',
-            'smtp_from_email' => $_POST['smtp_from_email'] ?? '',
-            'smtp_from_name' => $_POST['smtp_from_name'] ?? 'NDIGITMARKET'
-        ];
-
-        if ($this->model->updateSettings($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Configuration SMTP mise à jour']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+        /**
+         * API - Tester SMTP
+         */
+        public function testSmtp() {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+                return;
+            }
+            
+            $toEmail = trim($_POST['email'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            
+            if (empty($toEmail)) {
+                $this->jsonResponse(['success' => false, 'error' => 'Email destinataire requis'], 400);
+                return;
+            }
+            
+            if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+                $this->jsonResponse(['success' => false, 'error' => 'Email invalide'], 400);
+                return;
+            }
+            
+            $result = $this->model->testSmtp($toEmail, $message);
+            
+            if ($result['success']) {
+                $this->jsonResponse(['success' => true, 'message' => $result['message']]);
+            } else {
+                $this->jsonResponse(['success' => false, 'error' => $result['error'] ?? 'Erreur lors de l\'envoi'], 500);
+            }
         }
-    }
-
-    /**
-     * Tester la configuration SMTP
-     */
-    public function testSmtp() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-
-        $email = $_POST['email'] ?? '';
-        $message = $_POST['message'] ?? 'Ceci est un email de test de la plateforme NDIGITMARKET.';
-
-        if (empty($email)) {
-            $this->jsonResponse(['error' => 'Email destinataire requis'], 400);
-            return;
-        }
-
-        // Ici vous pouvez implémenter l'envoi réel d'email
-        // Pour l'instant, on simule un succès
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Email de test envoyé avec succès à ' . $email
-        ]);
-    }
+                    
 
     // ============================================
     // API GESTION ADMINISTRATEURS
@@ -335,6 +365,19 @@ class SettingController {
             $this->jsonResponse(['error' => 'Erreur lors de la réinitialisation'], 500);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // ============================================
     // FONCTIONS UTILITAIRES

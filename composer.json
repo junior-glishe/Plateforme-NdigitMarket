@@ -5,6 +5,7 @@
     "require": {
         "php": ">=8.1",
         "mpdf/mpdf": "^8.0.17",
+        "phpmailer/phpmailer": "^7.1",
         "phpoffice/phpspreadsheet": "^3.0.0"
     },
     "autoload": {
