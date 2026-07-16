@@ -1503,12 +1503,12 @@ async function loadChartData(period) {
             createInscriptionsChart(data);
             createVentesChart(data);
             
-            showToast('Succès', 'Graphiques mis à jour ✅', 'success');
+            showToast('Succès', 'Graphiques mis à jour ', 'success');
         } else {
             throw new Error(result.message || 'Données invalides');
         }
     } catch (error) {
-        console.error('❌ Erreur:', error);
+        console.error(' Erreur:', error);
         showToast('Erreur', error.message || 'Impossible de charger les données', 'error');
         
         // Données de secours
@@ -1598,7 +1598,7 @@ function showToast(title, message, type = 'info') {
     toast.style.borderLeftColor = colors[type] || colors.info;
     toast.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px;">
-            <div style="font-size:20px;">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
+            <div style="font-size:20px;">${type === 'success' ? '' : type === 'error' ? '' : 'ℹ️'}</div>
             <div>
                 <div style="font-weight:600; font-size:14px; color:#0F172A;">${title}</div>
                 <div style="font-size:12px; color:#6B7280; margin-top:2px;">${message}</div>
@@ -1679,7 +1679,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    console.log('✅ Graphiques prêts - Période:', initialPeriod);
+    console.log(' Graphiques prêts - Période:', initialPeriod);
 });
 
 // Exposer pour débogage
@@ -1694,9 +1694,7 @@ console.log('💡 Utilise window.chartManager.setPeriod("month") pour changer la
 
 
 
-// ============================================
-// RAPPORTS EXPORTABLES
-// ============================================
+
 
 (function() {
     'use strict';
@@ -1970,34 +1968,101 @@ console.log('💡 Utilise window.chartManager.setPeriod("month") pour changer la
     }
 
     // ============================================
-    // 6. ÉVÉNEMENTS DES BOUTONS
-    // ============================================
-    document.querySelectorAll('.generateReportBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tab = this.closest('.report-tab-content');
-            if (!tab) return;
-            
-            const tabName = tab.dataset.tab;
-            
-            switch(tabName) {
-                case 'sales':
-                    loadSalesReport();
-                    break;
-                case 'financial':
-                    loadFinancialReport();
-                    break;
-                case 'users':
-                    loadUsersReport();
-                    break;
-                case 'vendors':
-                    loadVendorsReport();
-                    break;
-            }
-            
-            showToast('Rapport généré', 'Les données ont été mises à jour', 'success');
-        });
-    });
+// GÉNÉRATION DES RAPPORTS
+// ============================================
 
+document.querySelectorAll('.generateReportBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tab = this.closest('.report-tab-content');
+        if (!tab) return;
+        
+        const tabName = tab.dataset.tab;
+        const startInputs = tab.querySelectorAll('input[type="date"]');
+        const startDate = startInputs[0]?.value || '';
+        const endDate = startInputs[1]?.value || '';
+        
+        // Récupérer les filtres pour le rapport de ventes
+        let categorie = '';
+        let vendeur = '';
+        if (tabName === 'sales') {
+            const selects = tab.querySelectorAll('select');
+            if (selects.length >= 2) {
+                categorie = selects[0].value || '';
+                vendeur = selects[1].value || '';
+            }
+        }
+        
+        // Construire l'URL
+        let url = `/back-end/routes/api.php?url=report_${tabName}_data&start_date=${startDate}&end_date=${endDate}`;
+        if (categorie) url += `&categorie=${categorie}`;
+        if (vendeur) url += `&vendeur=${vendeur}`;
+        
+        showToast('Génération', 'Chargement des données...', 'info');
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateReportData(tabName, data.data, data.summary);
+                    showToast('Succès', 'Rapport mis à jour ✅', 'success');
+                } else {
+                    throw new Error(data.message || 'Erreur');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Impossible de générer le rapport', 'error');
+            });
+    });
+});
+
+// Fonction pour mettre à jour les données du rapport
+function updateReportData(tabName, data, summary) {
+    const container = document.querySelector(`.report-tab-content[data-tab="${tabName}"]`);
+    if (!container) return;
+    
+    // Mettre à jour les KPI
+    const kpis = container.querySelectorAll('.grid-cols-2.md\\:grid-cols-4 .p-4 .text-xl');
+    
+    switch(tabName) {
+        case 'sales':
+            if (kpis.length >= 4) {
+                kpis[0].textContent = summary?.total_ventes || 0;
+                kpis[1].textContent = (summary?.ca_total || 0).toLocaleString('fr-FR') + ' FCFA';
+                kpis[2].textContent = (summary?.panier_moyen || 0).toLocaleString('fr-FR') + ' FCFA';
+                kpis[3].textContent = summary?.meilleur_jour || '-';
+            }
+            break;
+        case 'financial':
+            if (kpis.length >= 4) {
+                kpis[0].textContent = (summary?.ca_total || 0).toLocaleString('fr-FR') + ' FCFA';
+                kpis[1].textContent = (summary?.commission_plateforme || 0).toLocaleString('fr-FR') + ' FCFA';
+                kpis[2].textContent = (summary?.commission_vendeurs || 0).toLocaleString('fr-FR') + ' FCFA';
+                kpis[3].textContent = (summary?.versements || 0).toLocaleString('fr-FR') + ' FCFA';
+            }
+            break;
+        case 'users':
+            if (kpis.length >= 4) {
+                kpis[0].textContent = summary?.total_inscriptions || 0;
+                kpis[1].textContent = summary?.total_connexions || 0;
+                kpis[2].textContent = summary?.total_acheteurs || 0;
+                kpis[3].textContent = (summary?.taux_retention || 0) + '%';
+            }
+            break;
+        case 'vendors':
+            if (kpis.length >= 4) {
+                kpis[0].textContent = summary?.total_vendeurs || 0;
+                kpis[1].textContent = summary?.total_produits || 0;
+                kpis[2].textContent = summary?.total_ventes || 0;
+                kpis[3].textContent = (summary?.revenu_moyen || 0).toLocaleString('fr-FR') + ' FCFA';
+            }
+            break;
+    }
+    
+    // Mettre à jour le tableau
+    updateReportTable(container, data, tabName);
+}
+    
     // ============================================
     // 7. EXPORT DES RAPPORTS
     // ============================================
@@ -2143,7 +2208,7 @@ function createGeoChart(data) {
         }
     });
     
-    console.log('✅ Graphique géographique créé');
+    console.log(' Graphique géographique créé');
 }
 
 /**
@@ -2172,12 +2237,12 @@ async function loadGeoData() {
             // Mettre à jour le texte récapitulatif (optionnel)
             updateGeoSummary(result.data);
             
-            showToast('Succès', 'Données géographiques mises à jour ✅', 'success');
+            showToast('Succès', 'Données géographiques mises à jour ', 'success');
         } else {
             throw new Error(result.message || 'Données invalides');
         }
     } catch (error) {
-        console.error('❌ Erreur chargement géo:', error);
+        console.error(' Erreur chargement géo:', error);
         showToast('Erreur', 'Impossible de charger les données géographiques', 'error');
         
         // Données de secours
@@ -2256,6 +2321,197 @@ document.addEventListener('DOMContentLoaded', function() {
     // Attendre un peu pour s'assurer que tout est chargé
     setTimeout(initGeoChart, 500);
 });
+
+
+
+
+
+
+// ============================================
+// GESTION DES EXPORTS AVEC MODAL
+// ============================================
+
+(function() {
+    'use strict';
+
+    let selectedFormat = 'csv';
+    let selectedTab = 'sales';
+    let selectedStartDate = '';
+    let selectedEndDate = '';
+    let selectedCategorie = '';
+    let selectedVendeur = '';
+
+    // ============================================
+    // 1. OUVERTURE DU MODAL D'EXPORT
+    // ============================================
+    document.querySelectorAll('.exportReportBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const format = this.dataset.format || 'csv';
+            const tab = this.closest('.report-tab-content');
+            if (!tab) return;
+            
+            // Récupérer les informations
+            selectedTab = tab.dataset.tab || 'sales';
+            selectedFormat = format;
+            
+            const startInputs = tab.querySelectorAll('input[type="date"]');
+            selectedStartDate = startInputs[0]?.value || '';
+            selectedEndDate = startInputs[1]?.value || '';
+            
+            if (selectedTab === 'sales') {
+                const selects = tab.querySelectorAll('select');
+                if (selects.length >= 2) {
+                    selectedCategorie = selects[0].value || '';
+                    selectedVendeur = selects[1].value || '';
+                }
+            }
+            
+            // Mettre à jour le modal avec le format sélectionné
+            const modal = document.getElementById('exportModal');
+            if (modal) {
+                // Mettre en surbrillance le format sélectionné
+                document.querySelectorAll('.export-format-btn').forEach(b => {
+                    b.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+                    if (b.dataset.format === format) {
+                        b.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+                    }
+                });
+                
+                // Mettre à jour les dates dans le modal
+                const dateInputs = modal.querySelectorAll('input[type="date"]');
+                if (dateInputs.length >= 2) {
+                    dateInputs[0].value = selectedStartDate;
+                    dateInputs[1].value = selectedEndDate;
+                }
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    // ============================================
+    // 2. SÉLECTION DU FORMAT DANS LE MODAL
+    // ============================================
+    document.querySelectorAll('.export-format-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.export-format-btn').forEach(b => {
+                b.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+            });
+            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+            selectedFormat = this.dataset.format || 'csv';
+        });
+    });
+
+    // ============================================
+    // 3. FERMETURE DU MODAL
+    // ============================================
+    function closeExportModal() {
+        const modal = document.getElementById('exportModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.querySelectorAll('.closeExportBtn').forEach(btn => {
+        btn.addEventListener('click', closeExportModal);
+    });
+
+    document.getElementById('exportModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeExportModal();
+    });
+
+    // ============================================
+    // 4. CONFIRMATION ET TÉLÉCHARGEMENT
+    // ============================================
+    document.querySelector('.confirmExportBtn')?.addEventListener('click', function() {
+        // Récupérer les dates du modal
+        const modal = document.getElementById('exportModal');
+        const dateInputs = modal?.querySelectorAll('input[type="date"]');
+        const startDate = dateInputs?.[0]?.value || selectedStartDate;
+        const endDate = dateInputs?.[1]?.value || selectedEndDate;
+        
+        // Récupérer les options
+        const includeCharts = modal?.querySelector('input[type="checkbox"]:first-child')?.checked || false;
+        const includeSummary = modal?.querySelectorAll('input[type="checkbox"]')[1]?.checked || false;
+        const sendEmail = modal?.querySelectorAll('input[type="checkbox"]')[2]?.checked || false;
+        
+        // Fermer le modal
+        closeExportModal();
+        
+        // Afficher le toast de chargement
+        showToast('Export en cours', 'Génération du fichier ' + selectedFormat.toUpperCase() + '...', 'info');
+        
+        // Construire les données
+        const formData = new FormData();
+        formData.append('type', selectedTab);
+        formData.append('format', selectedFormat);
+        formData.append('start_date', startDate);
+        formData.append('end_date', endDate);
+        formData.append('categorie', selectedCategorie);
+        formData.append('vendeur', selectedVendeur);
+        formData.append('include_charts', includeCharts ? '1' : '0');
+        formData.append('include_summary', includeSummary ? '1' : '0');
+        formData.append('send_email', sendEmail ? '1' : '0');
+        
+        // Envoyer la requête
+        fetch('/back-end/routes/api.php?url=export_report', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur HTTP: ' + response.status);
+            }
+            
+            // Extraire le nom du fichier
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'rapport.' + selectedFormat;
+            
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (match && match[1]) {
+                    filename = match[1].replace(/['"]/g, '');
+                }
+            }
+            
+            return response.blob().then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ✅', 'success');
+            });
+        })
+        .catch(error => {
+            console.error('❌ Erreur export:', error);
+            showToast('Erreur', 'Impossible d\'exporter le rapport', 'error');
+        });
+    });
+
+    // ============================================
+    // 5. RACCOURCI CLAVIER (ESC pour fermer)
+    // ============================================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('exportModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeExportModal();
+            }
+        }
+    });
+
+})();
     </script>
 </body>
 </html>

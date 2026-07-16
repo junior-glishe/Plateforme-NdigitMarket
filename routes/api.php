@@ -361,7 +361,7 @@ switch ($url) {
         $controller->getVendorsReportData();
         break;
 
-    case 'report_export':
+    case 'export_report':
         require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
         $controller = new StatsRappportsController($pdo);
         $controller->exportReport();
@@ -442,6 +442,13 @@ switch ($url) {
         $controller->resetAdminPassword();
         break;
 
+
+        // TEST PDF - Ajoute cette route
+case 'test_pdf':
+    require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
+    $controller = new StatsRappportsController($pdo);
+    $controller->testPDF();
+    break;
 
 //    case 'logs_audits':
 //         require_once __DIR__ . '/../app/controllers/LoginController.php';

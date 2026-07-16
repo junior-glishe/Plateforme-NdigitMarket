@@ -112,33 +112,55 @@ class StatsRappportsModel {
     // ============================================
 
     public function getTopProducts($limit = 5) {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT 
-                    p.id,
-                    p.nom_article as nom,
-                    p.prix,
-                    p.image,
-                    CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
-                    COUNT(c.a) as ventes,
-                    SUM(CAST(c.prix AS DECIMAL(10,2))) as ca
-                FROM produits p
-                LEFT JOIN commande c ON c.id_article = p.id
-                LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
-                GROUP BY p.id
-                ORDER BY ventes DESC
-                LIMIT ?
-            ");
-            $stmt->execute([$limit]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Erreur top produits: " . $e->getMessage());
-            return [];
-        }
+    try {
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                p.id,
+                p.nom_article as nom,
+                p.prix,
+                p.image,
+                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
+                COUNT(c.a) as ventes,
+                COALESCE(SUM(CAST(c.prix AS DECIMAL(10,2))), 0) as ca
+            FROM produits p
+            LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
+            LEFT JOIN commande c ON c.id_article = p.id
+            WHERE p.statut = 'approuve'
+            GROUP BY p.id
+            ORDER BY ventes DESC, ca DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur top produits: " . $e->getMessage());
+        return [];
     }
+}
 
     public function getTopViewedProducts($limit = 5) {
-        try {
+    try {
+        $stmt = $this->pdo->prepare("
+            SELECT 
+                p.id,
+                p.nom_article as nom,
+                p.prix,
+                p.image,
+                CONCAT(COALESCE(u.prenom, ''), ' ', COALESCE(u.nom, '')) as vendeur,
+                COUNT(pv.id) as vues
+            FROM produits p
+            LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
+            LEFT JOIN produit_views pv ON pv.produit_id = p.id
+            WHERE p.statut = 'approuve'
+            GROUP BY p.id
+            ORDER BY vues DESC, p.id DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Si pas de vues, retourner les produits avec 0 vues
+        if (empty($results) || $results[0]['vues'] == 0) {
             $stmt = $this->pdo->prepare("
                 SELECT 
                     p.id,
@@ -149,17 +171,21 @@ class StatsRappportsModel {
                     0 as vues
                 FROM produits p
                 LEFT JOIN utilisateur u ON u.id_uti = p.id_vendeur
-                GROUP BY p.id
+                WHERE p.statut = 'approuve'
                 ORDER BY p.id DESC
                 LIMIT ?
             ");
             $stmt->execute([$limit]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Erreur top viewed: " . $e->getMessage());
-            return [];
         }
+        
+        return $results;
+        
+    } catch (PDOException $e) {
+        error_log("Erreur top viewed: " . $e->getMessage());
+        return [];
     }
+}
 
     // ============================================
     // CATÉGORIES PERFORMANTES
@@ -374,24 +400,24 @@ public function getGeoDistribution() {
     // EXPORTS
     // ============================================
 
-    public function exportToCSV($data, $filename) {
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=' . $filename . '.csv');
-        
-        $output = fopen('php://output', 'w');
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-        
-        if (!empty($data)) {
-            fputcsv($output, array_keys($data[0]));
-            foreach ($data as $row) {
-                fputcsv($output, $row);
-            }
-        }
-        
-        fclose($output);
-        exit();
-    }
 
+public function exportToCSV($data, $filename) {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=' . $filename . '.csv');
+    
+    $output = fopen('php://output', 'w');
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF)); // BOM UTF-8
+    
+    if (!empty($data)) {
+        fputcsv($output, array_keys($data[0]));
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+    }
+    
+    fclose($output);
+    exit();
+}
     // ============================================
     // GRAPHIQUES - DONNÉES D'ÉVOLUTION
     // ============================================
