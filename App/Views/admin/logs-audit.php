@@ -111,8 +111,8 @@
                 </div>
             </div>
 
-            <!-- Graphique activité -->
-                        
+             <!-- Graphique activité -->        
+                            <!-- Graphique activité -->        
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <div>
@@ -122,8 +122,15 @@
                             <p class="text-[11px] text-gray-400 mt-0.5">Nombre d'actions par jour</p>
                         </div>
                         <div class="flex items-center gap-3 text-xs">
-                            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-[#0EA486] rounded"></span> Actions</span>
-                            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-red-400 rounded"></span> Critiques</span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-red-500 rounded"></span> Critique
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-amber-500 rounded"></span> Avertissement
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-emerald-500 rounded"></span> Info
+                            </span>
                         </div>
                     </div>
                     <div class="h-64">
@@ -857,9 +864,6 @@
 
 
 
-
-
-
 // ============================================
 // GRAPHIQUE D'ACTIVITÉ - DONNÉES DEPUIS PHP
 // ============================================
@@ -867,33 +871,49 @@
 // 🔥 Récupérer les données PHP
 const chartData = <?= json_encode($chartData ?? []) ?>;
 
+console.log('📊 Données chartData:', chartData);
+console.log('📊 Nombre de jours:', chartData.length);
+
 let activityChart = null;
 
 function createActivityChart(data) {
     const canvas = document.getElementById('activityChart');
-    if (!canvas) return;
+    if (!canvas) {
+        console.error('❌ Canvas non trouvé');
+        return;
+    }
     
     if (activityChart) {
         activityChart.destroy();
         activityChart = null;
     }
     
-    // Si pas de données, utiliser des données de test
     if (!data || data.length === 0) {
-        data = generateFallbackData();
+        console.warn('⚠️ Aucune donnée pour le graphique');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Aucune donnée d\'activité', canvas.width/2, canvas.height/2);
+        return;
     }
     
     const ctx = canvas.getContext('2d');
     
-    // Labels
     const labels = data.map(item => {
         const date = new Date(item.date);
         return date.toLocaleDateString('fr-FR', { weekday: 'short' });
     });
     
-    // Données
-    const totalData = data.map(item => item.total || 0);
     const criticalData = data.map(item => item.critical || 0);
+    const warningData = data.map(item => item.warning || 0);
+    const infoData = data.map(item => item.info || 0);
+    
+    console.log('📊 Labels:', labels);
+    console.log('📊 Critical:', criticalData);
+    console.log('📊 Warning:', warningData);
+    console.log('📊 Info:', infoData);
     
     activityChart = new Chart(ctx, {
         type: 'bar',
@@ -901,20 +921,31 @@ function createActivityChart(data) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Actions',
-                    data: totalData,
-                    backgroundColor: '#0EA486',
-                    borderRadius: 4,
-                    barPercentage: 0.4,
-                    categoryPercentage: 0.7
-                },
-                {
-                    label: 'Critiques',
+                    label: 'Critique',
                     data: criticalData,
                     backgroundColor: '#EF4444',
                     borderRadius: 4,
-                    barPercentage: 0.4,
-                    categoryPercentage: 0.7
+                    barPercentage: 0.3,
+                    categoryPercentage: 0.8,
+                    order: 1
+                },
+                {
+                    label: 'Avertissement',
+                    data: warningData,
+                    backgroundColor: '#F59E0B',
+                    borderRadius: 4,
+                    barPercentage: 0.3,
+                    categoryPercentage: 0.8,
+                    order: 2
+                },
+                {
+                    label: 'Info',
+                    data: infoData,
+                    backgroundColor: '#0EA486',
+                    borderRadius: 4,
+                    barPercentage: 0.3,
+                    categoryPercentage: 0.8,
+                    order: 3
                 }
             ]
         },
@@ -931,8 +962,8 @@ function createActivityChart(data) {
                         padding: 15,
                         usePointStyle: true,
                         pointStyle: 'rectRounded',
-                        boxWidth: 10,
-                        boxHeight: 10
+                        boxWidth: 12,
+                        boxHeight: 12
                     }
                 },
                 tooltip: {
@@ -945,7 +976,9 @@ function createActivityChart(data) {
                     padding: 12,
                     callbacks: {
                         label: function(context) {
-                            return `${context.dataset.label}: ${context.parsed.y}`;
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            return `${label}: ${value}`;
                         }
                     }
                 }
@@ -965,42 +998,14 @@ function createActivityChart(data) {
             }
         }
     });
-}
-
-function generateFallbackData() {
-    const data = [];
-    const today = new Date();
-    for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        data.push({
-            date: date.toISOString().split('T')[0],
-            total: Math.floor(Math.random() * 15) + 2,
-            critical: Math.floor(Math.random() * 4)
-        });
-    }
-    return data;
+    
+    console.log('✅ Graphique d\'activité créé avec 3 niveaux');
 }
 
 // 🔥 Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📊 Données chartData:', chartData);
-    
-    if (chartData && chartData.length > 0) {
-        createActivityChart(chartData);
-    } else {
-        // Charger depuis l'API
-        fetch('/back-end/routes/api.php?url=logs_chart&days=7')
-            .then(response => response.json())
-            .then(result => {
-                if (result.success && result.data) {
-                    createActivityChart(result.data);
-                } else {
-                    createActivityChart(null);
-                }
-            })
-            .catch(() => createActivityChart(null));
-    }
+    console.log('🚀 Initialisation graphique activité');
+    createActivityChart(chartData);
 });
 
 

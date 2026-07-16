@@ -211,7 +211,7 @@ class LogsAuditModel {
         }
     }
 
-    // App/Models/LogsAuditModel.php
+
 
 /**
  * Récupérer les données pour le graphique d'activité
@@ -222,7 +222,9 @@ public function getActivityChart($days = 7) {
             SELECT 
                 DATE(created_at) as date,
                 COUNT(*) as total,
-                SUM(CASE WHEN level = 'critical' OR status = 'failed' THEN 1 ELSE 0 END) as critical
+                SUM(CASE WHEN level = 'critical' THEN 1 ELSE 0 END) as critical,
+                SUM(CASE WHEN level = 'warning' THEN 1 ELSE 0 END) as warning,
+                SUM(CASE WHEN level = 'info' THEN 1 ELSE 0 END) as info
             FROM admin_logs
             WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
             GROUP BY DATE(created_at)
@@ -231,18 +233,15 @@ public function getActivityChart($days = 7) {
         $stmt->execute([$days]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // Si pas de données, générer des données de test
-        if (empty($results)) {
-            return $this->generateTestChartData($days);
-        }
-        
+        // 🔥 Retourner directement les résultats, même s'ils sont vides
         return $results;
         
     } catch (PDOException $e) {
         error_log("Erreur getActivityChart: " . $e->getMessage());
-        return $this->generateTestChartData($days);
+        return [];
     }
 }
+
 
 /**
  * Générer des données de test pour le graphique
