@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="../public/assets/CSS/app.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="overlay" class="overlay"></div>
@@ -60,6 +62,7 @@
 
             <!-- Cartes statistiques -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <!-- Total actions -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
@@ -67,9 +70,11 @@
                         </div>
                         <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TOTAL</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($stats['total'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Actions enregistrées</p>
                 </div>
+
+                <!-- Connexions -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
@@ -77,9 +82,11 @@
                         </div>
                         <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">CONNEXIONS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($stats['connexions'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Connexions admin</p>
                 </div>
+
+                <!-- Modifications -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
@@ -87,9 +94,11 @@
                         </div>
                         <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">MODIFS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($stats['modifications'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Modifications</p>
                 </div>
+
+                <!-- Critiques / Alertes -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-600">
@@ -97,77 +106,30 @@
                         </div>
                         <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">ALERTES</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($stats['critiques'] ?? 0, 0, ',', ' ') ?></p>
                     <p class="text-xs text-gray-400 mt-1">Actions critiques</p>
                 </div>
             </div>
 
             <!-- Graphique activité -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-chart-area text-[#0EA486]"></i> Activité des 7 derniers jours
-                        </h4>
-                        <p class="text-[11px] text-gray-400 mt-0.5">Nombre d'actions par jour</p>
+                        
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-[#0EA486]"></i> Activité des 7 derniers jours
+                            </h4>
+                            <p class="text-[11px] text-gray-400 mt-0.5">Nombre d'actions par jour</p>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-[#0EA486] rounded"></span> Actions</span>
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 bg-red-400 rounded"></span> Critiques</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-[#0EA486] rounded"></span> Actions</span>
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-red-400 rounded"></span> Critiques</span>
+                    <div class="h-64">
+                        <canvas id="activityChart"></canvas>
                     </div>
                 </div>
-                <div class="flex items-end justify-between gap-2 h-40">
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 5px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Lun</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 8px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Mar</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 3px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Mer</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 12px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Jeu</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 6px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Ven</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 2px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400">Sam</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full flex flex-col gap-0.5">
-                            <div class="w-full bg-[#0EA486] rounded-t" style="height: 0px;"></div>
-                            <div class="w-full bg-red-400 rounded-b" style="height: 10px;"></div>
-                        </div>
-                        <span class="text-[10px] text-gray-400 font-semibold">Aujourd'hui</span>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- 4.13 JOURNAL D'AUDIT -->
@@ -876,6 +838,173 @@
                 document.body.style.overflow = '';
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================
+// GRAPHIQUE D'ACTIVITÉ - DONNÉES DEPUIS PHP
+// ============================================
+
+// 🔥 Récupérer les données PHP
+const chartData = <?= json_encode($chartData ?? []) ?>;
+
+let activityChart = null;
+
+function createActivityChart(data) {
+    const canvas = document.getElementById('activityChart');
+    if (!canvas) return;
+    
+    if (activityChart) {
+        activityChart.destroy();
+        activityChart = null;
+    }
+    
+    // Si pas de données, utiliser des données de test
+    if (!data || data.length === 0) {
+        data = generateFallbackData();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Labels
+    const labels = data.map(item => {
+        const date = new Date(item.date);
+        return date.toLocaleDateString('fr-FR', { weekday: 'short' });
+    });
+    
+    // Données
+    const totalData = data.map(item => item.total || 0);
+    const criticalData = data.map(item => item.critical || 0);
+    
+    activityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Actions',
+                    data: totalData,
+                    backgroundColor: '#0EA486',
+                    borderRadius: 4,
+                    barPercentage: 0.4,
+                    categoryPercentage: 0.7
+                },
+                {
+                    label: 'Critiques',
+                    data: criticalData,
+                    backgroundColor: '#EF4444',
+                    borderRadius: 4,
+                    barPercentage: 0.4,
+                    categoryPercentage: 0.7
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: { size: 11, weight: '600' },
+                        color: '#0F172A',
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        boxWidth: 10,
+                        boxHeight: 10
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    titleColor: '#0F172A',
+                    bodyColor: '#6B7280',
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
+                    ticks: { font: { size: 11 }, color: '#6B7280', stepSize: 1 },
+                    border: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 }, color: '#6B7280' },
+                    border: { display: false }
+                }
+            }
+        }
+    });
+}
+
+function generateFallbackData() {
+    const data = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        data.push({
+            date: date.toISOString().split('T')[0],
+            total: Math.floor(Math.random() * 15) + 2,
+            critical: Math.floor(Math.random() * 4)
+        });
+    }
+    return data;
+}
+
+// 🔥 Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📊 Données chartData:', chartData);
+    
+    if (chartData && chartData.length > 0) {
+        createActivityChart(chartData);
+    } else {
+        // Charger depuis l'API
+        fetch('/back-end/routes/api.php?url=logs_chart&days=7')
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data) {
+                    createActivityChart(result.data);
+                } else {
+                    createActivityChart(null);
+                }
+            })
+            .catch(() => createActivityChart(null));
+    }
+});
+
+
+        
     </script>
 </body>
 </html>

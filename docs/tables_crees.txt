@@ -440,3 +440,159 @@ ALTER TABLE admin_logs ADD INDEX idx_created_at (created_at);
 
 -- Vérifier la structure
 DESCRIBE admin_logs;
+
+
+
+
+
+-- Ajouter des logs de test avec les vrais admins
+INSERT INTO admin_logs (admin_id, admin_email, admin_name, action, action_description, target_user_id, entity_type, entity_id, ip_address, user_agent, level, status, created_at) VALUES
+(1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'connexion_admin', 'Connexion réussie depuis le dashboard', NULL, NULL, NULL, '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'info', 'success', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+
+(1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'modification_utilisateur', 'Modification du profil utilisateur ID: 45', 45, 'user', '45', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'info', 'success', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+
+(2, 'admin@ndigitmarket.com', 'Administrateur Principal', 'validation_produit', 'Validation du produit ID: 123 - "iPhone 13 Pro"', NULL, 'produit', '123', '192.168.1.101', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'info', 'success', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+
+(2, 'admin@ndigitmarket.com', 'Administrateur Principal', 'refus_produit', 'Refus du produit ID: 456 - "Casque Bluetooth" motif: Image non conforme', NULL, 'produit', '456', '192.168.1.102', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0', 'warning', 'success', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+
+(1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'suppression_utilisateur', 'Suppression de l\'utilisateur ID: 78 (compte frauduleux)', 78, 'user', '78', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'critical', 'success', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+
+(2, 'admin@ndigitmarket.com', 'Administrateur Principal', 'modification_parametres', 'Modification des paramètres de commission', NULL, 'settings', NULL, '192.168.1.102', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'info', 'success', DATE_SUB(NOW(), INTERVAL 6 DAY)),
+
+(1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'connexion_admin', 'Tentative de connexion échouée - Mauvais mot de passe', NULL, NULL, NULL, '192.168.1.200', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/119.0.0.0', 'critical', 'failed', DATE_SUB(NOW(), INTERVAL 7 DAY)),
+
+(2, 'admin@ndigitmarket.com', 'Administrateur Principal', 'export_donnees', 'Export des données utilisateurs en CSV', NULL, 'export', NULL, '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'info', 'success', DATE_SUB(NOW(), INTERVAL 8 DAY)),
+
+(3, 'support@ndigitmarket.com', 'Support Technique', 'envoi_email_masse', 'Envoi de 350 emails marketing', NULL, 'email', NULL, '192.168.1.103', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Edge/120.0.0.0', 'info', 'success', DATE_SUB(NOW(), INTERVAL 9 DAY)),
+
+(1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'versement_vendeur', 'Versement effectué au vendeur ID: 12 - Montant: 250 000 FCFA', 12, 'vendor', '12', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'warning', 'success', DATE_SUB(NOW(), INTERVAL 10 DAY));
+
+
+INSERT INTO admin_logs 
+(admin_id, admin_email, admin_name, action, action_description, target_user_id, entity_type, entity_id, ip_address, user_agent, level, status, created_at)
+
+SELECT
+    ELT(FLOOR(1 + RAND()*3),
+        1,
+        2,
+        3
+    ) AS admin_id,
+
+    ELT(FLOOR(1 + RAND()*3),
+        'missambounawane8@gmail.com',
+        'admin@ndigitmarket.com',
+        'support@ndigitmarket.com'
+    ) AS admin_email,
+
+
+    ELT(FLOOR(1 + RAND()*3),
+        'NTECH DIGIT',
+        'Administrateur Principal',
+        'Support Technique'
+    ) AS admin_name,
+
+
+    ELT(FLOOR(1 + RAND()*12),
+        'connexion_admin',
+        'modification_utilisateur',
+        'validation_produit',
+        'refus_produit',
+        'suppression_utilisateur',
+        'modification_parametres',
+        'export_donnees',
+        'envoi_email_masse',
+        'versement_vendeur',
+        'creation_produit',
+        'bloquage_compte',
+        'deconnexion_admin'
+    ) AS action,
+
+
+    ELT(FLOOR(1 + RAND()*12),
+        'Connexion réussie depuis le dashboard',
+        'Modification du profil utilisateur',
+        'Validation automatique d’un produit',
+        'Produit refusé après contrôle qualité',
+        'Suppression d’un compte suspect',
+        'Modification des paramètres système',
+        'Export CSV effectué',
+        'Campagne email envoyée',
+        'Paiement vendeur effectué',
+        'Création d’un nouveau produit',
+        'Compte utilisateur bloqué',
+        'Déconnexion administrateur'
+    ) AS action_description,
+
+
+    FLOOR(1 + RAND()*200) AS target_user_id,
+
+
+    ELT(FLOOR(1 + RAND()*8),
+        'user',
+        'produit',
+        'vendor',
+        'settings',
+        'export',
+        'email',
+        'account',
+        NULL
+    ) AS entity_type,
+
+
+    FLOOR(1 + RAND()*500) AS entity_id,
+
+
+    ELT(FLOOR(1 + RAND()*5),
+        '192.168.1.100',
+        '192.168.1.101',
+        '192.168.1.102',
+        '192.168.1.103',
+        '192.168.1.200'
+    ) AS ip_address,
+
+
+    ELT(FLOOR(1 + RAND()*4),
+        'Mozilla/5.0 Windows Chrome',
+        'Mozilla/5.0 Mac Safari',
+        'Mozilla/5.0 Linux Firefox',
+        'Mozilla/5.0 Edge Browser'
+    ) AS user_agent,
+
+
+    ELT(FLOOR(1 + RAND()*3),
+        'info',
+        'warning',
+        'critical'
+    ) AS level,
+
+
+    ELT(FLOOR(1 + RAND()*10),
+        'success',
+        'success',
+        'success',
+        'success',
+        'success',
+        'failed',
+        'success',
+        'success',
+        'success',
+        'failed'
+    ) AS status,
+
+
+    DATE_SUB(
+        NOW(),
+        INTERVAL FLOOR(RAND()*30) DAY
+    ) - INTERVAL FLOOR(RAND()*86400) SECOND AS created_at
+
+
+FROM information_schema.columns a
+JOIN information_schema.columns b
+LIMIT 150;
+
+
+
+
+
+
+

@@ -471,14 +471,6 @@ private function getCibleClass($cible) {
     return $classes[$cible] ?? 'text-blue-700 bg-blue-100';
 }
 
-
-
-
-
-
-
-
-
 /**
  * Envoyer une campagne (créer et envoyer)
  */

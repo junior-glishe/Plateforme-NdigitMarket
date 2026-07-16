@@ -1,5 +1,4 @@
 <?php
-// App/Controllers/Admin/LogsAuditController.php
 
 require_once __DIR__ . '/../../Models/LogsAuditModel.php';
 
@@ -37,6 +36,8 @@ class LogsAuditController {
             'chartData' => $chartData,
             'currentPage' => 'logs-audit'
         ]);
+
+       
     }
 
     /**
@@ -162,13 +163,23 @@ class LogsAuditController {
         $this->jsonResponse(['success' => true, 'message' => 'IP bloquée']);
     }
 
+     // ============================================
+    // 🔥 AJOUTE CETTE MÉTHODE render()
+    // ============================================
     private function render($view, $data = []) {
         extract($data);
-        $viewPath = __DIR__ . '/../../Views/admin/' . $view . '.php';
-        if (file_exists($viewPath)) {
-            include $viewPath;
+        $viewPath = __DIR__ . '/../../Views/' . $view . '.php';
+        
+        // Debug - Vérifier si le fichier existe
+        if (!file_exists($viewPath)) {
+            echo "❌ Vue non trouvée: " . $viewPath;
+            exit();
         }
+        
+        include $viewPath;
     }
+
+
 
     private function jsonResponse($data, $statusCode = 200) {
         http_response_code($statusCode);
