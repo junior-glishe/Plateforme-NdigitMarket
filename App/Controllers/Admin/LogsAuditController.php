@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/../../Models/LogsAuditModel.php';
 
- use PhpOffice\PhpSpreadsheet\Spreadsheet;
+  use PhpOffice\PhpSpreadsheet\Spreadsheet;
     use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
     use PhpOffice\PhpSpreadsheet\Style\Alignment;
     use PhpOffice\PhpSpreadsheet\Style\Fill;
     use PhpOffice\PhpSpreadsheet\Style\Border;
     use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-    
+
 class LogsAuditController {
     private $model;
     private $pdo;
@@ -244,6 +244,8 @@ public function blockIP() {
 
     // App/Controllers/Admin/LogsAuditController.php
 
+// App/Controllers/Admin/LogsAuditController.php
+
 /**
  * API - Exporter les logs (CSV, Excel, JSON)
  */
@@ -255,7 +257,18 @@ public function exportLogs() {
     
     $format = $_POST['format'] ?? 'csv';
     $period = $_POST['period'] ?? 'all';
-    $columns = $_POST['columns'] ?? [];
+    $columnsRaw = $_POST['columns'] ?? '';
+    
+    // 🔥 CORRECTION : Décoder le JSON correctement
+    if (is_string($columnsRaw) && !empty($columnsRaw)) {
+        $columns = json_decode($columnsRaw, true);
+        // Si le JSON est invalide, utiliser un tableau vide
+        if (!is_array($columns)) {
+            $columns = [];
+        }
+    } else {
+        $columns = [];
+    }
     
     // Récupérer les filtres
     $filters = [];
@@ -283,30 +296,49 @@ public function exportLogs() {
     // Récupérer les logs
     $logs = $this->model->getLogs($filters, 10000, 0);
     
-    // Construire les données pour l'export
-    $headers = ['ID', 'Date', 'Admin', 'Email', 'Action', 'Description', 'Entité', 'ID Entité', 'IP', 'Niveau', 'Statut'];
-    $data = [];
+    // 🔥 Si aucune colonne sélectionnée, utiliser toutes
+    if (empty($columns)) {
+        $columns = ['Date', 'Admin', 'Email', 'Action', 'Description', 'IP', 'Niveau', 'Statut'];
+    }
     
-    foreach ($logs as $log) {
-        $row = [
-            'ID' => $log['id'],
-            'Date' => $log['created_at'],
-            'Admin' => $log['admin_name'] ?? '-',
-            'Email' => $log['admin_email'] ?? '-',
-            'Action' => $log['action'],
-            'Description' => $log['action_description'] ?? $log['details'] ?? '-',
-            'Entité' => $log['entity_type'] ?? '-',
-            'ID Entité' => $log['entity_id'] ?? '-',
-            'IP' => $log['ip_address'] ?? '-',
-            'Niveau' => $log['level'] ?? 'info',
-            'Statut' => $log['status'] ?? 'success'
-        ];
-        
-        // Filtrer les colonnes si demandé
-        if (!empty($columns)) {
-            $row = array_intersect_key($row, array_flip($columns));
+    // Construire les données pour l'export
+    $allColumns = [
+        'Date' => 'created_at',
+        'Admin' => 'admin_name',
+        'Email' => 'admin_email',
+        'Action' => 'action',
+        'Description' => 'action_description',
+        'Entité' => 'entity_type',
+        'ID Entité' => 'entity_id',
+        'IP' => 'ip_address',
+        'Niveau' => 'level',
+        'Statut' => 'status'
+    ];
+    
+    // Filtrer les colonnes
+    $selectedColumns = [];
+    foreach ($columns as $col) {
+        if (isset($allColumns[$col])) {
+            $selectedColumns[$col] = $allColumns[$col];
         }
-        
+    }
+    
+    // Si aucune colonne valide, utiliser toutes
+    if (empty($selectedColumns)) {
+        $selectedColumns = $allColumns;
+    }
+    
+    $data = [];
+    foreach ($logs as $log) {
+        $row = [];
+        foreach ($selectedColumns as $header => $field) {
+            $value = $log[$field] ?? '-';
+            // Formater la date
+            if ($field === 'created_at' && $value) {
+                $value = date('d/m/Y H:i', strtotime($value));
+            }
+            $row[$header] = $value;
+        }
         $data[] = $row;
     }
     
@@ -358,7 +390,7 @@ private function exportLogsCSV($data, $filename) {
 private function exportLogsExcel($data, $filename) {
     require_once __DIR__ . '/../../../vendor/autoload.php';
     
-   
+  
     
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
@@ -418,6 +450,7 @@ private function exportLogsExcel($data, $filename) {
     ];
     $sheet->getStyle('A1:' . $lastColumn . ($rowNum - 1))->applyFromArray($styleArray);
     
+    // 🔥 Forcer l'extension .xlsx
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="' . $filename . '.xlsx"');
     header('Cache-Control: max-age=0');
@@ -442,7 +475,6 @@ private function exportLogsJSON($data, $filename) {
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
 }
-
 
 
     private function jsonResponse($data, $statusCode = 200) {

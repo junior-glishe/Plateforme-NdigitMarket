@@ -714,105 +714,110 @@
     </div>
 
     <!-- MODAL : EXPORT CSV -->
-    <div id="exportModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-file-csv text-[#0EA486]"></i> Exporter les logs
-                    </h3>
-                    <p class="text-xs text-gray-400">Choisir les paramètres d'export</p>
-                </div>
-                <button class="closeExportBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- MODAL : EXPORT LOGS -->
+<div id="exportModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fadeIn">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-file-export text-[#0EA486]"></i> Exporter les logs
+                </h3>
+                <p class="text-xs text-gray-400">Choisir les paramètres d'export</p>
             </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <p class="text-sm text-blue-700">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Les logs seront exportés selon les filtres actuellement appliqués.
-                    </p>
-                </div>
+            <button class="closeExportBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Période</label>
-                    <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les logs</option>
-                        <option>Aujourd'hui</option>
-                        <option>7 derniers jours</option>
-                        <option>30 derniers jours</option>
-                        <option>Ce mois</option>
-                        <option>Personnalisé</option>
-                    </select>
-                </div>
+        <div class="p-6 space-y-4">
+            <!-- Info -->
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 text-sm mt-0.5"></i>
+                <p class="text-sm text-blue-700">Les logs seront exportés selon les filtres actuellement appliqués.</p>
+            </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Format</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button class="export-format-btn p-3 bg-white border-2 border-[#0EA486] bg-[#0EA486]/5 rounded-xl text-center" data-format="csv">
-                            <i class="fas fa-file-csv text-xl text-emerald-500 mb-1"></i>
-                            <p class="text-xs font-semibold text-[#0F172A]">CSV</p>
-                        </button>
-                        <button class="export-format-btn p-3 bg-white border-2 border-gray-200 rounded-xl text-center" data-format="excel">
-                            <i class="fas fa-file-excel text-xl text-green-500 mb-1"></i>
-                            <p class="text-xs font-semibold text-[#0F172A]">Excel</p>
-                        </button>
-                        <button class="export-format-btn p-3 bg-white border-2 border-gray-200 rounded-xl text-center" data-format="json">
-                            <i class="fas fa-file-code text-xl text-blue-500 mb-1"></i>
-                            <p class="text-xs font-semibold text-[#0F172A]">JSON</p>
-                        </button>
-                    </div>
-                </div>
+            <!-- Période -->
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Période</label>
+                <select id="exportPeriod" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:ring-2 focus:ring-[#0EA486]/20 transition">
+                    <option value="all">Tous les logs</option>
+                    <option value="today">Aujourd'hui</option>
+                    <option value="7days">7 derniers jours</option>
+                    <option value="30days">30 derniers jours</option>
+                    <option value="month">Ce mois</option>
+                </select>
+            </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-2 block">Colonnes à inclure</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Date & Heure</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Administrateur</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Type d'action</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Description</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Adresse IP</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Métadonnées</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
-                    <p class="text-[10px] text-gray-500">
-                        <i class="fas fa-database mr-1"></i>
-                        <strong>Estimation :</strong> ... entrées · environ ... MB
-                    </p>
+            <!-- Format -->
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Format d'export</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button class="export-format-btn p-3 bg-white border-2 border-[#0EA486] bg-[#0EA486]/5 rounded-xl text-center transition hover:bg-[#0EA486]/10" data-format="csv">
+                        <i class="fas fa-file-csv text-xl text-emerald-500 mb-1"></i>
+                        <p class="text-xs font-semibold text-[#0F172A]">CSV</p>
+                    </button>
+                    <button class="export-format-btn p-3 bg-white border-2 border-gray-200 rounded-xl text-center transition hover:border-[#0EA486]" data-format="excel">
+                        <i class="fas fa-file-excel text-xl text-green-500 mb-1"></i>
+                        <p class="text-xs font-semibold text-[#0F172A]">Excel</p>
+                    </button>
+                    <button class="export-format-btn p-3 bg-white border-2 border-gray-200 rounded-xl text-center transition hover:border-[#0EA486]" data-format="json">
+                        <i class="fas fa-file-code text-xl text-blue-500 mb-1"></i>
+                        <p class="text-xs font-semibold text-[#0F172A]">JSON</p>
+                    </button>
                 </div>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeExportBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Annuler
-                </button>
-                <button id="confirmExportBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-download"></i> Télécharger
-                </button>
+
+            <!-- Colonnes -->
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-2 block">Colonnes à inclure</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="Date">
+                        <span>Date & Heure</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="Admin">
+                        <span>Administrateur</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="Action">
+                        <span>Type d'action</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="Description">
+                        <span>Description</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="IP">
+                        <span>Adresse IP</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer hover:text-[#0F172A] transition">
+                        <input type="checkbox" checked class="export-column w-4 h-4 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]/20" data-column="Metadata">
+                        <span>Métadonnées</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Estimation -->
+            <div class="bg-gray-50 rounded-xl p-3 border border-gray-200 flex items-center gap-3">
+                <i class="fas fa-database text-gray-400"></i>
+                <p class="text-[10px] text-gray-500">
+                    <strong>Estimation :</strong> <span id="exportEstimate">...</span> entrées · environ <span id="exportSize">...</span> MB
+                </p>
             </div>
         </div>
-    </div>
 
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeExportBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
+                Annuler
+            </button>
+            <button id="confirmExportBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                <i class="fas fa-download"></i> Télécharger
+            </button>
+        </div>
+    </div>
+</div>
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed bottom-6 right-6 z-[100] hidden">
         <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-4 flex items-center gap-3 min-w-[280px]">
@@ -1770,6 +1775,193 @@ document.querySelector('.log-export-btn')?.addEventListener('click', function() 
 
 })();
 
+
+
+
+
+
+// ============================================
+// GESTION DES EXPORTS LOGS (CSV, Excel, JSON)
+// ============================================
+
+(function() {
+    'use strict';
+
+    let selectedFormat = 'csv';
+    let selectedPeriod = 'all';
+
+    // ============================================
+    // 1. OUVERTURE / FERMETURE DU MODAL
+    // ============================================
+    const exportBtn = document.getElementById('exportLogsBtn');
+    const modal = document.getElementById('exportModal');
+
+    if (exportBtn && modal) {
+        exportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            updateEstimate();
+        });
+    }
+
+    function closeModal() {
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.querySelectorAll('.closeExportBtn').forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+
+    modal?.addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('exportModal');
+            if (modal && !modal.classList.contains('hidden')) closeModal();
+        }
+    });
+
+    // ============================================
+    // 2. SÉLECTION DU FORMAT
+    // ============================================
+    document.querySelectorAll('.export-format-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.export-format-btn').forEach(b => {
+                b.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+                b.classList.add('border-gray-200');
+            });
+            this.classList.remove('border-gray-200');
+            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+            selectedFormat = this.dataset.format || 'csv';
+        });
+    });
+
+    // ============================================
+    // 3. SÉLECTION DE LA PÉRIODE
+    // ============================================
+    const periodSelect = document.getElementById('exportPeriod');
+    if (periodSelect) {
+        periodSelect.addEventListener('change', function() {
+            selectedPeriod = this.value;
+            updateEstimate();
+        });
+        selectedPeriod = periodSelect.value;
+    }
+
+    // ============================================
+    // 4. MISE À JOUR DE L'ESTIMATION
+    // ============================================
+    function updateEstimate() {
+        const estimateEl = document.getElementById('exportEstimate');
+        const sizeEl = document.getElementById('exportSize');
+        if (!estimateEl || !sizeEl) return;
+
+        // Simulation - à remplacer par un appel API réel
+        const counts = {
+            'all': 2847,
+            'today': 45,
+            '7days': 320,
+            '30days': 1250,
+            'month': 980
+        };
+        const sizes = {
+            'all': '2.8',
+            'today': '0.05',
+            '7days': '0.35',
+            '30days': '1.2',
+            'month': '0.95'
+        };
+
+        const period = selectedPeriod || 'all';
+        estimateEl.textContent = counts[period] || 0;
+        sizeEl.textContent = sizes[period] || '0.0';
+    }
+
+    // ============================================
+    // 5. CONFIRMATION ET EXPORT
+    // ============================================
+    
+    const confirmBtn = document.getElementById('confirmExportBtn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            // Récupérer les colonnes sélectionnées
+            const selectedColumns = [];
+            document.querySelectorAll('.export-column:checked').forEach(cb => {
+                const column = cb.dataset.column;
+                if (column) selectedColumns.push(column);
+            });
+
+            // 🔥 Si aucune colonne, envoyer un tableau vide (le PHP utilisera toutes)
+            // 🔥 Envoyer comme JSON stringifié
+            const columnsJson = JSON.stringify(selectedColumns);
+
+            // Construire les données
+            const formData = new FormData();
+            formData.append('format', selectedFormat);
+            formData.append('period', selectedPeriod);
+            formData.append('columns', columnsJson); // Envoyer en JSON
+
+            // Désactiver le bouton
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Export en cours...';
+
+            showToast('Export en cours', 'Génération du fichier...', 'info');
+
+            fetch('/back-end/routes/api.php?url=logs_export', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+
+                // Récupérer le nom du fichier
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'logs_export.' + selectedFormat;
+
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (match && match[1]) {
+                        filename = match[1].replace(/['"]/g, '');
+                    }
+                }
+
+                return response.blob().then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    closeModal();
+                    showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ✅', 'success');
+                });
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Impossible d\'exporter les logs', 'error');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-download"></i> Télécharger';
+            });
+        });
+    }
+
+})();
     </script>
 </body>
 </html>
