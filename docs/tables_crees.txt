@@ -250,7 +250,7 @@ LEFT JOIN produit_views pv ON pv.produit_id = p.id
 WHERE p.statut = 'approuve'
 GROUP BY p.id
 ORDER BY nb_vues DESC
-LIMIT 10;
+LIMIT 10;	
 
 -- ============================================
 -- AJOUT DES COLONNES MANQUANTES
@@ -423,4 +423,20 @@ UPDATE utilisateur SET date_inscription = DATE_SUB(NOW(), INTERVAL FLOOR(RAND() 
 
 
 
+-- Ajouter les colonnes manquantes à la table admin_logs
+ALTER TABLE admin_logs 
+ADD COLUMN IF NOT EXISTS admin_email VARCHAR(255) NULL AFTER admin_id,
+ADD COLUMN IF NOT EXISTS admin_name VARCHAR(255) NULL AFTER admin_email,
+ADD COLUMN IF NOT EXISTS action_description TEXT NULL AFTER action,
+ADD COLUMN IF NOT EXISTS entity_type VARCHAR(100) NULL AFTER action_description,
+ADD COLUMN IF NOT EXISTS entity_id VARCHAR(100) NULL AFTER entity_type,
+ADD COLUMN IF NOT EXISTS level ENUM('info', 'warning', 'critical') DEFAULT 'info' AFTER user_agent,
+ADD COLUMN IF NOT EXISTS metadata JSON NULL AFTER status;
 
+-- Ajouter des indexes pour les performances
+ALTER TABLE admin_logs ADD INDEX idx_action_type (action);
+ALTER TABLE admin_logs ADD INDEX idx_level (level);
+ALTER TABLE admin_logs ADD INDEX idx_created_at (created_at);
+
+-- Vérifier la structure
+DESCRIBE admin_logs;

@@ -1,0 +1,179 @@
+<?php
+// App/Controllers/Admin/LogsAuditController.php
+
+require_once __DIR__ . '/../../Models/LogsAuditModel.php';
+
+class LogsAuditController {
+    private $model;
+    private $pdo;
+    
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+        $this->model = new LogsAuditModel($pdo);
+    }
+
+    /**
+     * Page principale
+     */
+    public function index() {
+        $stats = $this->model->getStats();
+        
+        $filters = $_GET['filters'] ?? [];
+        $page = (int)($_GET['page'] ?? 1);
+        $limit = (int)($_GET['limit'] ?? 25);
+        $offset = ($page - 1) * $limit;
+        
+        $logs = $this->model->getLogs($filters, $limit, $offset);
+        $total = $this->model->countLogs($filters);
+        $chartData = $this->model->getActivityChart(7);
+        
+        $this->render('admin/logs-audit', [
+            'stats' => $stats,
+            'logs' => $logs,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit,
+            'filters' => $filters,
+            'chartData' => $chartData,
+            'currentPage' => 'logs-audit'
+        ]);
+    }
+
+    /**
+     * API - Statistiques
+     */
+    public function getStats() {
+        $stats = $this->model->getStats();
+        $this->jsonResponse(['success' => true, 'data' => $stats]);
+    }
+
+    /**
+     * API - Liste des logs
+     */
+    public function getLogs() {
+        $filters = $_GET['filters'] ?? [];
+        $page = (int)($_GET['page'] ?? 1);
+        $limit = (int)($_GET['limit'] ?? 25);
+        $offset = ($page - 1) * $limit;
+        
+        $logs = $this->model->getLogs($filters, $limit, $offset);
+        $total = $this->model->countLogs($filters);
+        
+        $this->jsonResponse([
+            'success' => true,
+            'data' => $logs,
+            'pagination' => [
+                'total' => $total,
+                'page' => $page,
+                'limit' => $limit,
+                'pages' => ceil($total / $limit)
+            ]
+        ]);
+    }
+
+    /**
+     * API - Graphique
+     */
+    public function getChartData() {
+        $days = (int)($_GET['days'] ?? 7);
+        $data = $this->model->getActivityChart($days);
+        $this->jsonResponse(['success' => true, 'data' => $data]);
+    }
+
+    /**
+     * API - Détail d'un log
+     */
+    public function getLogDetail() {
+        $id = (int)($_GET['id'] ?? 0);
+        if (!$id) {
+            $this->jsonResponse(['success' => false, 'error' => 'ID requis'], 400);
+            return;
+        }
+        
+        $log = $this->model->getLogById($id);
+        if (!$log) {
+            $this->jsonResponse(['success' => false, 'error' => 'Log non trouvé'], 404);
+            return;
+        }
+        
+        if ($log['metadata']) {
+            $log['metadata'] = json_decode($log['metadata'], true);
+        }
+        
+        $this->jsonResponse(['success' => true, 'data' => $log]);
+    }
+
+    /**
+     * API - Export CSV
+     */
+    public function exportCSV() {
+        $filters = $_GET['filters'] ?? [];
+        $this->model->exportCSV($filters);
+    }
+
+    /**
+     * API - Rétention
+     */
+    public function updateRetention() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+            return;
+        }
+        
+        $retention = (int)($_POST['retention_days'] ?? 365);
+        $deleted = $this->model->deleteOldLogs($retention);
+        
+        $this->model->addLog([
+            'action_type' => 'configuration_retention',
+            'action_description' => 'Mise à jour de la rétention: ' . $retention . ' jours',
+            'level' => 'info',
+            'metadata' => ['retention_days' => $retention, 'logs_deleted' => $deleted]
+        ]);
+        
+        $this->jsonResponse([
+            'success' => true,
+            'message' => 'Rétention configurée',
+            'data' => ['retention_days' => $retention, 'logs_deleted' => $deleted]
+        ]);
+    }
+
+    /**
+     * API - Bloquer IP
+     */
+    public function blockIP() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+            return;
+        }
+        
+        $ip = $_POST['ip'] ?? '';
+        if (empty($ip)) {
+            $this->jsonResponse(['success' => false, 'error' => 'IP requise'], 400);
+            return;
+        }
+        
+        $this->model->addLog([
+            'action_type' => 'block_ip',
+            'action_description' => 'Blocage IP: ' . $ip,
+            'level' => 'critical',
+            'metadata' => ['ip' => $ip]
+        ]);
+        
+        $this->jsonResponse(['success' => true, 'message' => 'IP bloquée']);
+    }
+
+    private function render($view, $data = []) {
+        extract($data);
+        $viewPath = __DIR__ . '/../../Views/admin/' . $view . '.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        }
+    }
+
+    private function jsonResponse($data, $statusCode = 200) {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit();
+    }
+}

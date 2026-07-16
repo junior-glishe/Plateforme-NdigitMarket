@@ -482,17 +482,17 @@
                     <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
                         <i class="fas fa-code text-[#0EA486]"></i> Métadonnées JSON
                     </h5>
-                    <pre class="text-xs text-gray-600 font-mono bg-gray-50 rounded-xl p-3 overflow-x-auto whitespace-pre-wrap">{
-  "action": "...",
-  "entity_type": "...",
-  "entity_id": "...",
-  "admin_id": "...",
-  "timestamp": "...",
-  "ip_address": "...",
-  "user_agent": "...",
-  "metadata": {}
-}</pre>
-                </div>
+                        <pre class="text-xs text-gray-600 font-mono bg-gray-50 rounded-xl p-3 overflow-x-auto whitespace-pre-wrap">{
+                        "action": "...",
+                        "entity_type": "...",
+                        "entity_id": "...",
+                        "admin_id": "...",
+                        "timestamp": "...",
+                        "ip_address": "...",
+                        "user_agent": "...",
+                        "metadata": {}
+                        }</pre>
+                        </div>
             </div>
 
             <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">

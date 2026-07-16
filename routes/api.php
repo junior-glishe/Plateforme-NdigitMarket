@@ -442,32 +442,67 @@ switch ($url) {
         $controller->resetAdminPassword();
         break;
 
+        // ============================================
+    // LOGS & AUDIT
+    // ============================================
 
-        // TEST PDF - Ajoute cette route
-case 'test_pdf':
-    require_once __DIR__ . '/../App/Controllers/Admin/StatsRappportsController.php';
-    $controller = new StatsRappportsController($pdo);
-    $controller->testPDF();
-    break;
+    // Page principale
+    case 'logs-audit':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->index();
+        break;
 
-//    case 'logs_audits':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
+    // API - Statistiques
+    case 'logs_stats':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->getStats();
+        break;
+
+    // API - Liste des logs
+    case 'logs_list':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->getLogs();
+        break;
+
+    // API - Détail d'un log
+    case 'logs_detail':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->getLogDetail();
+        break;
+
+    // API - Graphique
+    case 'logs_chart':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->getChartData();
+        break;
+
+    // API - Export CSV
+    case 'logs_export':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->exportCSV();
+        break;
+
+    // API - Rétention
+    case 'logs_retention':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->updateRetention();
+        break;
+
+    // API - Bloquer IP
+    case 'logs_block_ip':
+        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+        $controller = new LogsAuditController($pdo);
+        $controller->blockIP();
+        break;
         
-//    case 'login':
-//         require_once __DIR__ . '/../app/controllers/LoginController.php';
-//         $controller = new LoginController($pdo);
-//         $controller->index();
-//         break;
-	
-    
-//     case 'logout':
-//         require_once __DIR__ . '/../app/controllers/LogoutController.php';
-//         $controller = new LogoutController();
-//         $controller->index();
-//         break;
+
 
     default:
         echo "404 - Page introuvable";
