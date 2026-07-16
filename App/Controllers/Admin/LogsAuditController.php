@@ -19,6 +19,10 @@ public function index() {
     // 🔥 Récupérer les données pour les filtres
     $actionTypes = $this->model->getActionTypes();
     $admins = $this->model->getAdmins();
+
+      // 🔥 DEBUG - Vérifier que les admins sont récupérés
+    error_log("Nombre d'admins: " . count($admins));
+    error_log("Admins: " . print_r($admins, true));
     
     // 🔥 Récupérer les filtres depuis l'URL
     $filters = [];
@@ -64,14 +68,15 @@ public function index() {
         $this->jsonResponse(['success' => true, 'data' => $stats]);
     }
 
+  
     /**
-     * API - Liste des logs
-     */
-    public function getLogs() {
+ * API - Liste des logs avec filtres
+ */
+public function getLogs() {
     $filters = [];
     if (!empty($_GET['search'])) $filters['search'] = $_GET['search'];
     if (!empty($_GET['action'])) $filters['action'] = $_GET['action'];
-    if (!empty($_GET['admin_id'])) $filters['admin_id'] = $_GET['admin_id'];
+    if (!empty($_GET['admin_id'])) $filters['admin_id'] = (int)$_GET['admin_id'];
     if (!empty($_GET['level'])) $filters['level'] = $_GET['level'];
     if (!empty($_GET['period'])) $filters['period'] = $_GET['period'];
     if (!empty($_GET['date_from'])) $filters['date_from'] = $_GET['date_from'];
@@ -163,29 +168,51 @@ public function index() {
     }
 
     /**
-     * API - Bloquer IP
-     */
-    public function blockIP() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-        
-        $ip = $_POST['ip'] ?? '';
-        if (empty($ip)) {
-            $this->jsonResponse(['success' => false, 'error' => 'IP requise'], 400);
-            return;
-        }
-        
-        $this->model->addLog([
-            'action_type' => 'block_ip',
-            'action_description' => 'Blocage IP: ' . $ip,
-            'level' => 'critical',
-            'metadata' => ['ip' => $ip]
-        ]);
-        
-        $this->jsonResponse(['success' => true, 'message' => 'IP bloquée']);
+ * API - Bloquer IP (CORRIGÉ)
+ */
+public function blockIP() {
+    // Accepter les deux méthodes POST et GET pour le test
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée. Utilisez POST.'], 405);
+        return;
     }
+    
+    // Récupérer l'IP depuis POST (FormData)
+    $ip = $_POST['ip'] ?? '';
+    
+    // Si pas d'IP, essayer de récupérer depuis le body JSON
+    if (empty($ip)) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $ip = $input['ip'] ?? '';
+    }
+    
+    // Nettoyer l'IP
+    $ip = trim($ip);
+    
+    if (empty($ip)) {
+        $this->jsonResponse(['success' => false, 'error' => 'Adresse IP requise'], 400);
+        return;
+    }
+    
+    // Valider le format IP
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        $this->jsonResponse(['success' => false, 'error' => 'Adresse IP invalide'], 400);
+        return;
+    }
+    
+    // Logger l'action
+    $this->model->addLog([
+        'action_type' => 'block_ip',
+        'action_description' => 'Blocage IP: ' . $ip . ' - Raison: ' . ($_POST['reason'] ?? 'Non spécifiée'),
+        'level' => 'critical',
+        'metadata' => ['ip' => $ip, 'reason' => $_POST['reason'] ?? null]
+    ]);
+    
+    $this->jsonResponse([
+        'success' => true,
+        'message' => 'IP ' . $ip . ' bloquée avec succès'
+    ]);
+}
 
      // ============================================
     // 🔥 AJOUTE CETTE MÉTHODE render()

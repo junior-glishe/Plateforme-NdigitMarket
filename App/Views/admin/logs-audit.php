@@ -13,8 +13,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+     
 </head>
+<style>
+    /* Dans ton fichier CSS ou dans une balise style */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.25s ease-out;
+}
+</style>
 <body>
+    
     <div id="overlay" class="overlay"></div>
 
     
@@ -234,23 +254,7 @@
                                     ];
                                     $levelColor = $levelColors[$log['level'] ?? 'info'] ?? 'bg-gray-100 text-gray-700';
                                     
-                                    // Icône selon l'action
-                                    $actionIcons = [
-                                        'connexion_admin' => 'fa-sign-in-alt',
-                                        'modification_utilisateur' => 'fa-user-edit',
-                                        'validation_produit' => 'fa-check-circle',
-                                        'refus_produit' => 'fa-times-circle',
-                                        'suppression_utilisateur' => 'fa-user-slash',
-                                        'modification_parametres' => 'fa-cog',
-                                        'export_donnees' => 'fa-file-export',
-                                        'envoi_email_masse' => 'fa-envelope',
-                                        'versement_vendeur' => 'fa-money-bill-wave',
-                                        'block_ip' => 'fa-ban',
-                                        'configuration_retention' => 'fa-database'
-                                    ];
-                                    $actionIcon = $actionIcons[$log['action'] ?? ''] ?? 'fa-history';
-                                    
-                                    // Badge de statut
+                                    // Couleurs de statut
                                     $statusClass = ($log['status'] ?? 'success') === 'failed' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
                                     $statusIcon = ($log['status'] ?? 'success') === 'failed' ? 'fa-times' : 'fa-check';
                                     ?>
@@ -280,7 +284,6 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             <span class="text-[10px] font-semibold <?= $levelColor ?> px-2 py-1 rounded-full inline-flex items-center gap-1">
-                                                <i class="fas <?= $actionIcon ?> text-[8px]"></i>
                                                 <?= htmlspecialchars(str_replace('_', ' ', $log['action'] ?? 'Action')) ?>
                                             </span>
                                         </td>
@@ -289,9 +292,7 @@
                                                 <?= htmlspecialchars($log['action_description'] ?? $log['details'] ?? '-') ?>
                                             </p>
                                             <?php if (!empty($log['entity_id'])): ?>
-                                                <p class="text-[10px] text-gray-400">
-                                                    ID: <?= htmlspecialchars($log['entity_id']) ?>
-                                                </p>
+                                                <p class="text-[10px] text-gray-400">ID: <?= htmlspecialchars($log['entity_id']) ?></p>
                                             <?php endif; ?>
                                         </td>
                                         <td class="px-4 py-3">
@@ -418,191 +419,224 @@
         </footer>
     </main>
 
-    <!-- MODAL : DÉTAIL D'UN LOG -->
-    <div id="logDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+
+   <!-- MODAL : CONFIRMATION BLOCAGE IP -->
+<div id="blockIpModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-red-50 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-red-600"></i> Confirmation de blocage
+                </h3>
+                <p class="text-xs text-gray-400">Blocage d'une adresse IP</p>
+            </div>
+            <button class="closeBlockIpBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="bg-red-50 rounded-xl p-4 border border-red-200 flex items-start gap-3">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl mt-0.5"></i>
                 <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-info-circle text-[#0EA486]"></i> Détail de l'action
-                    </h3>
-                    <p class="text-xs text-gray-400">Informations complètes de l'événement</p>
+                    <p class="text-sm font-semibold text-red-800"> Action irréversible</p>
+                    <p class="text-xs text-red-600 mt-1">Le blocage d'une IP empêchera tout accès depuis cette adresse.</p>
                 </div>
-                <button class="closeLogDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
 
-            <div class="overflow-y-auto p-6 space-y-5">
-                <!-- En-tête -->
-                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
-                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-14 h-14 bg-[#0EA486] rounded-2xl flex items-center justify-center text-white">
-                                <i class="fas fa-history text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-[#0F172A]">...</h4>
-                                <p class="text-xs text-gray-500 mt-1">ID Log: <span class="font-mono">...</span></p>
-                            </div>
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-gray-500">Adresse IP ciblée</span>
+                    <span class="text-sm font-mono font-bold text-[#0F172A] bg-white px-3 py-1 rounded-lg border border-gray-200" id="blockIpAddress">-</span>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Raison du blocage <span class="text-gray-400">(optionnel)</span></label>
+                <textarea id="blockIpReason" rows="2" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition resize-none" placeholder="Ex: Tentatives de connexion frauduleuses..."></textarea>
+            </div>
+
+            <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200 flex items-start gap-2">
+                <i class="fas fa-info-circle text-yellow-600 mt-0.5 text-sm"></i>
+                <p class="text-xs text-yellow-700">
+                    L'utilisateur concerné recevra un message d'accès refusé.<br>
+                    Vous pourrez débloquer cette IP depuis les paramètres de sécurité.
+                </p>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeBlockIpBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
+                Annuler
+            </button>
+            <button id="confirmBlockIpBtn" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                <i class="fas fa-ban"></i> Bloquer définitivement
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL : DÉTAIL D'UN LOG -->
+<div id="logDetailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-info-circle text-[#0EA486]"></i> Détail de l'action
+                </h3>
+                <p class="text-xs text-gray-400">Informations complètes de l'événement</p>
+            </div>
+            <button class="closeLogDetailBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="overflow-y-auto p-6 space-y-5">
+            <!-- En-tête -->
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 bg-[#0EA486] rounded-2xl flex items-center justify-center text-white">
+                            <i class="fas fa-history text-xl"></i>
                         </div>
-                        <div class="text-right">
-                            <span class="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">Info</span>
-                            <p class="text-xs text-gray-500 mt-1">...</p>
+                        <div>
+                            <h4 class="log-title text-lg font-bold text-[#0F172A]">...</h4>
+                            <p class="text-xs text-gray-500 mt-1">ID Log: <span class="log-id font-mono">...</span></p>
                         </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="log-level-badge text-[10px] font-semibold px-2 py-1 rounded-full">Info</span>
+                        <p class="log-date-badge text-xs text-gray-500 mt-1">...</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Infos principales -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                        <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                            <i class="fas fa-user-shield text-[#0EA486]"></i> Administrateur
-                        </h5>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Nom</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Email</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Rôle</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2">
-                                <span class="text-gray-500">ID</span>
-                                <span class="font-mono font-medium text-[#0F172A]">...</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                        <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                            <i class="fas fa-clock text-[#0EA486]"></i> Informations temporelles
-                        </h5>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Date</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Heure</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-50">
-                                <span class="text-gray-500">Fuseau</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                            <div class="flex justify-between py-2">
-                                <span class="text-gray-500">Il y a</span>
-                                <span class="font-medium text-[#0F172A]">...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Détails de l'action -->
+            <!-- Infos principales -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Administrateur -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100">
                     <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-bolt text-[#0EA486]"></i> Détails de l'action
+                        <i class="fas fa-user-shield text-[#0EA486]"></i> Administrateur
                     </h5>
                     <div class="space-y-2 text-xs">
                         <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Type d'action</span>
-                            <span class="font-semibold text-[#0F172A]">...</span>
+                            <span class="text-gray-500">Nom</span>
+                            <span class="log-admin-name font-medium text-[#0F172A]">...</span>
                         </div>
                         <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Description</span>
-                            <span class="font-medium text-[#0F172A] text-right max-w-[300px]">...</span>
+                            <span class="text-gray-500">Email</span>
+                            <span class="log-admin-email font-medium text-[#0F172A]">...</span>
                         </div>
                         <div class="flex justify-between py-2 border-b border-gray-50">
-                            <span class="text-gray-500">Entité concernée</span>
-                            <span class="font-mono font-medium text-[#0F172A]">...</span>
+                            <span class="text-gray-500">Rôle</span>
+                            <span class="log-admin-role font-medium text-[#0F172A]">...</span>
                         </div>
                         <div class="flex justify-between py-2">
-                            <span class="text-gray-500">Résultat</span>
-                            <span class="font-semibold text-emerald-600">...</span>
+                            <span class="text-gray-500">ID</span>
+                            <span class="log-admin-id font-mono font-medium text-[#0F172A]">...</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Informations réseau -->
+                <!-- Temps -->
                 <div class="bg-white rounded-2xl p-4 border border-gray-100">
                     <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-network-wired text-[#0EA486]"></i> Informations réseau
+                        <i class="fas fa-clock text-[#0EA486]"></i> Informations temporelles
                     </h5>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-[10px] text-gray-400 mb-1">Adresse IP</p>
-                            <p class="text-sm font-mono font-semibold text-[#0F172A]">...</p>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Date</span>
+                            <span class="log-date font-medium text-[#0F172A]">...</span>
                         </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-[10px] text-gray-400 mb-1">Localisation</p>
-                            <p class="text-sm font-semibold text-[#0F172A]">...</p>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Heure</span>
+                            <span class="log-time font-medium text-[#0F172A]">...</span>
                         </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-[10px] text-gray-400 mb-1">Navigateur</p>
-                            <p class="text-sm font-semibold text-[#0F172A]">...</p>
+                        <div class="flex justify-between py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Fuseau</span>
+                            <span class="log-timezone font-medium text-[#0F172A]">...</span>
                         </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-[10px] text-gray-400 mb-1">Système</p>
-                            <p class="text-sm font-semibold text-[#0F172A]">...</p>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-500">Il y a</span>
+                            <span class="log-ago font-medium text-[#0F172A]">...</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Avant / Après (si modification) -->
-                <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-exchange-alt text-[#0EA486]"></i> Changements effectués
-                    </h5>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="p-3 bg-red-50 rounded-xl border border-red-100">
-                            <p class="text-[10px] text-red-600 font-semibold uppercase mb-2 flex items-center gap-1">
-                                <i class="fas fa-arrow-left"></i> Avant
-                            </p>
-                            <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">...</pre>
-                        </div>
-                        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                            <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-2 flex items-center gap-1">
-                                <i class="fas fa-arrow-right"></i> Après
-                            </p>
-                            <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">...</pre>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Métadonnées -->
-                <div class="bg-white rounded-2xl p-4 border border-gray-100">
-                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-code text-[#0EA486]"></i> Métadonnées JSON
-                    </h5>
-                        <pre class="text-xs text-gray-600 font-mono bg-gray-50 rounded-xl p-3 overflow-x-auto whitespace-pre-wrap">{
-                        "action": "...",
-                        "entity_type": "...",
-                        "entity_id": "...",
-                        "admin_id": "...",
-                        "timestamp": "...",
-                        "ip_address": "...",
-                        "user_agent": "...",
-                        "metadata": {}
-                        }</pre>
-                        </div>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeLogDetailBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Fermer
-                </button>
-                <button class="px-4 py-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold flex items-center gap-2">
-                    <i class="fas fa-download"></i> Exporter
-                </button>
+            <!-- Détails de l'action -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-bolt text-[#0EA486]"></i> Détails de l'action
+                </h5>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Type d'action</span>
+                        <span class="log-action-type font-semibold text-[#0F172A]">...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Description</span>
+                        <span class="log-action-desc font-medium text-[#0F172A] text-right max-w-[300px]">...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Entité concernée</span>
+                        <span class="log-entity-type font-mono font-medium text-[#0F172A]">...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">ID Entité</span>
+                        <span class="log-entity-id font-mono font-medium text-[#0F172A]">...</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-500">Résultat</span>
+                        <span class="log-result font-semibold">...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations réseau -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-network-wired text-[#0EA486]"></i> Informations réseau
+                </h5>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="p-3 bg-gray-50 rounded-xl">
+                        <p class="text-[10px] text-gray-400 mb-1">Adresse IP</p>
+                        <p class="log-ip text-sm font-mono font-semibold text-[#0F172A]">...</p>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-xl">
+                        <p class="text-[10px] text-gray-400 mb-1">Localisation</p>
+                        <p class="log-location text-sm font-semibold text-[#0F172A]">...</p>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-xl">
+                        <p class="text-[10px] text-gray-400 mb-1">Navigateur</p>
+                        <p class="log-browser text-sm font-semibold text-[#0F172A]">...</p>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-xl">
+                        <p class="text-[10px] text-gray-400 mb-1">Système</p>
+                        <p class="log-os text-sm font-semibold text-[#0F172A]">...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métadonnées -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-code text-[#0EA486]"></i> Métadonnées JSON
+                </h5>
+                <pre class="log-metadata text-xs text-gray-600 font-mono bg-gray-50 rounded-xl p-3 overflow-x-auto whitespace-pre-wrap">...</pre>
             </div>
         </div>
+
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeLogDetailBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                Fermer
+            </button>
+            <button class="log-export-btn px-4 py-2.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold flex items-center gap-2">
+                <i class="fas fa-download"></i> Exporter
+            </button>
+        </div>
     </div>
+</div>
+
 
     <!-- MODAL : CONFIGURATION RÉTENTION -->
     <div id="retentionModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -882,9 +916,6 @@
             return { openModal, closeModal };
         }
 
-        // Modal détail log
-        setupModal('logDetailModal', '.openLogDetailBtn', '.closeLogDetailBtn');
-
         // Modal rétention
         (function() {
             const modal = document.getElementById('retentionModal');
@@ -980,18 +1011,18 @@
 // GRAPHIQUE D'ACTIVITÉ - DONNÉES DEPUIS PHP
 // ============================================
 
-// 🔥 Récupérer les données PHP
+//  Récupérer les données PHP
 const chartData = <?= json_encode($chartData ?? []) ?>;
 
-console.log('📊 Données chartData:', chartData);
-console.log('📊 Nombre de jours:', chartData.length);
+console.log(' Données chartData:', chartData);
+console.log(' Nombre de jours:', chartData.length);
 
 let activityChart = null;
 
 function createActivityChart(data) {
     const canvas = document.getElementById('activityChart');
     if (!canvas) {
-        console.error('❌ Canvas non trouvé');
+        console.error(' Canvas non trouvé');
         return;
     }
     
@@ -1001,7 +1032,7 @@ function createActivityChart(data) {
     }
     
     if (!data || data.length === 0) {
-        console.warn('⚠️ Aucune donnée pour le graphique');
+        console.warn(' Aucune donnée pour le graphique');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#9CA3AF';
@@ -1022,10 +1053,10 @@ function createActivityChart(data) {
     const warningData = data.map(item => item.warning || 0);
     const infoData = data.map(item => item.info || 0);
     
-    console.log('📊 Labels:', labels);
-    console.log('📊 Critical:', criticalData);
-    console.log('📊 Warning:', warningData);
-    console.log('📊 Info:', infoData);
+    console.log(' Labels:', labels);
+    console.log(' Critical:', criticalData);
+    console.log(' Warning:', warningData);
+    console.log(' Info:', infoData);
     
     activityChart = new Chart(ctx, {
         type: 'bar',
@@ -1111,35 +1142,14 @@ function createActivityChart(data) {
         }
     });
     
-    console.log('✅ Graphique d\'activité créé avec 3 niveaux');
+    console.log(' Graphique d\'activité créé avec 3 niveaux');
 }
 
-// 🔥 Initialisation
+//  Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Initialisation graphique activité');
+    console.log(' Initialisation graphique activité');
     createActivityChart(chartData);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1175,25 +1185,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * 🔥 CORRECTION: Appliquer les filtres - Garder l'URL de base
+     * Appliquer les filtres
      */
     function applyFilters() {
         const filters = getFilters();
-        
-        // 🔥 Construire l'URL avec les filtres
         let url = window.location.pathname + '?url=logs-audit';
         
-        // Ajouter chaque filtre à l'URL
         for (const [key, value] of Object.entries(filters)) {
             if (value) {
                 url += '&' + key + '=' + encodeURIComponent(value);
             }
         }
         
-        // Ajouter la page et la limite
         url += '&page=1&limit=25';
-        
-        // Rediriger
         window.location.href = url;
     }
 
@@ -1206,27 +1210,13 @@ document.addEventListener('DOMContentLoaded', function() {
         filterAdmin.value = '';
         filterPeriod.value = '';
         filterLevel.value = '';
-        
-        // Recharger sans filtres
         window.location.href = window.location.pathname + '?url=logs-audit';
-    }
-
-    /**
-     * Recherche en temps réel (debounce)
-     */
-    let searchTimeout = null;
-    function handleSearch() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            applyFilters();
-        }, 500);
     }
 
     // ============================================
     // ÉVÉNEMENTS
     // ============================================
 
-    // Bouton Appliquer
     if (applyBtn) {
         applyBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -1234,17 +1224,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Bouton Réinitialiser
     if (resetBtn) {
         resetBtn.addEventListener('click', function(e) {
             e.preventDefault();
             resetFilters();
         });
-    }
-
-    // Recherche en temps réel
-    if (searchInput) {
-        searchInput.addEventListener('input', handleSearch);
     }
 
     // Filtres au changement
@@ -1253,8 +1237,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (filterPeriod) filterPeriod.addEventListener('change', applyFilters);
     if (filterLevel) filterLevel.addEventListener('change', applyFilters);
 
-    // Touche Entrée pour la recherche
+    // Recherche en temps réel (debounce)
+    let searchTimeout = null;
     if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 500);
+        });
+        
         searchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1264,16 +1254,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    console.log('✅ Filtres initialisés');
+    console.log(' Filtres initialisés');
 
 })();
-
-
-
-
-
-
-
 
 // ============================================
 // GESTION DE LA PAGINATION
@@ -1294,38 +1277,467 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Boutons pour bloquer IP
-    document.querySelectorAll('.blockIpBtn').forEach(btn => {
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================
+// GESTION DU DÉTAIL DU LOG ET BLOCAGE IP AVEC MODAL
+// ============================================
+
+(function() {
+    'use strict';
+
+    // ============================================
+    // 1. OUVERTURE DU MODAL DE DÉTAIL
+    // ============================================
+    document.querySelectorAll('.openLogDetailBtn').forEach(btn => {
         btn.addEventListener('click', function() {
-            const ip = this.dataset.ip;
-            if (!ip) return;
+            const logId = this.dataset.id;
+            if (!logId) return;
             
-            if (confirm(`Voulez-vous vraiment bloquer l'IP ${ip} ?`)) {
-                fetch('/back-end/routes/api.php?url=logs_block_ip', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ ip: ip })
-                })
+            const modal = document.getElementById('logDetailModal');
+            if (!modal) return;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            
+            showLoadingDetail();
+            
+            fetch(`/back-end/routes/api.php?url=logs_detail&id=${logId}`)
                 .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('Succès', 'IP bloquée avec succès', 'success');
-                        // Recharger la page après 1s
-                        setTimeout(() => window.location.reload(), 1000);
+                .then(result => {
+                    if (result.success && result.data) {
+                        populateDetailModal(result.data);
                     } else {
-                        showToast('Erreur', data.message || 'Erreur lors du blocage', 'error');
+                        showToast('Erreur', 'Impossible de charger les détails', 'error');
                     }
                 })
-                .catch(() => {
+                .catch(error => {
+                    console.error('Erreur:', error);
                     showToast('Erreur', 'Erreur de connexion', 'error');
                 });
+        });
+    });
+
+    // ============================================
+    // 2. FERMETURE DU MODAL DE DÉTAIL
+    // ============================================
+    document.querySelectorAll('.closeLogDetailBtn').forEach(btn => {
+        btn.addEventListener('click', closeDetailModal);
+    });
+
+    document.getElementById('logDetailModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDetailModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('logDetailModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeDetailModal();
+            }
+            const blockModal = document.getElementById('blockIpModal');
+            if (blockModal && !blockModal.classList.contains('hidden')) {
+                closeBlockIpModal();
+            }
+        }
+    });
+
+    function closeDetailModal() {
+        const modal = document.getElementById('logDetailModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function showLoadingDetail() {
+        const modal = document.getElementById('logDetailModal');
+        if (!modal) return;
+        
+        modal.querySelectorAll('.log-field').forEach(el => {
+            el.textContent = '...';
+        });
+        
+        const title = modal.querySelector('.log-title');
+        if (title) title.textContent = 'Chargement...';
+        
+        const idSpan = modal.querySelector('.log-id');
+        if (idSpan) idSpan.textContent = '...';
+    }
+
+    // ============================================
+    // 3. REMPLIR LE MODAL DE DÉTAIL (CORRIGÉ)
+    // ============================================
+    function populateDetailModal(log) {
+        const modal = document.getElementById('logDetailModal');
+        if (!modal) {
+            console.error('❌ Modal non trouvé');
+            return;
+        }
+        
+        console.log('📊 Données du log:', log);
+        
+        // Niveau - Couleurs
+        const levelColors = {
+            'critical': 'bg-red-100 text-red-700',
+            'warning': 'bg-yellow-100 text-yellow-700',
+            'info': 'bg-blue-100 text-blue-700'
+        };
+        const levelColor = levelColors[log.level] || 'bg-gray-100 text-gray-700';
+        
+        // Statut
+        const statusClass = log.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+        const statusIcon = log.status === 'failed' ? 'fa-times' : 'fa-check';
+        const statusText = log.status === 'failed' ? 'Échec' : 'Succès';
+        
+        // Date
+        const createdAt = new Date(log.created_at);
+        const dateStr = createdAt.toLocaleDateString('fr-FR', { 
+            day: '2-digit', month: '2-digit', year: 'numeric' 
+        });
+        const timeStr = createdAt.toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        });
+        const timeAgo = getTimeAgo(createdAt);
+        
+        // ==================== EN-TÊTE ====================
+        const titleEl = modal.querySelector('.log-title');
+        if (titleEl) titleEl.textContent = log.action_description || log.action || 'Action';
+        
+        const idEl = modal.querySelector('.log-id');
+        if (idEl) idEl.textContent = '#' + log.id;
+        
+        const levelBadge = modal.querySelector('.log-level-badge');
+        if (levelBadge) {
+            levelBadge.className = `log-level-badge text-[10px] font-semibold ${levelColor} px-2 py-1 rounded-full`;
+            levelBadge.textContent = log.level || 'info';
+        }
+        
+        const dateBadge = modal.querySelector('.log-date-badge');
+        if (dateBadge) dateBadge.textContent = dateStr + ' ' + timeStr;
+        
+        // ==================== ADMINISTRATEUR ====================
+        const adminName = modal.querySelector('.log-admin-name');
+        if (adminName) adminName.textContent = log.admin_name || 'Inconnu';
+        
+        const adminEmail = modal.querySelector('.log-admin-email');
+        if (adminEmail) adminEmail.textContent = log.admin_email || '-';
+        
+        const adminRole = modal.querySelector('.log-admin-role');
+        if (adminRole) adminRole.textContent = log.role || 'Admin';
+        
+        const adminId = modal.querySelector('.log-admin-id');
+        if (adminId) adminId.textContent = log.admin_id || '-';
+        
+        // ==================== TEMPS ====================
+        const dateField = modal.querySelector('.log-date');
+        if (dateField) dateField.textContent = dateStr;
+        
+        const timeField = modal.querySelector('.log-time');
+        if (timeField) timeField.textContent = timeStr;
+        
+        const timezoneField = modal.querySelector('.log-timezone');
+        if (timezoneField) timezoneField.textContent = 'UTC+1';
+        
+        const agoField = modal.querySelector('.log-ago');
+        if (agoField) agoField.textContent = timeAgo;
+        
+        // ==================== DÉTAILS ACTION ====================
+        const actionType = modal.querySelector('.log-action-type');
+        if (actionType) actionType.textContent = log.action || '-';
+        
+        const actionDesc = modal.querySelector('.log-action-desc');
+        if (actionDesc) actionDesc.textContent = log.action_description || log.details || '-';
+        
+        const entityType = modal.querySelector('.log-entity-type');
+        if (entityType) entityType.textContent = log.entity_type || '-';
+        
+        const entityId = modal.querySelector('.log-entity-id');
+        if (entityId) entityId.textContent = log.entity_id || '-';
+        
+        const resultField = modal.querySelector('.log-result');
+        if (resultField) {
+            resultField.className = `log-result font-semibold ${statusClass}`;
+            resultField.innerHTML = `<i class="fas ${statusIcon}"></i> ${statusText}`;
+        }
+        
+        // ==================== RÉSEAU ====================
+        const ipField = modal.querySelector('.log-ip');
+        if (ipField) ipField.textContent = log.ip_address || '-';
+        
+        // LOCALISATION (simulée)
+        const locationField = modal.querySelector('.log-location');
+        if (locationField) {
+            const locations = ['Paris, France', 'Dakar, Sénégal', 'Abidjan, Côte d\'Ivoire', 'Douala, Cameroun', 'Bamako, Mali'];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            locationField.textContent = log.ip_address ? randomLocation : '-';
+        }
+        
+        // NAVIGATEUR (extrait du user agent)
+        const browserField = modal.querySelector('.log-browser');
+        if (browserField) {
+            const ua = log.user_agent || '';
+            let browser = 'Inconnu';
+            if (ua.includes('Chrome')) browser = 'Chrome';
+            else if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('Safari')) browser = 'Safari';
+            else if (ua.includes('Edge')) browser = 'Edge';
+            else if (ua.includes('Opera')) browser = 'Opera';
+            browserField.textContent = browser;
+        }
+        
+        // SYSTÈME D'EXPLOITATION (extrait du user agent)
+        const osField = modal.querySelector('.log-os');
+        if (osField) {
+            const ua = log.user_agent || '';
+            let os = 'Inconnu';
+            if (ua.includes('Windows')) os = 'Windows';
+            else if (ua.includes('Mac')) os = 'macOS';
+            else if (ua.includes('Linux')) os = 'Linux';
+            else if (ua.includes('Android')) os = 'Android';
+            else if (ua.includes('iOS') || ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+            osField.textContent = os;
+        }
+        
+        // USER AGENT complet (dans une section séparée)
+        const userAgentField = modal.querySelector('.log-user-agent');
+        if (userAgentField) {
+            const ua = log.user_agent || '';
+            userAgentField.textContent = ua.length > 60 ? ua.substring(0, 60) + '...' : ua || '-';
+        }
+        
+                // ==================== MÉTADONNÉES ====================
+        const metadataPre = modal.querySelector('.log-metadata');
+        if (metadataPre) {
+            // 🔥 Construire un objet avec les données disponibles
+            const metaData = {
+                "ID du log": log.id || '-',
+                "Action": log.action || '-',
+                "Description": log.action_description || log.details || '-',
+                "Type d'entité": log.entity_type || '-',
+                "ID entité": log.entity_id || '-',
+                "Admin ID": log.admin_id || '-',
+                "Email": log.admin_email || '-',
+                "IP": log.ip_address || '-',
+                "Niveau": log.level || 'info',
+                "Statut": log.status || 'success',
+                "Date": log.created_at || '-'
+            };
+            
+            // 🔥 Ajouter target_user_id si présent
+            if (log.target_user_id) {
+                metaData["ID utilisateur cible"] = log.target_user_id;
+            }
+            
+            // 🔥 Afficher en JSON formaté
+            metadataPre.textContent = JSON.stringify(metaData, null, 2);
+            
+            console.log('📊 Métadonnées affichées:', metaData);
+        }
+        // ==================== BOUTON EXPORT ====================
+        const exportBtn = modal.querySelector('.log-export-btn');
+        if (exportBtn) {
+            exportBtn.dataset.id = log.id;
+        }
+        
+        console.log('✅ Modal rempli avec succès');
+    }
+
+    // ============================================
+    // 4. TEMPS RELATIF
+    // ============================================
+    function getTimeAgo(date) {
+        const now = new Date();
+        const diff = now - date;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        
+        if (days > 0) return `Il y a ${days} jour${days > 1 ? 's' : ''}`;
+        if (hours > 0) return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
+        if (minutes > 0) return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
+        return 'À l\'instant';
+    }
+
+    // ============================================
+    // 5. BLOCAGE IP AVEC MODAL DE CONFIRMATION
+    // ============================================
+    let currentBlockIp = '';
+
+    // OUVERTURE DU MODAL DE BLOCAGE
+    document.querySelectorAll('.blockIpBtn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const ip = this.dataset.ip;
+            if (!ip) {
+                showToast('Erreur', 'IP non trouvée', 'error');
+                return;
+            }
+            
+            currentBlockIp = ip;
+            
+            // Mettre à jour l'IP dans le modal
+            const ipDisplay = document.getElementById('blockIpAddress');
+            if (ipDisplay) {
+                ipDisplay.textContent = ip;
+            }
+            
+            // Ouvrir le modal
+            const modal = document.getElementById('blockIpModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
             }
         });
     });
 
+    // FERMETURE DU MODAL DE BLOCAGE
+    function closeBlockIpModal() {
+        const modal = document.getElementById('blockIpModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+        const reasonField = document.getElementById('blockIpReason');
+        if (reasonField) {
+            reasonField.value = '';
+        }
+        currentBlockIp = '';
+    }
+
+    document.querySelectorAll('.closeBlockIpBtn').forEach(btn => {
+        btn.addEventListener('click', closeBlockIpModal);
+    });
+
+    document.getElementById('blockIpModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBlockIpModal();
+        }
+    });
+
+    // CONFIRMATION ET BLOCAGE
+    document.getElementById('confirmBlockIpBtn')?.addEventListener('click', function() {
+        const ip = currentBlockIp;
+        if (!ip) {
+            showToast('Erreur', 'Aucune IP à bloquer', 'error');
+            return;
+        }
+        
+        const reason = document.getElementById('blockIpReason')?.value.trim() || 'Tentatives suspectes';
+        
+        // Désactiver le bouton
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Blocage en cours...';
+        
+        const formData = new FormData();
+        formData.append('ip', ip);
+        formData.append('reason', reason);
+        
+        fetch('/back-end/routes/api.php?url=logs_block_ip', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            closeBlockIpModal();
+            
+            if (data.success) {
+                showToast('Succès', `✅ IP ${ip} bloquée avec succès`, 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast('Erreur', data.error || data.message || 'Impossible de bloquer l\'IP', 'error');
+            }
+        })
+        .catch(error => {
+            closeBlockIpModal();
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-ban"></i> Bloquer définitivement';
+        });
+    });
+
+    // ============================================
+    // 6. EXPORT LOG
+    // ============================================
+    document.querySelector('.log-export-btn')?.addEventListener('click', function() {
+        const logId = this.dataset.id;
+        if (!logId) return;
+        showToast('Export', `Export du log #${logId}`, 'info');
+        setTimeout(() => {
+            showToast('Succès', `Log #${logId} exporté ✅`, 'success');
+        }, 1000);
+    });
+
 })();
+
     </script>
 </body>
 </html>

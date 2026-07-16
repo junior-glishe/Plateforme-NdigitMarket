@@ -253,8 +253,9 @@ public function getActionTypes() {
     }
 }
 
+
 /**
- * Récupérer les administrateurs
+ * Récupérer les administrateurs depuis la table admin
  */
 public function getAdmins() {
     try {
@@ -263,7 +264,12 @@ public function getAdmins() {
             FROM admin 
             ORDER BY nom ASC
         ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // 🔥 DEBUG - Vérifier les résultats
+        error_log("getAdmins résultats: " . print_r($results, true));
+        
+        return $results;
     } catch (PDOException $e) {
         error_log("Erreur getAdmins: " . $e->getMessage());
         return [];
@@ -272,14 +278,14 @@ public function getAdmins() {
 
 
 /**
- * Récupérer les logs avec filtres (version corrigée)
+ * Récupérer les logs avec filtres
  */
 public function getLogs($filters = [], $limit = 25, $offset = 0) {
     try {
         $sql = "SELECT * FROM admin_logs WHERE 1=1";
         $params = [];
         
-        // 🔥 CORRECTION: Recherche textuelle
+        // RECHERCHE TEXTUELLE
         if (!empty($filters['search'])) {
             $sql .= " AND (action LIKE :search 
                           OR action_description LIKE :search 
@@ -290,25 +296,25 @@ public function getLogs($filters = [], $limit = 25, $offset = 0) {
             $params[':search'] = '%' . $filters['search'] . '%';
         }
         
-        // 🔥 CORRECTION: Type d'action
+        // TYPE D'ACTION
         if (!empty($filters['action'])) {
             $sql .= " AND action = :action";
             $params[':action'] = $filters['action'];
         }
         
-        // 🔥 CORRECTION: Administrateur (admin_id)
-        if (!empty($filters['admin_id'])) {
+        // 🔥 ADMINISTRATEUR - CORRIGÉ
+        if (!empty($filters['admin_id']) && is_numeric($filters['admin_id'])) {
             $sql .= " AND admin_id = :admin_id";
-            $params[':admin_id'] = $filters['admin_id'];
+            $params[':admin_id'] = (int)$filters['admin_id'];
         }
         
-        // 🔥 CORRECTION: Niveau
+        // NIVEAU
         if (!empty($filters['level'])) {
             $sql .= " AND level = :level";
             $params[':level'] = $filters['level'];
         }
         
-        // 🔥 CORRECTION: Période
+        // PÉRIODE
         if (!empty($filters['period'])) {
             switch($filters['period']) {
                 case 'today':
@@ -326,7 +332,7 @@ public function getLogs($filters = [], $limit = 25, $offset = 0) {
             }
         }
         
-        // Dates personnalisées
+        // DATES PERSONNALISÉES
         if (!empty($filters['date_from'])) {
             $sql .= " AND DATE(created_at) >= :date_from";
             $params[':date_from'] = $filters['date_from'];
@@ -358,73 +364,84 @@ public function getLogs($filters = [], $limit = 25, $offset = 0) {
         return [];
     }
 }
-
 /**
- * Compter les logs avec filtres
+ * Compter les logs avec filtres - Version avec jointure
  */
 public function countLogs($filters = []) {
     try {
-        $sql = "SELECT COUNT(*) as total FROM admin_logs WHERE 1=1";
+        $sql = "SELECT COUNT(*) as total FROM admin_logs al WHERE 1=1";
         $params = [];
         
+        // RECHERCHE TEXTUELLE
         if (!empty($filters['search'])) {
-            $sql .= " AND (action LIKE :search 
-                          OR action_description LIKE :search 
-                          OR admin_email LIKE :search 
-                          OR admin_name LIKE :search 
-                          OR ip_address LIKE :search
-                          OR details LIKE :search)";
+            $sql .= " AND (al.action LIKE :search 
+                          OR al.action_description LIKE :search 
+                          OR al.admin_email LIKE :search 
+                          OR al.admin_name LIKE :search 
+                          OR al.ip_address LIKE :search
+                          OR al.details LIKE :search)";
             $params[':search'] = '%' . $filters['search'] . '%';
         }
         
+        // TYPE D'ACTION
         if (!empty($filters['action'])) {
-            $sql .= " AND action = :action";
+            $sql .= " AND al.action = :action";
             $params[':action'] = $filters['action'];
         }
         
+        // ADMINISTRATEUR
         if (!empty($filters['admin_id'])) {
-            $sql .= " AND admin_id = :admin_id";
-            $params[':admin_id'] = $filters['admin_id'];
+            $sql .= " AND al.admin_id = :admin_id";
+            $params[':admin_id'] = (int)$filters['admin_id'];
         }
         
+        // NIVEAU
         if (!empty($filters['level'])) {
-            $sql .= " AND level = :level";
+            $sql .= " AND al.level = :level";
             $params[':level'] = $filters['level'];
         }
         
+        // STATUT
         if (!empty($filters['status'])) {
-            $sql .= " AND status = :status";
+            $sql .= " AND al.status = :status";
             $params[':status'] = $filters['status'];
         }
         
+        // PÉRIODE
         if (!empty($filters['period'])) {
             switch($filters['period']) {
                 case 'today':
-                    $sql .= " AND DATE(created_at) = CURDATE()";
+                    $sql .= " AND DATE(al.created_at) = CURDATE()";
                     break;
                 case '7days':
-                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                    $sql .= " AND al.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
                     break;
                 case '30days':
-                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    $sql .= " AND al.created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
                     break;
                 case 'month':
-                    $sql .= " AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
+                    $sql .= " AND MONTH(al.created_at) = MONTH(CURDATE()) AND YEAR(al.created_at) = YEAR(CURDATE())";
                     break;
             }
         }
         
+        // DATES PERSONNALISÉES
         if (!empty($filters['date_from'])) {
-            $sql .= " AND DATE(created_at) >= :date_from";
+            $sql .= " AND DATE(al.created_at) >= :date_from";
             $params[':date_from'] = $filters['date_from'];
         }
         if (!empty($filters['date_to'])) {
-            $sql .= " AND DATE(created_at) <= :date_to";
+            $sql .= " AND DATE(al.created_at) <= :date_to";
             $params[':date_to'] = $filters['date_to'];
         }
         
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)($result['total'] ?? 0);
         
@@ -433,4 +450,5 @@ public function countLogs($filters = []) {
         return 0;
     }
 }
+
 }
