@@ -1727,14 +1727,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // 6. EXPORT LOG
     // ============================================
-    document.querySelector('.log-export-btn')?.addEventListener('click', function() {
-        const logId = this.dataset.id;
-        if (!logId) return;
-        showToast('Export', `Export du log #${logId}`, 'info');
-        setTimeout(() => {
-            showToast('Succès', `Log #${logId} exporté ✅`, 'success');
-        }, 1000);
-    });
+    // ============================================
+// EXPORT D'UN LOG INDIVIDUEL
+// ============================================
+
+document.querySelector('.log-export-btn')?.addEventListener('click', function() {
+    const logId = this.dataset.id;
+    if (!logId) return;
+    
+    // Récupérer les détails du log
+    fetch(`/back-end/routes/api.php?url=logs_detail&id=${logId}`)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && result.data) {
+                // Exporter en JSON
+                const log = result.data;
+                const filename = 'log_' + logId + '_' + new Date().toISOString().slice(0,10);
+                
+                const jsonData = {
+                    exported_at: new Date().toISOString(),
+                    log: log
+                };
+                
+                const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('Succès', `Log #${logId} exporté ✅`, 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Impossible d\'exporter le log', 'error');
+        });
+});
 
 })();
 

@@ -2,6 +2,13 @@
 
 require_once __DIR__ . '/../../Models/LogsAuditModel.php';
 
+ use PhpOffice\PhpSpreadsheet\Spreadsheet;
+    use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+    use PhpOffice\PhpSpreadsheet\Style\Alignment;
+    use PhpOffice\PhpSpreadsheet\Style\Fill;
+    use PhpOffice\PhpSpreadsheet\Style\Border;
+    use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+    
 class LogsAuditController {
     private $model;
     private $pdo;
@@ -229,6 +236,212 @@ public function blockIP() {
         
         include $viewPath;
     }
+
+
+
+
+
+
+    // App/Controllers/Admin/LogsAuditController.php
+
+/**
+ * API - Exporter les logs (CSV, Excel, JSON)
+ */
+public function exportLogs() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $format = $_POST['format'] ?? 'csv';
+    $period = $_POST['period'] ?? 'all';
+    $columns = $_POST['columns'] ?? [];
+    
+    // Récupérer les filtres
+    $filters = [];
+    if ($period !== 'all') {
+        switch($period) {
+            case 'today':
+                $filters['date_from'] = date('Y-m-d');
+                $filters['date_to'] = date('Y-m-d');
+                break;
+            case '7days':
+                $filters['date_from'] = date('Y-m-d', strtotime('-7 days'));
+                $filters['date_to'] = date('Y-m-d');
+                break;
+            case '30days':
+                $filters['date_from'] = date('Y-m-d', strtotime('-30 days'));
+                $filters['date_to'] = date('Y-m-d');
+                break;
+            case 'month':
+                $filters['date_from'] = date('Y-m-01');
+                $filters['date_to'] = date('Y-m-d');
+                break;
+        }
+    }
+    
+    // Récupérer les logs
+    $logs = $this->model->getLogs($filters, 10000, 0);
+    
+    // Construire les données pour l'export
+    $headers = ['ID', 'Date', 'Admin', 'Email', 'Action', 'Description', 'Entité', 'ID Entité', 'IP', 'Niveau', 'Statut'];
+    $data = [];
+    
+    foreach ($logs as $log) {
+        $row = [
+            'ID' => $log['id'],
+            'Date' => $log['created_at'],
+            'Admin' => $log['admin_name'] ?? '-',
+            'Email' => $log['admin_email'] ?? '-',
+            'Action' => $log['action'],
+            'Description' => $log['action_description'] ?? $log['details'] ?? '-',
+            'Entité' => $log['entity_type'] ?? '-',
+            'ID Entité' => $log['entity_id'] ?? '-',
+            'IP' => $log['ip_address'] ?? '-',
+            'Niveau' => $log['level'] ?? 'info',
+            'Statut' => $log['status'] ?? 'success'
+        ];
+        
+        // Filtrer les colonnes si demandé
+        if (!empty($columns)) {
+            $row = array_intersect_key($row, array_flip($columns));
+        }
+        
+        $data[] = $row;
+    }
+    
+    $filename = 'logs_audit_' . date('Y-m-d');
+    
+    switch($format) {
+        case 'csv':
+            $this->exportLogsCSV($data, $filename);
+            break;
+        case 'excel':
+            $this->exportLogsExcel($data, $filename);
+            break;
+        case 'json':
+            $this->exportLogsJSON($data, $filename);
+            break;
+        default:
+            $this->jsonResponse(['success' => false, 'error' => 'Format non supporté'], 400);
+    }
+}
+
+/**
+ * Export CSV pour les logs
+ */
+private function exportLogsCSV($data, $filename) {
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=' . $filename . '.csv');
+    header('Cache-Control: max-age=0');
+    
+    $output = fopen('php://output', 'w');
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF)); // BOM UTF-8
+    
+    if (!empty($data)) {
+        // Entêtes
+        fputcsv($output, array_keys($data[0]));
+        
+        // Données
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+    }
+    
+    fclose($output);
+    exit();
+}
+
+/**
+ * Export Excel pour les logs
+ */
+private function exportLogsExcel($data, $filename) {
+    require_once __DIR__ . '/../../../vendor/autoload.php';
+    
+   
+    
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    
+    // Style des entêtes
+    $headerStyle = [
+        'font' => [
+            'bold' => true,
+            'color' => ['rgb' => 'FFFFFF'],
+            'size' => 11
+        ],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '0EA486']
+        ],
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER,
+            'vertical' => Alignment::VERTICAL_CENTER
+        ]
+    ];
+    
+    // Entêtes
+    $col = 0;
+    if (!empty($data)) {
+        foreach (array_keys($data[0]) as $header) {
+            $column = Coordinate::stringFromColumnIndex($col + 1);
+            $sheet->setCellValue($column . '1', $header);
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+            $col++;
+        }
+    }
+    
+    $lastColumn = Coordinate::stringFromColumnIndex($col);
+    $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($headerStyle);
+    $sheet->getRowDimension(1)->setRowHeight(25);
+    
+    // Données
+    $rowNum = 2;
+    foreach ($data as $row) {
+        $col = 0;
+        foreach ($row as $value) {
+            $column = Coordinate::stringFromColumnIndex($col + 1);
+            $sheet->setCellValue($column . $rowNum, $value);
+            $col++;
+        }
+        $rowNum++;
+    }
+    
+    // Bordures
+    $styleArray = [
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => Border::BORDER_THIN,
+                'color' => ['rgb' => 'E5E7EB']
+            ]
+        ]
+    ];
+    $sheet->getStyle('A1:' . $lastColumn . ($rowNum - 1))->applyFromArray($styleArray);
+    
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '.xlsx"');
+    header('Cache-Control: max-age=0');
+    
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit();
+}
+
+/**
+ * Export JSON pour les logs
+ */
+private function exportLogsJSON($data, $filename) {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Disposition: attachment; filename=' . $filename . '.json');
+    header('Cache-Control: max-age=0');
+    
+    echo json_encode([
+        'exported_at' => date('Y-m-d H:i:s'),
+        'total' => count($data),
+        'data' => $data
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    exit();
+}
 
 
 

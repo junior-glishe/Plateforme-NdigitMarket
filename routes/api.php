@@ -481,11 +481,11 @@ case 'logs_list':
         $controller->getChartData();
         break;
 
-    // API - Export CSV
+    // API - Export logs (CSV, Excel, JSON)
     case 'logs_export':
         require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
         $controller = new LogsAuditController($pdo);
-        $controller->exportCSV();
+        $controller->exportLogs();
         break;
 
     // API - Rétention
