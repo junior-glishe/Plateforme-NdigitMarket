@@ -101,115 +101,8 @@ class LogsAuditModel {
         }
     }
 
-    /**
-     * Récupérer les logs avec filtres
-     */
-    public function getLogs($filters = [], $limit = 25, $offset = 0) {
-        try {
-            $sql = "SELECT * FROM admin_logs WHERE 1=1";
-            $params = [];
-            
-            if (!empty($filters['action'])) {
-                $sql .= " AND action LIKE :action";
-                $params[':action'] = '%' . $filters['action'] . '%';
-            }
-            
-            if (!empty($filters['admin_id'])) {
-                $sql .= " AND admin_id = :admin_id";
-                $params[':admin_id'] = $filters['admin_id'];
-            }
-            
-            if (!empty($filters['level'])) {
-                $sql .= " AND level = :level";
-                $params[':level'] = $filters['level'];
-            }
-            
-            if (!empty($filters['status'])) {
-                $sql .= " AND status = :status";
-                $params[':status'] = $filters['status'];
-            }
-            
-            if (!empty($filters['date_from'])) {
-                $sql .= " AND DATE(created_at) >= :date_from";
-                $params[':date_from'] = $filters['date_from'];
-            }
-            
-            if (!empty($filters['date_to'])) {
-                $sql .= " AND DATE(created_at) <= :date_to";
-                $params[':date_to'] = $filters['date_to'];
-            }
-            
-            if (!empty($filters['search'])) {
-                $sql .= " AND (action_description LIKE :search OR admin_email LIKE :search OR admin_name LIKE :search OR ip_address LIKE :search OR details LIKE :search)";
-                $params[':search'] = '%' . $filters['search'] . '%';
-            }
-            
-            $sql .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
-            $params[':limit'] = (int)$limit;
-            $params[':offset'] = (int)$offset;
-            
-            $stmt = $this->pdo->prepare($sql);
-            
-            foreach ($params as $key => $value) {
-                if ($key === ':limit' || $key === ':offset') {
-                    $stmt->bindValue($key, $value, PDO::PARAM_INT);
-                } else {
-                    $stmt->bindValue($key, $value);
-                }
-            }
-            
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-        } catch (PDOException $e) {
-            error_log("Erreur getLogs: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Compter le nombre total de logs
-     */
-    public function countLogs($filters = []) {
-        try {
-            $sql = "SELECT COUNT(*) as total FROM admin_logs WHERE 1=1";
-            $params = [];
-            
-            if (!empty($filters['action'])) {
-                $sql .= " AND action LIKE :action";
-                $params[':action'] = '%' . $filters['action'] . '%';
-            }
-            
-            if (!empty($filters['admin_id'])) {
-                $sql .= " AND admin_id = :admin_id";
-                $params[':admin_id'] = $filters['admin_id'];
-            }
-            
-            if (!empty($filters['level'])) {
-                $sql .= " AND level = :level";
-                $params[':level'] = $filters['level'];
-            }
-            
-            if (!empty($filters['status'])) {
-                $sql .= " AND status = :status";
-                $params[':status'] = $filters['status'];
-            }
-            
-            if (!empty($filters['search'])) {
-                $sql .= " AND (action_description LIKE :search OR admin_email LIKE :search OR admin_name LIKE :search OR ip_address LIKE :search OR details LIKE :search)";
-                $params[':search'] = '%' . $filters['search'] . '%';
-            }
-            
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return (int)($result['total'] ?? 0);
-            
-        } catch (PDOException $e) {
-            error_log("Erreur countLogs: " . $e->getMessage());
-            return 0;
-        }
-    }
+    
+    
 
 
 
@@ -331,4 +224,218 @@ private function generateTestChartData($days = 7) {
         fclose($output);
         exit();
     }
+
+
+
+
+
+
+
+
+
+    // App/Models/LogsAuditModel.php
+
+/**
+ * Récupérer les types d'actions distincts
+ */
+public function getActionTypes() {
+    try {
+        $stmt = $this->pdo->query("
+            SELECT DISTINCT action 
+            FROM admin_logs 
+            WHERE action IS NOT NULL AND action != ''
+            ORDER BY action ASC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (PDOException $e) {
+        error_log("Erreur getActionTypes: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Récupérer les administrateurs
+ */
+public function getAdmins() {
+    try {
+        $stmt = $this->pdo->query("
+            SELECT id_gestion, nom, email, role 
+            FROM admin 
+            ORDER BY nom ASC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur getAdmins: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Récupérer les logs avec filtres (version améliorée)
+ */
+public function getLogs($filters = [], $limit = 25, $offset = 0) {
+    try {
+        $sql = "SELECT * FROM admin_logs WHERE 1=1";
+        $params = [];
+        
+        // Recherche textuelle
+        if (!empty($filters['search'])) {
+            $sql .= " AND (action LIKE :search 
+                          OR action_description LIKE :search 
+                          OR admin_email LIKE :search 
+                          OR admin_name LIKE :search 
+                          OR ip_address LIKE :search
+                          OR details LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+        
+        // Type d'action
+        if (!empty($filters['action'])) {
+            $sql .= " AND action = :action";
+            $params[':action'] = $filters['action'];
+        }
+        
+        // Administrateur
+        if (!empty($filters['admin_id'])) {
+            $sql .= " AND admin_id = :admin_id";
+            $params[':admin_id'] = $filters['admin_id'];
+        }
+        
+        // Niveau
+        if (!empty($filters['level'])) {
+            $sql .= " AND level = :level";
+            $params[':level'] = $filters['level'];
+        }
+        
+        // Statut
+        if (!empty($filters['status'])) {
+            $sql .= " AND status = :status";
+            $params[':status'] = $filters['status'];
+        }
+        
+        // Période
+        if (!empty($filters['period'])) {
+            switch($filters['period']) {
+                case 'today':
+                    $sql .= " AND DATE(created_at) = CURDATE()";
+                    break;
+                case '7days':
+                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                    break;
+                case '30days':
+                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    break;
+                case 'month':
+                    $sql .= " AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
+                    break;
+            }
+        }
+        
+        // Dates personnalisées
+        if (!empty($filters['date_from'])) {
+            $sql .= " AND DATE(created_at) >= :date_from";
+            $params[':date_from'] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $sql .= " AND DATE(created_at) <= :date_to";
+            $params[':date_to'] = $filters['date_to'];
+        }
+        
+        $sql .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+        $params[':limit'] = (int)$limit;
+        $params[':offset'] = (int)$offset;
+        
+        $stmt = $this->pdo->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            if ($key === ':limit' || $key === ':offset') {
+                $stmt->bindValue($key, $value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        error_log("Erreur getLogs: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Compter les logs avec filtres
+ */
+public function countLogs($filters = []) {
+    try {
+        $sql = "SELECT COUNT(*) as total FROM admin_logs WHERE 1=1";
+        $params = [];
+        
+        if (!empty($filters['search'])) {
+            $sql .= " AND (action LIKE :search 
+                          OR action_description LIKE :search 
+                          OR admin_email LIKE :search 
+                          OR admin_name LIKE :search 
+                          OR ip_address LIKE :search
+                          OR details LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+        
+        if (!empty($filters['action'])) {
+            $sql .= " AND action = :action";
+            $params[':action'] = $filters['action'];
+        }
+        
+        if (!empty($filters['admin_id'])) {
+            $sql .= " AND admin_id = :admin_id";
+            $params[':admin_id'] = $filters['admin_id'];
+        }
+        
+        if (!empty($filters['level'])) {
+            $sql .= " AND level = :level";
+            $params[':level'] = $filters['level'];
+        }
+        
+        if (!empty($filters['status'])) {
+            $sql .= " AND status = :status";
+            $params[':status'] = $filters['status'];
+        }
+        
+        if (!empty($filters['period'])) {
+            switch($filters['period']) {
+                case 'today':
+                    $sql .= " AND DATE(created_at) = CURDATE()";
+                    break;
+                case '7days':
+                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                    break;
+                case '30days':
+                    $sql .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    break;
+                case 'month':
+                    $sql .= " AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
+                    break;
+            }
+        }
+        
+        if (!empty($filters['date_from'])) {
+            $sql .= " AND DATE(created_at) >= :date_from";
+            $params[':date_from'] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $sql .= " AND DATE(created_at) <= :date_to";
+            $params[':date_to'] = $filters['date_to'];
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
+        
+    } catch (PDOException $e) {
+        error_log("Erreur countLogs: " . $e->getMessage());
+        return 0;
+    }
+}
 }

@@ -150,43 +150,55 @@
             <!-- Filtres -->
             <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-4">
                 <div class="flex flex-wrap items-center gap-3">
+                    <!-- Recherche -->
                     <div class="flex-1 min-w-[220px] relative">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="text" placeholder="Rechercher dans les logs (admin, action, IP...)" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                        <input type="text" id="searchLogs" 
+                            placeholder="Rechercher dans les logs (admin, action, IP...)" 
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                     </div>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les types d'actions</option>
-                        <option>Connexion admin</option>
-                        <option>Validation / Refus produit</option>
-                        <option>Validation / Refus vendeur</option>
-                        <option>Modification utilisateur</option>
-                        <option>Suppression de contenu</option>
-                        <option>Versement effectué</option>
-                        <option>Modification paramètres</option>
-                        <option>Envoi email en masse</option>
+                    
+                    <!-- Type d'action -->
+                    <select id="filterAction" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les types d'actions</option>
+                        <?php foreach ($actionTypes as $action): ?>
+                            <option value="<?= htmlspecialchars($action) ?>"><?= htmlspecialchars($action) ?></option>
+                        <?php endforeach; ?>
                     </select>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les administrateurs</option>
-                        <option>Admin Principal</option>
-                        <option>Modérateur</option>
-                        <option>Support</option>
-                        <option>Comptable</option>
+                    
+                    <!-- Administrateur -->
+                    <select id="filterAdmin" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les administrateurs</option>
+                        <?php foreach ($admins as $admin): ?>
+                            <option value="<?= $admin['id_gestion'] ?>">
+                                <?= htmlspecialchars($admin['nom']) ?> (<?= htmlspecialchars($admin['email']) ?>)
+                            </option>
+                        <?php endforeach; ?>
                     </select>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Toutes les périodes</option>
-                        <option>Aujourd'hui</option>
-                        <option>7 derniers jours</option>
-                        <option>30 derniers jours</option>
-                        <option>Ce mois</option>
-                        <option>Personnalisé</option>
+                    
+                    <!-- Période -->
+                    <select id="filterPeriod" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Toutes les périodes</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="7days">7 derniers jours</option>
+                        <option value="30days">30 derniers jours</option>
+                        <option value="month">Ce mois</option>
+                        <option value="custom">Personnalisé</option>
                     </select>
-                    <select class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
-                        <option>Tous les niveaux</option>
-                        <option>Info</option>
-                        <option>Warning</option>
-                        <option>Critical</option>
+                    
+                    <!-- Niveau -->
+                    <select id="filterLevel" class="px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-600 focus:outline-none focus:border-[#0EA486]">
+                        <option value="">Tous les niveaux</option>
+                        <option value="info">Info</option>
+                        <option value="warning">Warning</option>
+                        <option value="critical">Critical</option>
                     </select>
-                    <button class="px-3 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm flex items-center gap-2">
+                    
+                    <!-- Boutons -->
+                    <button id="applyFilters" class="px-3 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-medium flex items-center gap-2 transition">
+                        <i class="fas fa-search"></i> Filtrer
+                    </button>
+                    <button id="resetFilters" class="px-3 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm flex items-center gap-2 transition">
                         <i class="fas fa-redo"></i> Réinitialiser
                     </button>
                 </div>
@@ -208,48 +220,117 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            
-                            
-
-                            <!-- Log 9 : Connexion échouée -->
-                            <tr class="hover:bg-gray-50/50 transition bg-red-50/20">
-                                <td class="px-4 py-3">
-                                    <p class="text-xs font-semibold text-[#0F172A]">...</p>
-                                    <p class="text-[10px] text-gray-400">...</p>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 bg-gray-300 rounded-full flex items-center justify-center text-white text-[10px] font-semibold">?</div>
-                                        <span class="text-xs font-medium text-gray-500 italic">Inconnu</span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full inline-flex items-center gap-1">
-                                        <i class="fas fa-ban text-[8px]"></i> Connexion échouée
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <p class="text-xs text-gray-600">Tentative de connexion échouée</p>
-                                    <p class="text-[10px] text-gray-400">Email: ... · Motif: ...</p>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="text-xs font-mono text-red-600">...</span>
-                                    <p class="text-[10px] text-gray-400">...</p>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full">Critical</span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openLogDetailBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Voir détail">
-                                            <i class="fas fa-eye text-xs"></i>
-                                        </button>
-                                        <button class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center" title="Bloquer IP">
-                                            <i class="fas fa-ban text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php if (!empty($logs)): ?>
+                                <?php foreach ($logs as $log): ?>
+                                    <?php 
+                                    // Couleurs selon le niveau
+                                    $levelColors = [
+                                        'critical' => 'bg-red-100 text-red-700',
+                                        'warning' => 'bg-yellow-100 text-yellow-700',
+                                        'info' => 'bg-blue-100 text-blue-700'
+                                    ];
+                                    $levelColor = $levelColors[$log['level'] ?? 'info'] ?? 'bg-gray-100 text-gray-700';
+                                    
+                                    // Icône selon l'action
+                                    $actionIcons = [
+                                        'connexion_admin' => 'fa-sign-in-alt',
+                                        'modification_utilisateur' => 'fa-user-edit',
+                                        'validation_produit' => 'fa-check-circle',
+                                        'refus_produit' => 'fa-times-circle',
+                                        'suppression_utilisateur' => 'fa-user-slash',
+                                        'modification_parametres' => 'fa-cog',
+                                        'export_donnees' => 'fa-file-export',
+                                        'envoi_email_masse' => 'fa-envelope',
+                                        'versement_vendeur' => 'fa-money-bill-wave',
+                                        'block_ip' => 'fa-ban',
+                                        'configuration_retention' => 'fa-database'
+                                    ];
+                                    $actionIcon = $actionIcons[$log['action'] ?? ''] ?? 'fa-history';
+                                    
+                                    // Badge de statut
+                                    $statusClass = ($log['status'] ?? 'success') === 'failed' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+                                    $statusIcon = ($log['status'] ?? 'success') === 'failed' ? 'fa-times' : 'fa-check';
+                                    ?>
+                                    <tr class="hover:bg-gray-50/50 transition <?= ($log['level'] ?? '') === 'critical' ? 'bg-red-50/20' : '' ?>">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <p class="text-xs font-semibold text-[#0F172A]">
+                                                <?= date('d/m/Y', strtotime($log['created_at'])) ?>
+                                            </p>
+                                            <p class="text-[10px] text-gray-400">
+                                                <?= date('H:i:s', strtotime($log['created_at'])) ?>
+                                            </p>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-7 h-7 bg-[#0EA486] rounded-full flex items-center justify-center text-white text-[10px] font-semibold">
+                                                    <?= strtoupper(substr($log['admin_name'] ?? '?', 0, 1)) ?>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-[#0F172A]">
+                                                        <?= htmlspecialchars($log['admin_name'] ?? 'Inconnu') ?>
+                                                    </p>
+                                                    <p class="text-[10px] text-gray-400">
+                                                        <?= htmlspecialchars($log['admin_email'] ?? '-') ?>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $levelColor ?> px-2 py-1 rounded-full inline-flex items-center gap-1">
+                                                <i class="fas <?= $actionIcon ?> text-[8px]"></i>
+                                                <?= htmlspecialchars(str_replace('_', ' ', $log['action'] ?? 'Action')) ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <p class="text-xs text-gray-600 max-w-xs truncate">
+                                                <?= htmlspecialchars($log['action_description'] ?? $log['details'] ?? '-') ?>
+                                            </p>
+                                            <?php if (!empty($log['entity_id'])): ?>
+                                                <p class="text-[10px] text-gray-400">
+                                                    ID: <?= htmlspecialchars($log['entity_id']) ?>
+                                                </p>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-xs font-mono text-gray-600">
+                                                <?= htmlspecialchars($log['ip_address'] ?? '-') ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $levelColor ?> px-2 py-1 rounded-full capitalize">
+                                                <?= $log['level'] ?? 'info' ?>
+                                            </span>
+                                            <span class="text-[10px] font-semibold <?= $statusClass ?> px-2 py-1 rounded-full ml-1 inline-flex items-center gap-0.5">
+                                                <i class="fas <?= $statusIcon ?> text-[8px]"></i>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center justify-end gap-1">
+                                                <button class="openLogDetailBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                                        data-id="<?= $log['id'] ?>"
+                                                        title="Voir détail">
+                                                    <i class="fas fa-eye text-xs"></i>
+                                                </button>
+                                                <?php if (!empty($log['ip_address'])): ?>
+                                                    <button class="blockIpBtn w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" 
+                                                            data-ip="<?= htmlspecialchars($log['ip_address']) ?>"
+                                                            title="Bloquer IP">
+                                                        <i class="fas fa-ban text-xs"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">
+                                        <i class="fas fa-inbox text-3xl block mb-2"></i>
+                                        <p class="text-sm">Aucun log trouvé</p>
+                                        <p class="text-xs mt-1">Essayez de modifier vos filtres</p>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -258,27 +339,72 @@
                 <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 bg-gray-50/50">
                     <div class="flex items-center gap-2 text-xs text-gray-500">
                         <span>Afficher</span>
-                        <select class="px-2 py-1 bg-white border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#0EA486]">
-                            <option>25</option>
-                            <option>50</option>
-                            <option>100</option>
-                            <option>500</option>
+                        <select id="limitPerPage" class="px-2 py-1 bg-white border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#0EA486]">
+                            <option value="25" <?= $limit == 25 ? 'selected' : '' ?>>25</option>
+                            <option value="50" <?= $limit == 50 ? 'selected' : '' ?>>50</option>
+                            <option value="100" <?= $limit == 100 ? 'selected' : '' ?>>100</option>
+                            <option value="500" <?= $limit == 500 ? 'selected' : '' ?>>500</option>
                         </select>
                         <span>résultats par page</span>
                     </div>
                     <div class="flex items-center gap-1 text-xs text-gray-500">
-                        <span>1 - 9 sur 2 847</span>
-                        <button class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
-                            <i class="fas fa-chevron-left text-[10px]"></i>
-                        </button>
-                        <button class="w-8 h-8 rounded-lg bg-[#0EA486] text-white flex items-center justify-center">1</button>
-                        <button class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">2</button>
-                        <button class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">3</button>
-                        <span class="px-2 text-gray-400">...</span>
-                        <button class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">114</button>
-                        <button class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
-                            <i class="fas fa-chevron-right text-[10px]"></i>
-                        </button>
+                        <?php 
+                        $totalPages = ceil($total / $limit);
+                        $from = ($page - 1) * $limit + 1;
+                        $to = min($page * $limit, $total);
+                        ?>
+                        <span><?= $from ?> - <?= $to ?> sur <?= $total ?></span>
+                        
+                        <?php if ($page > 1): ?>
+                            <a href="?url=logs-audit&page=<?= $page - 1 ?><?= !empty($filters) ? '&' . http_build_query($filters) : '' ?>" 
+                            class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition">
+                                <i class="fas fa-chevron-left text-[10px]"></i>
+                            </a>
+                        <?php else: ?>
+                            <button class="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center cursor-not-allowed opacity-50">
+                                <i class="fas fa-chevron-left text-[10px]"></i>
+                            </button>
+                        <?php endif; ?>
+                        
+                        <?php 
+                        $startPage = max(1, $page - 2);
+                        $endPage = min($totalPages, $page + 2);
+                        
+                        if ($startPage > 1): ?>
+                            <a href="?url=logs-audit&page=1<?= !empty($filters) ? '&' . http_build_query($filters) : '' ?>" 
+                            class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition">1</a>
+                            <?php if ($startPage > 2): ?>
+                                <span class="px-2 text-gray-400">...</span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        
+                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                            <?php if ($i == $page): ?>
+                                <span class="w-8 h-8 rounded-lg bg-[#0EA486] text-white flex items-center justify-center"><?= $i ?></span>
+                            <?php else: ?>
+                                <a href="?url=logs-audit&page=<?= $i ?><?= !empty($filters) ? '&' . http_build_query($filters) : '' ?>" 
+                                class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition"><?= $i ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                        
+                        <?php if ($endPage < $totalPages): ?>
+                            <?php if ($endPage < $totalPages - 1): ?>
+                                <span class="px-2 text-gray-400">...</span>
+                            <?php endif; ?>
+                            <a href="?url=logs-audit&page=<?= $totalPages ?><?= !empty($filters) ? '&' . http_build_query($filters) : '' ?>" 
+                            class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition"><?= $totalPages ?></a>
+                        <?php endif; ?>
+                        
+                        <?php if ($page < $totalPages): ?>
+                            <a href="?url=logs-audit&page=<?= $page + 1 ?><?= !empty($filters) ? '&' . http_build_query($filters) : '' ?>" 
+                            class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition">
+                                <i class="fas fa-chevron-right text-[10px]"></i>
+                            </a>
+                        <?php else: ?>
+                            <button class="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center cursor-not-allowed opacity-50">
+                                <i class="fas fa-chevron-right text-[10px]"></i>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -847,23 +973,6 @@
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ============================================
 // GRAPHIQUE D'ACTIVITÉ - DONNÉES DEPUIS PHP
 // ============================================
@@ -1009,7 +1118,191 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================
+// GESTION DES FILTRES - LOGS
+// ============================================
+
+(function() {
+    'use strict';
+
+    // Éléments du DOM
+    const searchInput = document.getElementById('searchLogs');
+    const filterAction = document.getElementById('filterAction');
+    const filterAdmin = document.getElementById('filterAdmin');
+    const filterPeriod = document.getElementById('filterPeriod');
+    const filterLevel = document.getElementById('filterLevel');
+    const applyBtn = document.getElementById('applyFilters');
+    const resetBtn = document.getElementById('resetFilters');
+
+    /**
+     * Récupérer les valeurs des filtres
+     */
+    function getFilters() {
+        const filters = {};
         
+        if (searchInput.value.trim()) filters.search = searchInput.value.trim();
+        if (filterAction.value) filters.action = filterAction.value;
+        if (filterAdmin.value) filters.admin_id = filterAdmin.value;
+        if (filterPeriod.value) filters.period = filterPeriod.value;
+        if (filterLevel.value) filters.level = filterLevel.value;
+        
+        return filters;
+    }
+
+    /**
+     * Appliquer les filtres et recharger les données
+     */
+    function applyFilters() {
+        const filters = getFilters();
+        const params = new URLSearchParams(filters);
+        
+        // Ajouter la page
+        params.set('page', 1);
+        params.set('limit', 25);
+        
+        // Rediriger vers la même page avec les filtres
+        window.location.href = window.location.pathname + '?url=logs-audit&' + params.toString();
+    }
+
+    /**
+     * Réinitialiser tous les filtres
+     */
+    function resetFilters() {
+        searchInput.value = '';
+        filterAction.value = '';
+        filterAdmin.value = '';
+        filterPeriod.value = '';
+        filterLevel.value = '';
+        
+        // Recharger sans filtres
+        window.location.href = window.location.pathname + '?url=logs-audit';
+    }
+
+    /**
+     * Recherche en temps réel (debounce)
+     */
+    let searchTimeout = null;
+    function handleSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            applyFilters();
+        }, 500);
+    }
+
+    // ============================================
+    // ÉVÉNEMENTS
+    // ============================================
+
+    // Bouton Appliquer
+    applyBtn.addEventListener('click', applyFilters);
+
+    // Bouton Réinitialiser
+    resetBtn.addEventListener('click', resetFilters);
+
+    // Recherche en temps réel
+    searchInput.addEventListener('input', handleSearch);
+
+    // Filtres au changement (sauf recherche)
+    filterAction.addEventListener('change', applyFilters);
+    filterAdmin.addEventListener('change', applyFilters);
+    filterPeriod.addEventListener('change', applyFilters);
+    filterLevel.addEventListener('change', applyFilters);
+
+    // Touche Entrée pour la recherche
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            clearTimeout(searchTimeout);
+            applyFilters();
+        }
+    });
+
+    console.log('✅ Filtres initialisés');
+
+})();
+       
+
+
+
+
+
+
+
+
+// ============================================
+// GESTION DE LA PAGINATION
+// ============================================
+
+(function() {
+    'use strict';
+
+    const limitSelect = document.getElementById('limitPerPage');
+    
+    if (limitSelect) {
+        limitSelect.addEventListener('change', function() {
+            const limit = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('limit', limit);
+            url.searchParams.set('page', 1);
+            window.location.href = url.toString();
+        });
+    }
+
+    // Boutons pour bloquer IP
+    document.querySelectorAll('.blockIpBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const ip = this.dataset.ip;
+            if (!ip) return;
+            
+            if (confirm(`Voulez-vous vraiment bloquer l'IP ${ip} ?`)) {
+                fetch('/back-end/routes/api.php?url=logs_block_ip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ip: ip })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Succès', 'IP bloquée avec succès', 'success');
+                        // Recharger la page après 1s
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast('Erreur', data.message || 'Erreur lors du blocage', 'error');
+                    }
+                })
+                .catch(() => {
+                    showToast('Erreur', 'Erreur de connexion', 'error');
+                });
+            }
+        });
+    });
+
+})();
     </script>
 </body>
 </html>

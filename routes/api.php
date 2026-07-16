@@ -460,13 +460,13 @@ switch ($url) {
         $controller->getStats();
         break;
 
-    // API - Liste des logs
-    case 'logs_list':
-        require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
-        $controller = new LogsAuditController($pdo);
-        $controller->getLogs();
-        break;
-
+    // API - Liste des logs avec filtres
+case 'logs_list':
+    require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';
+    $controller = new LogsAuditController($pdo);
+    $controller->getLogs();
+    break;
+    
     // API - Détail d'un log
     case 'logs_detail':
         require_once __DIR__ . '/../App/Controllers/Admin/LogsAuditController.php';

@@ -14,31 +14,47 @@ class LogsAuditController {
     /**
      * Page principale
      */
-    public function index() {
-        $stats = $this->model->getStats();
-        
-        $filters = $_GET['filters'] ?? [];
-        $page = (int)($_GET['page'] ?? 1);
-        $limit = (int)($_GET['limit'] ?? 25);
-        $offset = ($page - 1) * $limit;
-        
-        $logs = $this->model->getLogs($filters, $limit, $offset);
-        $total = $this->model->countLogs($filters);
-        $chartData = $this->model->getActivityChart(7);
-        
-        $this->render('admin/logs-audit', [
-            'stats' => $stats,
-            'logs' => $logs,
-            'total' => $total,
-            'page' => $page,
-            'limit' => $limit,
-            'filters' => $filters,
-            'chartData' => $chartData,
-            'currentPage' => 'logs-audit'
-        ]);
 
-       
-    }
+public function index() {
+    // 🔥 Récupérer les données pour les filtres
+    $actionTypes = $this->model->getActionTypes();
+    $admins = $this->model->getAdmins();
+    
+    // 🔥 Récupérer les filtres depuis l'URL
+    $filters = [];
+    if (!empty($_GET['search'])) $filters['search'] = $_GET['search'];
+    if (!empty($_GET['action'])) $filters['action'] = $_GET['action'];
+    if (!empty($_GET['admin_id'])) $filters['admin_id'] = $_GET['admin_id'];
+    if (!empty($_GET['level'])) $filters['level'] = $_GET['level'];
+    if (!empty($_GET['period'])) $filters['period'] = $_GET['period'];
+    if (!empty($_GET['date_from'])) $filters['date_from'] = $_GET['date_from'];
+    if (!empty($_GET['date_to'])) $filters['date_to'] = $_GET['date_to'];
+    
+    // Pagination
+    $page = (int)($_GET['page'] ?? 1);
+    $limit = (int)($_GET['limit'] ?? 25);
+    $offset = ($page - 1) * $limit;
+    
+    // Données
+    $stats = $this->model->getStats();
+    $logs = $this->model->getLogs($filters, $limit, $offset);
+    $total = $this->model->countLogs($filters);
+    $chartData = $this->model->getActivityChart(7);
+    
+    // 🔥 Passer toutes les données à la vue
+    $this->render('admin/logs-audit', [
+        'stats' => $stats,
+        'logs' => $logs,
+        'total' => $total,
+        'page' => $page,
+        'limit' => $limit,
+        'filters' => $filters,
+        'chartData' => $chartData,
+        'actionTypes' => $actionTypes,    // 🔥 Pour les types d'actions
+        'admins' => $admins,              // 🔥 Pour les administrateurs
+        'currentPage' => 'logs-audit'
+    ]);
+}
 
     /**
      * API - Statistiques
@@ -52,25 +68,33 @@ class LogsAuditController {
      * API - Liste des logs
      */
     public function getLogs() {
-        $filters = $_GET['filters'] ?? [];
-        $page = (int)($_GET['page'] ?? 1);
-        $limit = (int)($_GET['limit'] ?? 25);
-        $offset = ($page - 1) * $limit;
-        
-        $logs = $this->model->getLogs($filters, $limit, $offset);
-        $total = $this->model->countLogs($filters);
-        
-        $this->jsonResponse([
-            'success' => true,
-            'data' => $logs,
-            'pagination' => [
-                'total' => $total,
-                'page' => $page,
-                'limit' => $limit,
-                'pages' => ceil($total / $limit)
-            ]
-        ]);
-    }
+    $filters = [];
+    if (!empty($_GET['search'])) $filters['search'] = $_GET['search'];
+    if (!empty($_GET['action'])) $filters['action'] = $_GET['action'];
+    if (!empty($_GET['admin_id'])) $filters['admin_id'] = $_GET['admin_id'];
+    if (!empty($_GET['level'])) $filters['level'] = $_GET['level'];
+    if (!empty($_GET['period'])) $filters['period'] = $_GET['period'];
+    if (!empty($_GET['date_from'])) $filters['date_from'] = $_GET['date_from'];
+    if (!empty($_GET['date_to'])) $filters['date_to'] = $_GET['date_to'];
+    
+    $page = (int)($_GET['page'] ?? 1);
+    $limit = (int)($_GET['limit'] ?? 25);
+    $offset = ($page - 1) * $limit;
+    
+    $logs = $this->model->getLogs($filters, $limit, $offset);
+    $total = $this->model->countLogs($filters);
+    
+    $this->jsonResponse([
+        'success' => true,
+        'data' => $logs,
+        'pagination' => [
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit,
+            'pages' => ceil($total / $limit)
+        ]
+    ]);
+}
 
     /**
      * API - Graphique
