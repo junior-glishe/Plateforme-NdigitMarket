@@ -237,7 +237,7 @@ $userPermissions = \App\Core\Auth::permissions();
                 <?php endif; ?>
 
                 <?php if (\App\Core\Auth::hasPermission('logs.view')): ?>
-                    <a href="<?= $baseUrl ?>/routes/api.php?url=categories"
+                    <a href="<?= $baseUrl ?>/routes/api.php?url=logs-audit"
                         class="sidebar-link <?= $currentPage === 'logs-audit' ? 'active' : '' ?>">
                         <i class="fas fa-history"></i> Logs & audit trail
                     </a>
