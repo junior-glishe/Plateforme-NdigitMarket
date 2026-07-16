@@ -148,31 +148,6 @@ public function getLogs() {
         $this->model->exportCSV($filters);
     }
 
-    /**
-     * API - Rétention
-     */
-    public function updateRetention() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-        
-        $retention = (int)($_POST['retention_days'] ?? 365);
-        $deleted = $this->model->deleteOldLogs($retention);
-        
-        $this->model->addLog([
-            'action_type' => 'configuration_retention',
-            'action_description' => 'Mise à jour de la rétention: ' . $retention . ' jours',
-            'level' => 'info',
-            'metadata' => ['retention_days' => $retention, 'logs_deleted' => $deleted]
-        ]);
-        
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Rétention configurée',
-            'data' => ['retention_days' => $retention, 'logs_deleted' => $deleted]
-        ]);
-    }
 
     /**
  * API - Bloquer IP (CORRIGÉ)
@@ -475,6 +450,49 @@ private function exportLogsJSON($data, $filename) {
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
 }
+
+
+
+// App/Controllers/Admin/LogsAuditController.php
+
+public function updateRetention() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    $retention = (int)($_POST['retention_days'] ?? 365);
+    $criticalRetention = $_POST['critical_retention'] ?? 'unlimited';
+    
+    // Supprimer les anciens logs (sauf critiques si conservation illimitée)
+    $deleted = 0;
+    if ($retention > 0) {
+        $deleted = $this->model->deleteOldLogs($retention);
+    }
+    
+    // Journaliser l'action
+    $this->model->addLog([
+        'action_type' => 'configuration_retention',
+        'action_description' => 'Mise à jour de la rétention: ' . $retention . ' jours',
+        'level' => 'info',
+        'metadata' => [
+            'retention_days' => $retention,
+            'critical_retention' => $criticalRetention,
+            'logs_deleted' => $deleted
+        ]
+    ]);
+    
+    $this->jsonResponse([
+        'success' => true,
+        'message' => 'Rétention configurée avec succès',
+        'data' => [
+            'retention_days' => $retention,
+            'logs_deleted' => $deleted
+        ]
+    ]);
+}
+
+
 
 
     private function jsonResponse($data, $statusCode = 200) {

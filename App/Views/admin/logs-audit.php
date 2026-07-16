@@ -639,79 +639,89 @@
 
 
     <!-- MODAL : CONFIGURATION RÉTENTION -->
-    <div id="retentionModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-database text-[#0EA486]"></i> Configuration de la rétention
-                    </h3>
-                    <p class="text-xs text-gray-400">Durée de conservation des logs</p>
-                </div>
-                <button class="closeRetentionBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
+<div id="retentionModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fadeIn">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+            <div>
+                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                    <i class="fas fa-database text-[#0EA486]"></i> Configuration de la rétention
+                </h3>
+                <p class="text-xs text-gray-400">Durée de conservation des logs</p>
             </div>
-            <div class="p-6 space-y-4">
-                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <p class="text-sm text-blue-700">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Les logs plus anciens que la durée définie seront automatiquement supprimés pour économiser de l'espace.
-                    </p>
-                </div>
+            <button class="closeRetentionBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Durée de rétention <span class="text-red-500">*</span></label>
-                    <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                        <option>3 mois</option>
-                        <option>6 mois</option>
-                        <option selected>12 mois (par défaut)</option>
-                        <option>18 mois</option>
-                        <option>24 mois</option>
-                        <option>36 mois</option>
-                        <option>Illimitée</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1">Recommandation légale : minimum 12 mois</p>
-                </div>
+        <!-- Body -->
+        <div class="p-6 space-y-4">
+            <!-- Info -->
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 flex items-start gap-3">
+                <i class="fas fa-info-circle text-blue-600 text-sm mt-0.5"></i>
+                <p class="text-sm text-blue-700">Les logs plus anciens que la durée définie seront automatiquement supprimés pour économiser de l'espace.</p>
+            </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Actions critiques</label>
-                    <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                        <option>Même durée que les autres logs</option>
-                        <option selected>Conservation illimitée</option>
-                        <option>Durée personnalisée</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1">Les actions critiques (suppressions, modifications paramètres) peuvent être conservées plus longtemps</p>
-                </div>
+            <!-- Durée de rétention -->
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                    Durée de rétention <span class="text-red-500">*</span>
+                </label>
+                <select id="retentionPeriod" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:ring-2 focus:ring-[#0EA486]/20 transition">
+                    <option value="90">3 mois</option>
+                    <option value="180">6 mois</option>
+                    <option value="365" selected>12 mois (par défaut)</option>
+                    <option value="540">18 mois</option>
+                    <option value="730">24 mois</option>
+                    <option value="1095">36 mois</option>
+                    <option value="0">Illimitée</option>
+                </select>
+                <p class="text-[10px] text-gray-400 mt-1">Recommandation légale : minimum 12 mois</p>
+            </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                        <p class="text-[10px] text-gray-400 mb-1">Logs actuels</p>
-                        <p class="text-lg font-bold text-[#0F172A]">...</p>
-                        <p class="text-[10px] text-gray-500">entrées</p>
-                    </div>
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                        <p class="text-[10px] text-gray-400 mb-1">Espace utilisé</p>
-                        <p class="text-lg font-bold text-[#0F172A]">... MB</p>
-                        <p class="text-[10px] text-gray-500">base de données</p>
-                    </div>
-                </div>
+            <!-- Actions critiques -->
+            <div>
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Actions critiques</label>
+                <select id="criticalRetention" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:ring-2 focus:ring-[#0EA486]/20 transition">
+                    <option value="same">Même durée que les autres logs</option>
+                    <option value="unlimited" selected>Conservation illimitée</option>
+                    <option value="custom">Durée personnalisée</option>
+                </select>
+                <p class="text-[10px] text-gray-400 mt-1">Les actions critiques (suppressions, modifications paramètres) peuvent être conservées plus longtemps</p>
+            </div>
 
-                <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200 flex items-start gap-2">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
-                    <p class="text-xs text-yellow-700">La réduction de la durée de rétention supprimera définitivement les logs plus anciens.</p>
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <p class="text-[10px] text-gray-400 mb-1">Logs actuels</p>
+                    <p class="text-lg font-bold text-[#0F172A]" id="currentLogsCount">...</p>
+                    <p class="text-[10px] text-gray-500">entrées</p>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-xl border border-gray-200">
+                    <p class="text-[10px] text-gray-400 mb-1">Espace utilisé</p>
+                    <p class="text-lg font-bold text-[#0F172A]" id="currentLogsSize">... MB</p>
+                    <p class="text-[10px] text-gray-500">base de données</p>
                 </div>
             </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeRetentionBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Annuler
-                </button>
-                <button id="saveRetentionBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-save"></i> Enregistrer
-                </button>
+
+            <!-- Avertissement -->
+            <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200 flex items-start gap-2">
+                <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                <p class="text-xs text-yellow-700">La réduction de la durée de rétention supprimera définitivement les logs plus anciens.</p>
             </div>
         </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+            <button class="closeRetentionBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
+                Annuler
+            </button>
+            <button id="saveRetentionBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        </div>
     </div>
+</div>
 
     <!-- MODAL : EXPORT CSV -->
     <!-- MODAL : EXPORT LOGS -->
@@ -921,35 +931,148 @@
             return { openModal, closeModal };
         }
 
-        // Modal rétention
-        (function() {
+       // ============================================
+// CONFIGURATION DE LA RÉTENTION
+// ============================================
+
+(function() {
+    'use strict';
+
+    const modal = document.getElementById('retentionModal');
+    const openBtn = document.getElementById('openRetentionBtn');
+    const closeBtns = document.querySelectorAll('.closeRetentionBtn');
+    const saveBtn = document.getElementById('saveRetentionBtn');
+    const retentionSelect = document.getElementById('retentionPeriod');
+    const criticalSelect = document.getElementById('criticalRetention');
+
+    // ============================================
+    // 1. OUVERTURE / FERMETURE
+    // ============================================
+    function openModal() {
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            loadRetentionStats();
+        }
+    }
+
+    function closeModal() {
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    }
+
+    openBtn?.addEventListener('click', openModal);
+
+    closeBtns.forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+
+    modal?.addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
             const modal = document.getElementById('retentionModal');
-            const openBtn = document.getElementById('openRetentionBtn');
-            const closeBtns = document.querySelectorAll('.closeRetentionBtn');
-            const saveBtn = document.getElementById('saveRetentionBtn');
+            if (modal && !modal.classList.contains('hidden')) closeModal();
+        }
+    });
 
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-            }
+    // ============================================
+    // 2. CHARGEMENT DES STATS
+    // ============================================
+    function loadRetentionStats() {
+        const countEl = document.getElementById('currentLogsCount');
+        const sizeEl = document.getElementById('currentLogsSize');
+        
+        if (!countEl || !sizeEl) return;
 
-            openBtn.addEventListener('click', openModal);
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
+        // 🔥 Appel API pour récupérer les stats
+        fetch('/back-end/routes/api.php?url=logs_stats')
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data) {
+                    const total = result.data.total || 0;
+                    countEl.textContent = total.toLocaleString('fr-FR');
+                    
+                    // Estimation de la taille (simulée)
+                    const size = Math.round((total * 0.002) * 100) / 100;
+                    sizeEl.textContent = size.toFixed(1);
+                } else {
+                    countEl.textContent = '0';
+                    sizeEl.textContent = '0.0';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                countEl.textContent = '?';
+                sizeEl.textContent = '?';
             });
+    }
 
-            saveBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Rétention configurée', 'La durée de conservation des logs a été mise à jour', 'success');
-            });
-        })();
+    // ============================================
+    // 3. ENREGISTREMENT
+    // ============================================
+    saveBtn?.addEventListener('click', function() {
+        // Récupérer les valeurs
+        const retentionDays = parseInt(retentionSelect?.value || 365);
+        const criticalRetention = criticalSelect?.value || 'unlimited';
+
+        // Validation
+        if (retentionDays === 0) {
+            // Illimité - demander confirmation
+            if (!confirm('⚠️ Vous avez choisi une conservation illimitée. Cela peut augmenter la taille de la base de données. Continuer ?')) {
+                return;
+            }
+        }
+
+        // Désactiver le bouton
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+        // Construire les données
+        const formData = new FormData();
+        formData.append('retention_days', retentionDays);
+        formData.append('critical_retention', criticalRetention);
+
+        // Envoyer la requête
+        fetch('/back-end/routes/api.php?url=logs_retention', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            closeModal();
+            
+            if (data.success) {
+                const deleted = data.data?.logs_deleted || 0;
+                let message = 'Durée de conservation mise à jour avec succès';
+                if (deleted > 0) {
+                    message += ` (${deleted} logs supprimés)`;
+                }
+                showToast('Succès', message, 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showToast('Erreur', data.message || 'Erreur lors de l\'enregistrement', 'error');
+            }
+        })
+        .catch(error => {
+            closeModal();
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        });
+    });
+
+})();
 
         // Modal export
         (function() {
