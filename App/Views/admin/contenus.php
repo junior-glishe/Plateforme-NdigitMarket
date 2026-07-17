@@ -177,16 +177,16 @@
                                             <i class="fas fa-eye text-xs"></i>
                                         </button>
                                         <button class="openBannerFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition"
-                                            title="Modifier"
-                                            data-id="<?= $banniere['id'] ?>"
-                                            data-titre="<?= htmlspecialchars($banniere['titre'] ?? '') ?>"
-                                            data-sous-titre="<?= htmlspecialchars($banniere['sous_titre'] ?? '') ?>"
-                                            data-image="<?= $banniere['image'] ?? '' ?>"
-                                            data-texte-bouton="<?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>"
-                                            data-url="<?= htmlspecialchars($banniere['url_destination'] ?? '') ?>"
-                                            data-debut="<?= $banniere['date_debut'] ?? '' ?>"
-                                            data-fin="<?= $banniere['date_fin'] ?? '' ?>"
-                                            data-statut="<?= $banniere['statut'] ?? 'active' ?>">
+                                                title="Modifier"
+                                                data-id="<?= $banniere['id'] ?>"
+                                                data-titre="<?= htmlspecialchars($banniere['titre'] ?? '') ?>"
+                                                data-sous-titre="<?= htmlspecialchars($banniere['sous_titre'] ?? '') ?>"
+                                                data-image="<?= $banniere['image'] ?? '' ?>"
+                                                data-texte-bouton="<?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>"
+                                                data-url="<?= htmlspecialchars($banniere['url_destination'] ?? '') ?>"
+                                                data-debut="<?= isset($banniere['date_debut']) ? date('Y-m-d\TH:i', strtotime($banniere['date_debut'])) : '' ?>"
+                                                data-fin="<?= isset($banniere['date_fin']) ? date('Y-m-d\TH:i', strtotime($banniere['date_fin'])) : '' ?>"
+                                                data-statut="<?= $banniere['statut'] ?? 'active' ?>">
                                             <i class="fas fa-edit text-xs"></i>
                                         </button>
                                         <button class="toggleBannerBtn w-9 h-9 rounded-lg <?= $banniere['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition"
@@ -577,14 +577,22 @@
                     </form>
 
                     <!-- Aperçu en temps réel -->
+                    <?php 
+                        $imagePath = !empty($banniere['image']) ? '/back-end/public/uploads/bannieres/' . $banniere['image'] : '';
+                        $hasImage = !empty($banniere['image']);
+                        $style = $hasImage 
+                            ? 'background-image: url(' . $imagePath . '); background-size: cover; background-position: center;' 
+                            : 'background: linear-gradient(135deg, #6366f1, #8b5cf6);';
+                    ?>
+
                     <div class="p-6 bg-gray-50">
                         <h5 class="text-xs font-semibold text-gray-500 uppercase mb-3 flex items-center gap-2">
                             <i class="fas fa-eye text-[#0EA486]"></i> Aperçu en temps réel
                         </h5>
-                        <div id="bannerPreview" class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg"
-                        style="background-image: url('/back-end/public/uploads/bannieres/<?= htmlspecialchars($banniere['image'] ?? '') ?>'); background-size: cover; background-position: center; <?= empty($banniere['image']) ? 'background: linear-gradient(135deg, #6366f1, #8b5cf6);' : '' ?>">
+                        <div id="bannerPreview" class="rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg bg-cover bg-center"
+                            style="<?= $style ?>">
                             <div class="absolute inset-0 bg-black/30"></div>
-                            <div class="relative text-center text-white px-6">
+                            <div class="relative text-center text-white px-6 z-10">
                                 <p id="previewSubtitle" class="text-sm font-bold uppercase tracking-wider mb-2">Sous-titre</p>
                                 <p id="previewTitle" class="text-3xl font-extrabold mb-4">Titre de la bannière</p>
                                 <button id="previewButton" class="px-6 py-2.5 bg-white text-[#0F172A] rounded-xl text-sm font-bold hover:scale-105 transition">
@@ -1172,6 +1180,24 @@
             });
         })();
 
+        // ============================================
+// FONCTIONS UTILITAIRES POUR LES DATES
+// ============================================
+
+function formatDateForInput(dateString) {
+    if (!dateString) return '';
+    // Convertir "2026-07-04 12:20:21" en "2026-07-04T12:20"
+    const date = dateString.replace(' ', 'T');
+    return date.slice(0, 16);
+}
+
+function formatDateForDb(dateString) {
+    if (!dateString) return '';
+    // Convertir "2026-07-04T12:20" en "2026-07-04 12:20:21"
+    const date = dateString.replace('T', ' ');
+    return date + ':00';
+}
+
         // Toast notification
         function showToast(title, message, type = 'success') {
             const toast = document.getElementById('toast');
@@ -1571,108 +1597,158 @@
 
 
         // ============================================
-        // MODAL APERÇU BANNIÈRE
-        // ============================================
-        (function() {
-            const modal = document.getElementById('bannerPreviewModal');
-            const openBtns = document.querySelectorAll('.openBannerPreviewBtn');
-            const closeBtns = document.querySelectorAll('.closeBannerPreviewBtn');
+// MODAL APERÇU BANNIÈRE
+// ============================================
+(function() {
+    'use strict';
 
-            function openBannerPreviewModal() {
-                const btn = this;
-                const id = btn.getAttribute('data-id');
+    const modal = document.getElementById('bannerPreviewModal');
+    const openBtns = document.querySelectorAll('.openBannerPreviewBtn');
+    const closeBtns = document.querySelectorAll('.closeBannerPreviewBtn');
+    const content = document.getElementById('bannerPreviewContent');
 
-                if (!id) {
-                    showToast('Erreur', 'ID manquant', 'error');
-                    return;
+    //  CHEMIN CORRECT DES IMAGES
+    const IMAGE_BASE_PATH = '/back-end/public/uploads/bannieres/';
+
+    function openBannerPreviewModal() {
+        const btn = this;
+        const id = btn.getAttribute('data-id');
+
+        if (!id) {
+            showToast('Erreur', 'ID manquant', 'error');
+            return;
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        // Afficher un loader
+        content.innerHTML = `
+            <div class="flex items-center justify-center h-64">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin text-3xl text-[#0EA486]"></i>
+                    <p class="text-gray-400 mt-2">Chargement...</p>
+                </div>
+            </div>
+        `;
+
+        fetch('/back-end/routes/api.php?url=banniere_get&id=' + id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderPreview(data.data);
+                } else {
+                    showToast('Erreur', data.error || 'Erreur de chargement', 'error');
+                    closeBannerPreviewModal();
                 }
-
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-
-                fetch('api.php?url=banniere_get&id=' + id)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            renderPreview(data.data);
-                        } else {
-                            showToast('Erreur', data.error || 'Erreur de chargement', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        showToast('Erreur', 'Erreur serveur', 'error');
-                    });
-            }
-
-            function renderPreview(banner) {
-                const colors = [
-                    ['#6366f1', '#8b5cf6'],
-                    ['#f59e0b', '#ef4444'],
-                    ['#10b981', '#06b6d4'],
-                    ['#8b5cf6', '#ec4899'],
-                    ['#f472b6', '#fb923c'],
-                    ['#14b8a6', '#3b82f6'],
-                    ['#a855f7', '#d946ef'],
-                    ['#f97316', '#ef4444']
-                ];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const gradient = `linear-gradient(135deg, ${color[0]}, ${color[1]})`;
-
-                const desktopDiv = document.getElementById('previewDesktop');
-                if (desktopDiv) {
-                    desktopDiv.style.background = gradient;
-                    if (banner.image) {
-                        desktopDiv.style.backgroundImage = `url('/public/uploads/bannieres/${banner.image}')`;
-                        desktopDiv.style.backgroundSize = 'cover';
-                        desktopDiv.style.backgroundPosition = 'center';
-                    }
-                }
-                document.getElementById('previewDesktopSubtitle').textContent = banner.sous_titre || 'Promo';
-                document.getElementById('previewDesktopTitle').textContent = banner.titre || 'Titre de la bannière';
-                document.getElementById('previewDesktopButton').textContent = banner.texte_bouton || 'Voir les offres';
-
-                const mobileDiv = document.getElementById('previewMobile');
-                if (mobileDiv) {
-                    mobileDiv.style.background = gradient;
-                    if (banner.image) {
-                        mobileDiv.style.backgroundImage = `url('/public/uploads/bannieres/${banner.image}')`;
-                        mobileDiv.style.backgroundSize = 'cover';
-                        mobileDiv.style.backgroundPosition = 'center';
-                    }
-                }
-                document.getElementById('previewMobileSubtitle').textContent = banner.sous_titre || 'Promo';
-                document.getElementById('previewMobileTitle').textContent = banner.titre || 'Titre de la bannière';
-                document.getElementById('previewMobileButton').textContent = banner.texte_bouton || 'Voir les offres';
-
-                document.getElementById('previewInfoTitle').textContent = banner.titre || '---';
-                document.getElementById('previewInfoUrl').textContent = banner.url_destination || '---';
-
-                const dateDebut = banner.date_debut ? new Date(banner.date_debut).toLocaleDateString('fr-FR') : '---';
-                const dateFin = banner.date_fin ? new Date(banner.date_fin).toLocaleDateString('fr-FR') : '---';
-                document.getElementById('previewInfoPeriod').textContent = `Du ${dateDebut} au ${dateFin}`;
-
-                const statusText = banner.statut === 'active' ? 'Active' : 'Inactive';
-                const statusClass = banner.statut === 'active' ? 'text-emerald-600' : 'text-gray-500';
-                const statusEl = document.getElementById('previewInfoStatus');
-                statusEl.textContent = statusText;
-                statusEl.className = `font-medium ${statusClass}`;
-            }
-
-            function closeBannerPreviewModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-            }
-
-            openBtns.forEach(btn => btn.addEventListener('click', openBannerPreviewModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeBannerPreviewModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeBannerPreviewModal();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Erreur serveur', 'error');
+                closeBannerPreviewModal();
             });
-        })();
+    }
 
+    function renderPreview(banner) {
+        //  Construction du chemin de l'image
+        const imageUrl = banner.image ? IMAGE_BASE_PATH + banner.image : '';
+        const hasImage = banner.image && imageUrl;
+
+        // Couleurs par défaut
+        const colors = [
+            ['#6366f1', '#8b5cf6'],
+            ['#f59e0b', '#ef4444'],
+            ['#10b981', '#06b6d4'],
+            ['#8b5cf6', '#ec4899'],
+            ['#f472b6', '#fb923c'],
+            ['#14b8a6', '#3b82f6'],
+            ['#a855f7', '#d946ef'],
+            ['#f97316', '#ef4444']
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const gradient = `linear-gradient(135deg, ${color[0]}, ${color[1]})`;
+
+        const html = `
+            <!-- En-tête de la bannière -->
+            <div>
+                <h5 class="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-2">
+                    <i class="fas fa-desktop text-[#0EA486]"></i> Version desktop
+                </h5>
+                <div id="previewDesktop" class="rounded-2xl w-full h-64 md:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden shadow-lg bg-cover bg-center"
+                     style="${hasImage ? 'background-image: url(' + imageUrl + '); background-size: cover; background-position: center;' : 'background: ' + gradient + ';'}">
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div class="relative text-center text-white px-6 z-10">
+                        <p class="text-sm md:text-base font-bold uppercase tracking-wider mb-2">${banner.sous_titre || 'Promo'}</p>
+                        <p class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">${banner.titre || 'Titre de la bannière'}</p>
+                        <button class="px-6 py-2.5 bg-white text-[#0F172A] rounded-xl text-sm md:text-base font-bold hover:scale-105 transition">
+                            ${banner.texte_bouton || 'Voir les offres'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview mobile -->
+            <div>
+                <h5 class="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-2">
+                    <i class="fas fa-mobile-alt text-[#0EA486]"></i> Version mobile
+                </h5>
+                <div class="max-w-sm mx-auto">
+                    <div id="previewMobile" class="rounded-2xl h-48 w-full flex items-center justify-center relative overflow-hidden shadow-lg bg-cover bg-center"
+                         style="${hasImage ? 'background-image: url(' + imageUrl + '); background-size: cover; background-position: center;' : 'background: ' + gradient + ';'}">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                        <div class="relative text-center text-white px-4 z-10">
+                            <p class="text-xs font-bold uppercase tracking-wider mb-1">${banner.sous_titre || 'Promo'}</p>
+                            <p class="text-lg md:text-xl font-extrabold mb-3">${banner.titre || 'Titre de la bannière'}</p>
+                            <button class="px-4 py-2 bg-white text-[#0F172A] rounded-lg text-xs font-bold hover:scale-105 transition">
+                                ${banner.texte_bouton || 'Voir les offres'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infos -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100">
+                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-[#0EA486]"></i> Informations
+                </h5>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Titre</span>
+                        <span class="font-medium text-[#0F172A]">${banner.titre || '---'}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">URL</span>
+                        <span class="font-mono text-[#0F172A] truncate max-w-[200px]">${banner.url_destination || '---'}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Période</span>
+                        <span class="font-medium text-[#0F172A]">${banner.date_debut ? new Date(banner.date_debut).toLocaleDateString('fr-FR') : '---'} - ${banner.date_fin ? new Date(banner.date_fin).toLocaleDateString('fr-FR') : '---'}</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-500">Statut</span>
+                        <span class="font-medium ${banner.statut === 'active' ? 'text-emerald-600' : 'text-gray-500'}">${banner.statut === 'active' ? 'Active' : 'Inactive'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        content.innerHTML = html;
+    }
+
+    function closeBannerPreviewModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    openBtns.forEach(btn => btn.addEventListener('click', openBannerPreviewModal));
+    closeBtns.forEach(btn => btn.addEventListener('click', closeBannerPreviewModal));
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeBannerPreviewModal();
+    });
+})();
         // ============================================
         // MODAL STATS BANNIÈRE - VERSION MAINTENABLE
         // ============================================
@@ -3027,7 +3103,7 @@
         previewButton.textContent = 'Voir les offres';
         previewContainer.className = 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg';
         
-        // Date par defaut
+        //  Date par defaut au bon format
         const now = new Date();
         const nowStr = now.toISOString().slice(0, 16);
         const weekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -3037,7 +3113,7 @@
         if (bannerDateFin) bannerDateFin.value = weekLaterStr;
     }
 
-    // ============================================
+        // ============================================
     // 2. OUVERTURE DU MODAL (Modification)
     // ============================================
     function openEditModal(btn) {
@@ -3051,8 +3127,19 @@
         bannerSubtitle.value = btn.dataset.sousTitre || '';
         bannerButtonText.value = btn.dataset.texteBouton || 'Voir les offres';
         bannerUrl.value = btn.dataset.url || '';
-        bannerDateDebut.value = btn.dataset.debut || '';
-        bannerDateFin.value = btn.dataset.fin || '';
+        
+       
+
+        
+        if (btn.dataset.debut) {
+            const date = btn.dataset.debut.replace(' ', 'T');
+            bannerDateDebut.value = date.slice(0, 16);
+        }
+        
+        if (btn.dataset.fin) {
+            const date = btn.dataset.fin.replace(' ', 'T');
+            bannerDateFin.value = date.slice(0, 16);
+        }
         
         // Statut
         const statut = btn.dataset.statut || 'active';
@@ -3063,10 +3150,19 @@
         // Image existante
         const image = btn.dataset.image || '';
         if (image) {
+            const fullPath = '/back-end/public/uploads/bannieres/' + image;
             bannerImagePreview.classList.remove('hidden');
-            bannerImagePreviewImg.src = '/back-end/public/uploads/bannieres/' + image;
+            bannerImagePreviewImg.src = fullPath;
+            
+            // Mettre à jour le fond de l'aperçu
+            previewContainer.style.backgroundImage = 'url(' + fullPath + ')';
+            previewContainer.style.backgroundSize = 'cover';
+            previewContainer.style.backgroundPosition = 'center';
+            previewContainer.style.background = 'none';
         } else {
             bannerImagePreview.classList.add('hidden');
+            previewContainer.style.backgroundImage = '';
+            previewContainer.style.background = 'linear-gradient(to bottom right, #6366f1, #8b5cf6)';
         }
         
         bannerFormTitle.textContent = 'Modifier la banniere';
@@ -3087,7 +3183,7 @@
         bannerImagePreview.classList.add('hidden');
     }
 
-    // ============================================
+        // ============================================
     // 4. MISE A JOUR DE L'APERCU EN TEMPS REEL
     // ============================================
     function updatePreview() {
@@ -3108,11 +3204,19 @@
         
         const reader = new FileReader();
         reader.onload = function(e) {
+            // Afficher la mini preview
             bannerImagePreview.classList.remove('hidden');
             bannerImagePreviewImg.src = e.target.result;
+            
+            //  Mettre à jour le fond de l'aperçu
+            previewContainer.style.backgroundImage = 'url(' + e.target.result + ')';
+            previewContainer.style.backgroundSize = 'cover';
+            previewContainer.style.backgroundPosition = 'center';
+            previewContainer.style.background = 'none';
         };
         reader.readAsDataURL(file);
     }
+
 
     // ============================================
     // 6. ENVOI DU FORMULAIRE (FETCH API)
@@ -3238,6 +3342,7 @@
     }
 
 })();
+
     </script>
 </body>
 
