@@ -417,37 +417,37 @@ switch ($url) {
 
     // Créer un administrateur
     case 'admin_create':
-        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
-        $controller = new AdminController($pdo);
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
         $controller->createAdmin();
         break;
 
     // Mettre à jour un administrateur
     case 'admin_update':
-        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
-        $controller = new AdminController($pdo);
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
         $controller->updateAdmin();
         break;
 
     // Désactiver un administrateur
     case 'admin_disable':
-        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
-        $controller = new AdminController($pdo);
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
         $controller->disableAdmin();
         break;
 
     // Réactiver un administrateur
     case 'admin_enable':
-        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
-        $controller = new AdminController($pdo);
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
         $controller->enableAdmin();
         break;
 
     // Réinitialiser mot de passe
     case 'admin_reset_password':
-        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
-        $controller = new AdminController($pdo);
-        $controller->resetPassword();
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->resetAdminPassword();
         break;
 
         // ============================================
