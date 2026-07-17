@@ -56,7 +56,7 @@
                 </span>
             </div>
 
-            <form id="generalSettingsForm" class="space-y-4" method="POST" action="/back-end/routes/api.php?url=settings_general_update">
+            <form id="generalSettingsForm" class="space-y-4" method="POST">
                 <input type="hidden" name="_method" value="POST">
                 
                 <!-- Infos plateforme -->
@@ -101,13 +101,13 @@
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Logo principal</label>
                             <div class="flex items-center gap-3">
                                 <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm">
-                                    <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                    <?= substr($settings['site_logo'] ?? 'NDIGITMARKET', 0, 1) ?>
                                 </div>
                                 <div class="flex-1">
                                     <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
                                         <p class="text-[10px] text-gray-500">PNG, SVG · max 500 KB</p>
-                                        <input type="file" name="logo" accept="image/png,image/svg+xml" class="hidden">
+                                        <input type="file" name="site_logo" id="site_logo" accept="image/png,image/svg+xml" class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -116,13 +116,13 @@
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Favicon</label>
                             <div class="flex items-center gap-3">
                                 <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm">
-                                    <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                    <?= substr($settings['site_favicon'] ?? 'NDIGITMARKET', 0, 1) ?>
                                 </div>
                                 <div class="flex-1">
                                     <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
                                         <p class="text-[10px] text-gray-500">ICO, PNG · 32x32 ou 64x64</p>
-                                        <input type="file" name="favicon" accept="image/png,image/x-icon" class="hidden">
+                                        <input type="file" name="site_favicon" id="site_favicon" accept="image/png,image/x-icon" class="hidden">
                                     </div>
                                 </div>
                             </div>
@@ -496,44 +496,52 @@
 
             <!-- Stats admins -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                <?php 
+                // Récupérer les stats depuis le controller
+                $adminStats = $adminStats ?? ['total' => 0, 'actifs' => 0, 'super_admins' => 0];
+                $lastConnection = $lastConnection ?? '-';
+                ?>
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
                             <i class="fas fa-users"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TOTAL</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['total'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Administrateurs</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ACTIFS</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['actifs'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Comptes actifs</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-600">
+                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
                             <i class="fas fa-crown"></i>
                         </div>
-                        <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">SUPER</span>
+                        <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">SUPER</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['super_admins'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Super admins</p>
                 </div>
-                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
                             <i class="fas fa-clock"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">DERNIER</span>
                     </div>
-                    <p class="text-2xl font-bold text-[#0F172A]">...</p>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= htmlspecialchars($lastConnection) ?></p>
                     <p class="text-xs text-gray-400 mt-1">Dernière connexion</p>
                 </div>
             </div>
@@ -547,125 +555,118 @@
                                 <th class="px-4 py-3">Administrateur</th>
                                 <th class="px-4 py-3">Email</th>
                                 <th class="px-4 py-3">Rôle</th>
-                                <th class="px-4 py-3">Dernière connexion</th>
                                 <th class="px-4 py-3">Statut</th>
                                 <th class="px-4 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <!-- Admin 1 : Super admin -->
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-full flex items-center justify-center text-white font-semibold">
-                                            A
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">Admin Principal</p>
-                                            <p class="text-[10px] text-gray-400">ID: ...</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-600">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-crown mr-1"></i>Super Admin
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-circle text-[6px] mr-1"></i>En ligne
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" title="Modifier">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button class="openResetPwdBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Réinitialiser mot de passe">
-                                            <i class="fas fa-key text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Admin 2 -->
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                            M
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">...</p>
-                                            <p class="text-[10px] text-gray-400">ID: ...</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-600">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-user-shield mr-1"></i>Modérateur
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-check mr-1"></i>Actif
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" title="Modifier">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button class="openResetPwdBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" title="Réinitialiser mot de passe">
-                                            <i class="fas fa-key text-xs"></i>
-                                        </button>
-                                        <button class="openDisableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center" title="Désactiver">
-                                            <i class="fas fa-ban text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Admin 3 : désactivé -->
-                            <tr class="hover:bg-gray-50/50 transition opacity-60">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white font-semibold">
-                                            J
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-[#0F172A] text-sm">...</p>
-                                            <p class="text-[10px] text-gray-400">ID: ...</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-600">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-user mr-1"></i>Support
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-xs text-gray-500">...</td>
-                                <td class="px-4 py-3">
-                                    <span class="text-[10px] font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                                        <i class="fas fa-pause mr-1"></i>Désactivé
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" title="Modifier">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </button>
-                                        <button class="openEnableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center" title="Réactiver">
-                                            <i class="fas fa-check text-xs"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php if (!empty($admins)): ?>
+                                <?php foreach ($admins as $admin): 
+                                    // Couleurs par rôle
+                                    $roleColors = [
+                                        'Super Admin' => 'bg-red-100 text-red-700',
+                                        'Admin' => 'bg-indigo-100 text-indigo-700',
+                                        'Modérateur' => 'bg-blue-100 text-blue-700',
+                                        'Support' => 'bg-purple-100 text-purple-700'
+                                    ];
+                                    $roleColor = $roleColors[$admin['role'] ?? ''] ?? 'bg-gray-100 text-gray-700';
+                                    
+                                    // Icônes par rôle
+                                    $roleIcons = [
+                                        'Super Admin' => 'crown',
+                                        'Admin' => 'user-shield',
+                                        'Modérateur' => 'user-cog',
+                                        'Support' => 'user-headset'
+                                    ];
+                                    $roleIcon = $roleIcons[$admin['role'] ?? ''] ?? 'user';
+                                    
+                                    // Couleurs de statut
+                                    $status = $admin['statut'] ?? 'actif';
+                                    $isActive = $status === 'actif';
+                                    $statusColor = $isActive ? 'text-emerald-700 bg-emerald-100' : 'text-gray-600 bg-gray-100';
+                                    $statusIcon = $isActive ? 'circle' : 'pause';
+                                    $statusText = $isActive ? 'Actif' : 'Désactivé';
+                                    $rowOpacity = $isActive ? '' : 'opacity-60';
+                                    
+                                    // Initiales
+                                    $initial = strtoupper(substr($admin['nom'] ?? 'A', 0, 1));
+                                ?>
+                                    <tr class="hover:bg-gray-50/50 transition <?= $rowOpacity ?>">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 <?= $isActive ? 'bg-gradient-to-br from-[#0EA486] to-[#0c8f75]' : 'bg-gray-300' ?> rounded-full flex items-center justify-center text-white font-semibold shadow-sm">
+                                                    <?= $initial ?>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-[#0F172A] text-sm"><?= htmlspecialchars($admin['nom'] ?? '-') ?></p>
+                                                    <p class="text-[10px] text-gray-400">ID: <?= $admin['id'] ?? '-' ?></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-gray-600">
+                                            <?= htmlspecialchars($admin['email'] ?? '-') ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $roleColor ?> px-2 py-1 rounded-full">
+                                                <i class="fas fa-<?= $roleIcon ?> mr-1"></i>
+                                                <?= htmlspecialchars($admin['role'] ?? 'Utilisateur') ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="text-[10px] font-semibold <?= $statusColor ?> px-2 py-1 rounded-full">
+                                                <i class="fas fa-<?= $statusIcon ?> text-[6px] mr-1"></i>
+                                                <?= $statusText ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center justify-end gap-1">
+                                                <!-- Modifier -->
+                                                <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
+                                                        data-id="<?= $admin['id'] ?>"
+                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                        data-email="<?= htmlspecialchars($admin['email']) ?>"
+                                                        data-role="<?= htmlspecialchars($admin['role']) ?>"
+                                                        data-image="<?= htmlspecialchars($admin['image_auteur'] ?? '') ?>"
+                                                        title="Modifier">
+                                                    <i class="fas fa-edit text-xs"></i>
+                                                </button>
+                                                
+                                                <!-- Réinitialiser mot de passe -->
+                                                <button class="openResetPwdBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                                        data-id="<?= $admin['id'] ?>"
+                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                        title="Réinitialiser mot de passe">
+                                                    <i class="fas fa-key text-xs"></i>
+                                                </button>
+                                                
+                                                <!-- Désactiver / Réactiver -->
+                                                <?php if ($isActive): ?>
+                                                    <button class="openDisableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" 
+                                                            data-id="<?= $admin['id'] ?>"
+                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                            title="Désactiver">
+                                                        <i class="fas fa-ban text-xs"></i>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button class="openEnableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
+                                                            data-id="<?= $admin['id'] ?>"
+                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                            title="Réactiver">
+                                                        <i class="fas fa-check-circle text-xs"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                        <i class="fas fa-users-slash text-3xl block mb-2"></i>
+                                        Aucun administrateur trouvé
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -1136,12 +1137,6 @@
                 }
             });
         })();
-
-        // Form submissions
-        document.getElementById('generalSettingsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('Paramètres enregistrés', 'Les paramètres généraux ont été mis à jour', 'success');
-        });
 
         document.getElementById('paymentSettingsForm').addEventListener('submit', function(e) {
             e.preventDefault();

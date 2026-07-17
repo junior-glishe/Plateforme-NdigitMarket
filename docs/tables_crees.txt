@@ -591,7 +591,11 @@ JOIN information_schema.columns b
 LIMIT 150;
 
 
+-- Ajouter la colonne statut si elle n'existe pas
+ALTER TABLE admin ADD COLUMN IF NOT EXISTS statut VARCHAR(50) DEFAULT 'actif';
 
+-- Ajouter la colonne derniere_connexion si elle n'existe pas
+ALTER TABLE admin ADD COLUMN IF NOT EXISTS derniere_connexion DATETIME NULL;
 
 
 

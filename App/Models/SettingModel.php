@@ -33,6 +33,28 @@ class SettingModel {
     }
 
     /**
+     * Récupérer le dernier administrateur connecté
+     */
+    public function getLastConnection() {
+        try {
+            $stmt = $this->pdo->query("
+                SELECT nom, derniere_connexion 
+                FROM admin 
+                WHERE derniere_connexion IS NOT NULL 
+                ORDER BY derniere_connexion DESC 
+                LIMIT 1
+            ");
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['nom'] . ' - ' . $result['derniere_connexion'] : '-';
+        } catch (PDOException $e) {
+            error_log("Erreur getLastConnection: " . $e->getMessage());
+            return '-';
+        }
+    }
+
+
+    
+    /**
      * Mettre à jour un paramètre
      */
     public function updateSetting($key, $value) {
@@ -51,6 +73,31 @@ class SettingModel {
             return false;
         }
     }
+
+
+    /**
+     * Mettre à jour les paramètres généraux
+     */
+public function updateGeneralSettings($data) {
+    try {
+        $success = true;
+        foreach ($data as $key => $value) {
+            error_log("=== UPDATE KEY: $key = $value ===");
+            $result = $this->updateSetting($key, $value);
+            if (!$result) {
+                error_log("❌ ERREUR pour la clé: $key");
+                $success = false;
+            } else {
+                error_log("✅ OK pour la clé: $key");
+            }
+        }
+        error_log("=== FINAL RESULT: " . ($success ? 'SUCCESS' : 'FAILED') . " ===");
+        return $success;
+    } catch (Exception $e) {
+        error_log("❌ EXCEPTION: " . $e->getMessage());
+        return false;
+    }
+}
 
     /**
      * Mettre à jour plusieurs paramètres
@@ -101,17 +148,14 @@ class SettingModel {
         try {
             $stmt = $this->pdo->query("
                 SELECT 
-                    id_uti as id,
+                    id_gestion as id,
                     nom,
-                    prenom,
                     email,
-                    type,
-                    statut,
-                    created_at as date_creation,
-                    derniere_connexion
-                FROM utilisateur 
-                WHERE type = 'admin' OR type = 'super_admin'
-                ORDER BY created_at DESC
+                    image_auteur,
+                    role,
+                    statut
+                FROM admin
+                ORDER BY id_gestion ASC
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -126,12 +170,11 @@ class SettingModel {
     public function countAdmins() {
         try {
             $stmt = $this->pdo->query("
-                SELECT 
+                 SELECT 
                     COUNT(*) as total,
                     SUM(CASE WHEN statut = 'actif' THEN 1 ELSE 0 END) as actifs,
-                    SUM(CASE WHEN type = 'super_admin' THEN 1 ELSE 0 END) as super_admins
-                FROM utilisateur 
-                WHERE type = 'admin' OR type = 'super_admin'
+                    SUM(CASE WHEN role = 'Super Admin' THEN 1 ELSE 0 END) as super_admins
+                FROM admin
             ");
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -140,26 +183,26 @@ class SettingModel {
         }
     }
 
-    /**
+   /**
      * Créer un administrateur
      */
     public function createAdmin($data) {
         try {
-            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+            $hashedPassword = password_hash($data['mdp'], PASSWORD_DEFAULT);
             
             $stmt = $this->pdo->prepare("
-                INSERT INTO utilisateur (nom, prenom, email, type, statut, mdp, created_at) 
-                VALUES (?, ?, ?, ?, 'actif', ?, NOW())
+                INSERT INTO admin (nom, email, mdp, image_auteur, role, statut) 
+                VALUES (?, ?, ?, ?, ?, 'actif')
             ");
             return $stmt->execute([
                 $data['nom'],
-                $data['prenom'],
                 $data['email'],
-                $data['role'] ?? 'admin',
-                $hashedPassword
+                $hashedPassword,
+                $data['image_auteur'] ?? 'uploads/default.png',
+                $data['role']
             ]);
         } catch (PDOException $e) {
-            error_log("Erreur create admin: " . $e->getMessage());
+            error_log("Erreur createAdmin: " . $e->getMessage());
             return false;
         }
     }
@@ -169,31 +212,37 @@ class SettingModel {
      */
     public function updateAdmin($id, $data) {
         try {
-            $sql = "UPDATE utilisateur SET nom = ?, prenom = ?, email = ?, type = ? WHERE id_uti = ?";
-            $params = [$data['nom'], $data['prenom'], $data['email'], $data['role'], $id];
+            $sql = "UPDATE admin SET nom = ?, email = ?, role = ? WHERE id_gestion = ?";
+            $params = [$data['nom'], $data['email'], $data['role'], $id];
             
-            if (!empty($data['password'])) {
-                $sql = "UPDATE utilisateur SET nom = ?, prenom = ?, email = ?, type = ?, mdp = ? WHERE id_uti = ?";
-                $params = [$data['nom'], $data['prenom'], $data['email'], $data['role'], password_hash($data['password'], PASSWORD_DEFAULT), $id];
+            if (!empty($data['mdp'])) {
+                $sql = "UPDATE admin SET nom = ?, email = ?, mdp = ?, role = ? WHERE id_gestion = ?";
+                $params = [$data['nom'], $data['email'], password_hash($data['mdp'], PASSWORD_DEFAULT), $data['role'], $id];
+            }
+            
+            if (!empty($data['image_auteur'])) {
+                $sql = "UPDATE admin SET nom = ?, email = ?, image_auteur = ?, role = ? WHERE id_gestion = ?";
+                $params = [$data['nom'], $data['email'], $data['image_auteur'], $data['role'], $id];
             }
             
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute($params);
         } catch (PDOException $e) {
-            error_log("Erreur update admin: " . $e->getMessage());
+            error_log("Erreur updateAdmin: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
+
+   /**
      * Désactiver un administrateur
-     */
+*/
     public function disableAdmin($id) {
         try {
-            $stmt = $this->pdo->prepare("UPDATE utilisateur SET statut = 'desactive' WHERE id_uti = ?");
+            $stmt = $this->pdo->prepare("UPDATE admin SET statut = 'inactif' WHERE id_gestion = ?");
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
-            error_log("Erreur disable admin: " . $e->getMessage());
+            error_log("Erreur disableAdmin: " . $e->getMessage());
             return false;
         }
     }
@@ -203,27 +252,51 @@ class SettingModel {
      */
     public function enableAdmin($id) {
         try {
-            $stmt = $this->pdo->prepare("UPDATE utilisateur SET statut = 'actif' WHERE id_uti = ?");
+            $stmt = $this->pdo->prepare("UPDATE admin SET statut = 'actif' WHERE id_gestion = ?");
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
-            error_log("Erreur enable admin: " . $e->getMessage());
+            error_log("Erreur enableAdmin: " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Réinitialiser le mot de passe d'un administrateur
+     * Réinitialiser le mot de passe
      */
-    public function resetAdminPassword($id, $newPassword) {
+    public function resetPassword($id, $newPassword) {
         try {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $stmt = $this->pdo->prepare("UPDATE utilisateur SET mdp = ? WHERE id_uti = ?");
+            $stmt = $this->pdo->prepare("UPDATE admin SET mdp = ? WHERE id_gestion = ?");
             return $stmt->execute([$hashedPassword, $id]);
         } catch (PDOException $e) {
-            error_log("Erreur reset password: " . $e->getMessage());
+            error_log("Erreur resetPassword: " . $e->getMessage());
             return false;
         }
     }
+
+     /**
+     * Vérifier si un email existe déjà
+     */
+    public function emailExists($email, $excludeId = null) {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM admin WHERE email = ?";
+            $params = [$email];
+            
+            if ($excludeId) {
+                $sql .= " AND id_gestion != ?";
+                $params[] = $excludeId;
+            }
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] > 0;
+        } catch (PDOException $e) {
+            error_log("Erreur emailExists: " . $e->getMessage());
+            return false;
+        }
+    }
+
 
     // ============================================
     // TABLE DES PARAMÈTRES

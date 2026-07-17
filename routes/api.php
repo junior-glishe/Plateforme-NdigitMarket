@@ -379,11 +379,19 @@ switch ($url) {
         $controller->index();
         break;
 
-    // API - Paramètres généraux
+        // API - Paramètres généraux
+    // API - Mettre à jour les paramètres généraux
     case 'settings_general_update':
         require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
         $controller = new SettingController($pdo);
         $controller->updateGeneralSettings();
+        break;
+
+    // API - Mettre à jour tous les paramètres
+    case 'settings_all_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
+        $controller = new SettingController($pdo);
+        $controller->updateAllSettings();
         break;
 
     // API - Configuration paiements

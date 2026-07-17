@@ -47,54 +47,76 @@ class SettingController {
     // API PARAMÈTRES GÉNÉRAUX
     // ============================================
 
-        /**
-         * Mettre à jour les paramètres généraux
-         */
-        public function updateGeneralSettings() {
-            // 🔥 Vérifier la méthode
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                $this->jsonResponse([
-                    'success' => false, 
-                    'error' => 'Méthode non autorisée. Utilisez POST.'
-                ], 405);
-                return;
-            }
+/**
+ * API - Mettre à jour les paramètres généraux*/
+// App/Controllers/Admin/SettingController.php
 
-            // 🔥 Récupérer les données avec les bons noms de champs
-            $data = [
-                'site_name' => trim($_POST['site_name'] ?? 'NDIGITMARKET'),
-                'site_tagline' => trim($_POST['site_tagline'] ?? ''),
-                'site_email' => trim($_POST['contact_email'] ?? trim($_POST['site_email'] ?? '')), // 🔥 CORRECTION ICI
-                'site_currency' => $_POST['currency'] ?? 'FCFA',
-                'facebook_url' => trim($_POST['facebook_url'] ?? ''),
-                'twitter_url' => trim($_POST['twitter_url'] ?? ''),
-                'instagram_url' => trim($_POST['instagram_url'] ?? ''),
-                'linkedin_url' => trim($_POST['linkedin_url'] ?? ''),
-                'maintenance_mode' => isset($_POST['maintenance_mode']) ? '1' : '0',
-                'maintenance_message' => trim($_POST['maintenance_message'] ?? ''),
-                'commission_rate' => $_POST['commission_rate'] ?? '10',
-                'min_withdrawal' => $_POST['min_withdrawal'] ?? '5000'
-            ];
-
-            // 🔥 Debug - afficher les données reçues
-            error_log("📊 Données reçues pour mise à jour: " . print_r($data, true));
-
-            // Mettre à jour
-            $result = $this->model->updateSettings($data);
-
-            if ($result) {
-                $this->jsonResponse([
-                    'success' => true, 
-                    'message' => 'Paramètres généraux mis à jour avec succès',
-                    'data' => $data
-                ]);
-            } else {
-                $this->jsonResponse([
-                    'success' => false,
-                    'error' => 'Erreur lors de la mise à jour des paramètres'
-                ], 500);
-            }
-        }
+public function updateGeneralSettings() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    // DEBUG - Voir exactement ce qui est envoyé
+    error_log("=== POST DATA ===");
+    error_log(print_r($_POST, true));
+    
+    $data = [
+        'site_name' => trim($_POST['site_name'] ?? ''),
+        'site_tagline' => trim($_POST['site_tagline'] ?? ''),
+        'site_email' => trim($_POST['site_email'] ?? ''),
+        'site_currency' => trim($_POST['currency'] ?? 'FCFA'),
+        'site_logo' => trim($_POST['site_logo'] ?? ''),
+        'site_favicon' => trim($_POST['site_favicon'] ?? ''),
+        'commission_rate' => trim($_POST['commission_rate'] ?? '10'),
+        'min_withdrawal' => trim($_POST['min_withdrawal'] ?? '5000'),
+        'maintenance_mode' => isset($_POST['maintenance_mode']) ? '1' : '0',
+        'maintenance_message' => trim($_POST['maintenance_message'] ?? ''),
+        'facebook_url' => trim($_POST['facebook_url'] ?? ''),
+        'twitter_url' => trim($_POST['twitter_url'] ?? ''),
+        'instagram_url' => trim($_POST['instagram_url'] ?? ''),
+        'linkedin_url' => trim($_POST['linkedin_url'] ?? '')
+    ];
+    
+    // DEBUG - Voir les données préparées
+    error_log("=== DATA TO SAVE ===");
+    error_log(print_r($data, true));
+    
+    $result = $this->model->updateGeneralSettings($data);
+    
+    // DEBUG - Voir le résultat
+    error_log("=== RESULT ===");
+    error_log(var_export($result, true));
+    
+    if ($result) {
+        $this->jsonResponse(['success' => true, 'message' => 'Paramètres généraux mis à jour']);
+    } else {
+        $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour des paramètres'], 500);
+    }
+}
+/**
+ * API - Mettre à jour tous les paramètres (généraux + SMTP + paiement)
+ */
+public function updateAllSettings() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
+    }
+    
+    // Récupérer toutes les données POST
+    $data = [];
+    foreach ($_POST as $key => $value) {
+        $data[$key] = trim($value);
+    }
+    
+    $result = $this->model->updateSettings($data);
+    
+    if ($result) {
+        $this->jsonResponse(['success' => true, 'message' => 'Tous les paramètres ont été mis à jour']);
+    } else {
+        $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour des paramètres'], 500);
+    }
+}
 
     // ============================================
     // API CONFIGURATION PAIEMENTS
