@@ -339,7 +339,7 @@ $userPermissions = \App\Core\Auth::permissions();
 </script>
 <?php // Assets globaux admin (chargés une seule fois par page) 
 ?>
-<?php $__base = defined('$baseUrl') ? $baseUrl : ''; ?>
+<?php $__base = isset($baseUrl) ? $baseUrl : ''; ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script>
     window.NDIGIT_$baseUrl = <?= json_encode($__base) ?>;
