@@ -4,10 +4,10 @@ require_once __DIR__ . '/../../Models/CategorieModel.php';
 
 class ContenuController {
     private $model;
-    private $pdo;  // 🔥 AJOUTE CETTE PROPRIÉTÉ
+    private $pdo;  //  AJOUTE CETTE PROPRIÉTÉ
     
     public function __construct($pdo) {
-        $this->pdo = $pdo;  // 🔥 STOCKE LE PDO
+        $this->pdo = $pdo;  //  STOCKE LE PDO
         $this->model = new ContenuModel($pdo);
     }
 
@@ -16,7 +16,7 @@ class ContenuController {
     // ============================================
 
     public function index() {
-        // 🔥 Récupérer les catégories - Utilise $this->pdo
+        //  Récupérer les catégories - Utilise $this->pdo
         $categorieModel = new CategorieModel($this->pdo);
         $categories = $categorieModel->getAllCategories();
         

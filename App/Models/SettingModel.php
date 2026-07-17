@@ -1,6 +1,4 @@
 <?php
-// App/Models/SettingModel.php
-
 class SettingModel {
     private $pdo;
     
@@ -52,87 +50,56 @@ class SettingModel {
         }
     }
 
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
  * Mettre à jour les paramètres généraux avec gestion des fichiers
  */
 public function updateGeneralSettings($data, $files = []) {
-    error_log("=== 🚀 START updateGeneralSettings (MODEL) ===");
-    error_log("📊 DATA reçues: " . print_r($data, true));
-    error_log("📁 FILES reçus: " . print_r($files, true));
+    error_log("===  START updateGeneralSettings (MODEL) ===");
+    error_log(" DATA reçues: " . print_r($data, true));
+    error_log(" FILES reçus: " . print_r($files, true));
     
     try {
         $success = true;
         
-        // 🔥 DEBUG: Vérifier la connexion à la BDD
+        //  DEBUG: Vérifier la connexion à la BDD
         if (!$this->pdo) {
-            error_log("❌ CONNEXION PDO NULL !");
+            error_log(" CONNEXION PDO NULL !");
             return false;
         }
-        error_log("✅ CONNEXION PDO OK");
+        error_log(" CONNEXION PDO OK");
         
         // Gérer l'upload du logo
         if (isset($files['site_logo']) && $files['site_logo']['error'] === UPLOAD_ERR_OK) {
-            error_log("🔄 Upload du logo en cours...");
+            error_log(" Upload du logo en cours...");
             $logoPath = $this->uploadFile($files['site_logo'], 'logo');
             if ($logoPath) {
                 $data['site_logo'] = $logoPath;
-                error_log("✅ Logo uploadé: " . $logoPath);
+                error_log(" Logo uploadé: " . $logoPath);
             } else {
-                error_log("❌ Erreur upload logo");
+                error_log(" Erreur upload logo");
                 $success = false;
             }
         } else {
-            error_log("ℹ️ Pas de logo à uploader");
+            error_log(" Pas de logo à uploader");
         }
         
         // Gérer l'upload du favicon
         if (isset($files['site_favicon']) && $files['site_favicon']['error'] === UPLOAD_ERR_OK) {
-            error_log("🔄 Upload du favicon en cours...");
+            error_log(" Upload du favicon en cours...");
             $faviconPath = $this->uploadFile($files['site_favicon'], 'favicon');
             if ($faviconPath) {
                 $data['site_favicon'] = $faviconPath;
-                error_log("✅ Favicon uploadé: " . $faviconPath);
+                error_log(" Favicon uploadé: " . $faviconPath);
             } else {
-                error_log("❌ Erreur upload favicon");
+                error_log(" Erreur upload favicon");
                 $success = false;
             }
         } else {
-            error_log("ℹ️ Pas de favicon à uploader");
+            error_log(" Pas de favicon à uploader");
         }
         
         // Mettre à jour les paramètres
-        error_log("🔄 Mise à jour des paramètres dans la BDD...");
+        error_log(" Mise à jour des paramètres dans la BDD...");
         
         foreach ($data as $key => $value) {
             error_log("=== UPDATE KEY: $key = " . substr($value, 0, 100) . (strlen($value) > 100 ? '...' : '') . " ===");
@@ -140,23 +107,23 @@ public function updateGeneralSettings($data, $files = []) {
             try {
                 $result = $this->updateSetting($key, $value);
                 if (!$result) {
-                    error_log("❌ ERREUR pour la clé: $key");
+                    error_log(" ERREUR pour la clé: $key");
                     $success = false;
                 } else {
-                    error_log("✅ OK pour la clé: $key");
+                    error_log(" OK pour la clé: $key");
                 }
             } catch (Exception $e) {
-                error_log("❌ EXCEPTION pour la clé $key: " . $e->getMessage());
+                error_log(" EXCEPTION pour la clé $key: " . $e->getMessage());
                 $success = false;
             }
         }
         
-        error_log("=== FINAL RESULT: " . ($success ? '✅ SUCCESS' : '❌ FAILED') . " ===");
+        error_log("=== FINAL RESULT: " . ($success ? ' SUCCESS' : ' FAILED') . " ===");
         return $success;
         
     } catch (Exception $e) {
-        error_log("❌ EXCEPTION GLOBALE: " . $e->getMessage());
-        error_log("❌ TRACE: " . $e->getTraceAsString());
+        error_log(" EXCEPTION GLOBALE: " . $e->getMessage());
+        error_log(" TRACE: " . $e->getTraceAsString());
         return false;
     }
 }
@@ -165,24 +132,24 @@ public function updateGeneralSettings($data, $files = []) {
  * Mettre à jour un paramètre
  */
 public function updateSetting($key, $value) {
-    error_log("🔧 updateSetting: $key = " . substr($value, 0, 50) . (strlen($value) > 50 ? '...' : ''));
+    error_log(" updateSetting: $key = " . substr($value, 0, 50) . (strlen($value) > 50 ? '...' : ''));
     
     try {
         // Vérifier la connexion PDO
         if (!$this->pdo) {
-            error_log("❌ PDO NULL dans updateSetting");
+            error_log(" PDO NULL dans updateSetting");
             return false;
         }
         
-        // 🔥 DEBUG: Vérifier si la table existe
+        //  DEBUG: Vérifier si la table existe
         try {
             $checkTable = $this->pdo->query("SHOW TABLES LIKE 'settings'");
             if ($checkTable->rowCount() == 0) {
-                error_log("❌ La table 'settings' n'existe pas !");
+                error_log(" La table 'settings' n'existe pas !");
                 return false;
             }
         } catch (Exception $e) {
-            error_log("❌ Erreur vérification table: " . $e->getMessage());
+            error_log(" Erreur vérification table: " . $e->getMessage());
             return false;
         }
         
@@ -198,20 +165,20 @@ public function updateSetting($key, $value) {
         ]);
         
         if ($result) {
-            error_log("✅ updateSetting OK pour: $key");
+            error_log(" updateSetting OK pour: $key");
         } else {
-            error_log("❌ updateSetting FAILED pour: $key");
-            error_log("❌ Erreur PDO: " . print_r($stmt->errorInfo(), true));
+            error_log(" updateSetting FAILED pour: $key");
+            error_log(" Erreur PDO: " . print_r($stmt->errorInfo(), true));
         }
         
         return $result;
         
     } catch (PDOException $e) {
-        error_log("❌ PDOException updateSetting: " . $e->getMessage());
-        error_log("❌ Code: " . $e->getCode());
+        error_log(" PDOException updateSetting: " . $e->getMessage());
+        error_log(" Code: " . $e->getCode());
         return false;
     } catch (Exception $e) {
-        error_log("❌ Exception updateSetting: " . $e->getMessage());
+        error_log(" Exception updateSetting: " . $e->getMessage());
         return false;
     }
 }
@@ -220,7 +187,7 @@ public function updateSetting($key, $value) {
  * Upload d'un fichier avec debug
  */
 private function uploadFile($file, $type = 'logo') {
-    error_log("🔄 uploadFile: type=$type, name=" . $file['name']);
+    error_log(" uploadFile: type=$type, name=" . $file['name']);
     
     try {
         // Vérifier les erreurs
@@ -235,29 +202,29 @@ private function uploadFile($file, $type = 'logo') {
                 UPLOAD_ERR_EXTENSION => 'Extension bloquée'
             ];
             $errorMsg = $errors[$file['error']] ?? 'Erreur inconnue: ' . $file['error'];
-            error_log("❌ Erreur upload: " . $errorMsg);
+            error_log(" Erreur upload: " . $errorMsg);
             return false;
         }
         
-        // 🔥 CORRECTION: Utiliser le bon dossier
+        //  CORRECTION: Utiliser le bon dossier
         $uploadDir = __DIR__ . '/../../public/assets/images/';
-        error_log("📁 Dossier upload: " . $uploadDir);
+        error_log(" Dossier upload: " . $uploadDir);
         
         // Créer le dossier s'il n'existe pas
         if (!is_dir($uploadDir)) {
-            error_log("📁 Création du dossier: " . $uploadDir);
+            error_log(" Création du dossier: " . $uploadDir);
             if (!mkdir($uploadDir, 0777, true)) {
-                error_log("❌ Impossible de créer le dossier: " . $uploadDir);
+                error_log(" Impossible de créer le dossier: " . $uploadDir);
                 return false;
             }
         }
         
         // Vérifier les droits
         if (!is_writable($uploadDir)) {
-            error_log("❌ Dossier non accessible en écriture: " . $uploadDir);
+            error_log(" Dossier non accessible en écriture: " . $uploadDir);
             return false;
         }
-        error_log("✅ Dossier accessible en écriture");
+        error_log(" Dossier accessible en écriture");
         
         // Vérifier le type de fichier
         $allowedTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon'];
@@ -265,53 +232,53 @@ private function uploadFile($file, $type = 'logo') {
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
         
-        error_log("📋 Type MIME: " . $mimeType);
+        error_log(" Type MIME: " . $mimeType);
         
         if (!in_array($mimeType, $allowedTypes)) {
-            error_log("❌ Type de fichier non autorisé: " . $mimeType);
+            error_log(" Type de fichier non autorisé: " . $mimeType);
             return false;
         }
         
         // Vérifier la taille (max 2MB)
         if ($file['size'] > 2 * 1024 * 1024) {
-            error_log("❌ Fichier trop volumineux: " . $file['size'] . " bytes");
+            error_log(" Fichier trop volumineux: " . $file['size'] . " bytes");
             return false;
         }
-        error_log("✅ Taille OK: " . $file['size'] . " bytes");
+        error_log(" Taille OK: " . $file['size'] . " bytes");
         
         // Générer un nom unique
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = $type . '_' . time() . '_' . uniqid() . '.' . $extension;
         $destination = $uploadDir . $filename;
         
-        error_log("📁 Destination: " . $destination);
+        error_log(" Destination: " . $destination);
         
         // Supprimer l'ancien fichier si existe
         if ($type === 'logo') {
             $oldLogo = $this->getSetting('site_logo');
             if ($oldLogo && file_exists($uploadDir . $oldLogo)) {
-                error_log("🗑️ Suppression ancien logo: " . $oldLogo);
+                error_log(" Suppression ancien logo: " . $oldLogo);
                 unlink($uploadDir . $oldLogo);
             }
         } elseif ($type === 'favicon') {
             $oldFavicon = $this->getSetting('site_favicon');
             if ($oldFavicon && file_exists($uploadDir . $oldFavicon)) {
-                error_log("🗑️ Suppression ancien favicon: " . $oldFavicon);
+                error_log(" Suppression ancien favicon: " . $oldFavicon);
                 unlink($uploadDir . $oldFavicon);
             }
         }
         
         // Déplacer le fichier
         if (move_uploaded_file($file['tmp_name'], $destination)) {
-            error_log("✅ Fichier uploadé avec succès: " . $filename);
+            error_log(" Fichier uploadé avec succès: " . $filename);
             return $filename;
         } else {
-            error_log("❌ Erreur move_uploaded_file");
+            error_log(" Erreur move_uploaded_file");
             return false;
         }
         
     } catch (Exception $e) {
-        error_log("❌ EXCEPTION uploadFile: " . $e->getMessage());
+        error_log(" EXCEPTION uploadFile: " . $e->getMessage());
         return false;
     }
 }
@@ -348,11 +315,6 @@ private function uploadFile($file, $type = 'logo') {
         }
     }
     
-
-    
-
-   
-
     // ============================================
     // ADMINISTRATEURS
     // ============================================
@@ -545,7 +507,6 @@ private function uploadFile($file, $type = 'logo') {
     // TABLE DES PARAMÈTRES
     // ============================================
 
-    // App/Models/SettingModel.php
 
 /**
  * Récupérer les paramètres SMTP depuis la BDD
@@ -598,14 +559,6 @@ public function updateSmtpSettings($data) {
         return false;
     }
 }
-
-
-
-
-
-
-
-// App/Models/SettingModel.php
 
 /**
  * Tester la configuration SMTP

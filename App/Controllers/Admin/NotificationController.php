@@ -56,9 +56,9 @@ $campagnes = $this->model->getRecentMassCampaigns(10);
             'notifications' => $notifications,
             'stats' => $stats,
             'settings' => $settings,
-             'emailStats' => $emailStats,  // Ajout des stats emails
+             'emailStats' => $emailStats,  
             'templates' => $templates,
-            'massStats' => $massStats,      // Ajout
+            'massStats' => $massStats, 
             'campagnes' => $campagnes,
             'currentPage' => 'notifications' 
         ]);
@@ -360,7 +360,6 @@ public function exportCampaignCSV() {
     fclose($output);
     exit();
 }
-
 
 /**
  * Composer un email

@@ -23,15 +23,15 @@ class LogsAuditController {
      */
 
 public function index() {
-    // 🔥 Récupérer les données pour les filtres
+    //  Récupérer les données pour les filtres
     $actionTypes = $this->model->getActionTypes();
     $admins = $this->model->getAdmins();
 
-      // 🔥 DEBUG - Vérifier que les admins sont récupérés
+      //  DEBUG - Vérifier que les admins sont récupérés
     error_log("Nombre d'admins: " . count($admins));
     error_log("Admins: " . print_r($admins, true));
     
-    // 🔥 Récupérer les filtres depuis l'URL
+    //  Récupérer les filtres depuis l'URL
     $filters = [];
     if (!empty($_GET['search'])) $filters['search'] = $_GET['search'];
     if (!empty($_GET['action'])) $filters['action'] = $_GET['action'];
@@ -52,7 +52,7 @@ public function index() {
     $total = $this->model->countLogs($filters);
     $chartData = $this->model->getActivityChart(7);
     
-    // 🔥 Passer toutes les données à la vue
+    //  Passer toutes les données à la vue
     $this->render('admin/logs-audit', [
         'stats' => $stats,
         'logs' => $logs,
@@ -61,8 +61,8 @@ public function index() {
         'limit' => $limit,
         'filters' => $filters,
         'chartData' => $chartData,
-        'actionTypes' => $actionTypes,    // 🔥 Pour les types d'actions
-        'admins' => $admins,              // 🔥 Pour les administrateurs
+        'actionTypes' => $actionTypes,    //  Pour les types d'actions
+        'admins' => $admins,              //  Pour les administrateurs
         'currentPage' => 'logs-audit'
     ]);
 }
@@ -197,7 +197,7 @@ public function blockIP() {
 }
 
      // ============================================
-    // 🔥 AJOUTE CETTE MÉTHODE render()
+    //  AJOUTE CETTE MÉTHODE render()
     // ============================================
     private function render($view, $data = []) {
         extract($data);
@@ -205,21 +205,12 @@ public function blockIP() {
         
         // Debug - Vérifier si le fichier existe
         if (!file_exists($viewPath)) {
-            echo "❌ Vue non trouvée: " . $viewPath;
+            echo " Vue non trouvée: " . $viewPath;
             exit();
         }
         
         include $viewPath;
     }
-
-
-
-
-
-
-    // App/Controllers/Admin/LogsAuditController.php
-
-// App/Controllers/Admin/LogsAuditController.php
 
 /**
  * API - Exporter les logs (CSV, Excel, JSON)
@@ -234,7 +225,7 @@ public function exportLogs() {
     $period = $_POST['period'] ?? 'all';
     $columnsRaw = $_POST['columns'] ?? '';
     
-    // 🔥 CORRECTION : Décoder le JSON correctement
+    //  CORRECTION : Décoder le JSON correctement
     if (is_string($columnsRaw) && !empty($columnsRaw)) {
         $columns = json_decode($columnsRaw, true);
         // Si le JSON est invalide, utiliser un tableau vide
@@ -271,7 +262,7 @@ public function exportLogs() {
     // Récupérer les logs
     $logs = $this->model->getLogs($filters, 10000, 0);
     
-    // 🔥 Si aucune colonne sélectionnée, utiliser toutes
+    //  Si aucune colonne sélectionnée, utiliser toutes
     if (empty($columns)) {
         $columns = ['Date', 'Admin', 'Email', 'Action', 'Description', 'IP', 'Niveau', 'Statut'];
     }
@@ -425,7 +416,7 @@ private function exportLogsExcel($data, $filename) {
     ];
     $sheet->getStyle('A1:' . $lastColumn . ($rowNum - 1))->applyFromArray($styleArray);
     
-    // 🔥 Forcer l'extension .xlsx
+    //  Forcer l'extension .xlsx
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="' . $filename . '.xlsx"');
     header('Cache-Control: max-age=0');

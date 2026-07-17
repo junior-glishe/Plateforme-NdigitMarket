@@ -101,11 +101,6 @@ class LogsAuditModel {
         }
     }
 
-    
-    
-
-
-
 /**
  * Récupérer les données pour le graphique d'activité
  */
@@ -224,16 +219,6 @@ private function generateTestChartData($days = 7) {
         fclose($output);
         exit();
     }
-
-
-
-
-
-
-
-
-
-    // App/Models/LogsAuditModel.php
 
 /**
  * Récupérer les types d'actions distincts

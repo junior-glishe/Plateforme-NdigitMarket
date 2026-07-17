@@ -1220,11 +1220,6 @@
             showToast('Paiements enregistrés', 'La configuration des paiements a été mise à jour', 'success');
         });
         // Modal test SMTP
-        
-
-
-
-
         // ============================================
 // GESTION ADMINISTRATEURS
 // ============================================
@@ -1294,9 +1289,6 @@
         adminPasswordConfirm.value = '';
         document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-edit';
     }
-
-    
-
     // ============================================
     // 3. FERMETURE MODAL
     // ============================================
@@ -1408,12 +1400,6 @@
     });
 
 })();
-
-        
-
-
-
-
 
 // ============================================
 // MODAL DÉFINIR NOUVEAU MOT DE PASSE
@@ -1555,12 +1541,6 @@
     });
 
 })();
-
-
-
-
-
-
 
 // ============================================
 // GESTION DES MODALS DÉSACTIVER/RÉACTIVER
@@ -1761,34 +1741,6 @@
 
 })();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ============================================
 // GESTION DES PARAMÈTRES SYSTÈME
 // ============================================
@@ -1872,7 +1824,7 @@
                 const file = e.dataTransfer.files[0];
                 
                 if (fileLabel) {
-                    fileLabel.textContent = '📎 ' + file.name;
+                    fileLabel.textContent = ' ' + file.name;
                     fileLabel.style.color = '#0EA486';
                 }
                 
@@ -1886,7 +1838,7 @@
                 const file = this.files[0];
                 
                 if (fileLabel) {
-                    fileLabel.textContent = '📎 ' + file.name;
+                    fileLabel.textContent = ' ' + file.name;
                     fileLabel.style.color = '#0EA486';
                 }
                 
@@ -1911,7 +1863,7 @@
             
             showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
             
-            console.log('📋 Données du formulaire:');
+            console.log(' Données du formulaire:');
             formData.forEach((value, key) => {
                 console.log(`${key}: ${value instanceof File ? value.name : value}`);
             });
@@ -1923,7 +1875,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Succès', 'Paramètres mis à jour avec succès ✅', 'success');
+                    showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
                     
                     const lastUpdate = document.getElementById('lastUpdate');
                     if (lastUpdate) {
@@ -1958,36 +1910,9 @@
     });
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ============================================
 // GESTION SMTP - Enregistrement & Test
 // ============================================
-
 (function() {
     'use strict';
 
@@ -2150,7 +2075,7 @@
                         <div class="flex items-start gap-3">
                             <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
                             <div>
-                                <p class="font-semibold text-red-800">❌ Erreur</p>
+                                <p class="font-semibold text-red-800"> Erreur</p>
                                 <p class="text-sm text-red-700">${data.error || 'Erreur lors de l\'envoi'}</p>
                                 <p class="text-xs text-red-600 mt-1">Vérifiez votre configuration SMTP</p>
                             </div>
@@ -2166,7 +2091,7 @@
                     <div class="flex items-start gap-3">
                         <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
                         <div>
-                            <p class="font-semibold text-red-800">❌ Erreur serveur</p>
+                            <p class="font-semibold text-red-800"> Erreur serveur</p>
                             <p class="text-sm text-red-700">Impossible de contacter le serveur</p>
                         </div>
                     </div>

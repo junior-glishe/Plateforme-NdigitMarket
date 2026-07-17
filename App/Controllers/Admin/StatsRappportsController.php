@@ -278,7 +278,6 @@ public function getChartDataAPI() {
     // EXPORT
     // ============================================
 
-   // App/Controllers/Admin/StatsRappportsController.php
 
 public function exportReport() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -507,7 +506,7 @@ private function exportPDF($data, $filename, $headers = [], $type = 'sales') {
         exit();
         
     } catch (Exception $e) {
-        die("❌ Erreur PDF: " . $e->getMessage());
+        die(" Erreur PDF: " . $e->getMessage());
     }
 }
 

@@ -327,7 +327,7 @@
                                         $pourcentage = $utilisationsMax > 0 ? round(($utilisationsActuelles / $utilisationsMax) * 100) : 0;
                                         
                                         // ============================================
-                                        // 🔥 STATUT DIRECTEMENT DEPUIS LA BASE 🔥
+                                        //  STATUT DIRECTEMENT DEPUIS LA BASE 
                                         // ============================================
                                         $statut = $promo['statut'] ?? 'inactive';
                                         
@@ -1243,7 +1243,7 @@ function formatDateForMySQL(datetime) {
     let timeoutId = null;
 
     if (!searchInput || !statusFilter || !typeFilter || !tbody) {
-        console.error('🔴 Éléments manquants');
+        console.error(' Éléments manquants');
         return;
     }
 
@@ -1533,7 +1533,7 @@ function formatDateForMySQL(datetime) {
     // Chargement initial
     loadPromoCodes();
 
-    console.log('✅ Filtres API prêts');
+    console.log('Filtres API prêts');
 
 })();
 
@@ -1647,7 +1647,7 @@ function formatDateForMySQL(datetime) {
 (function() {
     'use strict';
     
-    console.log('🔵 Script stats chargé');
+    console.log(' Script stats chargé');
 
     const modal = document.getElementById('bannerStatsModal');
     const openBtns = document.querySelectorAll('.openBannerStatsBtn');
@@ -1708,7 +1708,7 @@ function formatDateForMySQL(datetime) {
     }
 
     function renderStats(data) {
-        console.log('🟢 Données reçues:', data);
+        console.log(' Données reçues:', data);
         
         try {
             const total = data.total || {};
@@ -1743,10 +1743,10 @@ function formatDateForMySQL(datetime) {
             // === 4. METTRE À JOUR LE GRAPHIQUE ===
             renderChart(days);
             
-            console.log('✅ Stats affichées avec succès');
+            console.log('Stats affichées avec succès');
             
         } catch (error) {
-            console.error('🔴 Erreur dans renderStats:', error);
+            console.error(' Erreur dans renderStats:', error);
             showError('Erreur lors du rendu: ' + error.message);
         }
     }
@@ -1937,7 +1937,7 @@ function formatDateForMySQL(datetime) {
         }
     });
 
-    console.log('✅ Script stats prêt');
+    console.log('Script stats prêt');
 })();
 // ============================================
 // MODAL TOGGLE BANNIÈRE
@@ -2342,15 +2342,13 @@ setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn')
     });
 })();
 
-
-
 // ============================================
 // CODES PROMOTIONNELS - GESTION COMPLETE
 // ============================================
 (function() {
     'use strict';
 
-    console.log('🔵 Script codes promo chargé');
+    console.log(' Script codes promo chargé');
 
     // ============================================
     // VARIABLES
@@ -2462,7 +2460,7 @@ setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn')
 document.getElementById('promoForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    console.log('🔵 Formulaire soumis !');
+    console.log(' Formulaire soumis !');
     
     // Récupérer les valeurs
     const code = document.getElementById('promoCode')?.value.trim() || '';
@@ -2501,7 +2499,7 @@ document.getElementById('promoForm')?.addEventListener('submit', function(e) {
         submitText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
     }
 
-    // 🔥 Créer le FormData correctement
+    //  Créer le FormData correctement
     const formData = new FormData();
     formData.append('code', code);
     formData.append('type', type);
@@ -2520,8 +2518,8 @@ document.getElementById('promoForm')?.addEventListener('submit', function(e) {
         formData.append('id', currentPromoId);
     }
 
-    console.log('🔵 Action:', action);
-    console.log('🔵 Données envoyées:', Object.fromEntries(formData));
+    console.log(' Action:', action);
+    console.log(' Données envoyées:', Object.fromEntries(formData));
 
     // Envoyer la requête
     fetch('api.php?url=' + action, {
@@ -2529,11 +2527,11 @@ document.getElementById('promoForm')?.addEventListener('submit', function(e) {
         body: formData
     })
     .then(response => {
-        console.log('🟢 Statut réponse:', response.status);
+        console.log(' Statut réponse:', response.status);
         return response.json();
     })
     .then(data => {
-        console.log('🟢 Réponse:', data);
+        console.log(' Réponse:', data);
         
         if (data.success) {
             // Fermer le modal
@@ -2559,7 +2557,7 @@ document.getElementById('promoForm')?.addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
-        console.error('🔴 Erreur:', error);
+        console.error(' Erreur:', error);
         showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
         
         // Réactiver le bouton
@@ -2581,7 +2579,7 @@ document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
         const code = this.dataset.code || 'Code #' + id;
         const total = this.dataset.total || 0;
         
-        // 🔥 Remplir l'en-tête avec les données du bouton
+        //  Remplir l'en-tête avec les données du bouton
         document.getElementById('historyCodeName').textContent = code;
         document.getElementById('historyCodeInfo').textContent = 'ID: ' + id;
         document.getElementById('historyTotalUtilisations').textContent = total;
@@ -2920,7 +2918,7 @@ function formatDate(dateStr) {
         }
     }
 
-    console.log('✅ Script codes promo prêt');
+    console.log('Script codes promo prêt');
 
 })();
 

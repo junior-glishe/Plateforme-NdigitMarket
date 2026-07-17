@@ -46,27 +46,24 @@ class SettingController {
     // ============================================
     // API PARAMÈTRES GÉNÉRAUX
     // ============================================
-
-// App/Controllers/Admin/SettingController.php
-
 /**
  * Mettre à jour les paramètres généraux
  */
 public function updateGeneralSettings() {
-     // 🔥 FORCER L'AFFICHAGE DES ERREURS
+     //  FORCER L'AFFICHAGE DES ERREURS
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
     ini_set('log_errors', 1);
     
-    // 🔥 LOG
-    error_log("=== 🚀 updateGeneralSettings START ===");
-    error_log("📌 POST: " . print_r($_POST, true));
-    error_log("📌 FILES: " . print_r($_FILES, true));
+    //  LOG
+    error_log("===  updateGeneralSettings START ===");
+    error_log(" POST: " . print_r($_POST, true));
+    error_log(" FILES: " . print_r($_FILES, true));
     
     try {
         // ... le reste du code
     } catch (Exception $e) {
-        // 🔥 AFFICHER L'ERREUR DANS LA RÉPONSE
+        //  AFFICHER L'ERREUR DANS LA RÉPONSE
         http_response_code(500);
         echo json_encode([
             'success' => false,
@@ -109,7 +106,7 @@ public function updateGeneralSettings() {
         }
         
     } catch (Exception $e) {
-        error_log("❌ Erreur: " . $e->getMessage());
+        error_log(" Erreur: " . $e->getMessage());
         $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
     }
 }
@@ -407,19 +404,6 @@ public function updateAllSettings() {
             $this->jsonResponse(['error' => 'Erreur lors de la réinitialisation'], 500);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // ============================================
     // FONCTIONS UTILITAIRES

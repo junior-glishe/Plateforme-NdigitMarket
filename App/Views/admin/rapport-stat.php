@@ -1454,7 +1454,7 @@ async function loadChartData(period) {
     isLoading = true;
     
     currentPeriod = period;
-    console.log('🔄 Chargement des données pour:', period);
+    console.log(' Chargement des données pour:', period);
     
     // Mettre à jour le select
     const periodSelect = document.getElementById('periodSelect');
@@ -1478,7 +1478,7 @@ async function loadChartData(period) {
     try {
         // Construire l'URL API
         const apiUrl = `/back-end/routes/api.php?url=stats_chart_data&period=${period}`;
-        console.log('📡 Appel API:', apiUrl);
+        console.log(' Appel API:', apiUrl);
         
         const response = await fetch(apiUrl);
         
@@ -1487,7 +1487,7 @@ async function loadChartData(period) {
         }
         
         const result = await response.json();
-        console.log('📊 Données reçues:', result);
+        console.log(' Données reçues:', result);
         
         if (result.success && result.data) {
             // Vérifier que les données sont valides
@@ -1621,7 +1621,7 @@ function showToast(title, message, type = 'info') {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Initialisation des graphiques...');
+    console.log(' Initialisation des graphiques...');
     
     // Déterminer la période initiale
     const periodSelect = document.getElementById('periodSelect');
@@ -1630,7 +1630,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialiser les graphiques avec les données PHP
     if (chartData && chartData.labels) {
-        console.log('📊 Données initiales PHP:', chartData);
+        console.log(' Données initiales PHP:', chartData);
         createInscriptionsChart(chartData);
         createVentesChart(chartData);
     } else {
@@ -1690,10 +1690,7 @@ window.chartManager = {
     refresh: () => loadChartData(currentPeriod)
 };
 
-console.log('💡 Utilise window.chartManager.setPeriod("month") pour changer la période');
-
-
-
+console.log(' Utilise window.chartManager.setPeriod("month") pour changer la période');
 
 
 (function() {
@@ -2004,7 +2001,7 @@ document.querySelectorAll('.generateReportBtn').forEach(btn => {
             .then(data => {
                 if (data.success) {
                     updateReportData(tabName, data.data, data.summary);
-                    showToast('Succès', 'Rapport mis à jour ✅', 'success');
+                    showToast('Succès', 'Rapport mis à jour ', 'success');
                 } else {
                     throw new Error(data.message || 'Erreur');
                 }
@@ -2216,10 +2213,10 @@ function createGeoChart(data) {
  */
 async function loadGeoData() {
     try {
-        console.log('🔄 Chargement des données géographiques...');
+        console.log(' Chargement des données géographiques...');
         
         const apiUrl = `/back-end/routes/api.php?url=stats_geo_distribution`;
-        console.log('📡 Appel API:', apiUrl);
+        console.log(' Appel API:', apiUrl);
         
         const response = await fetch(apiUrl);
         
@@ -2228,7 +2225,7 @@ async function loadGeoData() {
         }
         
         const result = await response.json();
-        console.log('📊 Données géo reçues:', result);
+        console.log(' Données géo reçues:', result);
         
         if (result.success && result.data) {
             // Mettre à jour le graphique
@@ -2296,11 +2293,11 @@ function updateGeoSummary(data) {
  * Initialiser le graphique géographique
  */
 function initGeoChart() {
-    console.log('🚀 Initialisation du graphique géographique...');
+    console.log(' Initialisation du graphique géographique...');
     
     // Vérifier si les données PHP sont disponibles
     if (typeof geoData !== 'undefined' && geoData && geoData.labels) {
-        console.log('📊 Données PHP géo disponibles');
+        console.log(' Données PHP géo disponibles');
         createGeoChart(geoData);
         updateGeoSummary(geoData);
     } else {
@@ -2321,11 +2318,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Attendre un peu pour s'assurer que tout est chargé
     setTimeout(initGeoChart, 500);
 });
-
-
-
-
-
 
 // ============================================
 // GESTION DES EXPORTS AVEC MODAL
@@ -2490,11 +2482,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
                 
-                showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ✅', 'success');
+                showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ', 'success');
             });
         })
         .catch(error => {
-            console.error('❌ Erreur export:', error);
+            console.error(' Erreur export:', error);
             showToast('Erreur', 'Impossible d\'exporter le rapport', 'error');
         });
     });

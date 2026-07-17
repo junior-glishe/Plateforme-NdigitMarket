@@ -41,7 +41,7 @@ class CategorieController {
         'icons' => $icons,
         'colors' => $colors,
         'categoryDetail' => $categoryDetail,
-        'currentPage' => 'categories'  // 👈 AJOUTER CETTE LIGNE
+        'currentPage' => 'categories'  
     ]);
 }
         private function render($view, $data = [])
@@ -194,15 +194,9 @@ public function update() {
     
     $this->jsonResponse([
         'success' => true,
-        'data' => $category  // 👈 ATTENTION: utilise 'data' pas 'category'
+        'data' => $category  
     ]);
 }
-    
-    /**
-     * Mettre à jour une catégorie
-     */
-    
-    
     /**
      * Mettre à jour l'ordre d'affichage
      */
@@ -338,18 +332,18 @@ public function update() {
      * Upload d'image
      */
     private function uploadImage($file) {
-    // 🔥 Chemin vers le dossier uploads (qui existe déjà)
+    //  Chemin vers le dossier uploads (qui existe déjà)
      $uploadDir = __DIR__ . '/../../../public/uploads/';     
     
-    // 🔥 Vérifier que le dossier existe
+    //  Vérifier que le dossier existe
     if (!is_dir($uploadDir)) {
-        error_log('❌ Le dossier uploads n\'existe pas: ' . $uploadDir);
+        error_log(' Le dossier uploads n\'existe pas: ' . $uploadDir);
         return false;
     }
     
-    // 🔥 Vérifier que le dossier est accessible en écriture
+    //  Vérifier que le dossier est accessible en écriture
     if (!is_writable($uploadDir)) {
-        error_log('❌ Le dossier n\'est pas accessible en écriture: ' . $uploadDir);
+        error_log(' Le dossier n\'est pas accessible en écriture: ' . $uploadDir);
         return false;
     }
     
@@ -360,12 +354,12 @@ public function update() {
     
     $formats_autorises = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
     if (!in_array($imageType, $formats_autorises)) {
-        error_log('❌ Format non autorisé: ' . $imageType);
+        error_log(' Format non autorisé: ' . $imageType);
         return false;
     }
     
     if ($file['size'] > 2 * 1024 * 1024) { // 2MB
-        error_log('❌ Fichier trop volumineux: ' . $file['size']);
+        error_log(' Fichier trop volumineux: ' . $file['size']);
         return false;
     }
     
@@ -373,7 +367,7 @@ public function update() {
         return $imageName;
     }
     
-    error_log('❌ Erreur lors du déplacement du fichier vers: ' . $imagePath);
+    error_log(' Erreur lors du déplacement du fichier vers: ' . $imagePath);
     return false;
 }
     

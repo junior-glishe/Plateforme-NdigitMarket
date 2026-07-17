@@ -1706,14 +1706,6 @@
                 document.body.style.overflow = '';
             }
         });
-
-
-
-
-
-
-
-
 // ============================================
 // NOTIFICATIONS - LISTE & ACTIONS (COMPLET)
 // ============================================
@@ -2410,7 +2402,7 @@
     // ============================================
     filterSelect.addEventListener('change', function() {
         const filterValue = this.value;
-        console.log('🔵 Filtre sélectionné:', filterValue);
+        console.log(' Filtre sélectionné:', filterValue);
         
         if (filterValue === 'all' || filterValue === 'unread') {
             // Recharger via API
@@ -2492,7 +2484,7 @@
         loadNotifications(true);
     }
 
-    console.log('✅ Notifications prêtes');
+    console.log(' Notifications prêtes');
 
 })();
 
@@ -2515,7 +2507,7 @@
             const id = this.dataset.id;
             const nom = this.dataset.nom || 'Campagne';
             
-            console.log('📊 Stats - ID:', id, 'Nom:', nom);
+            console.log(' Stats - ID:', id, 'Nom:', nom);
             
             if (!id) {
                 showToast('Erreur', 'ID de campagne manquant', 'error');
@@ -2574,7 +2566,7 @@
 
             // Appel API
             const apiUrl = 'api.php?url=campaign_stats&id=' + id;
-            console.log('📡 Appel API:', apiUrl);
+            console.log(' Appel API:', apiUrl);
             
             fetch(apiUrl)
                 .then(response => {
@@ -2582,7 +2574,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('📊 Données reçues:', data);
+                    console.log(' Données reçues:', data);
                     if (data.success && data.data) {
                         renderCampaignStats(data.data);
                     } else {
@@ -2590,14 +2582,14 @@
                     }
                 })
                 .catch(error => {
-                    console.error('❌ Erreur:', error);
+                    console.error(' Erreur:', error);
                     showToast('Erreur', 'Erreur de connexion', 'error');
                 });
         });
     });
 
     function renderCampaignStats(data) {
-        console.log('🟢 Rendu des stats:', data);
+        console.log(' Rendu des stats:', data);
         
         const elements = {
             statsEnvoyes: document.getElementById('statsEnvoyes'),
@@ -2682,7 +2674,7 @@
     // ============================================
     function setupDuplicateButtons() {
         const buttons = document.querySelectorAll('.openCampaignDuplicateBtn');
-        console.log('🔵 Boutons Dupliquer trouvés:', buttons.length);
+        console.log(' Boutons Dupliquer trouvés:', buttons.length);
         
         buttons.forEach(btn => {
             // Supprimer les anciens écouteurs pour éviter les doublons
@@ -2697,7 +2689,7 @@
         
         const btn = this;
         const id = btn.dataset.id;
-        console.log('📋 Dupliquer - ID:', id);
+        console.log(' Dupliquer - ID:', id);
         
         if (!id) {
             showToast('Erreur', 'ID de campagne manquant', 'error');
@@ -2713,7 +2705,7 @@
         }
         nom = nom || 'Campagne';
         
-        console.log('📋 Dupliquer - Nom:', nom);
+        console.log(' Dupliquer - Nom:', nom);
         
         currentCampaignId = id;
         currentCampaignNom = nom;
@@ -2727,7 +2719,7 @@
     // ============================================
     function setupCancelButtons() {
         const buttons = document.querySelectorAll('.openCampaignCancelBtn');
-        console.log('🔴 Boutons Annuler trouvés:', buttons.length);
+        console.log(' Boutons Annuler trouvés:', buttons.length);
         
         buttons.forEach(btn => {
             btn.removeEventListener('click', handleCancel);
@@ -2741,7 +2733,7 @@
         
         const btn = this;
         const id = btn.dataset.id;
-        console.log('❌ Annuler - ID:', id);
+        console.log(' Annuler - ID:', id);
         
         if (!id) {
             showToast('Erreur', 'ID de campagne manquant', 'error');
@@ -2757,7 +2749,7 @@
         }
         nom = nom || 'Campagne';
         
-        console.log('❌ Annuler - Nom:', nom);
+        console.log(' Annuler - Nom:', nom);
         
         currentCampaignId = id;
         currentCampaignNom = nom;
@@ -2770,7 +2762,7 @@
     // 4. AFFICHER LE MODAL DE CONFIRMATION
     // ============================================
     function showConfirmModal(action, nom) {
-        console.log('🟡 Affichage modal:', action, nom);
+        console.log(' Affichage modal:', action, nom);
         
         const modal = document.getElementById('confirmCampaignModal');
         if (!modal) {
@@ -2864,7 +2856,7 @@
         const id = currentCampaignId;
         const action = currentActionType;
 
-        console.log('🟢 Confirmation - Action:', action, 'ID:', id);
+        console.log(' Confirmation - Action:', action, 'ID:', id);
 
         if (!id) {
             showToast('Erreur', 'ID de campagne manquant', 'error');
@@ -2899,7 +2891,7 @@
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
         this.disabled = true;
 
-        console.log('📡 Envoi requête:', url, 'ID:', id);
+        console.log(' Envoi requête:', url, 'ID:', id);
 
         fetch(url, {
             method: 'POST',
@@ -2909,11 +2901,11 @@
             body: 'id=' + encodeURIComponent(id)
         })
         .then(response => {
-            console.log('📡 Réponse HTTP:', response.status);
+            console.log(' Réponse HTTP:', response.status);
             return response.json();
         })
         .then(data => {
-            console.log('📡 Réponse JSON:', data);
+            console.log(' Réponse JSON:', data);
             if (data.success) {
                 // Fermer le modal
                 const modal = document.getElementById('confirmCampaignModal');
@@ -2935,7 +2927,7 @@
             }
         })
         .catch(error => {
-            console.error('❌ Erreur fetch:', error);
+            console.error(' Erreur fetch:', error);
             showToast('Erreur', 'Erreur de connexion au serveur', 'error');
             // Réactiver le bouton
             this.innerHTML = originalHtml;
@@ -3050,9 +3042,9 @@
         // Configurer les boutons d'annulation
         setupCancelButtons();
         
-        console.log('✅ Initialisation terminée');
-        console.log('📊 Boutons Dupliquer:', document.querySelectorAll('.openCampaignDuplicateBtn').length);
-        console.log('📊 Boutons Annuler:', document.querySelectorAll('.openCampaignCancelBtn').length);
+        console.log(' Initialisation terminée');
+        console.log(' Boutons Dupliquer:', document.querySelectorAll('.openCampaignDuplicateBtn').length);
+        console.log(' Boutons Annuler:', document.querySelectorAll('.openCampaignCancelBtn').length);
     }
 
     // Exécuter l'initialisation
@@ -3068,7 +3060,7 @@
             // Vérifier si de nouveaux boutons ont été ajoutés
             const hasNewButtons = document.querySelectorAll('.openCampaignDuplicateBtn, .openCampaignCancelBtn').length > 0;
             if (hasNewButtons) {
-                console.log('🔄 Nouveaux boutons détectés, réinitialisation...');
+                console.log(' Nouveaux boutons détectés, réinitialisation...');
                 setupDuplicateButtons();
                 setupCancelButtons();
             }
@@ -3081,7 +3073,7 @@
         });
     }
 
-    console.log('✅ Envoi d\'emails en masse - Actions prêtes');
+    console.log(' Envoi d\'emails en masse - Actions prêtes');
 
 })();
 
@@ -3181,7 +3173,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('📥 Réponse:', data);
+                console.log(' Réponse:', data);
                 
                 if (data.success) {
                     // Fermer le modal
@@ -3202,7 +3194,7 @@
                 }
             })
             .catch(error => {
-                console.error('❌ Erreur:', error);
+                console.error(' Erreur:', error);
                 showToast('Erreur', 'Erreur de connexion au serveur', 'error');
                 this.innerHTML = originalHtml;
                 this.disabled = false;
@@ -3210,7 +3202,7 @@
         });
     }
 
-    console.log('✅ Composer email - Prêt');
+    console.log(' Composer email - Prêt');
 
 })();
 
@@ -3289,7 +3281,7 @@
         });
     }
 
-    console.log('✅ Panel & Actions - Corrigé');
+    console.log(' Panel & Actions - Corrigé');
 
 })();
 
@@ -3370,7 +3362,7 @@
                 settings['email_notifications'] = emailSelect.value;
             }
 
-            console.log('📝 Paramètres sauvegardés:', settings);
+            console.log(' Paramètres sauvegardés:', settings);
 
             // Ici tu peux faire un appel API pour sauvegarder
             // fetch('api.php?url=notifications_settings', {
@@ -3388,7 +3380,7 @@
         });
     }
 
-    console.log('✅ Paramètres notifications prêt');
+    console.log(' Paramètres notifications prêt');
 
 })();
 
@@ -3399,7 +3391,7 @@
 (function() {
     'use strict';
 
-    console.log('🔔 Initialisation du panneau cloche...');
+    console.log(' Initialisation du panneau cloche...');
 
     const panel = document.getElementById('notifPanel');
     const openBtn = document.getElementById('openNotifCenterBtn');
@@ -3414,7 +3406,7 @@
     let isPanelOpen = false;
 
     if (!panel || !container) {
-        console.error('❌ Éléments du panel non trouvés !');
+        console.error(' Éléments du panel non trouvés !');
         return;
     }
 
@@ -3428,7 +3420,7 @@
 
     function handleOpen(e) {
         e.stopPropagation();
-        console.log('🔔 Clic sur la cloche !');
+        console.log(' Clic sur la cloche !');
         panel.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         isPanelOpen = true;
@@ -3468,11 +3460,11 @@
     // ============================================
     function loadNotifications() {
         if (!container) {
-            console.error('❌ Container non trouvé !');
+            console.error(' Container non trouvé !');
             return;
         }
 
-        console.log('🔄 Chargement des notifications...');
+        console.log(' Chargement des notifications...');
 
         container.innerHTML = `
             <div class="text-center py-12">
@@ -3487,7 +3479,7 @@
                 return response.json();
             })
             .then(data => {
-                console.log('📥 Données reçues:', data);
+                console.log(' Données reçues:', data);
                 if (data.success) {
                     allNotifications = data.data || [];
                     renderNotifications();
@@ -3502,7 +3494,7 @@
                 }
             })
             .catch(error => {
-                console.error('❌ Erreur:', error);
+                console.error(' Erreur:', error);
                 container.innerHTML = `
                     <div class="text-center py-12 text-red-500">
                         <i class="fas fa-exclamation-circle text-4xl mb-3"></i>
@@ -3758,7 +3750,7 @@
     // ============================================
     // 10. INITIALISATION
     // ============================================
-    console.log('✅ Panneau cloche prêt');
+    console.log(' Panneau cloche prêt');
     updateBadge();
 
 })();
