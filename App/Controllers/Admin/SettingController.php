@@ -165,12 +165,19 @@ class SettingController
             return;
         }
 
-        // Ici vous pouvez implémenter l'envoi réel d'email
-        // Pour l'instant, on simule un succès
-        $this->jsonResponse([
-            'success' => true,
-            'message' => 'Email de test envoyé avec succès à ' . $email
-        ]);
+        // Envoi réel de l'email de test via le modèle (SMTP)
+        $result = $this->model->testSmtp($email, $message);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Email de test envoyé avec succès à ' . $email
+            ]);
+        } else {
+            $this->jsonResponse([
+                'error' => $result['error'] ?? 'Erreur lors de l\'envoi de l\'email de test'
+            ], 500);
+        }
     }
 
     // ============================================

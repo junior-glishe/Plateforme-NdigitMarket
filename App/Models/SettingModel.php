@@ -146,22 +146,22 @@ class SettingModel
                 return false;
             }
 
-            //  DEBUG: Vérifier si la table existe
+            //  Vérifier si la table existe, la créer automatiquement sinon
             try {
                 $checkTable = $this->pdo->query("SHOW TABLES LIKE 'settings'");
                 if ($checkTable->rowCount() == 0) {
-                    error_log(" La table 'settings' n'existe pas !");
-                    return false;
+                    error_log(" La table 'settings' n'existe pas, création automatique...");
+                    $this->ensureSettingsTable();
                 }
             } catch (Exception $e) {
-                error_log(" Erreur vérification table: " . $e->getMessage());
+                error_log(" Erreur vérification/création table: " . $e->getMessage());
                 return false;
             }
 
             $stmt = $this->pdo->prepare("
             INSERT INTO settings (setting_key, setting_value) 
             VALUES (:key, :value) 
-            ON DUPLICATE KEY UPDATE setting_value = :value
+            ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
         ");
 
             $result = $stmt->execute([
