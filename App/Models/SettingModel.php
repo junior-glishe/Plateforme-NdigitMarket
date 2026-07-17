@@ -54,76 +54,40 @@ class SettingModel {
  * Mettre à jour les paramètres généraux avec gestion des fichiers
  */
 public function updateGeneralSettings($data, $files = []) {
-    error_log("===  START updateGeneralSettings (MODEL) ===");
-    error_log(" DATA reçues: " . print_r($data, true));
-    error_log(" FILES reçus: " . print_r($files, true));
+    error_log("=== MODEL updateGeneralSettings ===");
+    error_log("DATA: " . print_r($data, true));
+    error_log("FILES: " . print_r($files, true));
     
     try {
-        $success = true;
-        
-        //  DEBUG: Vérifier la connexion à la BDD
-        if (!$this->pdo) {
-            error_log(" CONNEXION PDO NULL !");
-            return false;
-        }
-        error_log(" CONNEXION PDO OK");
-        
-        // Gérer l'upload du logo
-        if (isset($files['site_logo']) && $files['site_logo']['error'] === UPLOAD_ERR_OK) {
-            error_log(" Upload du logo en cours...");
+        // Upload du logo
+        if (isset($files['site_logo'])) {
             $logoPath = $this->uploadFile($files['site_logo'], 'logo');
             if ($logoPath) {
                 $data['site_logo'] = $logoPath;
-                error_log(" Logo uploadé: " . $logoPath);
-            } else {
-                error_log(" Erreur upload logo");
-                $success = false;
+                error_log("LOGO: " . $logoPath);
             }
-        } else {
-            error_log(" Pas de logo à uploader");
         }
         
-        // Gérer l'upload du favicon
-        if (isset($files['site_favicon']) && $files['site_favicon']['error'] === UPLOAD_ERR_OK) {
-            error_log(" Upload du favicon en cours...");
+        // Upload du favicon
+        if (isset($files['site_favicon'])) {
             $faviconPath = $this->uploadFile($files['site_favicon'], 'favicon');
             if ($faviconPath) {
                 $data['site_favicon'] = $faviconPath;
-                error_log(" Favicon uploadé: " . $faviconPath);
-            } else {
-                error_log(" Erreur upload favicon");
-                $success = false;
+                error_log("FAVICON: " . $faviconPath);
             }
-        } else {
-            error_log(" Pas de favicon à uploader");
         }
         
-        // Mettre à jour les paramètres
-        error_log(" Mise à jour des paramètres dans la BDD...");
-        
+        // Mettre à jour les parametres
         foreach ($data as $key => $value) {
-            error_log("=== UPDATE KEY: $key = " . substr($value, 0, 100) . (strlen($value) > 100 ? '...' : '') . " ===");
-            
-            try {
-                $result = $this->updateSetting($key, $value);
-                if (!$result) {
-                    error_log(" ERREUR pour la clé: $key");
-                    $success = false;
-                } else {
-                    error_log(" OK pour la clé: $key");
-                }
-            } catch (Exception $e) {
-                error_log(" EXCEPTION pour la clé $key: " . $e->getMessage());
-                $success = false;
-            }
+            error_log("UPDATE: $key");
+            $this->updateSetting($key, $value);
         }
         
-        error_log("=== FINAL RESULT: " . ($success ? ' SUCCESS' : ' FAILED') . " ===");
-        return $success;
+        error_log("MODEL SUCCESS");
+        return true;
         
     } catch (Exception $e) {
-        error_log(" EXCEPTION GLOBALE: " . $e->getMessage());
-        error_log(" TRACE: " . $e->getTraceAsString());
+        error_log("MODEL EXCEPTION: " . $e->getMessage());
         return false;
     }
 }
@@ -187,98 +151,55 @@ public function updateSetting($key, $value) {
  * Upload d'un fichier avec debug
  */
 private function uploadFile($file, $type = 'logo') {
-    error_log(" uploadFile: type=$type, name=" . $file['name']);
+    error_log("uploadFile: $type - " . $file['name']);
     
     try {
-        // Vérifier les erreurs
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            $errors = [
-                UPLOAD_ERR_INI_SIZE => 'Fichier trop volumineux (ini)',
-                UPLOAD_ERR_FORM_SIZE => 'Fichier trop volumineux (form)',
-                UPLOAD_ERR_PARTIAL => 'Upload partiel',
-                UPLOAD_ERR_NO_FILE => 'Aucun fichier',
-                UPLOAD_ERR_NO_TMP_DIR => 'Dossier tmp manquant',
-                UPLOAD_ERR_CANT_WRITE => 'Impossible d\'écrire',
-                UPLOAD_ERR_EXTENSION => 'Extension bloquée'
-            ];
-            $errorMsg = $errors[$file['error']] ?? 'Erreur inconnue: ' . $file['error'];
-            error_log(" Erreur upload: " . $errorMsg);
-            return false;
-        }
-        
-        //  CORRECTION: Utiliser le bon dossier
         $uploadDir = __DIR__ . '/../../public/assets/images/';
-        error_log(" Dossier upload: " . $uploadDir);
         
-        // Créer le dossier s'il n'existe pas
         if (!is_dir($uploadDir)) {
-            error_log(" Création du dossier: " . $uploadDir);
-            if (!mkdir($uploadDir, 0777, true)) {
-                error_log(" Impossible de créer le dossier: " . $uploadDir);
-                return false;
-            }
+            mkdir($uploadDir, 0777, true);
+            error_log("Dossier cree: " . $uploadDir);
         }
         
-        // Vérifier les droits
-        if (!is_writable($uploadDir)) {
-            error_log(" Dossier non accessible en écriture: " . $uploadDir);
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            error_log("Erreur upload: " . $file['error']);
             return false;
         }
-        error_log(" Dossier accessible en écriture");
         
-        // Vérifier le type de fichier
         $allowedTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon'];
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $file['tmp_name']);
-        finfo_close($finfo);
-        
-        error_log(" Type MIME: " . $mimeType);
+        $mimeType = mime_content_type($file['tmp_name']);
         
         if (!in_array($mimeType, $allowedTypes)) {
-            error_log(" Type de fichier non autorisé: " . $mimeType);
+            error_log("Type non autorise: " . $mimeType);
             return false;
         }
         
-        // Vérifier la taille (max 2MB)
         if ($file['size'] > 2 * 1024 * 1024) {
-            error_log(" Fichier trop volumineux: " . $file['size'] . " bytes");
+            error_log("Fichier trop volumineux: " . $file['size']);
             return false;
         }
-        error_log(" Taille OK: " . $file['size'] . " bytes");
         
-        // Générer un nom unique
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = $type . '_' . time() . '_' . uniqid() . '.' . $extension;
         $destination = $uploadDir . $filename;
         
-        error_log(" Destination: " . $destination);
-        
-        // Supprimer l'ancien fichier si existe
-        if ($type === 'logo') {
-            $oldLogo = $this->getSetting('site_logo');
-            if ($oldLogo && file_exists($uploadDir . $oldLogo)) {
-                error_log(" Suppression ancien logo: " . $oldLogo);
-                unlink($uploadDir . $oldLogo);
-            }
-        } elseif ($type === 'favicon') {
-            $oldFavicon = $this->getSetting('site_favicon');
-            if ($oldFavicon && file_exists($uploadDir . $oldFavicon)) {
-                error_log(" Suppression ancien favicon: " . $oldFavicon);
-                unlink($uploadDir . $oldFavicon);
-            }
+        // Supprimer l'ancien fichier
+        $oldKey = $type === 'logo' ? 'site_logo' : 'site_favicon';
+        $oldFile = $this->getSetting($oldKey);
+        if ($oldFile && file_exists($uploadDir . $oldFile)) {
+            unlink($uploadDir . $oldFile);
+            error_log("Ancien fichier supprime: " . $oldFile);
         }
         
-        // Déplacer le fichier
         if (move_uploaded_file($file['tmp_name'], $destination)) {
-            error_log(" Fichier uploadé avec succès: " . $filename);
+            error_log("Fichier uploadé: " . $filename);
             return $filename;
-        } else {
-            error_log(" Erreur move_uploaded_file");
-            return false;
         }
+        
+        return false;
         
     } catch (Exception $e) {
-        error_log(" EXCEPTION uploadFile: " . $e->getMessage());
+        error_log("EXCEPTION uploadFile: " . $e->getMessage());
         return false;
     }
 }
@@ -392,54 +313,52 @@ private function uploadFile($file, $type = 'logo') {
      * Créer un administrateur
      */
     public function createAdmin($data) {
-        try {
-            $hashedPassword = password_hash($data['mdp'], PASSWORD_DEFAULT);
-            
-            $stmt = $this->pdo->prepare("
-                INSERT INTO admin (nom, email, telephone, mdp, image_auteur, role, statut) 
-                VALUES (?, ?, ?, ?, ?, ?, 'actif')
-            ");
-            return $stmt->execute([
-                $data['nom'],
-                $data['email'],
-                $data['telephone'] ?? '',
-                $hashedPassword,
-                $data['image_auteur'] ?? 'uploads/default.png',
-                $data['role']
-            ]);
-        } catch (PDOException $e) {
-            error_log("Erreur createAdmin: " . $e->getMessage());
-            return false;
-        }
+    try {
+        $hashedPassword = password_hash($data['mdp'], PASSWORD_DEFAULT);
+        
+        $stmt = $this->pdo->prepare("
+            INSERT INTO admin (nom, email, telephone, mdp, image_auteur, role, statut) 
+            VALUES (?, ?, ?, ?, ?, ?, 'actif')
+        ");
+        return $stmt->execute([
+            $data['nom'],
+            $data['email'],
+            $data['telephone'] ?? '',
+            $hashedPassword,
+            $data['image_auteur'] ?? 'default.png',
+            $data['role'] ?? 'Admin'
+        ]);
+    } catch (PDOException $e) {
+        error_log("Erreur createAdmin: " . $e->getMessage());
+        return false;
     }
+}
 
      /**
      * Mettre à jour un administrateur
      */
     public function updateAdmin($id, $data) {
-        try {
-            $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, role = ? WHERE id_gestion = ?";
-            $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['role'], $id];
-            
-            // Si mot de passe fourni
-            if (!empty($data['mdp'])) {
-                $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, mdp = ?, role = ? WHERE id_gestion = ?";
-                $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', password_hash($data['mdp'], PASSWORD_DEFAULT), $data['role'], $id];
-            }
-            
-            // Si image fournie
-            if (!empty($data['image_auteur'])) {
-                $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, image_auteur = ?, role = ? WHERE id_gestion = ?";
-                $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['image_auteur'], $data['role'], $id];
-            }
-            
-            $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute($params);
-        } catch (PDOException $e) {
-            error_log("Erreur updateAdmin: " . $e->getMessage());
-            return false;
+    try {
+        $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, role = ? WHERE id_gestion = ?";
+        $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['role'] ?? 'Admin', $id];
+        
+        if (!empty($data['mdp'])) {
+            $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, mdp = ?, role = ? WHERE id_gestion = ?";
+            $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', password_hash($data['mdp'], PASSWORD_DEFAULT), $data['role'] ?? 'Admin', $id];
         }
+        
+        if (!empty($data['image_auteur'])) {
+            $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, image_auteur = ?, role = ? WHERE id_gestion = ?";
+            $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['image_auteur'], $data['role'] ?? 'Admin', $id];
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
+    } catch (PDOException $e) {
+        error_log("Erreur updateAdmin: " . $e->getMessage());
+        return false;
     }
+}
 
     /**
      * Désactiver un administrateur
@@ -560,6 +479,10 @@ public function updateSmtpSettings($data) {
     }
 }
 
+
+/**
+ * Tester la configuration SMTP
+ */
 /**
  * Tester la configuration SMTP
  */

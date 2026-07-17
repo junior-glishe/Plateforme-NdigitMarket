@@ -46,48 +46,31 @@ class SettingController {
     // ============================================
     // API PARAMÈTRES GÉNÉRAUX
     // ============================================
-/**
+
+    /**
  * Mettre à jour les paramètres généraux
  */
 public function updateGeneralSettings() {
-     //  FORCER L'AFFICHAGE DES ERREURS
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
-    ini_set('log_errors', 1);
     
-    //  LOG
-    error_log("===  updateGeneralSettings START ===");
-    error_log(" POST: " . print_r($_POST, true));
-    error_log(" FILES: " . print_r($_FILES, true));
+    error_log("=== updateGeneralSettings START ===");
+    error_log("POST: " . print_r($_POST, true));
+    error_log("FILES: " . print_r($_FILES, true));
     
-    try {
-        // ... le reste du code
-    } catch (Exception $e) {
-        //  AFFICHER L'ERREUR DANS LA RÉPONSE
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ]);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'error' => 'Methode non autorisee']);
         exit();
     }
     
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
-        return;
-    }
-    
     try {
-        // 1. Récupérer TOUTES les données POST
+        // Récupérer les données POST
         $data = [];
         foreach ($_POST as $key => $value) {
             $data[$key] = trim($value);
         }
         
-        // 2. Récupérer les fichiers
+        // Récupérer les fichiers
         $files = [];
         if (isset($_FILES['site_logo']) && $_FILES['site_logo']['error'] === UPLOAD_ERR_OK) {
             $files['site_logo'] = $_FILES['site_logo'];
@@ -96,19 +79,22 @@ public function updateGeneralSettings() {
             $files['site_favicon'] = $_FILES['site_favicon'];
         }
         
-        // 3. Appeler le modèle
         $result = $this->model->updateGeneralSettings($data, $files);
         
         if ($result) {
-            $this->jsonResponse(['success' => true, 'message' => 'Paramètres mis à jour avec succès']);
+            echo json_encode(['success' => true, 'message' => 'Parametres mis a jour']);
         } else {
-            $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour'], 500);
+            echo json_encode(['success' => false, 'error' => 'Erreur lors de la mise a jour']);
         }
         
     } catch (Exception $e) {
-        error_log(" Erreur: " . $e->getMessage());
-        $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
+        error_log("EXCEPTION: " . $e->getMessage());
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
     }
+    exit();
 }
 
 /**
@@ -139,45 +125,47 @@ public function updateAllSettings() {
     // API CONFIGURATION PAIEMENTS
     // ============================================
 
-    /**
-     * Mettre à jour la configuration des paiements
-     */
-    public function updatePaymentSettings() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-
-        $data = [
-            'fedapay_public_key' => $_POST['fedapay_public_key'] ?? '',
-            'fedapay_secret_key' => $_POST['fedapay_secret_key'] ?? '',
-            'fedapay_mode' => $_POST['fedapay_mode'] ?? 'test',
-            'payment_mobile_money' => isset($_POST['payment_mobile_money']) ? '1' : '0',
-            'payment_card' => isset($_POST['payment_card']) ? '1' : '0',
-            'payment_bank_transfer' => isset($_POST['payment_bank_transfer']) ? '1' : '0',
-            'payment_paypal' => isset($_POST['payment_paypal']) ? '1' : '0',
-            'min_order_amount' => $_POST['min_order_amount'] ?? '500',
-            'max_order_amount' => $_POST['max_order_amount'] ?? '5000000',
-            'refund_days' => $_POST['refund_days'] ?? '7',
-            'vendor_payout_days' => $_POST['vendor_payout_days'] ?? '30'
-        ];
-
-        if ($this->model->updateSettings($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Configuration paiements mise à jour']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
-        }
+   /**
+ * Mettre à jour la configuration des paiements
+ */
+public function updatePaymentSettings() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'error' => 'Methode non autorisee']);
+        exit();
     }
+
+    $data = [
+        'payment_mobile_money' => isset($_POST['payment_mobile_money']) ? '1' : '0',
+        'payment_card' => isset($_POST['payment_card']) ? '1' : '0',
+        'payment_bank_transfer' => isset($_POST['payment_bank_transfer']) ? '1' : '0',
+        'payment_paypal' => isset($_POST['payment_paypal']) ? '1' : '0',
+        'fedapay_mode' => trim($_POST['fedapay_mode'] ?? 'test'),
+        'fedapay_public_key' => trim($_POST['fedapay_public_key'] ?? ''),
+        'fedapay_secret_key' => trim($_POST['fedapay_secret_key'] ?? ''),
+        'min_order_amount' => trim($_POST['min_order_amount'] ?? '500'),
+        'max_order_amount' => trim($_POST['max_order_amount'] ?? '5000000'),
+        'refund_days' => trim($_POST['refund_days'] ?? '7'),
+        'vendor_payout_days' => trim($_POST['vendor_payout_days'] ?? '30')
+    ];
+
+    $result = $this->model->updateSettings($data);
+
+    if ($result) {
+        echo json_encode(['success' => true, 'message' => 'Configuration paiements mise a jour']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Erreur lors de la mise a jour']);
+    }
+    exit();
+}
 
     // ============================================
     // API CONFIGURATION SMTP
     // ============================================
 
-        /**
-         * API - Mettre à jour les paramètres SMTP
-         */
-
-        public function updateSmtpSettings() {
+       /**
+ * Mettre à jour les paramètres SMTP
+ */
+public function updateSmtpSettings() {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
                 return;
@@ -204,7 +192,7 @@ public function updateAllSettings() {
             } else {
                 $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour des paramètres'], 500);
             }
-        }
+}
         /**
          * API - Tester SMTP
          */
@@ -244,93 +232,98 @@ public function updateAllSettings() {
     /**
      * Créer un administrateur
      */
-    public function createAdmin() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-
-        $nom = trim($_POST['nom'] ?? '');
-        $prenom = trim($_POST['prenom'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $role = $_POST['role'] ?? 'admin';
-
-        if (empty($nom) || empty($prenom) || empty($email) || empty($password)) {
-            $this->jsonResponse(['error' => 'Tous les champs sont requis'], 400);
-            return;
-        }
-
-        if (strlen($password) < 8) {
-            $this->jsonResponse(['error' => 'Le mot de passe doit contenir au moins 8 caractères'], 400);
-            return;
-        }
-
-        // Vérifier si l'email existe déjà
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM utilisateur WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->fetch(PDO::FETCH_ASSOC)['total'] > 0) {
-            $this->jsonResponse(['error' => 'Cet email est déjà utilisé'], 400);
-            return;
-        }
-
-        $data = [
-            'nom' => $nom,
-            'prenom' => $prenom,
-            'email' => $email,
-            'password' => $password,
-            'role' => $role
-        ];
-
-        if ($this->model->createAdmin($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Administrateur créé avec succès']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la création'], 500);
-        }
+    /**
+ * Creer un administrateur
+ */
+public function createAdmin() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'error' => 'Methode non autorisee']);
+        exit();
     }
+
+    $nom = trim($_POST['nom'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $mdp = $_POST['mdp'] ?? ''; // CHANGÉ: password → mdp
+    $role = $_POST['role'] ?? 'Admin';
+    $telephone = trim($_POST['telephone'] ?? '');
+
+    if (empty($nom) || empty($email) || empty($mdp)) {
+        echo json_encode(['success' => false, 'error' => 'Tous les champs sont requis']);
+        exit();
+    }
+
+    if (strlen($mdp) < 8) {
+        echo json_encode(['success' => false, 'error' => 'Le mot de passe doit contenir au moins 8 caracteres']);
+        exit();
+    }
+
+    // Verifier si l'email existe deja dans admin
+    $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM admin WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch(PDO::FETCH_ASSOC)['total'] > 0) {
+        echo json_encode(['success' => false, 'error' => 'Cet email est deja utilise']);
+        exit();
+    }
+
+    $data = [
+        'nom' => $nom,
+        'email' => $email,
+        'mdp' => $mdp, // CHANGÉ: password → mdp
+        'role' => $role,
+        'telephone' => $telephone
+    ];
+
+    if ($this->model->createAdmin($data)) {
+        echo json_encode(['success' => true, 'message' => 'Administrateur cree avec succes']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Erreur lors de la creation']);
+    }
+    exit();
+}
 
     /**
-     * Mettre à jour un administrateur
-     */
-    public function updateAdmin() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-
-        $id = (int)($_POST['id'] ?? 0);
-        $nom = trim($_POST['nom'] ?? '');
-        $prenom = trim($_POST['prenom'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $role = $_POST['role'] ?? 'admin';
-        $password = $_POST['password'] ?? '';
-
-        if (!$id || empty($nom) || empty($prenom) || empty($email)) {
-            $this->jsonResponse(['error' => 'Tous les champs sont requis'], 400);
-            return;
-        }
-
-        $data = [
-            'nom' => $nom,
-            'prenom' => $prenom,
-            'email' => $email,
-            'role' => $role
-        ];
-
-        if (!empty($password)) {
-            if (strlen($password) < 8) {
-                $this->jsonResponse(['error' => 'Le mot de passe doit contenir au moins 8 caractères'], 400);
-                return;
-            }
-            $data['password'] = $password;
-        }
-
-        if ($this->model->updateAdmin($id, $data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Administrateur mis à jour']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
-        }
+ * Mettre à jour un administrateur
+ */
+public function updateAdmin() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'error' => 'Methode non autorisee']);
+        exit();
     }
+
+    $id = (int)($_POST['id'] ?? 0);
+    $nom = trim($_POST['nom'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $role = $_POST['role'] ?? 'Admin';
+    $mdp = $_POST['mdp'] ?? ''; // CHANGÉ: password → mdp
+    $telephone = trim($_POST['telephone'] ?? '');
+
+    if (!$id || empty($nom) || empty($email)) {
+        echo json_encode(['success' => false, 'error' => 'Tous les champs sont requis']);
+        exit();
+    }
+
+    $data = [
+        'nom' => $nom,
+        'email' => $email,
+        'role' => $role,
+        'telephone' => $telephone
+    ];
+
+    if (!empty($mdp)) {
+        if (strlen($mdp) < 8) {
+            echo json_encode(['success' => false, 'error' => 'Le mot de passe doit contenir au moins 8 caracteres']);
+            exit();
+        }
+        $data['mdp'] = $mdp; // CHANGÉ: password → mdp
+    }
+
+    if ($this->model->updateAdmin($id, $data)) {
+        echo json_encode(['success' => true, 'message' => 'Administrateur mis a jour']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Erreur lors de la mise a jour']);
+    }
+    exit();
+}
 
     /**
      * Désactiver un administrateur

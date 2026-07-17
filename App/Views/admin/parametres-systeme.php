@@ -56,7 +56,7 @@
                 </span>
             </div>
 
-            <form id="generalSettingsForm" class="space-y-4" method="POST" enctype="multipart/form-data">
+            <form id="generalSettingsForm" class="space-y-8" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="_method" value="POST">
                 
                 <!-- Infos plateforme -->
@@ -120,7 +120,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <!-- Favicon -->
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Favicon</label>
@@ -252,7 +251,8 @@
                 </h3>
             </div>
 
-            <form id="paymentSettingsForm" class="space-y-4">
+            <form id="paymentSettingsForm" class="space-y-4" method="POST">
+
                 <!-- FedaPay -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
@@ -260,23 +260,27 @@
                             <i class="fas fa-key text-[#0EA486]"></i> Configuration FedaPay
                         </h4>
                         <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                            <i class="fas fa-check mr-1"></i>Connecté
+                            <i class="fas fa-check mr-1"></i>Connecte
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API publique <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Cle API publique</label>
                             <div class="relative">
-                                <input type="password" id="fedapayPublicKey" value="pub_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="text" name="fedapay_public_key" id="fedapayPublicKey" 
+                                    value="<?= htmlspecialchars($settings['fedapay_public_key'] ?? '') ?>" 
+                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapayPublicKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API secrète <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Cle API secrete</label>
                             <div class="relative">
-                                <input type="password" id="fedapaySecretKey" value="sec_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="password" name="fedapay_secret_key" id="fedapaySecretKey" 
+                                    value="<?= htmlspecialchars($settings['fedapay_secret_key'] ?? '') ?>" 
+                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapaySecretKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -286,17 +290,21 @@
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mode</label>
                             <div class="flex gap-2">
                                 <label class="flex-1 flex items-center gap-2 p-3 bg-blue-50 border-2 border-blue-200 rounded-xl cursor-pointer">
-                                    <input type="radio" name="fedapayMode" value="test" checked class="w-4 h-4 text-blue-500">
+                                    <input type="radio" name="fedapay_mode" value="test" 
+                                        <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'checked' : '' ?> 
+                                        class="w-4 h-4 text-blue-500">
                                     <div>
                                         <p class="text-xs font-semibold text-blue-700">Test / Sandbox</p>
                                         <p class="text-[10px] text-blue-600">Transactions fictives</p>
                                     </div>
                                 </label>
                                 <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
-                                    <input type="radio" name="fedapayMode" value="live" class="w-4 h-4 text-[#0EA486]">
+                                    <input type="radio" name="fedapay_mode" value="live" 
+                                        <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'checked' : '' ?> 
+                                        class="w-4 h-4 text-[#0EA486]">
                                     <div>
                                         <p class="text-xs font-semibold text-gray-700">Production / Live</p>
-                                        <p class="text-[10px] text-gray-500">Transactions réelles</p>
+                                        <p class="text-[10px] text-gray-500">Transactions reelles</p>
                                     </div>
                                 </label>
                             </div>
@@ -307,10 +315,10 @@
                 <!-- Modes de paiement -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
-                        <i class="fas fa-wallet text-[#0EA486]"></i> Modes de paiement activés
+                        <i class="fas fa-wallet text-[#0EA486]"></i> Modes de paiement actives
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_mobile_money'] ?? '1') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-mobile-alt text-[#0EA486]"></i>
@@ -320,9 +328,12 @@
                                     <p class="text-[10px] text-gray-500">Orange, MTN, Moov, Wave</p>
                                 </div>
                             </div>
-                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_mobile_money" value="1" 
+                                <?= ($settings['payment_mobile_money'] ?? '1') ? 'checked' : '' ?> 
+                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
+                        
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_card'] ?? '1') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-credit-card text-[#0EA486]"></i>
@@ -332,9 +343,12 @@
                                     <p class="text-[10px] text-gray-500">Visa, Mastercard</p>
                                 </div>
                             </div>
-                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_card" value="1" 
+                                <?= ($settings['payment_card'] ?? '1') ? 'checked' : '' ?> 
+                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
+                        
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_bank_transfer'] ?? '0') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-university text-gray-500"></i>
@@ -344,9 +358,12 @@
                                     <p class="text-[10px] text-gray-500">Transfert direct</p>
                                 </div>
                             </div>
-                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_bank_transfer" value="1" 
+                                <?= ($settings['payment_bank_transfer'] ?? '0') ? 'checked' : '' ?> 
+                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
+                        
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_paypal'] ?? '0') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fab fa-paypal text-blue-600"></i>
@@ -356,7 +373,9 @@
                                     <p class="text-[10px] text-gray-500">International</p>
                                 </div>
                             </div>
-                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_paypal" value="1" 
+                                <?= ($settings['payment_paypal'] ?? '0') ? 'checked' : '' ?> 
+                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
                     </div>
                 </div>
@@ -369,27 +388,35 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de commande (FCFA)</label>
-                            <input type="number" value="500" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="min_order_amount" 
+                                value="<?= htmlspecialchars($settings['min_order_amount'] ?? '500') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant maximum de commande (FCFA)</label>
-                            <input type="number" value="5000000" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="max_order_amount" 
+                                value="<?= htmlspecialchars($settings['max_order_amount'] ?? '5000000') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de remboursement (jours)</label>
-                            <input type="number" value="7" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                            <p class="text-[10px] text-gray-400 mt-1">Durée pendant laquelle un remboursement peut être demandé</p>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Delai de remboursement (jours)</label>
+                            <input type="number" name="refund_days" 
+                                value="<?= htmlspecialchars($settings['refund_days'] ?? '7') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <p class="text-[10px] text-gray-400 mt-1">Duree pendant laquelle un remboursement peut etre demande</p>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de versement vendeur (jours)</label>
-                            <input type="number" value="30" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                            <p class="text-[10px] text-gray-400 mt-1">Fréquence des versements aux vendeurs</p>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Delai de versement vendeur (jours)</label>
+                            <input type="number" name="vendor_payout_days" 
+                                value="<?= htmlspecialchars($settings['vendor_payout_days'] ?? '30') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <p class="text-[10px] text-gray-400 mt-1">Frequence des versements aux vendeurs</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-2">
-                    <button type="button" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
                     </button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
@@ -757,7 +784,8 @@
     </div>
 </div>
 
-    <!-- MODAL : ADMINISTRATEUR (Création/Modification) -->
+
+ <!-- MODAL : ADMINISTRATEUR (Création/Modification) -->
 <div id="adminFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
@@ -1220,6 +1248,8 @@
             showToast('Paiements enregistrés', 'La configuration des paiements a été mise à jour', 'success');
         });
         // Modal test SMTP
+
+
         // ============================================
 // GESTION ADMINISTRATEURS
 // ============================================
@@ -1847,57 +1877,99 @@
         });
     });
 
-    // ============================================
-    // 3. ENVOI DU FORMULAIRE
-    // ============================================
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-            
-            showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
-            
-            console.log(' Données du formulaire:');
-            formData.forEach((value, key) => {
-                console.log(`${key}: ${value instanceof File ? value.name : value}`);
-            });
-
-            fetch('/back-end/routes/api.php?url=settings_general_update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
-                    
-                    const lastUpdate = document.getElementById('lastUpdate');
-                    if (lastUpdate) {
-                        const now = new Date();
-                        lastUpdate.textContent = now.toLocaleString('fr-FR');
-                    }
-                    
-                    setTimeout(() => window.location.reload(), 1500);
-                } else {
-                    showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            });
+   // ============================================
+// 3. ENVOI DU FORMULAIRE
+// ============================================
+if (form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        console.log(' [LOG] 1 - Formulaire soumis');
+        
+        const formData = new FormData(this);
+        
+        // Afficher toutes les données du formulaire (sauf fichiers)
+        console.log(' [LOG] 2 - Données du formulaire:');
+        formData.forEach((value, key) => {
+            if (value instanceof File) {
+                console.log(`   ${key}: [FICHIER] ${value.name} (${value.size} bytes)`);
+            } else {
+                console.log(`   ${key}: ${value}`);
+            }
         });
-    }
+
+        // SUPPRIMER les fichiers vides
+        if (formData.get('site_logo') && formData.get('site_logo').size === 0) {
+            formData.delete('site_logo');
+            console.log(' [LOG] 3 - site_logo supprimé (vide)');
+        }
+        if (formData.get('site_favicon') && formData.get('site_favicon').size === 0) {
+            formData.delete('site_favicon');
+            console.log(' [LOG] 4 - site_favicon supprimé (vide)');
+        }
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+        
+        showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
+        console.log(' [LOG] 5 - Bouton désactivé, toast affiché');
+
+        //  LOG: Afficher les données finales avant l'envoi
+        console.log(' [LOG] 6 - Données FINALES envoyées:');
+        formData.forEach((value, key) => {
+            if (value instanceof File) {
+                console.log(`   ${key}: [FICHIER] ${value.name} (${value.size} bytes)`);
+            } else {
+                console.log(`   ${key}: ${value}`);
+            }
+        });
+
+        console.log(' [LOG] 7 - Envoi de la requête fetch vers /back-end/routes/api.php?url=settings_general_update');
+        
+        fetch('/back-end/routes/api.php?url=settings_general_update', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log(' [LOG] 8 - Réponse reçue, status:', response.status);
+            console.log(' [LOG] 8b - Headers:', response.headers);
+            return response.json();
+        })
+        .then(data => {
+            console.log(' [LOG] 9 - Données JSON reçues:', data);
+            
+            if (data.success) {
+                console.log(' [LOG] 10 - SUCCÈS: Paramètres mis à jour');
+                showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
+                
+                const lastUpdate = document.getElementById('lastUpdate');
+                if (lastUpdate) {
+                    const now = new Date();
+                    lastUpdate.textContent = now.toLocaleString('fr-FR');
+                }
+                
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                console.log(' [LOG] 10 - ÉCHEC: ', data.error || 'Erreur inconnue');
+                console.log(' [LOG] 10b - Détails:', data);
+                showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
+            }
+        })
+        .catch(error => {
+            console.error(' [LOG] 11 - ERREUR FETCH:', error);
+            console.error(' [LOG] 11b - Stack:', error.stack);
+            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            console.log(' [LOG] 12 - Bouton réactivé');
+        });
+    });
+}
 
     // ============================================
     // 4. PRÉSERVER LA PREVIEW EXISTANTE
@@ -2119,6 +2191,55 @@
             }
         });
     });
+
+})();
+
+
+// ============================================
+// GESTION DES PAIEMENTS
+// ============================================
+
+(function() {
+    'use strict';
+
+    const form = document.getElementById('paymentSettingsForm');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+            
+            showToast('Enregistrement', 'Mise a jour de la configuration des paiements...', 'info');
+            
+            fetch('/back-end/routes/api.php?url=settings_payment_update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Succes', 'Configuration paiements mise a jour avec succes', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast('Erreur', data.error || 'Erreur lors de la mise a jour', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    }
 
 })();
     </script>
