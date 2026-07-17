@@ -2,10 +2,12 @@
 
 require_once __DIR__ . '/../../config/database.php';
 
-class ContenuModel {
+class ContenuModel
+{
     private $pdo;
-    
-    public function __construct($pdo) {
+
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
@@ -16,7 +18,8 @@ class ContenuModel {
     /**
      * Récupérer toutes les bannières
      */
-    public function getAllBannieres() {
+    public function getAllBannieres()
+    {
         $stmt = $this->pdo->query("SELECT * FROM bannieres ORDER BY ordre_affichage ASC, id DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -24,7 +27,8 @@ class ContenuModel {
     /**
      * Récupérer une bannière par son ID
      */
-    public function getBanniereById($id) {
+    public function getBanniereById($id)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM bannieres WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -33,7 +37,8 @@ class ContenuModel {
     /**
      * Compter le nombre total de bannières
      */
-    public function countBannieres() {
+    public function countBannieres()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM bannieres");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -42,7 +47,8 @@ class ContenuModel {
     /**
      * Compter les bannières actives
      */
-    public function countActiveBannieres() {
+    public function countActiveBannieres()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM bannieres WHERE statut = 'active'");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -51,7 +57,8 @@ class ContenuModel {
     /**
      * Compter les bannières inactives
      */
-    public function countInactiveBannieres() {
+    public function countInactiveBannieres()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM bannieres WHERE statut = 'inactive'");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -60,7 +67,8 @@ class ContenuModel {
     /**
      * Récupérer les statistiques totales des bannières
      */
-    public function getBanniereStatsTotal() {
+    public function getBanniereStatsTotal()
+    {
         $stmt = $this->pdo->query("SELECT SUM(vues) as total_vues, SUM(clics) as total_clics FROM bannieres");
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -68,7 +76,8 @@ class ContenuModel {
     /**
      * Ajouter une bannière
      */
-    public function addBanniere($data) {
+    public function addBanniere($data)
+    {
         $sql = "INSERT INTO bannieres (
                     titre, 
                     sous_titre, 
@@ -80,7 +89,7 @@ class ContenuModel {
                     statut, 
                     ordre_affichage
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['titre'],
@@ -98,7 +107,8 @@ class ContenuModel {
     /**
      * Mettre à jour une bannière
      */
-    public function updateBanniere($id, $data) {
+    public function updateBanniere($id, $data)
+    {
         $sql = "UPDATE bannieres SET 
                     titre = ?,
                     sous_titre = ?,
@@ -110,7 +120,7 @@ class ContenuModel {
                     statut = ?,
                     ordre_affichage = ?
                 WHERE id = ?";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['titre'],
@@ -129,7 +139,8 @@ class ContenuModel {
     /**
      * Mettre à jour l'ordre d'affichage des bannières
      */
-    public function updateBanniereOrder($id, $ordre) {
+    public function updateBanniereOrder($id, $ordre)
+    {
         $stmt = $this->pdo->prepare("UPDATE bannieres SET ordre_affichage = ? WHERE id = ?");
         return $stmt->execute([$ordre, $id]);
     }
@@ -137,7 +148,8 @@ class ContenuModel {
     /**
      * Changer le statut d'une bannière
      */
-    public function toggleBanniereStatus($id, $statut) {
+    public function toggleBanniereStatus($id, $statut)
+    {
         $stmt = $this->pdo->prepare("UPDATE bannieres SET statut = ? WHERE id = ?");
         return $stmt->execute([$statut, $id]);
     }
@@ -145,7 +157,8 @@ class ContenuModel {
     /**
      * Incrémenter les vues d'une bannière
      */
-    public function incrementBanniereVues($id) {
+    public function incrementBanniereVues($id)
+    {
         $stmt = $this->pdo->prepare("UPDATE bannieres SET vues = vues + 1 WHERE id = ?");
         return $stmt->execute([$id]);
     }
@@ -153,7 +166,8 @@ class ContenuModel {
     /**
      * Incrémenter les clics d'une bannière
      */
-    public function incrementBanniereClics($id) {
+    public function incrementBanniereClics($id)
+    {
         $stmt = $this->pdo->prepare("UPDATE bannieres SET clics = clics + 1 WHERE id = ?");
         return $stmt->execute([$id]);
     }
@@ -161,7 +175,8 @@ class ContenuModel {
     /**
      * Supprimer une bannière
      */
-    public function deleteBanniere($id) {
+    public function deleteBanniere($id)
+    {
         $banniere = $this->getBanniereById($id);
         if ($banniere && $banniere['image']) {
             $imagePath = __DIR__ . '/../../public/uploads/bannieres/' . $banniere['image'];
@@ -169,7 +184,7 @@ class ContenuModel {
                 unlink($imagePath);
             }
         }
-        
+
         $stmt = $this->pdo->prepare("DELETE FROM bannieres WHERE id = ?");
         return $stmt->execute([$id]);
     }
@@ -177,7 +192,8 @@ class ContenuModel {
     /**
      * Récupérer les stats d'une bannière sur 7 jours
      */
-    public function getBanniereStats7Days($id) {
+    public function getBanniereStats7Days($id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT 
                 DATE(date) as jour,
@@ -199,7 +215,8 @@ class ContenuModel {
     /**
      * Récupérer tous les codes promo
      */
-    public function getAllCodesPromo() {
+    public function getAllCodesPromo()
+    {
         $stmt = $this->pdo->query("
             SELECT cp.*, 
                    c.nom_categorie as categorie_nom,
@@ -214,7 +231,8 @@ class ContenuModel {
     /**
      * Récupérer un code promo par son ID
      */
-    public function getCodePromoById($id) {
+    public function getCodePromoById($id)
+    {
         $stmt = $this->pdo->prepare("
             SELECT cp.*, 
                    c.nom_categorie as categorie_nom,
@@ -230,7 +248,8 @@ class ContenuModel {
     /**
      * Récupérer un code promo par son code
      */
-    public function getCodePromoByCode($code) {
+    public function getCodePromoByCode($code)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM codes_promo WHERE code = ?");
         $stmt->execute([$code]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -239,15 +258,16 @@ class ContenuModel {
     /**
      * Vérifier si un code existe déjà
      */
-    public function codeExists($code, $excludeId = null) {
+    public function codeExists($code, $excludeId = null)
+    {
         $sql = "SELECT COUNT(*) as count FROM codes_promo WHERE code = ?";
         $params = [$code];
-        
+
         if ($excludeId) {
             $sql .= " AND id != ?";
             $params[] = $excludeId;
         }
-        
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -257,7 +277,8 @@ class ContenuModel {
     /**
      * Compter le nombre total de codes promo
      */
-    public function countCodesPromo() {
+    public function countCodesPromo()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM codes_promo");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -266,7 +287,8 @@ class ContenuModel {
     /**
      * Compter les codes promo actifs
      */
-    public function countActiveCodesPromo() {
+    public function countActiveCodesPromo()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM codes_promo WHERE statut = 'active'");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -275,7 +297,8 @@ class ContenuModel {
     /**
      * Compter les codes promo inactifs
      */
-    public function countInactiveCodesPromo() {
+    public function countInactiveCodesPromo()
+    {
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM codes_promo WHERE statut = 'inactive'");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
@@ -284,7 +307,8 @@ class ContenuModel {
     /**
      * Récupérer le total des remises accordées
      */
-    public function getTotalRemises() {
+    public function getTotalRemises()
+    {
         $stmt = $this->pdo->query("SELECT SUM(remise) as total FROM promo_utilisations");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'] ?? 0;
@@ -293,7 +317,8 @@ class ContenuModel {
     /**
      * Ajouter un code promo
      */
-    public function addCodePromo($data) {
+    public function addCodePromo($data)
+    {
         $sql = "INSERT INTO codes_promo (
                     code, 
                     type, 
@@ -306,7 +331,7 @@ class ContenuModel {
                     utilisateur_id, 
                     statut
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['code'],
@@ -325,7 +350,8 @@ class ContenuModel {
     /**
      * Mettre à jour un code promo
      */
-    public function updateCodePromo($id, $data) {
+    public function updateCodePromo($id, $data)
+    {
         $sql = "UPDATE codes_promo SET 
                     code = ?,
                     type = ?,
@@ -338,7 +364,7 @@ class ContenuModel {
                     utilisateur_id = ?,
                     statut = ?
                 WHERE id = ?";
-        
+
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             $data['code'],
@@ -358,7 +384,8 @@ class ContenuModel {
     /**
      * Changer le statut d'un code promo
      */
-    public function toggleCodePromoStatus($id, $statut) {
+    public function toggleCodePromoStatus($id, $statut)
+    {
         $stmt = $this->pdo->prepare("UPDATE codes_promo SET statut = ? WHERE id = ?");
         return $stmt->execute([$statut, $id]);
     }
@@ -366,7 +393,8 @@ class ContenuModel {
     /**
      * Supprimer un code promo
      */
-    public function deleteCodePromo($id) {
+    public function deleteCodePromo($id)
+    {
         $stmt = $this->pdo->prepare("DELETE FROM codes_promo WHERE id = ?");
         return $stmt->execute([$id]);
     }
@@ -374,7 +402,8 @@ class ContenuModel {
     /**
      * Enregistrer une utilisation de code promo
      */
-    public function addPromoUtilisation($data) {
+    public function addPromoUtilisation($data)
+    {
         $sql = "INSERT INTO promo_utilisations (
                     code_promo_id, 
                     commande_id, 
@@ -383,7 +412,7 @@ class ContenuModel {
                     remise, 
                     montant_final
                 ) VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->pdo->prepare($sql);
         $result = $stmt->execute([
             $data['code_promo_id'],
@@ -393,20 +422,21 @@ class ContenuModel {
             $data['remise'],
             $data['montant_final']
         ]);
-        
+
         if ($result) {
             // Incrémenter les utilisations actuelles
             $stmt = $this->pdo->prepare("UPDATE codes_promo SET utilisations_actuelles = utilisations_actuelles + 1 WHERE id = ?");
             $stmt->execute([$data['code_promo_id']]);
         }
-        
+
         return $result;
     }
 
     /**
      * Récupérer l'historique d'utilisation d'un code promo
      */
-    public function getPromoHistorique($codePromoId) {
+    public function getPromoHistorique($codePromoId)
+    {
         $stmt = $this->pdo->prepare("
             SELECT pu.*, 
                    u.nom as utilisateur_nom,
@@ -424,7 +454,8 @@ class ContenuModel {
     /**
      * Récupérer les codes promo expirés et les mettre à jour
      */
-    public function updateExpiredCodes() {
+    public function updateExpiredCodes()
+    {
         $stmt = $this->pdo->query("
             UPDATE codes_promo 
             SET statut = 'expire' 
@@ -436,7 +467,8 @@ class ContenuModel {
     /**
      * Générer un code promo aléatoire
      */
-    public function generateRandomCode($prefix = 'PROMO-', $length = 8) {
+    public function generateRandomCode($prefix = 'PROMO-', $length = 8)
+    {
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $code = $prefix;
         for ($i = 0; $i < $length; $i++) {
@@ -446,44 +478,46 @@ class ContenuModel {
     }
 
     /**
- * Compter le nombre total d'utilisations de codes promo
- */
-public function countTotalUtilisations() {
-    $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM promo_utilisations");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result['total'] ?? 0;
-}
+     * Compter le nombre total d'utilisations de codes promo
+     */
+    public function countTotalUtilisations()
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM promo_utilisations");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
 
 
-public function getCodesPromoFiltered($search = '', $status = '', $type = '') {
-    $sql = "SELECT cp.*, 
+    public function getCodesPromoFiltered($search = '', $status = '', $type = '')
+    {
+        $sql = "SELECT cp.*, 
                    c.nom_categorie as categorie_nom,
                    (SELECT COUNT(*) FROM promo_utilisations WHERE code_promo_id = cp.id) as utilisations
             FROM codes_promo cp
             LEFT JOIN categories c ON cp.categorie_id = c.id
             WHERE 1=1";
-    
-    $params = [];
-    
-    if (!empty($search)) {
-        $sql .= " AND cp.code LIKE ?";
-        $params[] = '%' . $search . '%';
+
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " AND cp.code LIKE ?";
+            $params[] = '%' . $search . '%';
+        }
+
+        if (!empty($status)) {
+            $sql .= " AND cp.statut = ?";
+            $params[] = $status;
+        }
+
+        if (!empty($type)) {
+            $sql .= " AND cp.type = ?";
+            $params[] = $type;
+        }
+
+        $sql .= " ORDER BY cp.id DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    if (!empty($status)) {
-        $sql .= " AND cp.statut = ?";
-        $params[] = $status;
-    }
-    
-    if (!empty($type)) {
-        $sql .= " AND cp.type = ?";
-        $params[] = $type;
-    }
-    
-    $sql .= " ORDER BY cp.id DESC";
-    
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 }

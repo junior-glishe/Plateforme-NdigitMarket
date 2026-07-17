@@ -41,6 +41,10 @@ $stats = $stats ?? [
                 </div>
             </div>
             <div class="flex items-center gap-3">
+                <!-- <button class="relative w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
+                    <i class="fas fa-bell text-gray-600"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button> -->
                 <div class="w-9 h-9 rounded-full bg-[#0EA486] text-white flex items-center justify-center font-semibold text-sm">
                     A
                 </div>
@@ -1007,7 +1011,7 @@ $stats = $stats ?? [
 
         const formData = new FormData(form);
         formData.append('id', currentCategoryId || '');
-        formData.append('sous_categories', '0'); 
+        formData.append('sous_categories', '0'); // 👈 IMPORTANT
 
         const action = currentCategoryId ? 'categories_edit' : 'categories_add';
 
@@ -1018,7 +1022,7 @@ $stats = $stats ?? [
         .then(response => {
             // Voir la réponse brute pour debug
             return response.text().then(text => {
-                console.log(' Réponse brute:', text);
+                console.log('📥 Réponse brute:', text);
                 try {
                     return JSON.parse(text);
                 } catch(e) {
@@ -1038,7 +1042,7 @@ $stats = $stats ?? [
             }
         })
         .catch(error => {
-            console.error(' Erreur:', error);
+            console.error('❌ Erreur:', error);
             showToast('Erreur', error.message || 'Erreur serveur', 'error');
             submitBtn.disabled = false;
             submitBtn.innerHTML = currentCategoryId ? 'Modifier' : 'Ajouter';
@@ -1363,6 +1367,7 @@ $stats = $stats ?? [
 })();
 
         // Modal fusion
+        // Modal fusion
 (function() {
     const modal = document.getElementById('mergeModal');
     const openBtns = document.querySelectorAll('.openMergeBtn');
@@ -1378,7 +1383,7 @@ $stats = $stats ?? [
         currentSourceId = btn.getAttribute('data-id');
         const nom = btn.getAttribute('data-name') || 'Catégorie';
 
-        //  Pré-sélectionner la source
+        // 🔥 Pré-sélectionner la source
         const sourceSelect = document.getElementById('mergeSourceId');
         if (sourceSelect && currentSourceId) {
             sourceSelect.value = currentSourceId;
@@ -1437,7 +1442,7 @@ $stats = $stats ?? [
         if (e.target === modal) closeModal();
     });
 
-    //  SOUMISSION AVEC FETCH
+    // 🔥 SOUMISSION AVEC FETCH
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -1590,6 +1595,7 @@ $stats = $stats ?? [
         })();
 
         // Modal toggle statut
+        // Modal toggle statut
 (function() {
     const modal = document.getElementById('toggleModal');
     const openBtns = document.querySelectorAll('.toggleCategoryBtn');
@@ -1598,7 +1604,7 @@ $stats = $stats ?? [
     const title = document.getElementById('toggleTitle');
     const infoText = document.getElementById('toggleInfoText');
     const info = document.getElementById('toggleInfo');
-    const categoryNameSpan = document.getElementById('toggleCategoryName'); //  AJOUTE ÇA
+    const categoryNameSpan = document.getElementById('toggleCategoryName'); // 👈 AJOUTE ÇA
 
     let currentCategoryId = null;
     let currentAction = null; // "activate" ou "deactivate"
@@ -1606,7 +1612,7 @@ $stats = $stats ?? [
     function openModal() {
         const btn = this;
         currentCategoryId = btn.getAttribute('data-id');
-        const categoryName = btn.getAttribute('data-nom') || 'Catégorie'; //  RÉCUPÈRE LE NOM
+        const categoryName = btn.getAttribute('data-nom') || 'Catégorie'; // 👈 RÉCUPÈRE LE NOM
 
         // Afficher le nom dans le modal
         if (categoryNameSpan) {
@@ -2010,7 +2016,7 @@ $stats = $stats ?? [
             </div>
         `;
 
-        //  Fetch vers backend
+        // 🔥 Fetch vers backend
         fetch('api.php?url=categories_filter&' + params)
             .then(response => {
                 if (!response.ok) {
@@ -2019,7 +2025,7 @@ $stats = $stats ?? [
                 return response.json();
             })
             .then(data => {
-                console.log(' Réponse filtre:', data);
+                console.log('📥 Réponse filtre:', data);
                 if (data.success) {
                     if (data.categories && data.categories.length > 0) {
                         let html = '';
@@ -2041,7 +2047,7 @@ $stats = $stats ?? [
                 }
             })
             .catch(error => {
-                console.error(' Erreur:', error);
+                console.error('❌ Erreur:', error);
                 showToast('Erreur', 'Erreur serveur', 'error');
             });
     }

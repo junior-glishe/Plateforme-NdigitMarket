@@ -991,7 +991,7 @@
         
         if (!countEl || !sizeEl) return;
 
-        //  Appel API pour récupérer les stats
+        // 🔥 Appel API pour récupérer les stats
         fetch('/back-end/routes/api.php?url=logs_stats')
             .then(response => response.json())
             .then(result => {
@@ -1025,7 +1025,7 @@
         // Validation
         if (retentionDays === 0) {
             // Illimité - demander confirmation
-            if (!confirm(' Vous avez choisi une conservation illimitée. Cela peut augmenter la taille de la base de données. Continuer ?')) {
+            if (!confirm('⚠️ Vous avez choisi une conservation illimitée. Cela peut augmenter la taille de la base de données. Continuer ?')) {
                 return;
             }
         }
@@ -1407,6 +1407,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ============================================
 // GESTION DU DÉTAIL DU LOG ET BLOCAGE IP AVEC MODAL
 // ============================================
@@ -1503,11 +1558,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateDetailModal(log) {
         const modal = document.getElementById('logDetailModal');
         if (!modal) {
-            console.error(' Modal non trouvé');
+            console.error('❌ Modal non trouvé');
             return;
         }
         
-        console.log(' Données du log:', log);
+        console.log('📊 Données du log:', log);
         
         // Niveau - Couleurs
         const levelColors = {
@@ -1641,7 +1696,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // ==================== MÉTADONNÉES ====================
         const metadataPre = modal.querySelector('.log-metadata');
         if (metadataPre) {
-            //  Construire un objet avec les données disponibles
+            // 🔥 Construire un objet avec les données disponibles
             const metaData = {
                 "ID du log": log.id || '-',
                 "Action": log.action || '-',
@@ -1656,15 +1711,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 "Date": log.created_at || '-'
             };
             
-            //  Ajouter target_user_id si présent
+            // 🔥 Ajouter target_user_id si présent
             if (log.target_user_id) {
                 metaData["ID utilisateur cible"] = log.target_user_id;
             }
             
-            //  Afficher en JSON formaté
+            // 🔥 Afficher en JSON formaté
             metadataPre.textContent = JSON.stringify(metaData, null, 2);
             
-            console.log(' Métadonnées affichées:', metaData);
+            console.log('📊 Métadonnées affichées:', metaData);
         }
         // ==================== BOUTON EXPORT ====================
         const exportBtn = modal.querySelector('.log-export-btn');
@@ -1672,7 +1727,7 @@ document.addEventListener('DOMContentLoaded', function() {
             exportBtn.dataset.id = log.id;
         }
         
-        console.log(' Modal rempli avec succès');
+        console.log('✅ Modal rempli avec succès');
     }
 
     // ============================================
@@ -1780,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closeBlockIpModal();
             
             if (data.success) {
-                showToast('Succès', ` IP ${ip} bloquée avec succès`, 'success');
+                showToast('Succès', `✅ IP ${ip} bloquée avec succès`, 'success');
                 setTimeout(() => window.location.reload(), 1500);
             } else {
                 showToast('Erreur', data.error || data.message || 'Impossible de bloquer l\'IP', 'error');
@@ -1832,7 +1887,7 @@ document.querySelector('.log-export-btn')?.addEventListener('click', function() 
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                showToast('Succès', `Log #${logId} exporté `, 'success');
+                showToast('Succès', `Log #${logId} exporté ✅`, 'success');
             }
         })
         .catch(error => {
@@ -1842,6 +1897,11 @@ document.querySelector('.log-export-btn')?.addEventListener('click', function() 
 });
 
 })();
+
+
+
+
+
 
 // ============================================
 // GESTION DES EXPORTS LOGS (CSV, Excel, JSON)
@@ -1962,8 +2022,8 @@ document.querySelector('.log-export-btn')?.addEventListener('click', function() 
                 if (column) selectedColumns.push(column);
             });
 
-            //  Si aucune colonne, envoyer un tableau vide (le PHP utilisera toutes)
-            //  Envoyer comme JSON stringifié
+            // 🔥 Si aucune colonne, envoyer un tableau vide (le PHP utilisera toutes)
+            // 🔥 Envoyer comme JSON stringifié
             const columnsJson = JSON.stringify(selectedColumns);
 
             // Construire les données
@@ -2010,7 +2070,7 @@ document.querySelector('.log-export-btn')?.addEventListener('click', function() 
                     window.URL.revokeObjectURL(url);
                     
                     closeModal();
-                    showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ', 'success');
+                    showToast('Export réussi', 'Fichier ' + selectedFormat.toUpperCase() + ' téléchargé ✅', 'success');
                 });
             })
             .catch(error => {

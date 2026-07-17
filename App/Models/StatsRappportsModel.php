@@ -1,10 +1,12 @@
 <?php
 // App/Models/StatsRappportsModel.php
 
-class StatsRappportsModel {
+class StatsRappportsModel
+{
     private $pdo;
-    
-    public function __construct($pdo) {
+
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
@@ -12,7 +14,8 @@ class StatsRappportsModel {
     // STATISTIQUES GÉNÉRALES
     // ============================================
 
-    public function getGeneralStats($period = 'month') {
+    public function getGeneralStats($period = 'month')
+    {
         $stats = [
             'inscriptions' => 0,
             'ventes' => 0,
@@ -67,14 +70,14 @@ class StatsRappportsModel {
                 WHERE date_commande >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
             ");
             $moisActuel = (int)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
+
             $stmt = $this->pdo->query("
                 SELECT COUNT(*) as total 
                 FROM commande 
                 WHERE date_commande BETWEEN DATE_SUB(CURDATE(), INTERVAL 60 DAY) AND DATE_SUB(CURDATE(), INTERVAL 30 DAY)
             ");
             $moisPrecedent = (int)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
+
             if ($moisPrecedent > 0) {
                 $stats['evolution_ventes'] = round((($moisActuel - $moisPrecedent) / $moisPrecedent) * 100, 1);
             }
@@ -89,14 +92,14 @@ class StatsRappportsModel {
                 WHERE date_commande >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
             ");
             $moisActuel = (float)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
+
             $stmt = $this->pdo->query("
                 SELECT SUM(CAST(prix AS DECIMAL(10,2))) as total 
                 FROM commande 
                 WHERE date_commande BETWEEN DATE_SUB(CURDATE(), INTERVAL 60 DAY) AND DATE_SUB(CURDATE(), INTERVAL 30 DAY)
             ");
             $moisPrecedent = (float)($stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-            
+
             if ($moisPrecedent > 0) {
                 $stats['evolution_ca'] = round((($moisActuel - $moisPrecedent) / $moisPrecedent) * 100, 1);
             }
@@ -111,9 +114,10 @@ class StatsRappportsModel {
     // TOP PRODUITS
     // ============================================
 
-    public function getTopProducts($limit = 5) {
-    try {
-        $stmt = $this->pdo->prepare("
+    public function getTopProducts($limit = 5)
+    {
+        try {
+            $stmt = $this->pdo->prepare("
             SELECT 
                 p.id,
                 p.nom_article as nom,
@@ -130,17 +134,18 @@ class StatsRappportsModel {
             ORDER BY ventes DESC, ca DESC
             LIMIT ?
         ");
-        $stmt->execute([$limit]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Erreur top produits: " . $e->getMessage());
-        return [];
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur top produits: " . $e->getMessage());
+            return [];
+        }
     }
-}
 
-    public function getTopViewedProducts($limit = 5) {
-    try {
-        $stmt = $this->pdo->prepare("
+    public function getTopViewedProducts($limit = 5)
+    {
+        try {
+            $stmt = $this->pdo->prepare("
             SELECT 
                 p.id,
                 p.nom_article as nom,
@@ -156,12 +161,12 @@ class StatsRappportsModel {
             ORDER BY vues DESC, p.id DESC
             LIMIT ?
         ");
-        $stmt->execute([$limit]);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Si pas de vues, retourner les produits avec 0 vues
-        if (empty($results) || $results[0]['vues'] == 0) {
-            $stmt = $this->pdo->prepare("
+            $stmt->execute([$limit]);
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Si pas de vues, retourner les produits avec 0 vues
+            if (empty($results) || $results[0]['vues'] == 0) {
+                $stmt = $this->pdo->prepare("
                 SELECT 
                     p.id,
                     p.nom_article as nom,
@@ -175,23 +180,23 @@ class StatsRappportsModel {
                 ORDER BY p.id DESC
                 LIMIT ?
             ");
-            $stmt->execute([$limit]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $stmt->execute([$limit]);
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            return $results;
+        } catch (PDOException $e) {
+            error_log("Erreur top viewed: " . $e->getMessage());
+            return [];
         }
-        
-        return $results;
-        
-    } catch (PDOException $e) {
-        error_log("Erreur top viewed: " . $e->getMessage());
-        return [];
     }
-}
 
     // ============================================
     // CATÉGORIES PERFORMANTES
     // ============================================
 
-    public function getTopCategories() {
+    public function getTopCategories()
+    {
         try {
             $stmt = $this->pdo->query("
                 SELECT 
@@ -216,27 +221,28 @@ class StatsRappportsModel {
     // RÉPARTITION GÉOGRAPHIQUE
     // ============================================
 
-/**
- * Récupérer la répartition géographique des utilisateurs depuis la BDD
- */
-public function getGeoDistribution() {
-    $data = [
-        'labels' => [],
-        'values' => [],
-        'pourcentages' => []
-    ];
-    
-    try {
-        // Vérifier si la colonne pays existe
-        $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
-        $hasPaysColumn = $stmt->rowCount() > 0;
-        
-        if (!$hasPaysColumn) {
-            return $data;
-        }
-        
-        // Récupérer TOUS les pays d'abord
-        $stmt = $this->pdo->query("
+    /**
+     * Récupérer la répartition géographique des utilisateurs depuis la BDD
+     */
+    public function getGeoDistribution()
+    {
+        $data = [
+            'labels' => [],
+            'values' => [],
+            'pourcentages' => []
+        ];
+
+        try {
+            // Vérifier si la colonne pays existe
+            $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'pays'");
+            $hasPaysColumn = $stmt->rowCount() > 0;
+
+            if (!$hasPaysColumn) {
+                return $data;
+            }
+
+            // Récupérer TOUS les pays d'abord
+            $stmt = $this->pdo->query("
             SELECT 
                 pays,
                 COUNT(*) as total,
@@ -248,52 +254,51 @@ public function getGeoDistribution() {
             GROUP BY pays
             ORDER BY total DESC
         ");
-        
-        $allResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Si pas de résultats, retourner des données vides
-        if (empty($allResults)) {
+
+            $allResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Si pas de résultats, retourner des données vides
+            if (empty($allResults)) {
+                return $data;
+            }
+
+            // Prendre les 5 premiers pays
+            $topResults = array_slice($allResults, 0, 5);
+            $topPays = [];
+
+            foreach ($topResults as $row) {
+                // Ne pas inclure "Autres" dans le top 5 s'il existe
+                if ($row['pays'] === 'Autres') {
+                    continue;
+                }
+                $data['labels'][] = $row['pays'];
+                $data['values'][] = (int)$row['total'];
+                $data['pourcentages'][] = (float)$row['pourcentage'];
+                $topPays[] = $row['pays'];
+            }
+
+            // Calculer le total des autres pays (ceux qui ne sont pas dans le top 5 et qui ne sont pas "Autres")
+            $totalAutres = 0;
+            foreach ($allResults as $row) {
+                if (!in_array($row['pays'], $topPays) && $row['pays'] !== 'Autres') {
+                    $totalAutres += (int)$row['total'];
+                }
+            }
+
+            // Ajouter "Autres" si le total est > 0
+            if ($totalAutres > 0) {
+                $totalGeneral = array_sum($data['values']) + $totalAutres;
+                $data['labels'][] = 'Autres';
+                $data['values'][] = $totalAutres;
+                $data['pourcentages'][] = round(($totalAutres / $totalGeneral) * 100, 1);
+            }
+
+            return $data;
+        } catch (PDOException $e) {
+            error_log("Erreur getGeoDistribution: " . $e->getMessage());
             return $data;
         }
-        
-        // Prendre les 5 premiers pays
-        $topResults = array_slice($allResults, 0, 5);
-        $topPays = [];
-        
-        foreach ($topResults as $row) {
-            // Ne pas inclure "Autres" dans le top 5 s'il existe
-            if ($row['pays'] === 'Autres') {
-                continue;
-            }
-            $data['labels'][] = $row['pays'];
-            $data['values'][] = (int)$row['total'];
-            $data['pourcentages'][] = (float)$row['pourcentage'];
-            $topPays[] = $row['pays'];
-        }
-        
-        // Calculer le total des autres pays (ceux qui ne sont pas dans le top 5 et qui ne sont pas "Autres")
-        $totalAutres = 0;
-        foreach ($allResults as $row) {
-            if (!in_array($row['pays'], $topPays) && $row['pays'] !== 'Autres') {
-                $totalAutres += (int)$row['total'];
-            }
-        }
-        
-        // Ajouter "Autres" si le total est > 0
-        if ($totalAutres > 0) {
-            $totalGeneral = array_sum($data['values']) + $totalAutres;
-            $data['labels'][] = 'Autres';
-            $data['values'][] = $totalAutres;
-            $data['pourcentages'][] = round(($totalAutres / $totalGeneral) * 100, 1);
-        }
-        
-        return $data;
-        
-    } catch (PDOException $e) {
-        error_log("Erreur getGeoDistribution: " . $e->getMessage());
-        return $data;
     }
-}
 
 
 
@@ -301,7 +306,8 @@ public function getGeoDistribution() {
     // RAPPORTS
     // ============================================
 
-    public function getSalesReport($startDate, $endDate) {
+    public function getSalesReport($startDate, $endDate)
+    {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT 
@@ -328,7 +334,8 @@ public function getGeoDistribution() {
         }
     }
 
-    public function getFinancialReport($startDate, $endDate) {
+    public function getFinancialReport($startDate, $endDate)
+    {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT 
@@ -351,7 +358,8 @@ public function getGeoDistribution() {
         }
     }
 
-    public function getUsersReport($startDate, $endDate) {
+    public function getUsersReport($startDate, $endDate)
+    {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT 
@@ -369,7 +377,8 @@ public function getGeoDistribution() {
         }
     }
 
-    public function getVendorsReport($startDate, $endDate) {
+    public function getVendorsReport($startDate, $endDate)
+    {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT 
@@ -401,28 +410,30 @@ public function getGeoDistribution() {
     // ============================================
 
 
-public function exportToCSV($data, $filename) {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=' . $filename . '.csv');
-    
-    $output = fopen('php://output', 'w');
-    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF)); // BOM UTF-8
-    
-    if (!empty($data)) {
-        fputcsv($output, array_keys($data[0]));
-        foreach ($data as $row) {
-            fputcsv($output, $row);
+    public function exportToCSV($data, $filename)
+    {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename . '.csv');
+
+        $output = fopen('php://output', 'w');
+        fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
+
+        if (!empty($data)) {
+            fputcsv($output, array_keys($data[0]));
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
         }
+
+        fclose($output);
+        exit();
     }
-    
-    fclose($output);
-    exit();
-}
     // ============================================
     // GRAPHIQUES - DONNÉES D'ÉVOLUTION
     // ============================================
 
-    public function getChartData($period = 'week') {
+    public function getChartData($period = 'week')
+    {
         $data = [
             'labels' => [],
             'inscriptions' => [],
@@ -431,7 +442,7 @@ public function exportToCSV($data, $filename) {
         ];
 
         // Déterminer le nombre de jours selon la période
-        switch($period) {
+        switch ($period) {
             case 'week':
                 $days = 7;
                 break;
@@ -463,7 +474,7 @@ public function exportToCSV($data, $filename) {
         try {
             $stmt = $this->pdo->query("SHOW COLUMNS FROM utilisateur LIKE 'date_inscription'");
             $hasDateInscription = $stmt->rowCount() > 0;
-            
+
             if ($hasDateInscription) {
                 $stmt = $this->pdo->prepare("
                     SELECT 
@@ -509,7 +520,7 @@ public function exportToCSV($data, $filename) {
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = date('Y-m-d', strtotime("-$i days"));
             $timestamp = strtotime("-$i days");
-            
+
             // Générer les labels
             if ($period === 'week') {
                 // Pour la semaine : Lun, Mar, Mer...
@@ -525,10 +536,10 @@ public function exportToCSV($data, $filename) {
                 // Pour le mois : 01/01, 02/01...
                 $data['labels'][] = $formatter->format($timestamp);
             }
-            
+
             // Inscriptions du jour
             $data['inscriptions'][] = $inscriptionsParJour[$date] ?? 0;
-            
+
             // Ventes et CA du jour
             $data['ventes'][] = $commandesParJour[$date]['ventes'] ?? 0;
             $data['ca'][] = $commandesParJour[$date]['ca'] ?? 0;
@@ -541,12 +552,14 @@ public function exportToCSV($data, $filename) {
     // RAPPORTS EXPORTABLES - MÉTHODES
     // ============================================
 
-    public function getCategoriesList() {
+    public function getCategoriesList()
+    {
         $stmt = $this->pdo->query("SELECT id, nom_categorie FROM categories ORDER BY nom_categorie");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getVendorsList() {
+    public function getVendorsList()
+    {
         $stmt = $this->pdo->query("
             SELECT u.id_uti as id, CONCAT(u.prenom, ' ', u.nom) as nom 
             FROM utilisateur u 
@@ -556,10 +569,11 @@ public function exportToCSV($data, $filename) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSalesReportData($startDate = null, $endDate = null, $categorie = null, $vendeur = null) {
+    public function getSalesReportData($startDate = null, $endDate = null, $categorie = null, $vendeur = null)
+    {
         if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
         if (!$endDate) $endDate = date('Y-m-d');
-        
+
         $sql = "
             SELECT 
                 DATE(c.date_commande) as date,
@@ -575,30 +589,31 @@ public function exportToCSV($data, $filename) {
             JOIN categories cat ON cat.id = p.categorie_id
             WHERE c.date_commande BETWEEN ? AND ?
         ";
-        
+
         $params = [$startDate . ' 00:00:00', $endDate . ' 23:59:59'];
-        
+
         if ($categorie && $categorie !== 'Toutes les catégories' && $categorie !== 'all') {
             $sql .= " AND cat.nom_categorie = ?";
             $params[] = $categorie;
         }
-        
+
         if ($vendeur && $vendeur !== 'Tous les vendeurs' && $vendeur !== 'all') {
             $sql .= " AND u.id_uti = ?";
             $params[] = $vendeur;
         }
-        
+
         $sql .= " ORDER BY c.date_commande DESC LIMIT 100";
-        
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSalesReportSummary($startDate = null, $endDate = null) {
+    public function getSalesReportSummary($startDate = null, $endDate = null)
+    {
         if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
         if (!$endDate) $endDate = date('Y-m-d');
-        
+
         $stmt = $this->pdo->prepare("
             SELECT 
                 COUNT(*) as total_ventes,
@@ -609,7 +624,7 @@ public function exportToCSV($data, $filename) {
         ");
         $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         $stmt = $this->pdo->prepare("
             SELECT DATE(date_commande) as meilleur_jour, COUNT(*) as total
             FROM commande
@@ -620,7 +635,7 @@ public function exportToCSV($data, $filename) {
         ");
         $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         $meilleurJour = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         return [
             'total_ventes' => (int)($result['total_ventes'] ?? 0),
             'ca_total' => (float)($result['ca_total'] ?? 0),
@@ -629,10 +644,11 @@ public function exportToCSV($data, $filename) {
         ];
     }
 
-    public function getFinancialReportData($startDate = null, $endDate = null) {
+    public function getFinancialReportData($startDate = null, $endDate = null)
+    {
         if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
         if (!$endDate) $endDate = date('Y-m-d');
-        
+
         $stmt = $this->pdo->prepare("
             SELECT 
                 DATE_FORMAT(c.date_commande, '%Y-%m') as mois,
@@ -650,10 +666,11 @@ public function exportToCSV($data, $filename) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFinancialReportSummary($startDate = null, $endDate = null) {
+    public function getFinancialReportSummary($startDate = null, $endDate = null)
+    {
         if (!$startDate) $startDate = date('Y-m-d', strtotime('-30 days'));
         if (!$endDate) $endDate = date('Y-m-d');
-        
+
         $stmt = $this->pdo->prepare("
             SELECT 
                 SUM(CAST(prix AS DECIMAL(10,2))) as ca_total,
@@ -666,7 +683,7 @@ public function exportToCSV($data, $filename) {
         ");
         $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         return [
             'ca_total' => (float)($result['ca_total'] ?? 0),
             'commission_plateforme' => (float)($result['commission_plateforme'] ?? 0),
@@ -676,7 +693,8 @@ public function exportToCSV($data, $filename) {
         ];
     }
 
-    public function getUsersReportData($startDate = null, $endDate = null) {
+    public function getUsersReportData($startDate = null, $endDate = null)
+    {
         $stmt = $this->pdo->query("
             SELECT 
                 type,
@@ -686,7 +704,7 @@ public function exportToCSV($data, $filename) {
             GROUP BY type
         ");
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $data = [];
         foreach ($result as $row) {
             $data[] = [
@@ -700,7 +718,8 @@ public function exportToCSV($data, $filename) {
         return $data;
     }
 
-    public function getUsersReportSummary($startDate = null, $endDate = null) {
+    public function getUsersReportSummary($startDate = null, $endDate = null)
+    {
         $stmt = $this->pdo->query("
             SELECT 
                 COUNT(*) as total,
@@ -710,11 +729,11 @@ public function exportToCSV($data, $filename) {
             FROM utilisateur
         ");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         $total = (int)($result['total'] ?? 0);
         $actifs = (int)($result['actifs'] ?? 0);
         $usersActifs = (int)($result['users_actifs'] ?? 0);
-        
+
         return [
             'total_inscriptions' => $total,
             'total_connexions' => $actifs,
@@ -724,7 +743,8 @@ public function exportToCSV($data, $filename) {
         ];
     }
 
-    public function getVendorsReportData($startDate = null, $endDate = null) {
+    public function getVendorsReportData($startDate = null, $endDate = null)
+    {
         $stmt = $this->pdo->prepare("
             SELECT 
                 u.id_uti as id,
@@ -748,10 +768,11 @@ public function exportToCSV($data, $filename) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getVendorsReportSummary($startDate = null, $endDate = null) {
+    public function getVendorsReportSummary($startDate = null, $endDate = null)
+    {
         $data = $this->getVendorsReportData();
         $totalVendeurs = count($data);
-        
+
         return [
             'total_vendeurs' => (int)$totalVendeurs,
             'total_produits' => (int)array_sum(array_column($data, 'produits')),

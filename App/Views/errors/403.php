@@ -169,12 +169,12 @@ $role = \App\Core\Auth::role();
         <?php endif; ?>
 
         <div class="actions">
-            <a href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/index.php?route=admin/dashboard" class="btn-home">
+            <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/back-end'; ?>/index.php?route=admin/dashboard" class="btn-home">
                 🏠 Retour au Dashboard
             </a>
 
             <?php if ($user): ?>
-                <a href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/index.php?route=logout" class="btn-logout">
+                <a href="<?php echo defined('BASE_URL') ? BASE_URL : '/back-end'; ?>/index.php?route=logout" class="btn-logout">
                     🚪 Déconnexion
                 </a>
             <?php endif; ?>

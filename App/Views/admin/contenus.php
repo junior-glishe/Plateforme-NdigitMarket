@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,10 +13,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
+
 <body>
     <div id="overlay" class="overlay"></div>
 
-    
+
     <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <main class="md:ml-[280px] min-h-screen p-4 md:p-8 transition-all">
@@ -117,8 +119,8 @@
             <div id="bannersList" class="space-y-3">
                 <?php if (!empty($bannieres)): ?>
                     <?php foreach ($bannieres as $banniere): ?>
-                        <div class="banner-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden" 
-                            draggable="true" 
+                        <div class="banner-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden"
+                            draggable="true"
                             data-id="<?= $banniere['id'] ?>">
                             <div class="flex items-stretch">
                                 <div class="drag-handle w-12 bg-gray-50 hover:bg-gray-100 flex items-center justify-center cursor-grab active:cursor-grabbing border-r border-gray-100 transition">
@@ -130,7 +132,7 @@
                                         style="background: linear-gradient(135deg, <?= $banniere['couleur_1'] ?? '#6366f1' ?>, <?= $banniere['couleur_2'] ?? '#8b5cf6' ?>);">
                                         <div class="absolute inset-0 bg-black/20"></div>
                                         <?php if (!empty($banniere['image'])): ?>
-                                            <img src="/back-end/uploads/bannieres/<?= $banniere['image'] ?>" class="absolute inset-0 w-full h-full object-cover">
+                                            <img src="/back-end/public/uploads/bannieres/<?= $banniere['image'] ?>" class="absolute inset-0 w-full h-full object-cover">
                                         <?php endif; ?>
                                         <div class="relative text-center text-white px-4 z-10">
                                             <p class="text-xs font-bold uppercase tracking-wider"><?= htmlspecialchars($banniere['sous_titre'] ?? 'Promo') ?></p>
@@ -160,8 +162,8 @@
                                             <span class="text-[10px] font-semibold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
                                                 <i class="fas fa-mouse-pointer mr-1"></i><?= number_format($banniere['clics'] ?? 0, 0, ',', ' ') ?> clics
                                             </span>
-                                            <?php 
-                                                $ctr = ($banniere['vues'] ?? 0) > 0 ? round(($banniere['clics'] ?? 0) / ($banniere['vues'] ?? 1) * 100, 1) : 0;
+                                            <?php
+                                            $ctr = ($banniere['vues'] ?? 0) > 0 ? round(($banniere['clics'] ?? 0) / ($banniere['vues'] ?? 1) * 100, 1) : 0;
                                             ?>
                                             <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
                                                 CTR: <?= $ctr ?>%
@@ -169,41 +171,41 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-1.5">
-                                        <button class="openBannerPreviewBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
-                                                title="Aperçu"
-                                                data-id="<?= $banniere['id'] ?>">
+                                        <button class="openBannerPreviewBtn w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition"
+                                            title="Aperçu"
+                                            data-id="<?= $banniere['id'] ?>">
                                             <i class="fas fa-eye text-xs"></i>
                                         </button>
-                                        <button class="openBannerFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
-                                                title="Modifier"
-                                                data-id="<?= $banniere['id'] ?>"
-                                                data-titre="<?= htmlspecialchars($banniere['titre'] ?? '') ?>"
-                                                data-sous-titre="<?= htmlspecialchars($banniere['sous_titre'] ?? '') ?>"
-                                                data-image="<?= $banniere['image'] ?? '' ?>"
-                                                data-texte-bouton="<?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>"
-                                                data-url="<?= htmlspecialchars($banniere['url_destination'] ?? '') ?>"
-                                                data-debut="<?= $banniere['date_debut'] ?? '' ?>"
-                                                data-fin="<?= $banniere['date_fin'] ?? '' ?>"
-                                                data-statut="<?= $banniere['statut'] ?? 'active' ?>">
+                                        <button class="openBannerFormBtn w-9 h-9 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition"
+                                            title="Modifier"
+                                            data-id="<?= $banniere['id'] ?>"
+                                            data-titre="<?= htmlspecialchars($banniere['titre'] ?? '') ?>"
+                                            data-sous-titre="<?= htmlspecialchars($banniere['sous_titre'] ?? '') ?>"
+                                            data-image="<?= $banniere['image'] ?? '' ?>"
+                                            data-texte-bouton="<?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>"
+                                            data-url="<?= htmlspecialchars($banniere['url_destination'] ?? '') ?>"
+                                            data-debut="<?= $banniere['date_debut'] ?? '' ?>"
+                                            data-fin="<?= $banniere['date_fin'] ?? '' ?>"
+                                            data-statut="<?= $banniere['statut'] ?? 'active' ?>">
                                             <i class="fas fa-edit text-xs"></i>
                                         </button>
-                                        <button class="toggleBannerBtn w-9 h-9 rounded-lg <?= $banniere['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition" 
-                                                title="<?= $banniere['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
-                                                data-id="<?= $banniere['id'] ?>"
-                                                data-statut="<?= $banniere['statut'] ?? 'active' ?>"
-                                                data-nom="<?= htmlspecialchars($banniere['titre'] ?? 'Bannière') ?>">
+                                        <button class="toggleBannerBtn w-9 h-9 rounded-lg <?= $banniere['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center transition"
+                                            title="<?= $banniere['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
+                                            data-id="<?= $banniere['id'] ?>"
+                                            data-statut="<?= $banniere['statut'] ?? 'active' ?>"
+                                            data-nom="<?= htmlspecialchars($banniere['titre'] ?? 'Bannière') ?>">
                                             <i class="fas <?= $banniere['statut'] === 'active' ? 'fa-toggle-on' : 'fa-toggle-off' ?> text-xs"></i>
                                         </button>
-                                        
-                                        <button class="openBannerStatsBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition" 
-                                                title="Statistiques"
-                                                data-id="<?= $banniere['id'] ?>">
+
+                                        <button class="openBannerStatsBtn w-9 h-9 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 flex items-center justify-center transition"
+                                            title="Statistiques"
+                                            data-id="<?= $banniere['id'] ?>">
                                             <i class="fas fa-chart-line text-xs"></i>
                                         </button>
-                                        <button class="openDeleteBannerBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" 
-                                                title="Supprimer"
-                                                data-id="<?= $banniere['id'] ?>"
-                                                data-nom="<?= htmlspecialchars($banniere['titre'] ?? 'Bannière') ?>">
+                                        <button class="openDeleteBannerBtn w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition"
+                                            title="Supprimer"
+                                            data-id="<?= $banniere['id'] ?>"
+                                            data-nom="<?= htmlspecialchars($banniere['titre'] ?? 'Bannière') ?>">
                                             <i class="fas fa-trash text-xs"></i>
                                         </button>
                                     </div>
@@ -237,50 +239,50 @@
             </div>
 
             <!-- Stats codes promo -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                        <i class="fas fa-ticket-alt"></i>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TOTAL</span>
                     </div>
-                    <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TOTAL</span>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $statsPromo['total'] ?? 0 ?></p>
+                    <p class="text-xs text-gray-400 mt-1">Codes créés</p>
                 </div>
-                <p class="text-2xl font-bold text-[#0F172A]"><?= $statsPromo['total'] ?? 0 ?></p>
-                <p class="text-xs text-gray-400 mt-1">Codes créés</p>
-            </div>
-            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                        <i class="fas fa-check-circle"></i>
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ACTIFS</span>
                     </div>
-                    <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">ACTIFS</span>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= $statsPromo['actifs'] ?? 0 ?></p>
+                    <p class="text-xs text-gray-400 mt-1">Codes actifs</p>
                 </div>
-                <p class="text-2xl font-bold text-[#0F172A]"><?= $statsPromo['actifs'] ?? 0 ?></p>
-                <p class="text-xs text-gray-400 mt-1">Codes actifs</p>
-            </div>
-            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                        <i class="fas fa-shopping-cart"></i>
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">UTILISÉS</span>
                     </div>
-                    <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">UTILISÉS</span>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($statsPromo['utilisations'] ?? 0, 0, ',', ' ') ?></p>
+                    <p class="text-xs text-gray-400 mt-1">Utilisations totales</p>
                 </div>
-                <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($statsPromo['utilisations'] ?? 0, 0, ',', ' ') ?></p>
-                <p class="text-xs text-gray-400 mt-1">Utilisations totales</p>
-            </div>
-            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                        <i class="fas fa-percent"></i>
+                <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">REMISES</span>
                     </div>
-                    <span class="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full">REMISES</span>
+                    <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($statsPromo['remises'] ?? 0, 0, ',', ' ') ?> FCFA</p>
+                    <p class="text-xs text-gray-400 mt-1">Total remises accordées</p>
                 </div>
-                <p class="text-2xl font-bold text-[#0F172A]"><?= number_format($statsPromo['remises'] ?? 0, 0, ',', ' ') ?> FCFA</p>
-                <p class="text-xs text-gray-400 mt-1">Total remises accordées</p>
             </div>
-        </div>
 
-             <!-- Filtres -->
+            <!-- Filtres -->
             <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-4">
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex-1 min-w-[220px] relative">
@@ -318,46 +320,46 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100" id="promoTableBody">
-                              <?php if (!empty($codesPromo)): ?>
+                            <?php if (!empty($codesPromo)): ?>
                                 <?php foreach ($codesPromo as $promo): ?>
                                     <?php
-                                        // Calcul du pourcentage d'utilisation
-                                        $utilisationsMax = $promo['utilisations_max'] ?? 0;
-                                        $utilisationsActuelles = $promo['utilisations_actuelles'] ?? 0;
-                                        $pourcentage = $utilisationsMax > 0 ? round(($utilisationsActuelles / $utilisationsMax) * 100) : 0;
-                                        
-                                        // ============================================
-                                        //  STATUT DIRECTEMENT DEPUIS LA BASE 
-                                        // ============================================
-                                        $statut = $promo['statut'] ?? 'inactive';
-                                        
-                                        // Classes CSS selon le statut en base
-                                        $statutClasses = [
-                                            'active' => 'text-emerald-700 bg-emerald-100',
-                                            'inactive' => 'text-gray-500 bg-gray-100',
-                                            'expire' => 'text-red-700 bg-red-100'
-                                        ];
-                                        $statutLabels = [
-                                            'active' => 'Actif',
-                                            'inactive' => 'Inactif',
-                                            'expire' => 'Expiré'
-                                        ];
-                                        $statutIcons = [
-                                            'active' => 'fa-check',
-                                            'inactive' => 'fa-pause',
-                                            'expire' => 'fa-times'
-                                        ];
-                                        
-                                        $statutClass = $statutClasses[$statut] ?? 'text-gray-500 bg-gray-100';
-                                        $statutText = $statutLabels[$statut] ?? $statut;
-                                        $statutIcon = $statutIcons[$statut] ?? 'fa-circle';
-                                        
-                                        // Type de remise
-                                        $typeText = $promo['type'] === 'percentage' ? 'Pourcentage' : 'Montant fixe';
-                                        $typeClass = $promo['type'] === 'percentage' ? 'text-purple-700 bg-purple-100' : 'text-blue-700 bg-blue-100';
-                                        
-                                        // Valeur formatée
-                                        $valeurFormatee = $promo['type'] === 'percentage' ? $promo['valeur'] . '%' : number_format($promo['valeur'], 0, ',', ' ') . ' FCFA';
+                                    // Calcul du pourcentage d'utilisation
+                                    $utilisationsMax = $promo['utilisations_max'] ?? 0;
+                                    $utilisationsActuelles = $promo['utilisations_actuelles'] ?? 0;
+                                    $pourcentage = $utilisationsMax > 0 ? round(($utilisationsActuelles / $utilisationsMax) * 100) : 0;
+
+                                    // ============================================
+                                    //  STATUT DIRECTEMENT DEPUIS LA BASE 
+                                    // ============================================
+                                    $statut = $promo['statut'] ?? 'inactive';
+
+                                    // Classes CSS selon le statut en base
+                                    $statutClasses = [
+                                        'active' => 'text-emerald-700 bg-emerald-100',
+                                        'inactive' => 'text-gray-500 bg-gray-100',
+                                        'expire' => 'text-red-700 bg-red-100'
+                                    ];
+                                    $statutLabels = [
+                                        'active' => 'Actif',
+                                        'inactive' => 'Inactif',
+                                        'expire' => 'Expiré'
+                                    ];
+                                    $statutIcons = [
+                                        'active' => 'fa-check',
+                                        'inactive' => 'fa-pause',
+                                        'expire' => 'fa-times'
+                                    ];
+
+                                    $statutClass = $statutClasses[$statut] ?? 'text-gray-500 bg-gray-100';
+                                    $statutText = $statutLabels[$statut] ?? $statut;
+                                    $statutIcon = $statutIcons[$statut] ?? 'fa-circle';
+
+                                    // Type de remise
+                                    $typeText = $promo['type'] === 'percentage' ? 'Pourcentage' : 'Montant fixe';
+                                    $typeClass = $promo['type'] === 'percentage' ? 'text-purple-700 bg-purple-100' : 'text-blue-700 bg-blue-100';
+
+                                    // Valeur formatée
+                                    $valeurFormatee = $promo['type'] === 'percentage' ? $promo['valeur'] . '%' : number_format($promo['valeur'], 0, ',', ' ') . ' FCFA';
                                     ?>
                                     <tr class="hover:bg-gray-50/50 transition">
                                         <td class="px-4 py-3">
@@ -397,36 +399,36 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="flex items-center justify-end gap-1">
-                                                <button class="openPromoHistoryBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center" 
-                                                        title="Historique"
-                                                        data-id="<?= $promo['id'] ?>"
-                                                        data-code="<?= htmlspecialchars($promo['code']) ?>"
-                                                        data-total="<?= $promo['utilisations_actuelles'] ?? 0 ?>">
+                                                <button class="openPromoHistoryBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center"
+                                                    title="Historique"
+                                                    data-id="<?= $promo['id'] ?>"
+                                                    data-code="<?= htmlspecialchars($promo['code']) ?>"
+                                                    data-total="<?= $promo['utilisations_actuelles'] ?? 0 ?>">
                                                     <i class="fas fa-history text-xs"></i>
                                                 </button>
-                                                <button class="openPromoFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center" 
-                                                        title="Modifier"
-                                                        data-id="<?= $promo['id'] ?>"
-                                                        data-code="<?= htmlspecialchars($promo['code']) ?>"
-                                                        data-type="<?= $promo['type'] ?>"
-                                                        data-valeur="<?= $promo['valeur'] ?>"
-                                                        data-montant-minimum="<?= $promo['montant_minimum'] ?? 0 ?>"
-                                                        data-utilisations-max="<?= $promo['utilisations_max'] ?? '' ?>"
-                                                        data-date-expiration="<?= $promo['date_expiration'] ?? '' ?>"
-                                                        data-statut="<?= $promo['statut'] ?? 'active' ?>">
+                                                <button class="openPromoFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                                                    title="Modifier"
+                                                    data-id="<?= $promo['id'] ?>"
+                                                    data-code="<?= htmlspecialchars($promo['code']) ?>"
+                                                    data-type="<?= $promo['type'] ?>"
+                                                    data-valeur="<?= $promo['valeur'] ?>"
+                                                    data-montant-minimum="<?= $promo['montant_minimum'] ?? 0 ?>"
+                                                    data-utilisations-max="<?= $promo['utilisations_max'] ?? '' ?>"
+                                                    data-date-expiration="<?= $promo['date_expiration'] ?? '' ?>"
+                                                    data-statut="<?= $promo['statut'] ?? 'active' ?>">
                                                     <i class="fas fa-edit text-xs"></i>
                                                 </button>
-                                                <button class="togglePromoBtn w-8 h-8 rounded-lg <?= $promo['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center" 
-                                                        title="<?= $promo['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
-                                                        data-id="<?= $promo['id'] ?>"
-                                                        data-statut="<?= $promo['statut'] ?? 'active' ?>"
-                                                        data-code="<?= htmlspecialchars($promo['code']) ?>">
+                                                <button class="togglePromoBtn w-8 h-8 rounded-lg <?= $promo['statut'] === 'active' ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-gray-50 text-gray-400 hover:bg-gray-100' ?> flex items-center justify-center"
+                                                    title="<?= $promo['statut'] === 'active' ? 'Désactiver' : 'Activer' ?>"
+                                                    data-id="<?= $promo['id'] ?>"
+                                                    data-statut="<?= $promo['statut'] ?? 'active' ?>"
+                                                    data-code="<?= htmlspecialchars($promo['code']) ?>">
                                                     <i class="fas <?= $promo['statut'] === 'active' ? 'fa-toggle-on' : 'fa-toggle-off' ?> text-xs"></i>
                                                 </button>
-                                                <button class="openDeletePromoBtn w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center" 
-                                                        title="Supprimer"
-                                                        data-id="<?= $promo['id'] ?>"
-                                                        data-code="<?= htmlspecialchars($promo['code']) ?>">
+                                                <button class="openDeletePromoBtn w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center"
+                                                    title="Supprimer"
+                                                    data-id="<?= $promo['id'] ?>"
+                                                    data-code="<?= htmlspecialchars($promo['code']) ?>">
                                                     <i class="fas fa-trash text-xs"></i>
                                                 </button>
                                             </div>
@@ -680,187 +682,187 @@
         </div>
     </div>
 
- <!-- MODAL : STATS BANNIÈRE -->
-<div id="bannerStatsModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <div>
-                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                    <i class="fas fa-chart-line text-purple-500"></i> 
-                    <span>Statistiques de la bannière</span>
-                </h3>
-                <p class="text-xs text-gray-400">Performances détaillées</p>
-            </div>
-            <button class="closeBannerStatsBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <div class="overflow-y-auto p-6 space-y-5" id="bannerStatsContent">
-            
-            <!-- Stats cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Affichages</p>
-                    <p id="statsVues" class="text-2xl font-bold text-[#0F172A]">0</p>
-                    <p class="text-[10px] mt-1" id="statsVuesEvolution">
-                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
-                        <span class="text-emerald-600">0%</span>
-                    </p>
+    <!-- MODAL : STATS BANNIÈRE -->
+    <div id="bannerStatsModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-chart-line text-purple-500"></i>
+                        <span>Statistiques de la bannière</span>
+                    </h3>
+                    <p class="text-xs text-gray-400">Performances détaillées</p>
                 </div>
-                <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                    <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Clics</p>
-                    <p id="statsClics" class="text-2xl font-bold text-[#0F172A]">0</p>
-                    <p class="text-[10px] mt-1" id="statsClicsEvolution">
-                        <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
-                        <span class="text-emerald-600">0%</span>
-                    </p>
-                </div>
-                <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
-                    <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CTR</p>
-                    <p id="statsCtr" class="text-2xl font-bold text-[#0F172A]">0%</p>
-                    <p class="text-[10px] text-gray-400 mt-1">Taux de clic</p>
-                </div>
-                <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                    <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Jours actifs</p>
-                    <p id="statsJoursActifs" class="text-2xl font-bold text-[#0F172A]">0</p>
-                    <p class="text-[10px] text-gray-400 mt-1">Depuis activation</p>
-                </div>
+                <button class="closeBannerStatsBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <!-- Graphique -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-100">
-                <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
-                    <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
-                </h5>
-                <div id="statsChart" class="flex items-end justify-between gap-2 h-40">
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Lun</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Mar</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Mer</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Jeu</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Ven</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400">Sam</span>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center gap-1">
-                        <div class="w-full bg-[#0EA486] rounded-t-lg" style="height: 10%;"></div>
-                        <div class="w-full bg-purple-800 rounded-t-lg" style="height: 5%;"></div>
-                        <span class="text-[10px] text-gray-400 font-semibold">Dim</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 mt-3 text-xs">
-                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Affichages</span>
-                    <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded"></span> Clics</span>
-                </div>
-            </div>
+            <div class="overflow-y-auto p-6 space-y-5" id="bannerStatsContent">
 
+                <!-- Stats cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                        <p class="text-[10px] text-blue-600 font-semibold uppercase mb-1">Affichages</p>
+                        <p id="statsVues" class="text-2xl font-bold text-[#0F172A]">0</p>
+                        <p class="text-[10px] mt-1" id="statsVuesEvolution">
+                            <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                            <span class="text-emerald-600">0%</span>
+                        </p>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                        <p class="text-[10px] text-purple-600 font-semibold uppercase mb-1">Clics</p>
+                        <p id="statsClics" class="text-2xl font-bold text-[#0F172A]">0</p>
+                        <p class="text-[10px] mt-1" id="statsClicsEvolution">
+                            <i class="fas fa-arrow-up text-[8px] text-emerald-600"></i>
+                            <span class="text-emerald-600">0%</span>
+                        </p>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+                        <p class="text-[10px] text-emerald-600 font-semibold uppercase mb-1">CTR</p>
+                        <p id="statsCtr" class="text-2xl font-bold text-[#0F172A]">0%</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Taux de clic</p>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+                        <p class="text-[10px] text-amber-600 font-semibold uppercase mb-1">Jours actifs</p>
+                        <p id="statsJoursActifs" class="text-2xl font-bold text-[#0F172A]">0</p>
+                        <p class="text-[10px] text-gray-400 mt-1">Depuis activation</p>
+                    </div>
+                </div>
+
+                <!-- Graphique -->
+                <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                    <h5 class="text-xs font-semibold text-gray-400 uppercase mb-3 flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-[#0EA486]"></i> Évolution sur 7 jours
+                    </h5>
+                    <div id="statsChart" class="flex items-end justify-between gap-2 h-40">
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Lun</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Mar</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Mer</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Jeu</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Ven</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-blue-200 rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-200 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400">Sam</span>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center gap-1">
+                            <div class="w-full bg-[#0EA486] rounded-t-lg" style="height: 10%;"></div>
+                            <div class="w-full bg-purple-800 rounded-t-lg" style="height: 5%;"></div>
+                            <span class="text-[10px] text-gray-400 font-semibold">Dim</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 mt-3 text-xs">
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded"></span> Affichages</span>
+                        <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded"></span> Clics</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
     <!-- MODAL : TOGGLE BANNIÈRE -->
-<div id="toggleBannerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <div>
-                <h3 id="toggleBannerTitle" class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                    <i class="fas fa-toggle-on text-yellow-500"></i> Changer le statut
-                </h3>
-                <p class="text-xs text-gray-400">Activer ou désactiver la bannière</p>
+    <div id="toggleBannerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h3 id="toggleBannerTitle" class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-toggle-on text-yellow-500"></i> Changer le statut
+                    </h3>
+                    <p class="text-xs text-gray-400">Activer ou désactiver la bannière</p>
+                </div>
+                <button class="closeToggleBannerBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <button class="closeToggleBannerBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <div id="toggleBannerInfo" class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-                <p class="text-sm text-yellow-700">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    <span id="toggleBannerInfoText">La bannière sera masquée du site.</span>
-                </p>
+            <div class="p-6 space-y-4">
+                <div id="toggleBannerInfo" class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                    <p class="text-sm text-yellow-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span id="toggleBannerInfoText">La bannière sera masquée du site.</span>
+                    </p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-xs text-gray-500 mb-1">Bannière concernée</p>
+                    <p id="toggleBannerName" class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                        <span class="text-xl"></span>
+                    </p>
+                </div>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p class="text-xs text-gray-500 mb-1">Bannière concernée</p>
-                <p id="toggleBannerName" class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                    <span class="text-xl"></span> 
-                </p>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+                <button class="closeToggleBannerBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    Annuler
+                </button>
+                <button id="confirmToggleBannerBtn" class="px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i class="fas fa-check"></i> Confirmer
+                </button>
             </div>
-        </div>
-        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-            <button class="closeToggleBannerBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                Annuler
-            </button>
-            <button id="confirmToggleBannerBtn" class="px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                <i class="fas fa-check"></i> Confirmer
-            </button>
         </div>
     </div>
-</div>
 
     <!-- MODAL : SUPPRIMER BANNIÈRE -->
-<div id="deleteBannerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <div>
-                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                    <i class="fas fa-trash text-red-500"></i> Supprimer la bannière
-                </h3>
-                <p class="text-xs text-gray-400">Action irréversible</p>
+    <div id="deleteBannerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-trash text-red-500"></i> Supprimer la bannière
+                    </h3>
+                    <p class="text-xs text-gray-400">Action irréversible</p>
+                </div>
+                <button class="closeDeleteBannerBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <button class="closeDeleteBannerBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <div class="bg-red-50 rounded-xl p-4 border border-red-100">
-                <p class="text-sm text-red-700">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <strong>Attention :</strong> Cette action est irréversible. Toutes les statistiques associées seront perdues.
-                </p>
+            <div class="p-6 space-y-4">
+                <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                    <p class="text-sm text-red-700">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <strong>Attention :</strong> Cette action est irréversible. Toutes les statistiques associées seront perdues.
+                    </p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <p class="text-xs text-gray-500 mb-1">Bannière à supprimer</p>
+                    <p id="deleteBannerName" class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+                        <span class="text-xl"></span>
+                    </p>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Tapez "SUPPRIMER" pour confirmer</label>
+                    <input type="text" id="deleteBannerConfirmInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:bg-white" placeholder="SUPPRIMER">
+                </div>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p class="text-xs text-gray-500 mb-1">Bannière à supprimer</p>
-                <p id="deleteBannerName" class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
-                    <span class="text-xl"></span> 
-                </p>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+                <button class="closeDeleteBannerBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    Annuler
+                </button>
+                <button id="confirmDeleteBannerBtn" class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition opacity-50 cursor-not-allowed" disabled>
+                    <i class="fas fa-trash"></i> Supprimer définitivement
+                </button>
             </div>
-            <div>
-                <label class="text-xs font-semibold text-gray-600 mb-1 block">Tapez "SUPPRIMER" pour confirmer</label>
-                <input type="text" id="deleteBannerConfirmInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-red-500 focus:bg-white" placeholder="SUPPRIMER">
-            </div>
-        </div>
-        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-            <button class="closeDeleteBannerBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                Annuler
-            </button>
-            <button id="confirmDeleteBannerBtn" class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition opacity-50 cursor-not-allowed" disabled>
-                <i class="fas fa-trash"></i> Supprimer définitivement
-            </button>
         </div>
     </div>
-</div>
 
     <!-- MODAL : CRÉER / MODIFIER CODE PROMO -->
     <div id="promoFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -938,7 +940,7 @@
                         </select>
                     </div>
 
-                    
+
 
                     <!-- Restriction produit -->
                     <div>
@@ -987,62 +989,62 @@
         </div>
     </div>
 
-        <!-- MODAL : HISTORIQUE CODE PROMO -->
-        <div id="promoHistoryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <div>
-                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-history text-blue-500"></i> Historique d'utilisation
-                        </h3>
-                        <p class="text-xs text-gray-400">Toutes les utilisations du code promo</p>
+    <!-- MODAL : HISTORIQUE CODE PROMO -->
+    <div id="promoHistoryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-history text-blue-500"></i> Historique d'utilisation
+                    </h3>
+                    <p class="text-xs text-gray-400">Toutes les utilisations du code promo</p>
+                </div>
+                <button class="closePromoHistoryBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto p-6 space-y-5">
+                <!-- En-tête code -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white">
+                            <i class="fas fa-ticket-alt text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 id="historyCodeName" class="text-lg font-bold font-mono text-[#0F172A]">---</h4>
+                            <p id="historyCodeInfo" class="text-xs text-gray-500 mt-1">Type: --- · Valeur: ---</p>
+                        </div>
+                        <div class="text-right">
+                            <p id="historyTotalUtilisations" class="text-2xl font-bold text-[#0EA486]">0</p>
+                            <p class="text-xs text-gray-500">Utilisations</p>
+                        </div>
                     </div>
-                    <button class="closePromoHistoryBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
 
-                <div class="overflow-y-auto p-6 space-y-5">
-                    <!-- En-tête code -->
-                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-white">
-                                <i class="fas fa-ticket-alt text-2xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h4 id="historyCodeName" class="text-lg font-bold font-mono text-[#0F172A]">---</h4>
-                                <p id="historyCodeInfo" class="text-xs text-gray-500 mt-1">Type: --- · Valeur: ---</p>
-                            </div>
-                            <div class="text-right">
-                                <p id="historyTotalUtilisations" class="text-2xl font-bold text-[#0EA486]">0</p>
-                                <p class="text-xs text-gray-500">Utilisations</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tableau historique -->
-                    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-50 border-b border-gray-100">
-                                    <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                        <th class="px-4 py-3">Date</th>
-                                        <th class="px-4 py-3">Utilisateur</th>
-                                        <th class="px-4 py-3">Commande</th>
-                                        <th class="px-4 py-3">Montant initial</th>
-                                        <th class="px-4 py-3">Remise</th>
-                                        <th class="px-4 py-3">Montant final</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="historyTableBody" class="divide-y divide-gray-100">
-                                    <!-- Les données seront chargées par JS -->
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- Tableau historique -->
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-100">
+                                <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="px-4 py-3">Date</th>
+                                    <th class="px-4 py-3">Utilisateur</th>
+                                    <th class="px-4 py-3">Commande</th>
+                                    <th class="px-4 py-3">Montant initial</th>
+                                    <th class="px-4 py-3">Remise</th>
+                                    <th class="px-4 py-3">Montant final</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody" class="divide-y divide-gray-100">
+                                <!-- Les données seront chargées par JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- MODAL : TOGGLE CODE PROMO -->
     <div id="togglePromoModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1131,128 +1133,149 @@
     </div>
 
     <script>
-     // Sidebar mobile
-(function() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const hamburger = document.getElementById('hamburgerBtn');
+        // Sidebar mobile
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const hamburger = document.getElementById('hamburgerBtn');
 
-    function openSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    hamburger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-    });
-    overlay.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
-    });
-    window.addEventListener('resize', function() {
-        if (window.innerWidth >= 768 && sidebar.classList.contains('open')) closeSidebar();
-    });
-})();
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-// Toast notification
-function showToast(title, message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastIcon = document.getElementById('toastIcon');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastMessage = document.getElementById('toastMessage');
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+            });
+            overlay.addEventListener('click', closeSidebar);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+            });
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768 && sidebar.classList.contains('open')) closeSidebar();
+            });
+        })();
 
-    toastTitle.textContent = title;
-    toastMessage.textContent = message;
+        // Toast notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
 
-    const styles = {
-        success: { bg: 'bg-emerald-100', color: 'text-emerald-600', icon: 'fa-check' },
-        error: { bg: 'bg-red-100', color: 'text-red-600', icon: 'fa-times' },
-        warning: { bg: 'bg-yellow-100', color: 'text-yellow-600', icon: 'fa-exclamation' },
-        info: { bg: 'bg-blue-100', color: 'text-blue-600', icon: 'fa-info' }
-    };
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
 
-    const style = styles[type] || styles.success;
-    toastIcon.className = `w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${style.bg} ${style.color}`;
-    toastIcon.innerHTML = `<i class="fas ${style.icon}"></i>`;
+            const styles = {
+                success: {
+                    bg: 'bg-emerald-100',
+                    color: 'text-emerald-600',
+                    icon: 'fa-check'
+                },
+                error: {
+                    bg: 'bg-red-100',
+                    color: 'text-red-600',
+                    icon: 'fa-times'
+                },
+                warning: {
+                    bg: 'bg-yellow-100',
+                    color: 'text-yellow-600',
+                    icon: 'fa-exclamation'
+                },
+                info: {
+                    bg: 'bg-blue-100',
+                    color: 'text-blue-600',
+                    icon: 'fa-info'
+                }
+            };
 
-    toast.classList.remove('hidden');
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 3500);
-}
+            const style = styles[type] || styles.success;
+            toastIcon.className = `w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${style.bg} ${style.color}`;
+            toastIcon.innerHTML = `<i class="fas ${style.icon}"></i>`;
 
-document.querySelector('.closeToast').addEventListener('click', function() {
-    document.getElementById('toast').classList.add('hidden');
-});
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
 
-// Helper pour modals
-function setupModal(modalId, openSelector, closeSelector) {
-    const modal = document.getElementById(modalId);
-    const openBtns = document.querySelectorAll(openSelector);
-    const closeBtns = document.querySelectorAll(closeSelector);
+        document.querySelector('.closeToast').addEventListener('click', function() {
+            document.getElementById('toast').classList.add('hidden');
+        });
 
-    function openModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
+        // Helper pour modals
+        function setupModal(modalId, openSelector, closeSelector) {
+            const modal = document.getElementById(modalId);
+            const openBtns = document.querySelectorAll(openSelector);
+            const closeBtns = document.querySelectorAll(closeSelector);
 
-    openBtns.forEach(btn => btn.addEventListener('click', openModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
 
-    return { openModal, closeModal };
-}
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
 
-function formatDateForInput(dateStr) {
-    if (!dateStr) return '';
-    // MySQL: "2025-11-20 14:30:00" → HTML: "2025-11-20T14:30"
-    return dateStr.replace(' ', 'T').slice(0, 16);
-}
+            openBtns.forEach(btn => btn.addEventListener('click', openModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
 
-function formatDateForMySQL(datetime) {
-    if (!datetime) return null;
-    // HTML: "2025-11-20T14:30" → MySQL: "2025-11-20 14:30:00"
-    return datetime.replace('T', ' ') + ':00';
-}
+            return {
+                openModal,
+                closeModal
+            };
+        }
 
-// ============================================
-// CODES PROMO - FILTRES AVEC API
-// ============================================
-(function() {
-    'use strict';
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            // MySQL: "2025-11-20 14:30:00" → HTML: "2025-11-20T14:30"
+            return dateStr.replace(' ', 'T').slice(0, 16);
+        }
 
-    const searchInput = document.getElementById('promoSearchInput');
-    const statusFilter = document.getElementById('promoStatusFilter');
-    const typeFilter = document.getElementById('promoTypeFilter');
-    const tbody = document.getElementById('promoTableBody');
+        function formatDateForMySQL(datetime) {
+            if (!datetime) return null;
+            // HTML: "2025-11-20T14:30" → MySQL: "2025-11-20 14:30:00"
+            return datetime.replace('T', ' ') + ':00';
+        }
 
-    let timeoutId = null;
+        // ============================================
+        // CODES PROMO - FILTRES AVEC API
+        // ============================================
+        (function() {
+            'use strict';
 
-    if (!searchInput || !statusFilter || !typeFilter || !tbody) {
-        console.error(' Éléments manquants');
-        return;
-    }
+            const searchInput = document.getElementById('promoSearchInput');
+            const statusFilter = document.getElementById('promoStatusFilter');
+            const typeFilter = document.getElementById('promoTypeFilter');
+            const tbody = document.getElementById('promoTableBody');
 
-    function loadPromoCodes() {
-        const search = searchInput.value.trim();
-        const status = statusFilter.value;
-        const type = typeFilter.value;
+            let timeoutId = null;
 
-        tbody.innerHTML = `
+            if (!searchInput || !statusFilter || !typeFilter || !tbody) {
+                console.error(' Éléments manquants');
+                return;
+            }
+
+            function loadPromoCodes() {
+                const search = searchInput.value.trim();
+                const status = statusFilter.value;
+                const type = typeFilter.value;
+
+                tbody.innerHTML = `
             <tr>
                 <td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">
                     <i class="fas fa-spinner fa-spin text-2xl block mb-2"></i>
@@ -1261,18 +1284,18 @@ function formatDateForMySQL(datetime) {
             </tr>
         `;
 
-        const params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (status) params.append('status', status);
-        if (type) params.append('type', type);
+                const params = new URLSearchParams();
+                if (search) params.append('search', search);
+                if (status) params.append('status', status);
+                if (type) params.append('type', type);
 
-        fetch('api.php?url=promo_list&' + params.toString())
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    renderPromoCodes(data.data);
-                } else {
-                    tbody.innerHTML = `
+                fetch('api.php?url=promo_list&' + params.toString())
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            renderPromoCodes(data.data);
+                        } else {
+                            tbody.innerHTML = `
                         <tr>
                             <td colspan="8" class="px-4 py-8 text-center text-red-500 text-sm">
                                 <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
@@ -1280,11 +1303,11 @@ function formatDateForMySQL(datetime) {
                             </td>
                         </tr>
                     `;
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                tbody.innerHTML = `
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        tbody.innerHTML = `
                     <tr>
                         <td colspan="8" class="px-4 py-8 text-center text-red-500 text-sm">
                             <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
@@ -1292,12 +1315,12 @@ function formatDateForMySQL(datetime) {
                         </td>
                     </tr>
                 `;
-            });
-    }
+                    });
+            }
 
-    function renderPromoCodes(codes) {
-        if (!codes || codes.length === 0) {
-            tbody.innerHTML = `
+            function renderPromoCodes(codes) {
+                if (!codes || codes.length === 0) {
+                    tbody.innerHTML = `
                 <tr>
                     <td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">
                         <i class="fas fa-ticket-alt text-3xl block mb-2"></i>
@@ -1305,38 +1328,38 @@ function formatDateForMySQL(datetime) {
                     </td>
                 </tr>
             `;
-            return;
-        }
+                    return;
+                }
 
-        let html = '';
-        codes.forEach(promo => {
-            const statut = promo.statut || 'inactive';
-            
-            const statutClasses = {
-                'active': 'text-emerald-700 bg-emerald-100',
-                'inactive': 'text-gray-500 bg-gray-100',
-                'expire': 'text-red-700 bg-red-100'
-            };
-            const statutLabels = {
-                'active': 'Actif',
-                'inactive': 'Inactif',
-                'expire': 'Expiré'
-            };
-            const statutIcons = {
-                'active': 'fa-check',
-                'inactive': 'fa-pause',
-                'expire': 'fa-times'
-            };
+                let html = '';
+                codes.forEach(promo => {
+                    const statut = promo.statut || 'inactive';
 
-            const utilisationsMax = promo.utilisations_max || 0;
-            const utilisationsActuelles = promo.utilisations_actuelles || 0;
-            const pourcentage = utilisationsMax > 0 ? Math.round((utilisationsActuelles / utilisationsMax) * 100) : 0;
-            
-            const typeText = promo.type === 'percentage' ? 'Pourcentage' : 'Montant fixe';
-            const typeClass = promo.type === 'percentage' ? 'text-purple-700 bg-purple-100' : 'text-blue-700 bg-blue-100';
-            const valeurFormatee = promo.type === 'percentage' ? promo.valeur + '%' : formatNumber(promo.valeur) + ' FCFA';
+                    const statutClasses = {
+                        'active': 'text-emerald-700 bg-emerald-100',
+                        'inactive': 'text-gray-500 bg-gray-100',
+                        'expire': 'text-red-700 bg-red-100'
+                    };
+                    const statutLabels = {
+                        'active': 'Actif',
+                        'inactive': 'Inactif',
+                        'expire': 'Expiré'
+                    };
+                    const statutIcons = {
+                        'active': 'fa-check',
+                        'inactive': 'fa-pause',
+                        'expire': 'fa-times'
+                    };
 
-            html += `
+                    const utilisationsMax = promo.utilisations_max || 0;
+                    const utilisationsActuelles = promo.utilisations_actuelles || 0;
+                    const pourcentage = utilisationsMax > 0 ? Math.round((utilisationsActuelles / utilisationsMax) * 100) : 0;
+
+                    const typeText = promo.type === 'percentage' ? 'Pourcentage' : 'Montant fixe';
+                    const typeClass = promo.type === 'percentage' ? 'text-purple-700 bg-purple-100' : 'text-blue-700 bg-blue-100';
+                    const valeurFormatee = promo.type === 'percentage' ? promo.valeur + '%' : formatNumber(promo.valeur) + ' FCFA';
+
+                    html += `
                 <tr class="hover:bg-gray-50/50 transition" data-id="${promo.id}">
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
@@ -1411,262 +1434,262 @@ function formatDateForMySQL(datetime) {
                     </td>
                 </tr>
             `;
-        });
+                });
 
-        tbody.innerHTML = html;
-        attachEvents();
-    }
-
-    function attachEvents() {
-        // Toggle
-        document.querySelectorAll('.togglePromoBtn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const statut = this.dataset.statut;
-                const code = this.dataset.code;
-                togglePromoStatus(id, statut, code);
-            });
-        });
-
-        // Delete
-        document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const code = this.dataset.code;
-                deletePromoCode(id, code);
-            });
-        });
-    }
-
-    function togglePromoStatus(id, statut, code) {
-        const newStatut = statut === 'active' ? 'inactive' : 'active';
-        const action = newStatut === 'active' ? 'Activer' : 'Désactiver';
-
-        if (!confirm(`${action} le code promo "${code}" ?`)) return;
-
-        fetch('api.php?url=promo_toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + id + '&statut=' + newStatut
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Succès', data.message || 'Statut mis à jour', 'success');
-                loadPromoCodes();
-            } else {
-                showToast('Erreur', data.error || 'Erreur', 'error');
+                tbody.innerHTML = html;
+                attachEvents();
             }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion', 'error');
-        });
-    }
 
-    function deletePromoCode(id, code) {
-        if (!confirm(`Supprimer définitivement le code promo "${code}" ?`)) return;
+            function attachEvents() {
+                // Toggle
+                document.querySelectorAll('.togglePromoBtn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const statut = this.dataset.statut;
+                        const code = this.dataset.code;
+                        togglePromoStatus(id, statut, code);
+                    });
+                });
 
-        fetch('api.php?url=promo_delete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + id
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Succès', data.message || 'Code promo supprimé', 'success');
-                loadPromoCodes();
-            } else {
-                showToast('Erreur', data.error || 'Erreur', 'error');
+                // Delete
+                document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const code = this.dataset.code;
+                        deletePromoCode(id, code);
+                    });
+                });
             }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion', 'error');
-        });
-    }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+            function togglePromoStatus(id, statut, code) {
+                const newStatut = statut === 'active' ? 'inactive' : 'active';
+                const action = newStatut === 'active' ? 'Activer' : 'Désactiver';
 
-    function formatNumber(num) {
-        num = Number(num) || 0;
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    }
+                if (!confirm(`${action} le code promo "${code}" ?`)) return;
 
-    function formatDate(dateStr) {
-        if (!dateStr) return '---';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
+                fetch('api.php?url=promo_toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + id + '&statut=' + newStatut
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                            loadPromoCodes();
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion', 'error');
+                    });
+            }
 
-    function showToast(title, message, type = 'success') {
-        if (typeof window.showToast === 'function') {
-            window.showToast(title, message, type);
-        } else {
-            alert(title + ': ' + message);
-        }
-    }
+            function deletePromoCode(id, code) {
+                if (!confirm(`Supprimer définitivement le code promo "${code}" ?`)) return;
 
-    // Écouteurs
-    searchInput.addEventListener('input', function() {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(loadPromoCodes, 300);
-    });
+                fetch('api.php?url=promo_delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + id
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('Succès', data.message || 'Code promo supprimé', 'success');
+                            loadPromoCodes();
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion', 'error');
+                    });
+            }
 
-    statusFilter.addEventListener('change', loadPromoCodes);
-    typeFilter.addEventListener('change', loadPromoCodes);
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
 
-    // Chargement initial
-    loadPromoCodes();
+            function formatNumber(num) {
+                num = Number(num) || 0;
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
 
-    console.log('Filtres API prêts');
+            function formatDate(dateStr) {
+                if (!dateStr) return '---';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
 
-})();
-
-
-// ============================================
-// MODAL APERÇU BANNIÈRE
-// ============================================
-(function() {
-    const modal = document.getElementById('bannerPreviewModal');
-    const openBtns = document.querySelectorAll('.openBannerPreviewBtn');
-    const closeBtns = document.querySelectorAll('.closeBannerPreviewBtn');
-    
-    function openBannerPreviewModal() {
-        const btn = this;
-        const id = btn.getAttribute('data-id');
-        
-        if (!id) {
-            showToast('Erreur', 'ID manquant', 'error');
-            return;
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-
-        fetch('api.php?url=banniere_get&id=' + id)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    renderPreview(data.data);
+            function showToast(title, message, type = 'success') {
+                if (typeof window.showToast === 'function') {
+                    window.showToast(title, message, type);
                 } else {
-                    showToast('Erreur', data.error || 'Erreur de chargement', 'error');
+                    alert(title + ': ' + message);
                 }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur serveur', 'error');
+            }
+
+            // Écouteurs
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(loadPromoCodes, 300);
             });
-    }
 
-    function renderPreview(banner) {
-        const colors = [
-            ['#6366f1', '#8b5cf6'],
-            ['#f59e0b', '#ef4444'],
-            ['#10b981', '#06b6d4'],
-            ['#8b5cf6', '#ec4899'],
-            ['#f472b6', '#fb923c'],
-            ['#14b8a6', '#3b82f6'],
-            ['#a855f7', '#d946ef'],
-            ['#f97316', '#ef4444']
-        ];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const gradient = `linear-gradient(135deg, ${color[0]}, ${color[1]})`;
-        
-        const desktopDiv = document.getElementById('previewDesktop');
-        if (desktopDiv) {
-            desktopDiv.style.background = gradient;
-            if (banner.image) {
-                desktopDiv.style.backgroundImage = `url('/uploads/bannieres/${banner.image}')`;
-                desktopDiv.style.backgroundSize = 'cover';
-                desktopDiv.style.backgroundPosition = 'center';
+            statusFilter.addEventListener('change', loadPromoCodes);
+            typeFilter.addEventListener('change', loadPromoCodes);
+
+            // Chargement initial
+            loadPromoCodes();
+
+            console.log('Filtres API prêts');
+
+        })();
+
+
+        // ============================================
+        // MODAL APERÇU BANNIÈRE
+        // ============================================
+        (function() {
+            const modal = document.getElementById('bannerPreviewModal');
+            const openBtns = document.querySelectorAll('.openBannerPreviewBtn');
+            const closeBtns = document.querySelectorAll('.closeBannerPreviewBtn');
+
+            function openBannerPreviewModal() {
+                const btn = this;
+                const id = btn.getAttribute('data-id');
+
+                if (!id) {
+                    showToast('Erreur', 'ID manquant', 'error');
+                    return;
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+
+                fetch('api.php?url=banniere_get&id=' + id)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            renderPreview(data.data);
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur de chargement', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur serveur', 'error');
+                    });
             }
-        }
-        document.getElementById('previewDesktopSubtitle').textContent = banner.sous_titre || 'Promo';
-        document.getElementById('previewDesktopTitle').textContent = banner.titre || 'Titre de la bannière';
-        document.getElementById('previewDesktopButton').textContent = banner.texte_bouton || 'Voir les offres';
-        
-        const mobileDiv = document.getElementById('previewMobile');
-        if (mobileDiv) {
-            mobileDiv.style.background = gradient;
-            if (banner.image) {
-                mobileDiv.style.backgroundImage = `url('/uploads/bannieres/${banner.image}')`;
-                mobileDiv.style.backgroundSize = 'cover';
-                mobileDiv.style.backgroundPosition = 'center';
+
+            function renderPreview(banner) {
+                const colors = [
+                    ['#6366f1', '#8b5cf6'],
+                    ['#f59e0b', '#ef4444'],
+                    ['#10b981', '#06b6d4'],
+                    ['#8b5cf6', '#ec4899'],
+                    ['#f472b6', '#fb923c'],
+                    ['#14b8a6', '#3b82f6'],
+                    ['#a855f7', '#d946ef'],
+                    ['#f97316', '#ef4444']
+                ];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const gradient = `linear-gradient(135deg, ${color[0]}, ${color[1]})`;
+
+                const desktopDiv = document.getElementById('previewDesktop');
+                if (desktopDiv) {
+                    desktopDiv.style.background = gradient;
+                    if (banner.image) {
+                        desktopDiv.style.backgroundImage = `url('/public/uploads/bannieres/${banner.image}')`;
+                        desktopDiv.style.backgroundSize = 'cover';
+                        desktopDiv.style.backgroundPosition = 'center';
+                    }
+                }
+                document.getElementById('previewDesktopSubtitle').textContent = banner.sous_titre || 'Promo';
+                document.getElementById('previewDesktopTitle').textContent = banner.titre || 'Titre de la bannière';
+                document.getElementById('previewDesktopButton').textContent = banner.texte_bouton || 'Voir les offres';
+
+                const mobileDiv = document.getElementById('previewMobile');
+                if (mobileDiv) {
+                    mobileDiv.style.background = gradient;
+                    if (banner.image) {
+                        mobileDiv.style.backgroundImage = `url('/public/uploads/bannieres/${banner.image}')`;
+                        mobileDiv.style.backgroundSize = 'cover';
+                        mobileDiv.style.backgroundPosition = 'center';
+                    }
+                }
+                document.getElementById('previewMobileSubtitle').textContent = banner.sous_titre || 'Promo';
+                document.getElementById('previewMobileTitle').textContent = banner.titre || 'Titre de la bannière';
+                document.getElementById('previewMobileButton').textContent = banner.texte_bouton || 'Voir les offres';
+
+                document.getElementById('previewInfoTitle').textContent = banner.titre || '---';
+                document.getElementById('previewInfoUrl').textContent = banner.url_destination || '---';
+
+                const dateDebut = banner.date_debut ? new Date(banner.date_debut).toLocaleDateString('fr-FR') : '---';
+                const dateFin = banner.date_fin ? new Date(banner.date_fin).toLocaleDateString('fr-FR') : '---';
+                document.getElementById('previewInfoPeriod').textContent = `Du ${dateDebut} au ${dateFin}`;
+
+                const statusText = banner.statut === 'active' ? 'Active' : 'Inactive';
+                const statusClass = banner.statut === 'active' ? 'text-emerald-600' : 'text-gray-500';
+                const statusEl = document.getElementById('previewInfoStatus');
+                statusEl.textContent = statusText;
+                statusEl.className = `font-medium ${statusClass}`;
             }
-        }
-        document.getElementById('previewMobileSubtitle').textContent = banner.sous_titre || 'Promo';
-        document.getElementById('previewMobileTitle').textContent = banner.titre || 'Titre de la bannière';
-        document.getElementById('previewMobileButton').textContent = banner.texte_bouton || 'Voir les offres';
-        
-        document.getElementById('previewInfoTitle').textContent = banner.titre || '---';
-        document.getElementById('previewInfoUrl').textContent = banner.url_destination || '---';
-        
-        const dateDebut = banner.date_debut ? new Date(banner.date_debut).toLocaleDateString('fr-FR') : '---';
-        const dateFin = banner.date_fin ? new Date(banner.date_fin).toLocaleDateString('fr-FR') : '---';
-        document.getElementById('previewInfoPeriod').textContent = `Du ${dateDebut} au ${dateFin}`;
-        
-        const statusText = banner.statut === 'active' ? 'Active' : 'Inactive';
-        const statusClass = banner.statut === 'active' ? 'text-emerald-600' : 'text-gray-500';
-        const statusEl = document.getElementById('previewInfoStatus');
-        statusEl.textContent = statusText;
-        statusEl.className = `font-medium ${statusClass}`;
-    }
 
-    function closeBannerPreviewModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', openBannerPreviewModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeBannerPreviewModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeBannerPreviewModal();
-    });
-})();
-
-// ============================================
-// MODAL STATS BANNIÈRE - VERSION MAINTENABLE
-// ============================================
-(function() {
-    'use strict';
-    
-    console.log(' Script stats chargé');
-
-    const modal = document.getElementById('bannerStatsModal');
-    const openBtns = document.querySelectorAll('.openBannerStatsBtn');
-    const closeBtns = document.querySelectorAll('.closeBannerStatsBtn');
-    const content = document.getElementById('bannerStatsContent');
-
-    function openBannerStatsModal() {
-        const btn = this;
-        const id = btn.getAttribute('data-id');
-        
-        if (!id) {
-            if (typeof showToast === 'function') {
-                showToast('Erreur', 'ID manquant', 'error');
+            function closeBannerPreviewModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
             }
-            return;
-        }
 
-        // Afficher le chargement
-        content.innerHTML = `
+            openBtns.forEach(btn => btn.addEventListener('click', openBannerPreviewModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeBannerPreviewModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeBannerPreviewModal();
+            });
+        })();
+
+        // ============================================
+        // MODAL STATS BANNIÈRE - VERSION MAINTENABLE
+        // ============================================
+        (function() {
+            'use strict';
+
+            console.log(' Script stats chargé');
+
+            const modal = document.getElementById('bannerStatsModal');
+            const openBtns = document.querySelectorAll('.openBannerStatsBtn');
+            const closeBtns = document.querySelectorAll('.closeBannerStatsBtn');
+            const content = document.getElementById('bannerStatsContent');
+
+            function openBannerStatsModal() {
+                const btn = this;
+                const id = btn.getAttribute('data-id');
+
+                if (!id) {
+                    if (typeof showToast === 'function') {
+                        showToast('Erreur', 'ID manquant', 'error');
+                    }
+                    return;
+                }
+
+                // Afficher le chargement
+                content.innerHTML = `
             <div class="flex justify-center py-12">
                 <div class="flex flex-col items-center gap-3">
                     <i class="fas fa-spinner fa-spin text-3xl text-[#0EA486]"></i>
@@ -1675,27 +1698,27 @@ function formatDateForMySQL(datetime) {
             </div>
         `;
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
 
-        fetch('api.php?url=banniere_stats&id=' + id)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    renderStats(data.data);
-                } else {
-                    showError(data.error || 'Erreur de chargement');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showError('Erreur de connexion au serveur');
-            });
-    }
+                fetch('api.php?url=banniere_stats&id=' + id)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            renderStats(data.data);
+                        } else {
+                            showError(data.error || 'Erreur de chargement');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showError('Erreur de connexion au serveur');
+                    });
+            }
 
-    function showError(message) {
-        content.innerHTML = `
+            function showError(message) {
+                content.innerHTML = `
             <div class="text-center py-12">
                 <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-3"></i>
                 <p class="text-lg font-semibold text-red-600">Erreur</p>
@@ -1705,55 +1728,58 @@ function formatDateForMySQL(datetime) {
                 </button>
             </div>
         `;
-    }
+            }
 
-    function renderStats(data) {
-        console.log(' Données reçues:', data);
-        
-        try {
-            const total = data.total || {};
-            const days = data['7days'] || [];
-            
-            // === 1. RESTAURER LE HTML D'ORIGINE ===
-            restoreOriginalHTML();
-            
-            // === 2. METTRE À JOUR LES VALEURS ===
-            
-            // Vues
-            const vuesEl = document.getElementById('statsVues');
-            if (vuesEl) vuesEl.textContent = formatNumber(total.vues || 0);
-            
-            // Clics
-            const clicsEl = document.getElementById('statsClics');
-            if (clicsEl) clicsEl.textContent = formatNumber(total.clics || 0);
-            
-            // CTR
-            const ctrEl = document.getElementById('statsCtr');
-            if (ctrEl) ctrEl.textContent = (total.ctr || 0).toFixed(1) + '%';
-            
-            // Jours actifs
-            const joursEl = document.getElementById('statsJoursActifs');
-            if (joursEl) joursEl.textContent = data.jours_actifs || 0;
+            function renderStats(data) {
+                console.log(' Données reçues:', data);
 
-            // === 3. METTRE À JOUR LES ÉVOLUTIONS ===
-            const evolution = data.evolution || { vues: 0, clics: 0 };
-            updateEvolution('statsVuesEvolution', evolution.vues);
-            updateEvolution('statsClicsEvolution', evolution.clics);
+                try {
+                    const total = data.total || {};
+                    const days = data['7days'] || [];
 
-            // === 4. METTRE À JOUR LE GRAPHIQUE ===
-            renderChart(days);
-            
-            console.log('Stats affichées avec succès');
-            
-        } catch (error) {
-            console.error(' Erreur dans renderStats:', error);
-            showError('Erreur lors du rendu: ' + error.message);
-        }
-    }
+                    // === 1. RESTAURER LE HTML D'ORIGINE ===
+                    restoreOriginalHTML();
 
-    function restoreOriginalHTML() {
-        // Restaurer le HTML original du modal
-        content.innerHTML = `
+                    // === 2. METTRE À JOUR LES VALEURS ===
+
+                    // Vues
+                    const vuesEl = document.getElementById('statsVues');
+                    if (vuesEl) vuesEl.textContent = formatNumber(total.vues || 0);
+
+                    // Clics
+                    const clicsEl = document.getElementById('statsClics');
+                    if (clicsEl) clicsEl.textContent = formatNumber(total.clics || 0);
+
+                    // CTR
+                    const ctrEl = document.getElementById('statsCtr');
+                    if (ctrEl) ctrEl.textContent = (total.ctr || 0).toFixed(1) + '%';
+
+                    // Jours actifs
+                    const joursEl = document.getElementById('statsJoursActifs');
+                    if (joursEl) joursEl.textContent = data.jours_actifs || 0;
+
+                    // === 3. METTRE À JOUR LES ÉVOLUTIONS ===
+                    const evolution = data.evolution || {
+                        vues: 0,
+                        clics: 0
+                    };
+                    updateEvolution('statsVuesEvolution', evolution.vues);
+                    updateEvolution('statsClicsEvolution', evolution.clics);
+
+                    // === 4. METTRE À JOUR LE GRAPHIQUE ===
+                    renderChart(days);
+
+                    console.log('Stats affichées avec succès');
+
+                } catch (error) {
+                    console.error(' Erreur dans renderStats:', error);
+                    showError('Erreur lors du rendu: ' + error.message);
+                }
+            }
+
+            function restoreOriginalHTML() {
+                // Restaurer le HTML original du modal
+                content.innerHTML = `
             <!-- Stats cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
@@ -1832,32 +1858,32 @@ function formatDateForMySQL(datetime) {
                 </div>
             </div>
         `;
-    }
+            }
 
-    function updateEvolution(elementId, value) {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        
-        const val = Number(value) || 0;
-        const isPositive = val >= 0;
-        const arrow = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
-        const color = isPositive ? 'text-emerald-600' : 'text-red-600';
-        const sign = isPositive ? '+' : '';
-        
-        el.innerHTML = `
+            function updateEvolution(elementId, value) {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+
+                const val = Number(value) || 0;
+                const isPositive = val >= 0;
+                const arrow = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+                const color = isPositive ? 'text-emerald-600' : 'text-red-600';
+                const sign = isPositive ? '+' : '';
+
+                el.innerHTML = `
             <i class="fas ${arrow} text-[8px] ${color}"></i>
             <span class="${color}">${sign}${val}%</span>
         `;
-    }
+            }
 
-    function renderChart(days) {
-        const chartContainer = document.getElementById('statsChart');
-        if (!chartContainer) return;
-        
-        const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-        
-        if (!days || days.length === 0) {
-            chartContainer.innerHTML = `
+            function renderChart(days) {
+                const chartContainer = document.getElementById('statsChart');
+                if (!chartContainer) return;
+
+                const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+
+                if (!days || days.length === 0) {
+                    chartContainer.innerHTML = `
                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                     <div class="text-center">
                         <i class="fas fa-chart-simple text-3xl mb-2 opacity-30"></i>
@@ -1866,31 +1892,34 @@ function formatDateForMySQL(datetime) {
                     </div>
                 </div>
             `;
-            return;
-        }
+                    return;
+                }
 
-        let maxVues = 1;
-        let maxClics = 1;
-        days.forEach(function(d) {
-            if (d.vues > maxVues) maxVues = d.vues;
-            if (d.clics > maxClics) maxClics = d.clics;
-        });
+                let maxVues = 1;
+                let maxClics = 1;
+                days.forEach(function(d) {
+                    if (d.vues > maxVues) maxVues = d.vues;
+                    if (d.clics > maxClics) maxClics = d.clics;
+                });
 
-        let html = '';
-        const today = new Date().getDay();
-        
-        jours.forEach(function(jour, index) {
-            const dayData = days.find(function(d) {
-                if (!d.jour) return false;
-                const d2 = new Date(d.jour);
-                return d2.getDay() === (index + 1);
-            }) || { vues: 0, clics: 0 };
-            
-            const hauteurVues = maxVues > 0 ? Math.max(8, (dayData.vues / maxVues) * 100) : 8;
-            const hauteurClics = maxClics > 0 ? Math.max(8, (dayData.clics / maxClics) * 100) : 8;
-            const isToday = index === today - 1;
-            
-            html += `
+                let html = '';
+                const today = new Date().getDay();
+
+                jours.forEach(function(jour, index) {
+                    const dayData = days.find(function(d) {
+                        if (!d.jour) return false;
+                        const d2 = new Date(d.jour);
+                        return d2.getDay() === (index + 1);
+                    }) || {
+                        vues: 0,
+                        clics: 0
+                    };
+
+                    const hauteurVues = maxVues > 0 ? Math.max(8, (dayData.vues / maxVues) * 100) : 8;
+                    const hauteurClics = maxClics > 0 ? Math.max(8, (dayData.clics / maxClics) * 100) : 8;
+                    const isToday = index === today - 1;
+
+                    html += `
                 <div class="flex-1 flex flex-col items-center gap-1">
                     <div class="w-full ${isToday ? 'bg-emerald-500' : 'bg-blue-500'} rounded-t-lg transition-all duration-500" 
                          style="height: ${hauteurVues}%; min-height: 5px;"></div>
@@ -1900,693 +1929,696 @@ function formatDateForMySQL(datetime) {
                     <span class="text-[8px] text-gray-300">${dayData.vues}/${dayData.clics}</span>
                 </div>
             `;
-        });
-        
-        chartContainer.innerHTML = html;
-    }
-
-    function formatNumber(num) {
-        num = Number(num) || 0;
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    }
-
-    function closeBannerStatsModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    // === ATTACHEMENT DES ÉVÉNEMENTS ===
-    openBtns.forEach(function(btn) {
-        btn.addEventListener('click', openBannerStatsModal);
-    });
-    
-    closeBtns.forEach(function(btn) {
-        btn.addEventListener('click', closeBannerStatsModal);
-    });
-    
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeBannerStatsModal();
-        });
-    }
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeBannerStatsModal();
-        }
-    });
-
-    console.log('Script stats prêt');
-})();
-// ============================================
-// MODAL TOGGLE BANNIÈRE
-// ============================================
-(function() {
-    const modal = document.getElementById('toggleBannerModal');
-    const openBtns = document.querySelectorAll('.toggleBannerBtn');
-    const closeBtns = document.querySelectorAll('.closeToggleBannerBtn');
-    const confirmBtn = document.getElementById('confirmToggleBannerBtn');
-    const title = document.getElementById('toggleBannerTitle');
-    const infoText = document.getElementById('toggleBannerInfoText');
-    const info = document.getElementById('toggleBannerInfo');
-    const nameSpan = document.getElementById('toggleBannerName');
-
-    let currentBannerId = null;
-    let currentAction = null;
-
-    function openToggleBannerModal() {
-        const btn = this;
-        currentBannerId = btn.getAttribute('data-id');
-        const currentStatut = btn.getAttribute('data-statut');
-        const nom = btn.getAttribute('data-nom') || 'Bannière';
-
-        nameSpan.textContent = nom;
-
-        if (currentStatut === 'active') {
-            currentAction = 'deactivate';
-            title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver la bannière';
-            infoText.textContent = 'La bannière sera masquée du site.';
-            info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
-            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-            confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
-        } else {
-            currentAction = 'activate';
-            title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer la bannière';
-            infoText.textContent = 'La bannière sera à nouveau visible sur le site.';
-            info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
-            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-            confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeToggleBannerModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-        currentBannerId = null;
-        currentAction = null;
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', openToggleBannerModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeToggleBannerModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeToggleBannerModal();
-    });
-
-    confirmBtn.addEventListener('click', function() {
-        if (!currentBannerId) {
-            showToast('Erreur', 'ID manquant', 'error');
-            return;
-        }
-
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
-
-        fetch('api.php?url=banniere_toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + currentBannerId + '&statut=' + (currentAction === 'activate' ? 'active' : 'inactive')
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                closeToggleBannerModal();
-                showToast('Succès', data.message || 'Statut mis à jour', 'success');
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showToast('Erreur', data.error || 'Action impossible', 'error');
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = currentAction === 'activate' ? 'Activer' : 'Désactiver';
-            }
-        })
-        .catch(error => {
-            console.error(error);
-            showToast('Erreur', 'Erreur serveur', 'error');
-            confirmBtn.disabled = false;
-            confirmBtn.innerHTML = currentAction === 'activate' ? 'Activer' : 'Désactiver';
-        });
-    });
-})();
-
-// ============================================
-// MODAL SUPPRESSION BANNIÈRE
-// ============================================
-(function() {
-    const modal = document.getElementById('deleteBannerModal');
-    const openBtns = document.querySelectorAll('.openDeleteBannerBtn');
-    const closeBtns = document.querySelectorAll('.closeDeleteBannerBtn');
-    const input = document.getElementById('deleteBannerConfirmInput');
-    const confirmBtn = document.getElementById('confirmDeleteBannerBtn');
-    const nameSpan = document.getElementById('deleteBannerName');
-
-    let currentBannerId = null;
-
-    function openDeleteBannerModal() {
-        const btn = this;
-        currentBannerId = btn.getAttribute('data-id');
-        const nom = btn.getAttribute('data-nom') || 'Bannière';
-
-        nameSpan.textContent = nom;
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        input.value = '';
-        confirmBtn.disabled = true;
-        confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
-
-    function closeDeleteBannerModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-        currentBannerId = null;
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', openDeleteBannerModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeDeleteBannerModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeDeleteBannerModal();
-    });
-
-    input.addEventListener('input', function() {
-        if (this.value === 'SUPPRIMER') {
-            confirmBtn.disabled = false;
-            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-    });
-
-    confirmBtn.addEventListener('click', function() {
-        if (!this.disabled) {
-            if (!currentBannerId) {
-                showToast('Erreur', 'ID de bannière manquant', 'error');
-                return;
-            }
-
-            confirmBtn.disabled = true;
-            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Suppression...';
-
-            fetch('api.php?url=banniere_delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + currentBannerId
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur réseau');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    closeDeleteBannerModal();
-                    showToast('Succès', data.message || 'Bannière supprimée avec succès', 'success');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showToast('Erreur', data.error || 'Impossible de supprimer la bannière', 'error');
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Supprimer définitivement';
-                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Impossible de supprimer la bannière', 'error');
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Supprimer définitivement';
-                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            });
-        }
-    });
-})();
-
-// ============================================
-// DRAG & DROP BANNIÈRES
-// ============================================
-(function() {
-    const list = document.getElementById('bannersList');
-    let draggedItem = null;
-
-    list.querySelectorAll('.banner-card').forEach(card => {
-        card.addEventListener('dragstart', function(e) {
-            draggedItem = this;
-            setTimeout(() => this.classList.add('opacity-50', 'scale-95'), 0);
-        });
-
-        card.addEventListener('dragend', function() {
-            this.classList.remove('opacity-50', 'scale-95');
-            list.querySelectorAll('.banner-card').forEach(c => {
-                c.classList.remove('border-t-2', 'border-[#0EA486]');
-            });
-            draggedItem = null;
-        });
-
-        card.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            if (draggedItem !== this) {
-                const rect = this.getBoundingClientRect();
-                const midY = rect.top + rect.height / 2;
-                if (e.clientY < midY) {
-                    this.classList.add('border-t-2', 'border-[#0EA486]');
-                } else {
-                    this.classList.remove('border-t-2', 'border-[#0EA486]');
-                }
-            }
-        });
-
-        card.addEventListener('dragleave', function() {
-            this.classList.remove('border-t-2', 'border-[#0EA486]');
-        });
-
-        card.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('border-t-2', 'border-[#0EA486]');
-            
-            if (draggedItem !== this) {
-                const rect = this.getBoundingClientRect();
-                const midY = rect.top + rect.height / 2;
-                if (e.clientY < midY) {
-                    list.insertBefore(draggedItem, this);
-                } else {
-                    list.insertBefore(draggedItem, this.nextSibling);
-                }
-            }
-        });
-    });
-
-    document.getElementById('saveBannerOrderBtn').addEventListener('click', function() {
-        showToast('Ordre enregistré', 'L\'ordre des bannières a été sauvegardé', 'success');
-    });
-})();
-
-// ============================================
-// MODAL FORMULAIRE CODE PROMO
-// ============================================
-(function() {
-    const modal = document.getElementById('promoFormModal');
-    const openBtns = document.querySelectorAll('.openPromoFormBtn, #openPromoFormBtn');
-    const closeBtns = document.querySelectorAll('.closePromoFormBtn');
-    const title = document.getElementById('promoFormTitle');
-
-    function openPromoFormModal(isEdit = false) {
-        title.textContent = isEdit ? 'Modifier le code promo' : 'Nouveau code promo';
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-    function closePromoFormModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', function() {
-        const isEdit = this.classList.contains('openPromoFormBtn');
-        openPromoFormModal(isEdit);
-    }));
-    closeBtns.forEach(btn => btn.addEventListener('click', closePromoFormModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closePromoFormModal();
-    });
-
-    document.getElementById('generatePromoCodeBtn').addEventListener('click', function() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let code = 'PROMO-';
-        for (let i = 0; i < 8; i++) {
-            code += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        document.getElementById('promoCode').value = code;
-    });
-
-    modal.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        closePromoFormModal();
-        showToast('Succès', 'Code promo enregistré avec succès', 'success');
-    });
-})();
-
-// ============================================
-// MODAL HISTORIQUE CODE PROMO
-// ============================================
-setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn');
-
-// ============================================
-// MODAL TOGGLE CODE PROMO
-// ============================================
-(function() {
-    const modal = document.getElementById('togglePromoModal');
-    const openBtns = document.querySelectorAll('.togglePromoBtn');
-    const closeBtns = document.querySelectorAll('.closeTogglePromoBtn');
-    const confirmBtn = document.getElementById('confirmTogglePromoBtn');
-    const title = document.getElementById('togglePromoTitle');
-    const infoText = document.getElementById('togglePromoInfoText');
-    const info = document.getElementById('togglePromoInfo');
-
-    function openTogglePromoModal() {
-        const btn = this;
-        const isOn = btn.querySelector('.fa-toggle-on');
-        
-        if (isOn) {
-            title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver le code';
-            infoText.textContent = 'Le code ne sera plus utilisable par les clients.';
-            info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
-            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-            confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
-        } else {
-            title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer le code';
-            infoText.textContent = 'Le code sera à nouveau utilisable par les clients.';
-            info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
-            confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-            confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
-        }
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeTogglePromoModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', openTogglePromoModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeTogglePromoModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeTogglePromoModal();
-    });
-
-    confirmBtn.addEventListener('click', function() {
-        closeTogglePromoModal();
-        showToast('Statut modifié', 'Le statut du code promo a été mis à jour', 'success');
-    });
-})();
-
-// ============================================
-// MODAL SUPPRESSION CODE PROMO
-// ============================================
-(function() {
-    const modal = document.getElementById('deletePromoModal');
-    const openBtns = document.querySelectorAll('.openDeletePromoBtn');
-    const closeBtns = document.querySelectorAll('.closeDeletePromoBtn');
-    const input = document.getElementById('deletePromoConfirmInput');
-    const confirmBtn = document.getElementById('confirmDeletePromoBtn');
-
-    function openDeletePromoModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        input.value = '';
-        confirmBtn.disabled = true;
-        confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
-    function closeDeletePromoModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    openBtns.forEach(btn => btn.addEventListener('click', openDeletePromoModal));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeDeletePromoModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeDeletePromoModal();
-    });
-
-    input.addEventListener('input', function() {
-        if (this.value === 'SUPPRIMER') {
-            confirmBtn.disabled = false;
-            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-    });
-
-    confirmBtn.addEventListener('click', function() {
-        if (!this.disabled) {
-            closeDeletePromoModal();
-            showToast('Supprimé', 'Code promo supprimé avec succès', 'success');
-        }
-    });
-})();
-
-// ============================================
-// CODES PROMOTIONNELS - GESTION COMPLETE
-// ============================================
-(function() {
-    'use strict';
-
-    console.log(' Script codes promo chargé');
-
-    // ============================================
-    // VARIABLES
-    // ============================================
-    let currentPromoId = null;
-    let currentPromoCode = null;
-    let currentAction = '';
-
-    // ============================================
-    // RÉFÉRENCES DES MODALS
-    // ============================================
-    const promoFormModal = document.getElementById('promoFormModal');
-    const promoHistoryModal = document.getElementById('promoHistoryModal');
-    const togglePromoModal = document.getElementById('togglePromoModal');
-    const deletePromoModal = document.getElementById('deletePromoModal');
-
-    // ============================================
-    // RÉFÉRENCES DES ÉLÉMENTS DU FORMULAIRE
-    // ============================================
-    const promoCodeInput = document.getElementById('promoCode');
-    const promoTypeSelect = document.getElementById('promoType');
-    const promoValueInput = document.getElementById('promoValue');
-
-    // ============================================
-    // 1. GENERER UN CODE PROMO
-    // ============================================
-    document.getElementById('generatePromoCodeBtn')?.addEventListener('click', function() {
-        fetch('api.php?url=promo_generate')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    promoCodeInput.value = data.code;
-                    showToast('Succès', 'Code généré: ' + data.code, 'success');
-                } else {
-                    showToast('Erreur', data.error || 'Erreur de génération', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion', 'error');
-            });
-    });
-
-    // ============================================
-    // 2. OUVRIR LE MODAL DE FORMULAIRE (AJOUT/MODIFICATION)
-    // ============================================
-    document.querySelectorAll('#openPromoFormBtn, .openPromoFormBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const isEdit = this.classList.contains('openPromoFormBtn');
-            const title = document.getElementById('promoFormTitle');
-            const submitBtn = document.querySelector('#promoFormModal button[type="submit"]');
-            
-            if (isEdit) {
-                // Mode édition
-                title.textContent = 'Modifier le code promo';
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Modifier';
-                
-                // Remplir les champs
-                document.getElementById('promoCode').value = this.dataset.code || '';
-                document.getElementById('promoType').value = this.dataset.type || 'percentage';
-                document.getElementById('promoValue').value = this.dataset.valeur || '';
-                document.querySelector('#promoFormModal input[placeholder*="10000"]').value = this.dataset.montantMinimum || '';
-                document.querySelector('#promoFormModal input[placeholder*="100"]').value = this.dataset.utilisationsMax || '';
-                document.querySelector('#promoFormModal input[type="datetime-local"]').value = this.dataset.dateExpiration || '';
-                
-                // Statut
-                const status = this.dataset.statut || 'active';
-                document.querySelectorAll('#promoFormModal input[name="promoStatus"]').forEach(radio => {
-                    radio.checked = radio.value === status;
                 });
-                
-                currentPromoId = this.dataset.id;
-            } else {
-                // Mode ajout
-                title.textContent = 'Nouveau code promo';
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
-                document.getElementById('promoFormModal').querySelector('form').reset();
-                currentPromoId = null;
+
+                chartContainer.innerHTML = html;
             }
-            
-            promoFormModal.classList.remove('hidden');
-            promoFormModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        });
-    });
 
-    // ============================================
-    // 3. FERMER LE MODAL FORMULAIRE
-    // ============================================
-    document.querySelectorAll('.closePromoFormBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            promoFormModal.classList.add('hidden');
-            promoFormModal.classList.remove('flex');
-            document.body.style.overflow = '';
-        });
-    });
+            function formatNumber(num) {
+                num = Number(num) || 0;
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
 
-    promoFormModal?.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
-            this.classList.remove('flex');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // ============================================
-// SOUMETTRE LE FORMULAIRE (AJOUT/MODIFICATION)
-// ============================================
-document.getElementById('promoForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log(' Formulaire soumis !');
-    
-    // Récupérer les valeurs
-    const code = document.getElementById('promoCode')?.value.trim() || '';
-    const type = document.getElementById('promoType')?.value || 'percentage';
-    const valeur = document.getElementById('promoValue')?.value || 0;
-    const montant_minimum = document.getElementById('promoMinAmount')?.value || 0;
-    const utilisations_max = document.getElementById('promoMaxUses')?.value || '';
-    const date_expiration = document.getElementById('promoExpiration')?.value || '';
-    const categorie_id = document.getElementById('promoCategorie')?.value || '';
-    const produit_id = document.getElementById('promoProduit')?.value || '';
-    const utilisateur_id = document.getElementById('promoUtilisateur')?.value || '';
-    const statut = document.querySelector('input[name="statut"]:checked')?.value || 'active';
-
-    // Validation
-    if (!code) {
-        showToast('Erreur', 'Le code est requis', 'error');
-        return;
-    }
-    if (!valeur || valeur <= 0) {
-        showToast('Erreur', 'La valeur doit être supérieure à 0', 'error');
-        return;
-    }
-    if (!date_expiration) {
-        showToast('Erreur', 'La date d\'expiration est requise', 'error');
-        return;
-    }
-
-    // Désactiver le bouton
-    const submitBtn = document.getElementById('promoSubmitBtn');
-    const submitText = document.getElementById('promoSubmitText');
-    
-    if (submitBtn) {
-        submitBtn.disabled = true;
-    }
-    if (submitText) {
-        submitText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-    }
-
-    //  Créer le FormData correctement
-    const formData = new FormData();
-    formData.append('code', code);
-    formData.append('type', type);
-    formData.append('valeur', valeur);
-    formData.append('montant_minimum', montant_minimum);
-    formData.append('utilisations_max', utilisations_max);
-    formData.append('date_expiration', date_expiration);
-    formData.append('categorie_id', categorie_id);
-    formData.append('produit_id', produit_id);
-    formData.append('utilisateur_id', utilisateur_id);
-    formData.append('statut', statut);
-
-    // Déterminer l'action
-    const action = currentPromoId ? 'promo_edit' : 'promo_add';
-    if (currentPromoId) {
-        formData.append('id', currentPromoId);
-    }
-
-    console.log(' Action:', action);
-    console.log(' Données envoyées:', Object.fromEntries(formData));
-
-    // Envoyer la requête
-    fetch('api.php?url=' + action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        console.log(' Statut réponse:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log(' Réponse:', data);
-        
-        if (data.success) {
-            // Fermer le modal
-            const modal = document.getElementById('promoFormModal');
-            if (modal) {
+            function closeBannerStatsModal() {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+                document.body.style.overflow = '';
             }
-            document.body.style.overflow = '';
-            
-            showToast('Succès', data.message || 'Code promo enregistré', 'success');
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showToast('Erreur', data.error || 'Erreur d\'enregistrement', 'error');
-        }
-        
-        // Réactiver le bouton
-        if (submitBtn) {
-            submitBtn.disabled = false;
-        }
-        if (submitText) {
-            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
-        }
-    })
-    .catch(error => {
-        console.error(' Erreur:', error);
-        showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
-        
-        // Réactiver le bouton
-        if (submitBtn) {
-            submitBtn.disabled = false;
-        }
-        if (submitText) {
-            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
-        }
-    });
-});
 
-    // ============================================
-// HISTORIQUE CODE PROMO - CORRIGÉ
-// ============================================
-document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const code = this.dataset.code || 'Code #' + id;
-        const total = this.dataset.total || 0;
-        
-        //  Remplir l'en-tête avec les données du bouton
-        document.getElementById('historyCodeName').textContent = code;
-        document.getElementById('historyCodeInfo').textContent = 'ID: ' + id;
-        document.getElementById('historyTotalUtilisations').textContent = total;
+            // === ATTACHEMENT DES ÉVÉNEMENTS ===
+            openBtns.forEach(function(btn) {
+                btn.addEventListener('click', openBannerStatsModal);
+            });
 
-        // Afficher le chargement
-        const tbody = document.getElementById('historyTableBody');
-        tbody.innerHTML = `
+            closeBtns.forEach(function(btn) {
+                btn.addEventListener('click', closeBannerStatsModal);
+            });
+
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeBannerStatsModal();
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    closeBannerStatsModal();
+                }
+            });
+
+            console.log('Script stats prêt');
+        })();
+        // ============================================
+        // MODAL TOGGLE BANNIÈRE
+        // ============================================
+        (function() {
+            const modal = document.getElementById('toggleBannerModal');
+            const openBtns = document.querySelectorAll('.toggleBannerBtn');
+            const closeBtns = document.querySelectorAll('.closeToggleBannerBtn');
+            const confirmBtn = document.getElementById('confirmToggleBannerBtn');
+            const title = document.getElementById('toggleBannerTitle');
+            const infoText = document.getElementById('toggleBannerInfoText');
+            const info = document.getElementById('toggleBannerInfo');
+            const nameSpan = document.getElementById('toggleBannerName');
+
+            let currentBannerId = null;
+            let currentAction = null;
+
+            function openToggleBannerModal() {
+                const btn = this;
+                currentBannerId = btn.getAttribute('data-id');
+                const currentStatut = btn.getAttribute('data-statut');
+                const nom = btn.getAttribute('data-nom') || 'Bannière';
+
+                nameSpan.textContent = nom;
+
+                if (currentStatut === 'active') {
+                    currentAction = 'deactivate';
+                    title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver la bannière';
+                    infoText.textContent = 'La bannière sera masquée du site.';
+                    info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
+                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                    confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+                } else {
+                    currentAction = 'activate';
+                    title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer la bannière';
+                    infoText.textContent = 'La bannière sera à nouveau visible sur le site.';
+                    info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
+                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                    confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeToggleBannerModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                currentBannerId = null;
+                currentAction = null;
+            }
+
+            openBtns.forEach(btn => btn.addEventListener('click', openToggleBannerModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeToggleBannerModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeToggleBannerModal();
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                if (!currentBannerId) {
+                    showToast('Erreur', 'ID manquant', 'error');
+                    return;
+                }
+
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
+
+                fetch('api.php?url=banniere_toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + currentBannerId + '&statut=' + (currentAction === 'activate' ? 'active' : 'inactive')
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            closeToggleBannerModal();
+                            showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast('Erreur', data.error || 'Action impossible', 'error');
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerHTML = currentAction === 'activate' ? 'Activer' : 'Désactiver';
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        showToast('Erreur', 'Erreur serveur', 'error');
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = currentAction === 'activate' ? 'Activer' : 'Désactiver';
+                    });
+            });
+        })();
+
+        // ============================================
+        // MODAL SUPPRESSION BANNIÈRE
+        // ============================================
+        (function() {
+            const modal = document.getElementById('deleteBannerModal');
+            const openBtns = document.querySelectorAll('.openDeleteBannerBtn');
+            const closeBtns = document.querySelectorAll('.closeDeleteBannerBtn');
+            const input = document.getElementById('deleteBannerConfirmInput');
+            const confirmBtn = document.getElementById('confirmDeleteBannerBtn');
+            const nameSpan = document.getElementById('deleteBannerName');
+
+            let currentBannerId = null;
+
+            function openDeleteBannerModal() {
+                const btn = this;
+                currentBannerId = btn.getAttribute('data-id');
+                const nom = btn.getAttribute('data-nom') || 'Bannière';
+
+                nameSpan.textContent = nom;
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                input.value = '';
+                confirmBtn.disabled = true;
+                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            function closeDeleteBannerModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                currentBannerId = null;
+            }
+
+            openBtns.forEach(btn => btn.addEventListener('click', openDeleteBannerModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeDeleteBannerModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeDeleteBannerModal();
+            });
+
+            input.addEventListener('input', function() {
+                if (this.value === 'SUPPRIMER') {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    if (!currentBannerId) {
+                        showToast('Erreur', 'ID de bannière manquant', 'error');
+                        return;
+                    }
+
+                    confirmBtn.disabled = true;
+                    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Suppression...';
+
+                    fetch('api.php?url=banniere_delete', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'id=' + currentBannerId
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur réseau');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                closeDeleteBannerModal();
+                                showToast('Succès', data.message || 'Bannière supprimée avec succès', 'success');
+                                setTimeout(() => location.reload(), 1500);
+                            } else {
+                                showToast('Erreur', data.error || 'Impossible de supprimer la bannière', 'error');
+                                confirmBtn.disabled = false;
+                                confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Supprimer définitivement';
+                                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Impossible de supprimer la bannière', 'error');
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerHTML = '<i class="fas fa-trash"></i> Supprimer définitivement';
+                            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        });
+                }
+            });
+        })();
+
+        // ============================================
+        // DRAG & DROP BANNIÈRES
+        // ============================================
+        (function() {
+            const list = document.getElementById('bannersList');
+            let draggedItem = null;
+
+            list.querySelectorAll('.banner-card').forEach(card => {
+                card.addEventListener('dragstart', function(e) {
+                    draggedItem = this;
+                    setTimeout(() => this.classList.add('opacity-50', 'scale-95'), 0);
+                });
+
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('opacity-50', 'scale-95');
+                    list.querySelectorAll('.banner-card').forEach(c => {
+                        c.classList.remove('border-t-2', 'border-[#0EA486]');
+                    });
+                    draggedItem = null;
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    if (draggedItem !== this) {
+                        const rect = this.getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (e.clientY < midY) {
+                            this.classList.add('border-t-2', 'border-[#0EA486]');
+                        } else {
+                            this.classList.remove('border-t-2', 'border-[#0EA486]');
+                        }
+                    }
+                });
+
+                card.addEventListener('dragleave', function() {
+                    this.classList.remove('border-t-2', 'border-[#0EA486]');
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-t-2', 'border-[#0EA486]');
+
+                    if (draggedItem !== this) {
+                        const rect = this.getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (e.clientY < midY) {
+                            list.insertBefore(draggedItem, this);
+                        } else {
+                            list.insertBefore(draggedItem, this.nextSibling);
+                        }
+                    }
+                });
+            });
+
+            document.getElementById('saveBannerOrderBtn').addEventListener('click', function() {
+                showToast('Ordre enregistré', 'L\'ordre des bannières a été sauvegardé', 'success');
+            });
+        })();
+
+        // ============================================
+        // MODAL FORMULAIRE CODE PROMO
+        // ============================================
+        (function() {
+            const modal = document.getElementById('promoFormModal');
+            const openBtns = document.querySelectorAll('.openPromoFormBtn, #openPromoFormBtn');
+            const closeBtns = document.querySelectorAll('.closePromoFormBtn');
+            const title = document.getElementById('promoFormTitle');
+
+            function openPromoFormModal(isEdit = false) {
+                title.textContent = isEdit ? 'Modifier le code promo' : 'Nouveau code promo';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closePromoFormModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            openBtns.forEach(btn => btn.addEventListener('click', function() {
+                const isEdit = this.classList.contains('openPromoFormBtn');
+                openPromoFormModal(isEdit);
+            }));
+            closeBtns.forEach(btn => btn.addEventListener('click', closePromoFormModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closePromoFormModal();
+            });
+
+            document.getElementById('generatePromoCodeBtn').addEventListener('click', function() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let code = 'PROMO-';
+                for (let i = 0; i < 8; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                document.getElementById('promoCode').value = code;
+            });
+
+            modal.querySelector('form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                closePromoFormModal();
+                showToast('Succès', 'Code promo enregistré avec succès', 'success');
+            });
+        })();
+
+        // ============================================
+        // MODAL HISTORIQUE CODE PROMO
+        // ============================================
+        setupModal('promoHistoryModal', '.openPromoHistoryBtn', '.closePromoHistoryBtn');
+
+        // ============================================
+        // MODAL TOGGLE CODE PROMO
+        // ============================================
+        (function() {
+            const modal = document.getElementById('togglePromoModal');
+            const openBtns = document.querySelectorAll('.togglePromoBtn');
+            const closeBtns = document.querySelectorAll('.closeTogglePromoBtn');
+            const confirmBtn = document.getElementById('confirmTogglePromoBtn');
+            const title = document.getElementById('togglePromoTitle');
+            const infoText = document.getElementById('togglePromoInfoText');
+            const info = document.getElementById('togglePromoInfo');
+
+            function openTogglePromoModal() {
+                const btn = this;
+                const isOn = btn.querySelector('.fa-toggle-on');
+
+                if (isOn) {
+                    title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver le code';
+                    infoText.textContent = 'Le code ne sera plus utilisable par les clients.';
+                    info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
+                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                    confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+                } else {
+                    title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer le code';
+                    infoText.textContent = 'Le code sera à nouveau utilisable par les clients.';
+                    info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
+                    confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                    confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeTogglePromoModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            openBtns.forEach(btn => btn.addEventListener('click', openTogglePromoModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeTogglePromoModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeTogglePromoModal();
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                closeTogglePromoModal();
+                showToast('Statut modifié', 'Le statut du code promo a été mis à jour', 'success');
+            });
+        })();
+
+        // ============================================
+        // MODAL SUPPRESSION CODE PROMO
+        // ============================================
+        (function() {
+            const modal = document.getElementById('deletePromoModal');
+            const openBtns = document.querySelectorAll('.openDeletePromoBtn');
+            const closeBtns = document.querySelectorAll('.closeDeletePromoBtn');
+            const input = document.getElementById('deletePromoConfirmInput');
+            const confirmBtn = document.getElementById('confirmDeletePromoBtn');
+
+            function openDeletePromoModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                input.value = '';
+                confirmBtn.disabled = true;
+                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            function closeDeletePromoModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            openBtns.forEach(btn => btn.addEventListener('click', openDeletePromoModal));
+            closeBtns.forEach(btn => btn.addEventListener('click', closeDeletePromoModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeDeletePromoModal();
+            });
+
+            input.addEventListener('input', function() {
+                if (this.value === 'SUPPRIMER') {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            confirmBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    closeDeletePromoModal();
+                    showToast('Supprimé', 'Code promo supprimé avec succès', 'success');
+                }
+            });
+        })();
+
+        // ============================================
+        // CODES PROMOTIONNELS - GESTION COMPLETE
+        // ============================================
+        (function() {
+            'use strict';
+
+            console.log(' Script codes promo chargé');
+
+            // ============================================
+            // VARIABLES
+            // ============================================
+            let currentPromoId = null;
+            let currentPromoCode = null;
+            let currentAction = '';
+
+            // ============================================
+            // RÉFÉRENCES DES MODALS
+            // ============================================
+            const promoFormModal = document.getElementById('promoFormModal');
+            const promoHistoryModal = document.getElementById('promoHistoryModal');
+            const togglePromoModal = document.getElementById('togglePromoModal');
+            const deletePromoModal = document.getElementById('deletePromoModal');
+
+            // ============================================
+            // RÉFÉRENCES DES ÉLÉMENTS DU FORMULAIRE
+            // ============================================
+            const promoCodeInput = document.getElementById('promoCode');
+            const promoTypeSelect = document.getElementById('promoType');
+            const promoValueInput = document.getElementById('promoValue');
+
+            // ============================================
+            // 1. GENERER UN CODE PROMO
+            // ============================================
+            document.getElementById('generatePromoCodeBtn')?.addEventListener('click', function() {
+                fetch('api.php?url=promo_generate')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            promoCodeInput.value = data.code;
+                            showToast('Succès', 'Code généré: ' + data.code, 'success');
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur de génération', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion', 'error');
+                    });
+            });
+
+            // ============================================
+            // 2. OUVRIR LE MODAL DE FORMULAIRE (AJOUT/MODIFICATION)
+            // ============================================
+            document.querySelectorAll('#openPromoFormBtn, .openPromoFormBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const isEdit = this.classList.contains('openPromoFormBtn');
+                    const title = document.getElementById('promoFormTitle');
+                    const submitBtn = document.querySelector('#promoFormModal button[type="submit"]');
+
+                    if (isEdit) {
+                        // Mode édition
+                        title.textContent = 'Modifier le code promo';
+                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Modifier';
+
+                        // Remplir les champs
+                        document.getElementById('promoCode').value = this.dataset.code || '';
+                        document.getElementById('promoType').value = this.dataset.type || 'percentage';
+                        document.getElementById('promoValue').value = this.dataset.valeur || '';
+                        document.querySelector('#promoFormModal input[placeholder*="10000"]').value = this.dataset.montantMinimum || '';
+                        document.querySelector('#promoFormModal input[placeholder*="100"]').value = this.dataset.utilisationsMax || '';
+                        document.querySelector('#promoFormModal input[type="datetime-local"]').value = this.dataset.dateExpiration || '';
+
+                        // Statut
+                        const status = this.dataset.statut || 'active';
+                        document.querySelectorAll('#promoFormModal input[name="promoStatus"]').forEach(radio => {
+                            radio.checked = radio.value === status;
+                        });
+
+                        currentPromoId = this.dataset.id;
+                    } else {
+                        // Mode ajout
+                        title.textContent = 'Nouveau code promo';
+                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+                        document.getElementById('promoFormModal').querySelector('form').reset();
+                        currentPromoId = null;
+                    }
+
+                    promoFormModal.classList.remove('hidden');
+                    promoFormModal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // ============================================
+            // 3. FERMER LE MODAL FORMULAIRE
+            // ============================================
+            document.querySelectorAll('.closePromoFormBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    promoFormModal.classList.add('hidden');
+                    promoFormModal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            promoFormModal?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // ============================================
+            // SOUMETTRE LE FORMULAIRE (AJOUT/MODIFICATION)
+            // ============================================
+            document.getElementById('promoForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                console.log(' Formulaire soumis !');
+
+                // Récupérer les valeurs
+                const code = document.getElementById('promoCode')?.value.trim() || '';
+                const type = document.getElementById('promoType')?.value || 'percentage';
+                const valeur = document.getElementById('promoValue')?.value || 0;
+                const montant_minimum = document.getElementById('promoMinAmount')?.value || 0;
+                const utilisations_max = document.getElementById('promoMaxUses')?.value || '';
+                const date_expiration = document.getElementById('promoExpiration')?.value || '';
+                const categorie_id = document.getElementById('promoCategorie')?.value || '';
+                const produit_id = document.getElementById('promoProduit')?.value || '';
+                const utilisateur_id = document.getElementById('promoUtilisateur')?.value || '';
+                const statut = document.querySelector('input[name="statut"]:checked')?.value || 'active';
+
+                // Validation
+                if (!code) {
+                    showToast('Erreur', 'Le code est requis', 'error');
+                    return;
+                }
+                if (!valeur || valeur <= 0) {
+                    showToast('Erreur', 'La valeur doit être supérieure à 0', 'error');
+                    return;
+                }
+                if (!date_expiration) {
+                    showToast('Erreur', 'La date d\'expiration est requise', 'error');
+                    return;
+                }
+
+                // Désactiver le bouton
+                const submitBtn = document.getElementById('promoSubmitBtn');
+                const submitText = document.getElementById('promoSubmitText');
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                }
+                if (submitText) {
+                    submitText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+                }
+
+                //  Créer le FormData correctement
+                const formData = new FormData();
+                formData.append('code', code);
+                formData.append('type', type);
+                formData.append('valeur', valeur);
+                formData.append('montant_minimum', montant_minimum);
+                formData.append('utilisations_max', utilisations_max);
+                formData.append('date_expiration', date_expiration);
+                formData.append('categorie_id', categorie_id);
+                formData.append('produit_id', produit_id);
+                formData.append('utilisateur_id', utilisateur_id);
+                formData.append('statut', statut);
+
+                // Déterminer l'action
+                const action = currentPromoId ? 'promo_edit' : 'promo_add';
+                if (currentPromoId) {
+                    formData.append('id', currentPromoId);
+                }
+
+                console.log(' Action:', action);
+                console.log(' Données envoyées:', Object.fromEntries(formData));
+
+                // Envoyer la requête
+                fetch('api.php?url=' + action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log(' Statut réponse:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(' Réponse:', data);
+
+                        if (data.success) {
+                            // Fermer le modal
+                            const modal = document.getElementById('promoFormModal');
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                modal.classList.remove('flex');
+                            }
+                            document.body.style.overflow = '';
+
+                            showToast('Succès', data.message || 'Code promo enregistré', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur d\'enregistrement', 'error');
+                        }
+
+                        // Réactiver le bouton
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                        }
+                        if (submitText) {
+                            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(' Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion: ' + error.message, 'error');
+
+                        // Réactiver le bouton
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                        }
+                        if (submitText) {
+                            submitText.innerHTML = '<i class="fas fa-save"></i> ' + (currentPromoId ? 'Modifier' : 'Enregistrer');
+                        }
+                    });
+            });
+
+            // ============================================
+            // HISTORIQUE CODE PROMO - CORRIGÉ
+            // ============================================
+            document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const code = this.dataset.code || 'Code #' + id;
+                    const total = this.dataset.total || 0;
+
+                    //  Remplir l'en-tête avec les données du bouton
+                    document.getElementById('historyCodeName').textContent = code;
+                    document.getElementById('historyCodeInfo').textContent = 'ID: ' + id;
+                    document.getElementById('historyTotalUtilisations').textContent = total;
+
+                    // Afficher le chargement
+                    const tbody = document.getElementById('historyTableBody');
+                    tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
                     <i class="fas fa-spinner fa-spin text-2xl block mb-2"></i>
@@ -2595,18 +2627,18 @@ document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
             </tr>
         `;
 
-        document.getElementById('promoHistoryModal').classList.remove('hidden');
-        document.getElementById('promoHistoryModal').classList.add('flex');
-        document.body.style.overflow = 'hidden';
+                    document.getElementById('promoHistoryModal').classList.remove('hidden');
+                    document.getElementById('promoHistoryModal').classList.add('flex');
+                    document.body.style.overflow = 'hidden';
 
-        // Fetch l'historique
-        fetch('api.php?url=promo_history&id=' + id)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    renderHistorique(data.data);
-                } else {
-                    tbody.innerHTML = `
+                    // Fetch l'historique
+                    fetch('api.php?url=promo_history&id=' + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                renderHistorique(data.data);
+                            } else {
+                                tbody.innerHTML = `
                         <tr>
                             <td colspan="6" class="px-4 py-8 text-center text-red-500 text-sm">
                                 <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
@@ -2614,11 +2646,11 @@ document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
                             </td>
                         </tr>
                     `;
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                tbody.innerHTML = `
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="px-4 py-8 text-center text-red-500 text-sm">
                             <i class="fas fa-exclamation-circle text-2xl block mb-2"></i>
@@ -2626,15 +2658,15 @@ document.querySelectorAll('.openPromoHistoryBtn').forEach(btn => {
                         </td>
                     </tr>
                 `;
+                        });
+                });
             });
-    });
-});
 
-function renderHistorique(historique) {
-    const tbody = document.getElementById('historyTableBody');
+            function renderHistorique(historique) {
+                const tbody = document.getElementById('historyTableBody');
 
-    if (!historique || historique.length === 0) {
-        tbody.innerHTML = `
+                if (!historique || historique.length === 0) {
+                    tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">
                     <i class="fas fa-clock text-2xl block mb-2"></i>
@@ -2642,12 +2674,12 @@ function renderHistorique(historique) {
                 </td>
             </tr>
         `;
-        return;
-    }
+                    return;
+                }
 
-    let html = '';
-    historique.forEach(item => {
-        html += `
+                let html = '';
+                historique.forEach(item => {
+                    html += `
             <tr class="hover:bg-gray-50/50 transition">
                 <td class="px-4 py-3 text-xs text-gray-500">${formatDate(item.date_utilisation)}</td>
                 <td class="px-4 py-3">
@@ -2664,276 +2696,540 @@ function renderHistorique(historique) {
                 <td class="px-4 py-3 text-xs font-bold text-[#0EA486]">${formatNumber(item.montant_final)} FCFA</td>
             </tr>
         `;
-    });
-    tbody.innerHTML = html;
-}
-
-// ============================================
-// 6. FERMER LE MODAL HISTORIQUE
-// ============================================
-document.querySelectorAll('.closePromoHistoryBtn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.getElementById('promoHistoryModal').classList.add('hidden');
-        document.getElementById('promoHistoryModal').classList.remove('flex');
-        document.body.style.overflow = '';
-    });
-});
-
-document.getElementById('promoHistoryModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        this.classList.add('hidden');
-        this.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-});
-
-// ============================================
-// FONCTIONS UTILITAIRES
-// ============================================
-function formatNumber(num) {
-    num = Number(num) || 0;
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '---';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-    // ============================================
-    // 7. TOGGLE STATUT DU CODE PROMO
-    // ============================================
-    document.querySelectorAll('.togglePromoBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const statut = this.dataset.statut;
-            const code = this.dataset.code;
-            
-            currentPromoId = id;
-            currentPromoCode = code;
-            currentAction = statut === 'active' ? 'inactive' : 'active';
-
-            const title = document.getElementById('togglePromoTitle');
-            const infoText = document.getElementById('togglePromoInfoText');
-            const confirmBtn = document.getElementById('confirmTogglePromoBtn');
-            const info = document.getElementById('togglePromoInfo');
-
-            if (statut === 'active') {
-                title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver le code promo';
-                infoText.textContent = 'Le code promo "' + code + '" ne sera plus utilisable par les clients.';
-                info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
-                confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-                confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
-            } else {
-                title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer le code promo';
-                infoText.textContent = 'Le code promo "' + code + '" sera à nouveau utilisable par les clients.';
-                info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
-                confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
-                confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+                });
+                tbody.innerHTML = html;
             }
 
-            togglePromoModal.classList.remove('hidden');
-            togglePromoModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        });
-    });
+            // ============================================
+            // 6. FERMER LE MODAL HISTORIQUE
+            // ============================================
+            document.querySelectorAll('.closePromoHistoryBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('promoHistoryModal').classList.add('hidden');
+                    document.getElementById('promoHistoryModal').classList.remove('flex');
+                    document.body.style.overflow = '';
+                });
+            });
 
-    // ============================================
-    // 8. FERMER LE MODAL TOGGLE
-    // ============================================
-    document.querySelectorAll('.closeTogglePromoBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            togglePromoModal.classList.add('hidden');
-            togglePromoModal.classList.remove('flex');
-            document.body.style.overflow = '';
-        });
-    });
+            document.getElementById('promoHistoryModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            });
 
-    togglePromoModal?.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
-            this.classList.remove('flex');
-            document.body.style.overflow = '';
-        }
-    });
+            // ============================================
+            // FONCTIONS UTILITAIRES
+            // ============================================
+            function formatNumber(num) {
+                num = Number(num) || 0;
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
 
-    // ============================================
-    // 9. CONFIRMER LE TOGGLE
-    // ============================================
-    document.getElementById('confirmTogglePromoBtn')?.addEventListener('click', function() {
-        fetch('api.php?url=promo_toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'id=' + currentPromoId + '&statut=' + currentAction
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                togglePromoModal.classList.add('hidden');
-                togglePromoModal.classList.remove('flex');
+            function formatDate(dateStr) {
+                if (!dateStr) return '---';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            // ============================================
+            // 7. TOGGLE STATUT DU CODE PROMO
+            // ============================================
+            document.querySelectorAll('.togglePromoBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const statut = this.dataset.statut;
+                    const code = this.dataset.code;
+
+                    currentPromoId = id;
+                    currentPromoCode = code;
+                    currentAction = statut === 'active' ? 'inactive' : 'active';
+
+                    const title = document.getElementById('togglePromoTitle');
+                    const infoText = document.getElementById('togglePromoInfoText');
+                    const confirmBtn = document.getElementById('confirmTogglePromoBtn');
+                    const info = document.getElementById('togglePromoInfo');
+
+                    if (statut === 'active') {
+                        title.innerHTML = '<i class="fas fa-toggle-off text-gray-500"></i> Désactiver le code promo';
+                        infoText.textContent = 'Le code promo "' + code + '" ne sera plus utilisable par les clients.';
+                        info.className = 'bg-yellow-50 rounded-xl p-4 border border-yellow-100';
+                        confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                        confirmBtn.innerHTML = '<i class="fas fa-pause"></i> Désactiver';
+                    } else {
+                        title.innerHTML = '<i class="fas fa-toggle-on text-emerald-500"></i> Activer le code promo';
+                        infoText.textContent = 'Le code promo "' + code + '" sera à nouveau utilisable par les clients.';
+                        info.className = 'bg-emerald-50 rounded-xl p-4 border border-emerald-100';
+                        confirmBtn.className = 'px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition';
+                        confirmBtn.innerHTML = '<i class="fas fa-check"></i> Activer';
+                    }
+
+                    togglePromoModal.classList.remove('hidden');
+                    togglePromoModal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // ============================================
+            // 8. FERMER LE MODAL TOGGLE
+            // ============================================
+            document.querySelectorAll('.closeTogglePromoBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    togglePromoModal.classList.add('hidden');
+                    togglePromoModal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            togglePromoModal?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // ============================================
+            // 9. CONFIRMER LE TOGGLE
+            // ============================================
+            document.getElementById('confirmTogglePromoBtn')?.addEventListener('click', function() {
+                fetch('api.php?url=promo_toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'id=' + currentPromoId + '&statut=' + currentAction
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            togglePromoModal.classList.add('hidden');
+                            togglePromoModal.classList.remove('flex');
+                            document.body.style.overflow = '';
+                            showToast('Succès', data.message || 'Statut mis à jour', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion', 'error');
+                    });
+            });
+
+            // ============================================
+            // 10. SUPPRIMER UN CODE PROMO
+            // ============================================
+            document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentPromoId = this.dataset.id;
+                    currentPromoCode = this.dataset.code;
+
+                    const input = document.getElementById('deletePromoConfirmInput');
+                    const confirmBtn = document.getElementById('confirmDeletePromoBtn');
+
+                    input.value = '';
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                    deletePromoModal.classList.remove('hidden');
+                    deletePromoModal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // ============================================
+            // 11. FERMER LE MODAL SUPPRESSION
+            // ============================================
+            document.querySelectorAll('.closeDeletePromoBtn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    deletePromoModal.classList.add('hidden');
+                    deletePromoModal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            deletePromoModal?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // ============================================
+            // 12. CONFIRMER LA SUPPRESSION
+            // ============================================
+            document.getElementById('deletePromoConfirmInput')?.addEventListener('input', function() {
+                const confirmBtn = document.getElementById('confirmDeletePromoBtn');
+                if (this.value === 'SUPPRIMER') {
+                    confirmBtn.disabled = false;
+                    confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            document.getElementById('confirmDeletePromoBtn')?.addEventListener('click', function() {
+                if (!this.disabled) {
+                    fetch('api.php?url=promo_delete', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'id=' + currentPromoId
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                deletePromoModal.classList.add('hidden');
+                                deletePromoModal.classList.remove('flex');
+                                document.body.style.overflow = '';
+                                showToast('Succès', data.message || 'Code promo supprimé', 'success');
+                                setTimeout(() => location.reload(), 1500);
+                            } else {
+                                showToast('Erreur', data.error || 'Erreur', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Erreur de connexion', 'error');
+                        });
+                }
+            });
+
+            // ============================================
+            // 13. ESC POUR FERMER TOUS LES MODALS
+            // ============================================
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    });
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // ============================================
+            // 14. FONCTIONS UTILITAIRES
+            // ============================================
+            function formatNumber(num) {
+                num = Number(num) || 0;
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+
+            function formatDate(dateStr) {
+                if (!dateStr) return '---';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function showToast(title, message, type = 'success') {
+                // Utilise ta fonction showToast existante
+                if (typeof window.showToast === 'function') {
+                    window.showToast(title, message, type);
+                } else {
+                    // Fallback
+                    alert(title + ': ' + message);
+                }
+            }
+
+            console.log('Script codes promo prêt');
+
+        })();
+
+        // ============================================
+        // ESC POUR FERMER TOUS LES MODALS
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
                 document.body.style.overflow = '';
-                showToast('Succès', data.message || 'Statut mis à jour', 'success');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showToast('Erreur', data.error || 'Erreur', 'error');
             }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion', 'error');
         });
-    });
+
+
+        // ============================================
+// GESTION DES BANNIERES
+// ============================================
+
+(function() {
+    'use strict';
+
+    const modal = document.getElementById('bannerFormModal');
+    const form = document.getElementById('bannerForm');
+    const bannerId = document.getElementById('bannerId');
+    const bannerTitle = document.getElementById('bannerTitle');
+    const bannerSubtitle = document.getElementById('bannerSubtitle');
+    const bannerImage = document.getElementById('bannerImage');
+    const bannerImagePreview = document.getElementById('bannerImagePreview');
+    const bannerImagePreviewImg = document.getElementById('bannerImagePreviewImg');
+    const bannerButtonText = document.getElementById('bannerButtonText');
+    const bannerUrl = document.getElementById('bannerUrl');
+    const bannerDateDebut = document.getElementById('bannerDateDebut');
+    const bannerDateFin = document.getElementById('bannerDateFin');
+    const bannerFormTitle = document.getElementById('bannerFormTitle');
+    const bannerSubmitText = document.getElementById('bannerSubmitText');
+    const bannerSubmitBtn = document.getElementById('bannerSubmitBtn');
+
+    // Preview elements
+    const previewTitle = document.getElementById('previewTitle');
+    const previewSubtitle = document.getElementById('previewSubtitle');
+    const previewButton = document.getElementById('previewButton');
+    const previewContainer = document.getElementById('bannerPreview');
 
     // ============================================
-    // 10. SUPPRIMER UN CODE PROMO
+    // 1. OUVERTURE DU MODAL (Creation)
     // ============================================
-    document.querySelectorAll('.openDeletePromoBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            currentPromoId = this.dataset.id;
-            currentPromoCode = this.dataset.code;
-            
-            const input = document.getElementById('deletePromoConfirmInput');
-            const confirmBtn = document.getElementById('confirmDeletePromoBtn');
-            
-            input.value = '';
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    function openCreateModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        // Reinitialiser le formulaire
+        form.reset();
+        bannerId.value = '';
+        bannerFormTitle.textContent = 'Nouvelle banniere';
+        bannerSubmitText.textContent = 'Enregistrer';
+        bannerImagePreview.classList.add('hidden');
+        
+        // Reinitialiser l'apercu
+        previewTitle.textContent = 'Titre de la banniere';
+        previewSubtitle.textContent = 'Sous-titre';
+        previewButton.textContent = 'Voir les offres';
+        previewContainer.className = 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg';
+        
+        // Date par defaut
+        const now = new Date();
+        const nowStr = now.toISOString().slice(0, 16);
+        const weekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const weekLaterStr = weekLater.toISOString().slice(0, 16);
+        
+        if (bannerDateDebut) bannerDateDebut.value = nowStr;
+        if (bannerDateFin) bannerDateFin.value = weekLaterStr;
+    }
 
-            deletePromoModal.classList.remove('hidden');
-            deletePromoModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
+    // ============================================
+    // 2. OUVERTURE DU MODAL (Modification)
+    // ============================================
+    function openEditModal(btn) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        // Remplir les champs
+        bannerId.value = btn.dataset.id || '';
+        bannerTitle.value = btn.dataset.titre || '';
+        bannerSubtitle.value = btn.dataset.sousTitre || '';
+        bannerButtonText.value = btn.dataset.texteBouton || 'Voir les offres';
+        bannerUrl.value = btn.dataset.url || '';
+        bannerDateDebut.value = btn.dataset.debut || '';
+        bannerDateFin.value = btn.dataset.fin || '';
+        
+        // Statut
+        const statut = btn.dataset.statut || 'active';
+        document.querySelectorAll('input[name="statut"]').forEach(radio => {
+            radio.checked = radio.value === statut;
         });
-    });
-
-    // ============================================
-    // 11. FERMER LE MODAL SUPPRESSION
-    // ============================================
-    document.querySelectorAll('.closeDeletePromoBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            deletePromoModal.classList.add('hidden');
-            deletePromoModal.classList.remove('flex');
-            document.body.style.overflow = '';
-        });
-    });
-
-    deletePromoModal?.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
-            this.classList.remove('flex');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // ============================================
-    // 12. CONFIRMER LA SUPPRESSION
-    // ============================================
-    document.getElementById('deletePromoConfirmInput')?.addEventListener('input', function() {
-        const confirmBtn = document.getElementById('confirmDeletePromoBtn');
-        if (this.value === 'SUPPRIMER') {
-            confirmBtn.disabled = false;
-            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        
+        // Image existante
+        const image = btn.dataset.image || '';
+        if (image) {
+            bannerImagePreview.classList.remove('hidden');
+            bannerImagePreviewImg.src = '/back-end/public/uploads/bannieres/' + image;
         } else {
-            confirmBtn.disabled = true;
-            confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            bannerImagePreview.classList.add('hidden');
         }
-    });
+        
+        bannerFormTitle.textContent = 'Modifier la banniere';
+        bannerSubmitText.textContent = 'Mettre a jour';
+        
+        // Mettre a jour l'apercu
+        updatePreview();
+    }
 
-    document.getElementById('confirmDeletePromoBtn')?.addEventListener('click', function() {
-        if (!this.disabled) {
-            fetch('api.php?url=promo_delete', {
+    // ============================================
+    // 3. FERMETURE DU MODAL
+    // ============================================
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        form.reset();
+        bannerImagePreview.classList.add('hidden');
+    }
+
+    // ============================================
+    // 4. MISE A JOUR DE L'APERCU EN TEMPS REEL
+    // ============================================
+    function updatePreview() {
+        const title = bannerTitle.value || 'Titre de la banniere';
+        const subtitle = bannerSubtitle.value || 'Sous-titre';
+        const buttonText = bannerButtonText.value || 'Voir les offres';
+        
+        previewTitle.textContent = title;
+        previewSubtitle.textContent = subtitle;
+        previewButton.textContent = buttonText;
+    }
+
+    // ============================================
+    // 5. PREVIEW DE L'IMAGE
+    // ============================================
+    function previewImage(file) {
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            bannerImagePreview.classList.remove('hidden');
+            bannerImagePreviewImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ============================================
+    // 6. ENVOI DU FORMULAIRE (FETCH API)
+    // ============================================
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const id = bannerId.value;
+            const isEdit = id !== '';
+            
+            // Validation des champs obligatoires
+            const title = bannerTitle.value.trim();
+            const url = bannerUrl.value.trim();
+            const dateDebut = bannerDateDebut.value;
+            const dateFin = bannerDateFin.value;
+            
+            if (!title) {
+                showToast('Erreur', 'Le titre est obligatoire', 'error');
+                bannerTitle.focus();
+                return;
+            }
+            
+            if (!url) {
+                showToast('Erreur', 'L\'URL de destination est obligatoire', 'error');
+                bannerUrl.focus();
+                return;
+            }
+            
+            if (!dateDebut || !dateFin) {
+                showToast('Erreur', 'Les dates sont obligatoires', 'error');
+                return;
+            }
+            
+            // Désactiver le bouton
+            bannerSubmitBtn.disabled = true;
+            bannerSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+            
+            showToast('Enregistrement', 'Envoi en cours...', 'info');
+            
+            // Construire l'URL
+            const apiUrl = isEdit 
+                ? '/back-end/routes/api.php?url=banniere_edit' 
+                : '/back-end/routes/api.php?url=banniere_add';
+            
+            fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'id=' + currentPromoId
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    deletePromoModal.classList.add('hidden');
-                    deletePromoModal.classList.remove('flex');
-                    document.body.style.overflow = '';
-                    showToast('Succès', data.message || 'Code promo supprimé', 'success');
-                    setTimeout(() => location.reload(), 1500);
+                    showToast('Succes', data.message || 'Banniere enregistree avec succes', 'success');
+                    closeModal();
+                    setTimeout(() => window.location.reload(), 1500);
                 } else {
-                    showToast('Erreur', data.error || 'Erreur', 'error');
+                    showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion', 'error');
+                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+            })
+            .finally(() => {
+                bannerSubmitBtn.disabled = false;
+                bannerSubmitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (isEdit ? 'Mettre a jour' : 'Enregistrer');
             });
-        }
-    });
-
-    // ============================================
-    // 13. ESC POUR FERMER TOUS LES MODALS
-    // ============================================
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            });
-            document.body.style.overflow = '';
-        }
-    });
-
-    // ============================================
-    // 14. FONCTIONS UTILITAIRES
-    // ============================================
-    function formatNumber(num) {
-        num = Number(num) || 0;
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    }
-
-    function formatDate(dateStr) {
-        if (!dateStr) return '---';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
         });
     }
 
-    function showToast(title, message, type = 'success') {
-        // Utilise ta fonction showToast existante
-        if (typeof window.showToast === 'function') {
-            window.showToast(title, message, type);
-        } else {
-            // Fallback
-            alert(title + ': ' + message);
+    // ============================================
+    // 7. EVENEMENTS
+    // ============================================
+    
+    // Ouvrir le modal (creation)
+    document.querySelectorAll('#openBannerFormBtn, .openBannerFormBtn[data-id=""]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openCreateModal();
+        });
+    });
+    
+    // Ouvrir le modal (modification)
+    document.querySelectorAll('.openBannerFormBtn[data-id]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openEditModal(this);
+        });
+    });
+    
+    // Fermer le modal
+    document.querySelectorAll('.closeBannerFormBtn').forEach(btn => {
+        btn.addEventListener('click', closeModal);
+    });
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeModal();
         }
-    }
+    });
 
-    console.log('Script codes promo prêt');
+    // ============================================
+    // 8. PREVIEW EN TEMPS REEL
+    // ============================================
+    if (bannerTitle) bannerTitle.addEventListener('input', updatePreview);
+    if (bannerSubtitle) bannerSubtitle.addEventListener('input', updatePreview);
+    if (bannerButtonText) bannerButtonText.addEventListener('input', updatePreview);
+
+    // ============================================
+    // 9. PREVIEW DE L'IMAGE
+    // ============================================
+    if (bannerImage) {
+        bannerImage.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                previewImage(this.files[0]);
+            }
+        });
+    }
 
 })();
-
-// ============================================
-// ESC POUR FERMER TOUS LES MODALS
-// ============================================
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        });
-        document.body.style.overflow = '';
-    }
-});
     </script>
 </body>
+
 </html>

@@ -217,6 +217,119 @@ trait ProductsTrait
         return 'uploads/' . $safeName;
     }
 
+    /**
+     * Prépare les valeurs INSERT en respectant exactement les colonnes de la table.
+     * Cela évite les erreurs 500 quand la base contient des colonnes obligatoires
+     * supplémentaires sans valeur par défaut.
+     */
+    private function buildProductInsertData(array $input, array $columns): array
+    {
+        $data = [
+            'nom_article'    => $input['nom_article'] ?? '',
+            'prix'           => $input['prix'] ?? 0,
+            'prix_reduction' => $input['prix_reduction'] ?? 0,
+            'image'          => $input['image'] ?? '',
+            'fichier'        => $input['fichier'] ?? '',
+            'categorie_id'   => $input['categorie_id'] ?? 0,
+            'sous_categorie' => $input['sous_categorie'] ?? '',
+            'auteur'         => $input['auteur'] ?? '',
+            'description'    => $input['description'] ?? '',
+            'apercue'        => $input['apercue'] ?? '',
+            'id_vendeur'     => $input['id_vendeur'] ?? 0,
+            'statut'         => $input['statut'] ?? 'en_attente',
+            'commentaire'    => $input['commentaire'] ?? '',
+        ];
+
+        if (!$columns) {
+            return $data;
+        }
+
+        $data += [
+            'demo_url'       => $input['apercue'] ?? '',
+            'tags'           => $input['sous_categorie'] ?? '',
+            'date_ajout'     => date('Y-m-d H:i:s'),
+            'stock'          => 0,
+            'vues'           => 0,
+            'ventes'         => 0,
+        ];
+
+        $prepared = array_intersect_key($data, $columns);
+
+        foreach ($columns as $field => $meta) {
+            $extra = strtolower((string)($meta['Extra'] ?? ''));
+            if (isset($prepared[$field]) || strpos($extra, 'auto_increment') !== false) {
+                continue;
+            }
+
+            $isRequired = strtoupper((string)($meta['Null'] ?? 'YES')) === 'NO'
+                && ($meta['Default'] ?? null) === null;
+
+            if (!$isRequired) {
+                continue;
+            }
+
+            $prepared[$field] = $this->defaultValueForProductColumn((string)($meta['Type'] ?? ''));
+        }
+
+        return $prepared;
+    }
+
+    private function defaultValueForProductColumn(string $type)
+    {
+        $originalType = $type;
+        $type = strtolower($type);
+
+        if (strpos($type, 'enum(') === 0) {
+            $values = $this->enumValuesFromColumnType($originalType);
+            return $values[0] ?? '';
+        }
+
+        if (preg_match('/int|decimal|float|double|real|bit|bool/', $type)) {
+            return 0;
+        }
+
+        if (strpos($type, 'datetime') !== false || strpos($type, 'timestamp') !== false) {
+            return date('Y-m-d H:i:s');
+        }
+
+        if (strpos($type, 'date') !== false) {
+            return date('Y-m-d');
+        }
+
+        if (strpos($type, 'time') !== false) {
+            return date('H:i:s');
+        }
+
+        return '';
+    }
+
+    private function enumValuesFromColumnType(string $type): array
+    {
+        if (!preg_match('/^enum\((.*)\)$/i', $type, $matches)) {
+            return [];
+        }
+
+        return str_getcsv($matches[1], ',', "'", "\\");
+    }
+
+    private function normalizeProductStatusForColumn(string $status, array $columns): string
+    {
+        $allowed = ['en_attente', 'approuve', 'refuse', 'suspendu'];
+
+        if (isset($columns['statut'])) {
+            $enumValues = $this->enumValuesFromColumnType((string)($columns['statut']['Type'] ?? ''));
+            if ($enumValues) {
+                $allowed = $enumValues;
+            }
+        }
+
+        if (in_array($status, $allowed, true)) {
+            return $status;
+        }
+
+        return in_array('en_attente', $allowed, true) ? 'en_attente' : (string)($allowed[0] ?? 'en_attente');
+    }
+
     public function createProduct(): void
     {
         $this->checkAuth();
@@ -236,7 +349,7 @@ trait ProductsTrait
             $this->jsonResponse(['success' => false, 'message' => 'Nom, catégorie, vendeur et prix requis'], 400);
             return;
         }
-        if (!in_array($statut, ['en_attente', 'approuve', 'refuse'], true)) {
+        if (!in_array($statut, ['en_attente', 'approuve', 'refuse', 'suspendu'], true)) {
             $statut = 'en_attente';
         }
 
@@ -244,17 +357,51 @@ trait ProductsTrait
             $image = $this->storeProductUpload('image', ['jpg', 'jpeg', 'png', 'webp'], 2 * 1024 * 1024) ?? '';
             $fichier = $this->storeProductUpload('fichier_template', ['zip', 'rar'], 100 * 1024 * 1024) ?? '';
 
-            $stmt = $db->prepare("
-                INSERT INTO produits
-                (nom_article, prix, prix_reduction, image, fichier, categorie_id, sous_categorie, auteur, description, apercue, id_vendeur, statut, commentaire)
-                VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, NULL)
-            ");
-            $stmt->execute([$nom, $prix, $prixReduction, $image, $fichier, $categorieId, $tags, $description, $apercue, $idVendeur, $statut]);
+            // Détection dynamique des colonnes présentes dans la table `produits`
+            // pour éviter les 500 quand une colonne (commentaire, date_ajout, auteur…)
+            // est absente ou possède une contrainte NOT NULL sans valeur par défaut.
+            $columns = [];
+            try {
+                $colsStmt = $db->query("SHOW COLUMNS FROM produits");
+                foreach ($colsStmt->fetchAll(\PDO::FETCH_ASSOC) as $col) {
+                    $columns[$col['Field']] = $col;
+                }
+            } catch (\Throwable $e) {
+                // On continue avec un jeu de colonnes vide -> fallback complet
+            }
+
+            $statut = $this->normalizeProductStatusForColumn($statut, $columns);
+
+            $data = $this->buildProductInsertData([
+                'nom_article'    => $nom,
+                'prix'           => $prix,
+                'prix_reduction' => $prixReduction,
+                'image'          => $image,
+                'fichier'        => $fichier,
+                'categorie_id'   => $categorieId,
+                'sous_categorie' => $tags,
+                'auteur'         => '',
+                'description'    => $description,
+                'apercue'        => $apercue,
+                'id_vendeur'     => $idVendeur,
+                'statut'         => $statut,
+                'commentaire'    => '',
+            ], $columns);
+
+            $fields = array_keys($data);
+            $placeholders = array_fill(0, count($fields), '?');
+            $sqlFields = implode(', ', array_map(fn($f) => "`$f`", $fields));
+            $sqlPlaceholders = implode(', ', $placeholders);
+
+            $sql = "INSERT INTO produits ($sqlFields) VALUES ($sqlPlaceholders)";
+            $stmt = $db->prepare($sql);
+            $stmt->execute(array_values($data));
             $newId = (int)$db->lastInsertId();
 
             $this->logAction('create_product', $newId, "Produit créé: $nom");
             $this->jsonResponse(['success' => true, 'message' => 'Produit créé', 'id' => $newId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            error_log('[createProduct] ' . $e->getMessage());
             $this->jsonResponse(['success' => false, 'message' => 'Erreur création produit : ' . $e->getMessage()], 500);
         }
     }

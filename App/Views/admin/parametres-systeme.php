@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,10 +13,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
+
 <body>
     <div id="overlay" class="overlay"></div>
 
-    
+
     <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <main class="md:ml-[280px] min-h-screen p-4 md:p-8 transition-all">
@@ -42,8 +44,8 @@
             </div>
         </header>
 
-        
-       <!-- ============================================
+
+        <!-- ============================================
      PARAMÈTRES GÉNÉRAUX
      ============================================ -->
         <section class="mb-8">
@@ -56,9 +58,9 @@
                 </span>
             </div>
 
-            <form id="generalSettingsForm" class="space-y-8" method="POST" enctype="multipart/form-data">
+            <form id="generalSettingsForm" class="space-y-4" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="_method" value="POST">
-                
+
                 <!-- Infos plateforme -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
@@ -67,17 +69,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom de la plateforme <span class="text-red-500">*</span></label>
-                            <input type="text" name="site_name" id="site_name" value="<?= htmlspecialchars($settings['site_name'] ?? 'market') ?>" 
+                            <input type="text" name="site_name" id="site_name" value="<?= htmlspecialchars($settings['site_name'] ?? 'market') ?>"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Tagline / Slogan</label>
-                            <input type="text" name="site_tagline" id="site_tagline" value="<?= htmlspecialchars($settings['site_tagline'] ?? 'Le en Afrique') ?>" 
+                            <input type="text" name="site_tagline" id="site_tagline" value="<?= htmlspecialchars($settings['site_tagline'] ?? 'Le en Afrique') ?>"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Email de contact officiel <span class="text-red-500">*</span></label>
-                            <input type="email" name="site_email" id="site_email" value="<?= htmlspecialchars($settings['site_email'] ?? 'contact@ndigitmarket.com') ?>" 
+                            <input type="email" name="site_email" id="site_email" value="<?= htmlspecialchars($settings['site_email'] ?? 'contact@ndigitmarket.com') ?>"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                         </div>
                         <div>
@@ -120,6 +122,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <!-- Favicon -->
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Favicon</label>
@@ -145,101 +148,101 @@
                         </div>
                     </div>
 
-                <!-- Réseaux sociaux -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
-                    <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
-                        <i class="fas fa-share-alt text-[#0EA486]"></i> Réseaux sociaux
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">
-                                <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook
-                            </label>
-                            <input type="url" name="facebook_url" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>" placeholder="https://facebook.com/..." 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">
-                                <i class="fab fa-twitter text-sky-500 mr-1"></i> Twitter / X
-                            </label>
-                            <input type="url" name="twitter_url" value="<?= htmlspecialchars($settings['twitter_url'] ?? '') ?>" placeholder="https://twitter.com/..." 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">
-                                <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram
-                            </label>
-                            <input type="url" name="instagram_url" value="<?= htmlspecialchars($settings['instagram_url'] ?? '') ?>" placeholder="https://instagram.com/..." 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">
-                                <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
-                            </label>
-                            <input type="url" name="linkedin_url" value="<?= htmlspecialchars($settings['linkedin_url'] ?? '') ?>" placeholder="https://linkedin.com/..." 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mode maintenance -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
-                    <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
-                        <i class="fas fa-tools text-[#0EA486]"></i> Mode maintenance
-                    </h4>
-                    <div class="space-y-3">
-                        <label class="flex items-center justify-between p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">
-                                    <i class="fas fa-tools"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-[#0F172A]">Activer le mode maintenance</p>
-                                    <p class="text-[11px] text-gray-400">Le site sera inaccessible aux visiteurs</p>
-                                </div>
+                    <!-- Réseaux sociaux -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
+                            <i class="fas fa-share-alt text-[#0EA486]"></i> Réseaux sociaux
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                                    <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook
+                                </label>
+                                <input type="url" name="facebook_url" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>" placeholder="https://facebook.com/..."
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                             </div>
-                            <input type="checkbox" name="maintenance_mode" id="maintenanceToggle" class="w-5 h-5 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]" <?= ($settings['maintenance_mode'] ?? 0) ? 'checked' : '' ?>>
-                        </label>
-                        <div id="maintenanceMessageSection" class="<?= ($settings['maintenance_mode'] ?? 0) ? '' : 'hidden' ?>">
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Message personnalisé de maintenance</label>
-                            <textarea name="maintenance_message" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Nous effectuons une maintenance. Le site sera bientôt de retour..."><?= htmlspecialchars($settings['maintenance_message'] ?? '') ?></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Commission et retraits -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
-                    <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
-                        <i class="fas fa-percentage text-[#0EA486]"></i> Commissions et retraits
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Commission plateforme (%) <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <input type="number" name="commission_rate" value="<?= htmlspecialchars($settings['commission_rate'] ?? 10) ?>" min="0" max="100" step="0.1" 
-                                    class="w-full px-3 py-2.5 pr-10 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">%</span>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                                    <i class="fab fa-twitter text-sky-500 mr-1"></i> Twitter / X
+                                </label>
+                                <input type="url" name="twitter_url" value="<?= htmlspecialchars($settings['twitter_url'] ?? '') ?>" placeholder="https://twitter.com/..."
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
                             </div>
-                            <p class="text-[10px] text-gray-400 mt-1">Pourcentage retenu sur chaque vente</p>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de retrait vendeur (FCFA) <span class="text-red-500">*</span></label>
-                            <input type="number" name="min_withdrawal" value="<?= htmlspecialchars($settings['min_withdrawal'] ?? 5000) ?>" min="0" step="100" 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
-                            <p class="text-[10px] text-gray-400 mt-1">Montant minimum pour qu'un vendeur puisse retirer</p>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                                    <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram
+                                </label>
+                                <input type="url" name="instagram_url" value="<?= htmlspecialchars($settings['instagram_url'] ?? '') ?>" placeholder="https://instagram.com/..."
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">
+                                    <i class="fab fa-linkedin text-blue-700 mr-1"></i> LinkedIn
+                                </label>
+                                <input type="url" name="linkedin_url" value="<?= htmlspecialchars($settings['linkedin_url'] ?? '') ?>" placeholder="https://linkedin.com/..."
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Boutons -->
-                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                    <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
-                        <i class="fas fa-undo mr-1"></i> Annuler
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                        <i class="fas fa-save"></i> Enregistrer les paramètres
-                    </button>
-                </div>
+                    <!-- Mode maintenance -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
+                            <i class="fas fa-tools text-[#0EA486]"></i> Mode maintenance
+                        </h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600">
+                                        <i class="fas fa-tools"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-[#0F172A]">Activer le mode maintenance</p>
+                                        <p class="text-[11px] text-gray-400">Le site sera inaccessible aux visiteurs</p>
+                                    </div>
+                                </div>
+                                <input type="checkbox" name="maintenance_mode" id="maintenanceToggle" class="w-5 h-5 rounded border-gray-300 text-[#0EA486] focus:ring-[#0EA486]" <?= ($settings['maintenance_mode'] ?? 0) ? 'checked' : '' ?>>
+                            </label>
+                            <div id="maintenanceMessageSection" class="<?= ($settings['maintenance_mode'] ?? 0) ? '' : 'hidden' ?>">
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">Message personnalisé de maintenance</label>
+                                <textarea name="maintenance_message" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Nous effectuons une maintenance. Le site sera bientôt de retour..."><?= htmlspecialchars($settings['maintenance_message'] ?? '') ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Commission et retraits -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
+                            <i class="fas fa-percentage text-[#0EA486]"></i> Commissions et retraits
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">Commission plateforme (%) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" name="commission_rate" value="<?= htmlspecialchars($settings['commission_rate'] ?? 10) ?>" min="0" max="100" step="0.1"
+                                        class="w-full px-3 py-2.5 pr-10 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">%</span>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-1">Pourcentage retenu sur chaque vente</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de retrait vendeur (FCFA) <span class="text-red-500">*</span></label>
+                                <input type="number" name="min_withdrawal" value="<?= htmlspecialchars($settings['min_withdrawal'] ?? 5000) ?>" min="0" step="100"
+                                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white transition">
+                                <p class="text-[10px] text-gray-400 mt-1">Montant minimum pour qu'un vendeur puisse retirer</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                        <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition">
+                            <i class="fas fa-undo mr-1"></i> Annuler
+                        </button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                            <i class="fas fa-save"></i> Enregistrer les paramètres
+                        </button>
+                    </div>
             </form>
         </section>
 
@@ -251,8 +254,7 @@
                 </h3>
             </div>
 
-            <form id="paymentSettingsForm" class="space-y-4" method="POST">
-
+            <form id="paymentSettingsForm" class="space-y-4">
                 <!-- FedaPay -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
@@ -260,27 +262,23 @@
                             <i class="fas fa-key text-[#0EA486]"></i> Configuration FedaPay
                         </h4>
                         <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                            <i class="fas fa-check mr-1"></i>Connecte
+                            <i class="fas fa-check mr-1"></i>Connecté
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Cle API publique</label>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API publique <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="text" name="fedapay_public_key" id="fedapayPublicKey" 
-                                    value="<?= htmlspecialchars($settings['fedapay_public_key'] ?? '') ?>" 
-                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="password" id="fedapayPublicKey" value="pub_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapayPublicKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Cle API secrete</label>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API secrète <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" name="fedapay_secret_key" id="fedapaySecretKey" 
-                                    value="<?= htmlspecialchars($settings['fedapay_secret_key'] ?? '') ?>" 
-                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="password" id="fedapaySecretKey" value="sec_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapaySecretKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -290,21 +288,17 @@
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mode</label>
                             <div class="flex gap-2">
                                 <label class="flex-1 flex items-center gap-2 p-3 bg-blue-50 border-2 border-blue-200 rounded-xl cursor-pointer">
-                                    <input type="radio" name="fedapay_mode" value="test" 
-                                        <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'checked' : '' ?> 
-                                        class="w-4 h-4 text-blue-500">
+                                    <input type="radio" name="fedapayMode" value="test" checked class="w-4 h-4 text-blue-500">
                                     <div>
                                         <p class="text-xs font-semibold text-blue-700">Test / Sandbox</p>
                                         <p class="text-[10px] text-blue-600">Transactions fictives</p>
                                     </div>
                                 </label>
                                 <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
-                                    <input type="radio" name="fedapay_mode" value="live" 
-                                        <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'checked' : '' ?> 
-                                        class="w-4 h-4 text-[#0EA486]">
+                                    <input type="radio" name="fedapayMode" value="live" class="w-4 h-4 text-[#0EA486]">
                                     <div>
                                         <p class="text-xs font-semibold text-gray-700">Production / Live</p>
-                                        <p class="text-[10px] text-gray-500">Transactions reelles</p>
+                                        <p class="text-[10px] text-gray-500">Transactions réelles</p>
                                     </div>
                                 </label>
                             </div>
@@ -315,10 +309,10 @@
                 <!-- Modes de paiement -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
-                        <i class="fas fa-wallet text-[#0EA486]"></i> Modes de paiement actives
+                        <i class="fas fa-wallet text-[#0EA486]"></i> Modes de paiement activés
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_mobile_money'] ?? '1') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-mobile-alt text-[#0EA486]"></i>
@@ -328,12 +322,9 @@
                                     <p class="text-[10px] text-gray-500">Orange, MTN, Moov, Wave</p>
                                 </div>
                             </div>
-                            <input type="checkbox" name="payment_mobile_money" value="1" 
-                                <?= ($settings['payment_mobile_money'] ?? '1') ? 'checked' : '' ?> 
-                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        
-                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_card'] ?? '1') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-credit-card text-[#0EA486]"></i>
@@ -343,12 +334,9 @@
                                     <p class="text-[10px] text-gray-500">Visa, Mastercard</p>
                                 </div>
                             </div>
-                            <input type="checkbox" name="payment_card" value="1" 
-                                <?= ($settings['payment_card'] ?? '1') ? 'checked' : '' ?> 
-                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        
-                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_bank_transfer'] ?? '0') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-university text-gray-500"></i>
@@ -358,12 +346,9 @@
                                     <p class="text-[10px] text-gray-500">Transfert direct</p>
                                 </div>
                             </div>
-                            <input type="checkbox" name="payment_bank_transfer" value="1" 
-                                <?= ($settings['payment_bank_transfer'] ?? '0') ? 'checked' : '' ?> 
-                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        
-                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_paypal'] ?? '0') ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fab fa-paypal text-blue-600"></i>
@@ -373,9 +358,7 @@
                                     <p class="text-[10px] text-gray-500">International</p>
                                 </div>
                             </div>
-                            <input type="checkbox" name="payment_paypal" value="1" 
-                                <?= ($settings['payment_paypal'] ?? '0') ? 'checked' : '' ?> 
-                                class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
                     </div>
                 </div>
@@ -388,35 +371,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de commande (FCFA)</label>
-                            <input type="number" name="min_order_amount" 
-                                value="<?= htmlspecialchars($settings['min_order_amount'] ?? '500') ?>" 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" value="500" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant maximum de commande (FCFA)</label>
-                            <input type="number" name="max_order_amount" 
-                                value="<?= htmlspecialchars($settings['max_order_amount'] ?? '5000000') ?>" 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" value="5000000" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Delai de remboursement (jours)</label>
-                            <input type="number" name="refund_days" 
-                                value="<?= htmlspecialchars($settings['refund_days'] ?? '7') ?>" 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                            <p class="text-[10px] text-gray-400 mt-1">Duree pendant laquelle un remboursement peut etre demande</p>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de remboursement (jours)</label>
+                            <input type="number" value="7" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <p class="text-[10px] text-gray-400 mt-1">Durée pendant laquelle un remboursement peut être demandé</p>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Delai de versement vendeur (jours)</label>
-                            <input type="number" name="vendor_payout_days" 
-                                value="<?= htmlspecialchars($settings['vendor_payout_days'] ?? '30') ?>" 
-                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                            <p class="text-[10px] text-gray-400 mt-1">Frequence des versements aux vendeurs</p>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de versement vendeur (jours)</label>
+                            <input type="number" value="30" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <p class="text-[10px] text-gray-400 mt-1">Fréquence des versements aux vendeurs</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-2">
-                    <button type="reset" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    <button type="button" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
                     </button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
@@ -434,11 +409,11 @@
                 </h3>
             </div>
 
-            <form id="smtpSettingsForm"  method="POST" class="space-y-4">
-                <?php 
+            <form id="smtpSettingsForm" method="POST" class="space-y-4">
+                <?php
                 $smtp = $smtpSettings ?? [];
                 ?>
-                
+
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
@@ -452,26 +427,26 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-2">
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Serveur SMTP <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_host" id="smtp_host" value="<?= htmlspecialchars($smtp['smtp_host'] ?? '') ?>" 
+                            <input type="text" name="smtp_host" id="smtp_host" value="<?= htmlspecialchars($smtp['smtp_host'] ?? '') ?>"
                                 placeholder="ex: smtp.gmail.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Port <span class="text-red-500">*</span></label>
-                            <input type="number" name="smtp_port" id="smtp_port" value="<?= htmlspecialchars($smtp['smtp_port'] ?? '') ?>" 
+                            <input type="number" name="smtp_port" id="smtp_port" value="<?= htmlspecialchars($smtp['smtp_port'] ?? '') ?>"
                                 placeholder="587"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom d'utilisateur <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_username" id="smtp_username" value="<?= htmlspecialchars($smtp['smtp_username'] ?? '') ?>" 
+                            <input type="text" name="smtp_username" id="smtp_username" value="<?= htmlspecialchars($smtp['smtp_username'] ?? '') ?>"
                                 placeholder="noreply@domaine.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mot de passe <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" id="smtp_password" name="smtp_password" value="<?= htmlspecialchars($smtp['smtp_password'] ?? '') ?>" 
+                                <input type="password" id="smtp_password" name="smtp_password" value="<?= htmlspecialchars($smtp['smtp_password'] ?? '') ?>"
                                     placeholder="••••••••"
                                     class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="smtp_password">
@@ -497,13 +472,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Email expéditeur <span class="text-red-500">*</span></label>
-                            <input type="email" name="smtp_from_email" id="smtp_from_email" value="<?= htmlspecialchars($smtp['smtp_from_email'] ?? '') ?>" 
+                            <input type="email" name="smtp_from_email" id="smtp_from_email" value="<?= htmlspecialchars($smtp['smtp_from_email'] ?? '') ?>"
                                 placeholder="noreply@domaine.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom affiché <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_from_name" id="smtp_from_name" value="<?= htmlspecialchars($smtp['smtp_from_name'] ?? '') ?>" 
+                            <input type="text" name="smtp_from_name" id="smtp_from_name" value="<?= htmlspecialchars($smtp['smtp_from_name'] ?? '') ?>"
                                 placeholder="Nom de l'entreprise"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
@@ -539,7 +514,7 @@
 
             <!-- Stats admins -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <?php 
+                <?php
                 // Récupérer les stats depuis le controller
                 $adminStats = $adminStats ?? ['total' => 0, 'actifs' => 0, 'super_admins' => 0];
                 $lastConnection = $lastConnection ?? '-';
@@ -554,7 +529,7 @@
                     <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['total'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Administrateurs</p>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
@@ -565,7 +540,7 @@
                     <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['actifs'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Comptes actifs</p>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
@@ -576,7 +551,7 @@
                     <p class="text-2xl font-bold text-[#0F172A]"><?= $adminStats['super_admins'] ?? 0 ?></p>
                     <p class="text-xs text-gray-400 mt-1">Super admins</p>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
@@ -604,7 +579,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             <?php if (!empty($admins)): ?>
-                                <?php foreach ($admins as $admin): 
+                                <?php foreach ($admins as $admin):
                                     $roleColors = [
                                         'Super Admin' => 'bg-red-100 text-red-700',
                                         'Admin' => 'bg-indigo-100 text-indigo-700',
@@ -612,7 +587,7 @@
                                         'Support' => 'bg-purple-100 text-purple-700'
                                     ];
                                     $roleColor = $roleColors[$admin['role'] ?? ''] ?? 'bg-gray-100 text-gray-700';
-                                    
+
                                     $roleIcons = [
                                         'Super Admin' => 'crown',
                                         'Admin' => 'user-shield',
@@ -620,11 +595,11 @@
                                         'Support' => 'user-headset'
                                     ];
                                     $roleIcon = $roleIcons[$admin['role'] ?? ''] ?? 'user';
-                                    
+
                                     // Gestion du statut
                                     $status = $admin['statut'] ?? 'actif';
                                     $isActive = $status === 'actif';
-                                    
+
                                     if ($isActive) {
                                         $statusColor = 'text-emerald-700 bg-emerald-100';
                                         $statusIcon = 'circle';
@@ -652,7 +627,7 @@
                                             </button>
                                         ';
                                     }
-                                    
+
                                     $initial = strtoupper(substr($admin['nom'] ?? 'A', 0, 1));
                                 ?>
                                     <tr class="hover:bg-gray-50/50 transition <?= $rowOpacity ?>">
@@ -685,37 +660,37 @@
                                         <td class="px-4 py-3">
                                             <div class="flex items-center justify-end gap-1">
                                                 <!-- Modifier -->
-                                                <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition" 
-                                                        data-id="<?= $admin['id'] ?>"
-                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                        data-email="<?= htmlspecialchars($admin['email']) ?>"
-                                                        data-telephone="<?= htmlspecialchars($admin['telephone'] ?? '') ?>"
-                                                        data-role="<?= htmlspecialchars($admin['role']) ?>"
-                                                        title="Modifier">
+                                                <button class="openAdminFormBtn w-8 h-8 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 flex items-center justify-center transition"
+                                                    data-id="<?= $admin['id'] ?>"
+                                                    data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                    data-email="<?= htmlspecialchars($admin['email']) ?>"
+                                                    data-telephone="<?= htmlspecialchars($admin['telephone'] ?? '') ?>"
+                                                    data-role="<?= htmlspecialchars($admin['role']) ?>"
+                                                    title="Modifier">
                                                     <i class="fas fa-edit text-xs"></i>
                                                 </button>
-                                                
+
                                                 <!-- Réinitialiser mot de passe -->
-                                                <button class="setNewPwdBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
-                                                        data-id="<?= $admin['id'] ?>"
-                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                        data-email="<?= htmlspecialchars($admin['email']) ?>"
-                                                        title="Définir nouveau mot de passe">
+                                                <button class="setNewPwdBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition"
+                                                    data-id="<?= $admin['id'] ?>"
+                                                    data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                    data-email="<?= htmlspecialchars($admin['email']) ?>"
+                                                    title="Définir nouveau mot de passe">
                                                     <i class="fas fa-key text-xs"></i>
                                                 </button>
                                                 <!-- Désactiver / Réactiver -->
                                                 <?php if ($isActive): ?>
-                                                    <button class="disableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" 
-                                                            data-id="<?= $admin['id'] ?>"
-                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                            title="Désactiver">
+                                                    <button class="disableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition"
+                                                        data-id="<?= $admin['id'] ?>"
+                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                        title="Désactiver">
                                                         <i class="fas fa-ban text-xs"></i>
                                                     </button>
                                                 <?php else: ?>
-                                                    <button class="enableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
-                                                            data-id="<?= $admin['id'] ?>"
-                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                            title="Réactiver">
+                                                    <button class="enableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition"
+                                                        data-id="<?= $admin['id'] ?>"
+                                                        data-nom="<?= htmlspecialchars($admin['nom']) ?>"
+                                                        title="Réactiver">
                                                         <i class="fas fa-check-circle text-xs"></i>
                                                     </button>
                                                 <?php endif; ?>
@@ -744,154 +719,153 @@
 
     <!-- MODAL : TEST ENVOI SMTP -->
     <div id="testSmtpModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <div>
-                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                    <i class="fas fa-paper-plane text-blue-500"></i> Tester l'envoi SMTP
-                </h3>
-                <p class="text-xs text-gray-400">Envoyer un email de test</p>
-            </div>
-            <button class="closeTestSmtpBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100" id="testSmtpInfo">
-                <p class="text-sm text-blue-700">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Un email de test sera envoyé à l'adresse indiquée pour vérifier la configuration SMTP.
-                </p>
-            </div>
-            <div id="testSmtpResult" class="hidden rounded-xl p-4 border"></div>
-            <div>
-                <label class="text-xs font-semibold text-gray-600 mb-1 block">Email destinataire <span class="text-red-500">*</span></label>
-                <input type="email" id="testEmailInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="votre@email.com">
-            </div>
-            <div>
-                <label class="text-xs font-semibold text-gray-600 mb-1 block">Message (optionnel)</label>
-                <textarea id="testMessageInput" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Message personnalisé..."></textarea>
-            </div>
-        </div>
-        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-            <button class="closeTestSmtpBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                Annuler
-            </button>
-            <button id="sendTestEmailBtn" class="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
-                <i class="fas fa-paper-plane"></i> Envoyer le test
-            </button>
-        </div>
-    </div>
-</div>
-
-
- <!-- MODAL : ADMINISTRATEUR (Création/Modification) -->
-<div id="adminFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-            <div>
-                <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                    <i class="fas fa-user-shield text-[#0EA486]"></i> 
-                    <span id="adminFormTitle">Nouvel administrateur</span>
-                </h3>
-                <p class="text-xs text-gray-400" id="adminFormSubtitle">Créer un nouveau compte administrateur</p>
-            </div>
-            <button class="closeAdminFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <form id="adminForm" class="p-6 overflow-y-auto space-y-4">
-            <input type="hidden" id="adminId" name="id" value="">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom complet <span class="text-red-500">*</span></label>
-                    <input type="text" id="adminNom" name="nom" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Jean Dupont" required>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-paper-plane text-blue-500"></i> Tester l'envoi SMTP
+                    </h3>
+                    <p class="text-xs text-gray-400">Envoyer un email de test</p>
+                </div>
+                <button class="closeTestSmtpBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="bg-blue-50 rounded-xl p-4 border border-blue-100" id="testSmtpInfo">
+                    <p class="text-sm text-blue-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Un email de test sera envoyé à l'adresse indiquée pour vérifier la configuration SMTP.
+                    </p>
+                </div>
+                <div id="testSmtpResult" class="hidden rounded-xl p-4 border"></div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Email destinataire <span class="text-red-500">*</span></label>
+                    <input type="email" id="testEmailInput" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="votre@email.com">
                 </div>
                 <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Email <span class="text-red-500">*</span></label>
-                    <input type="email" id="adminEmail" name="email" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="admin@ndigitmarket.com" required>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Téléphone</label>
-                    <input type="tel" id="adminTelephone" name="telephone" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="+229 01 47 85 47 58" value="+229 01 47 85 47 58">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Rôle <span class="text-red-500">*</span></label>
-                    <select id="adminRole" name="role" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" required>
-                        <option value="Super Admin">Super Admin</option>
-                        <option value="Admin" selected>Admin</option>
-                        <option value="Modérateur">Modérateur</option>
-                        <option value="Support">Support</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block" id="passwordLabel">Mot de passe <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="password" id="adminPassword" name="mdp" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
-                        <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="adminPassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer mot de passe</label>
-                    <input type="password" id="adminPasswordConfirm" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Message (optionnel)</label>
+                    <textarea id="testMessageInput" rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white resize-none" placeholder="Message personnalisé..."></textarea>
                 </div>
             </div>
-
-            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <h5 class="text-xs font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
-                    <i class="fas fa-key text-[#0EA486]"></i> Permissions
-                </h5>
-                <div class="grid grid-cols-2 gap-2">
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Gestion utilisateurs</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Gestion vendeurs</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Gestion produits</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Gestion commandes</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Finances</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Paramètres système</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Contenus & bannières</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                        <span>Support client</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                <button type="button" class="closeAdminFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
+                <button class="closeTestSmtpBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                     Annuler
                 </button>
-                <button type="submit" id="adminSubmitBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-save"></i> <span id="adminSubmitText">Enregistrer</span>
+                <button id="sendTestEmailBtn" class="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-paper-plane"></i> Envoyer le test
                 </button>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <!-- MODAL : ADMINISTRATEUR (Création/Modification) -->
+    <div id="adminFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+                <div>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-user-shield text-[#0EA486]"></i> 
+                        <span id="adminFormTitle">Nouvel administrateur</span>
+                    </h3>
+                    <p class="text-xs text-gray-400" id="adminFormSubtitle">Créer un nouveau compte administrateur</p>
+                </div>
+                <button class="closeAdminFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="adminForm" class="p-6 overflow-y-auto space-y-4">
+                <input type="hidden" id="adminId" name="id" value="">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom complet <span class="text-red-500">*</span></label>
+                        <input type="text" id="adminNom" name="nom" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Jean Dupont" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="adminEmail" name="email" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="admin@ndigitmarket.com" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Téléphone</label>
+                        <input type="tel" id="adminTelephone" name="telephone" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="+229 01 47 85 47 58" value="+229 01 47 85 47 58">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Rôle <span class="text-red-500">*</span></label>
+                        <select id="adminRole" name="role" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" required>
+                            <option value="Super Admin">Super Admin</option>
+                            <option value="Admin" selected>Admin</option>
+                            <option value="Modérateur">Modérateur</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block" id="passwordLabel">Mot de passe <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="password" id="adminPassword" name="mdp" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
+                            <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="adminPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer mot de passe</label>
+                        <input type="password" id="adminPasswordConfirm" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <h5 class="text-xs font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+                        <i class="fas fa-key text-[#0EA486]"></i> Permissions
+                    </h5>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Gestion utilisateurs</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Gestion vendeurs</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Gestion produits</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Gestion commandes</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Finances</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Paramètres système</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Contenus & bannières</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                            <span>Support client</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="button" class="closeAdminFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                        Annuler
+                    </button>
+                    <button type="submit" id="adminSubmitBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-save"></i> <span id="adminSubmitText">Enregistrer</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- MODAL : RÉINITIALISER MOT DE PASSE -->
     <div id="resetPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -907,10 +881,10 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <form id="resetPwdForm" method="POST">
                 <input type="hidden" id="resetAdminId" name="id" value="">
-                
+
                 <div class="p-6 space-y-4">
                     <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
                         <p class="text-sm text-blue-700">
@@ -918,13 +892,13 @@
                             Un email sera envoyé à l'administrateur avec un lien pour réinitialiser son mot de passe.
                         </p>
                     </div>
-                    
+
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                         <p class="text-xs text-gray-500 mb-1">Administrateur concerné</p>
                         <p class="text-sm font-bold text-[#0F172A]" id="resetAdminNom">...</p>
                         <p class="text-[11px] text-gray-400 mt-1" id="resetAdminEmail">...</p>
                     </div>
-                    
+
                     <div>
                         <label class="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
                             <input type="checkbox" name="force_logout" value="1" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486] mt-0.5">
@@ -932,7 +906,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
                     <button type="button" class="closeResetPwdBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
@@ -944,72 +918,72 @@
             </form>
         </div>
     </div>
-        <!-- MODAL : DÉFINIR NOUVEAU MOT DE PASSE -->
-        <div id="setNewPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <div>
-                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                            <i class="fas fa-lock text-[#0EA486]"></i> Définir un nouveau mot de passe
-                        </h3>
-                        <p class="text-xs text-gray-400">Remplacer le mot de passe de <span id="setPwdAdminName" class="font-semibold text-gray-600">l'administrateur</span></p>
+    <!-- MODAL : DÉFINIR NOUVEAU MOT DE PASSE -->
+    <div id="setNewPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                        <i class="fas fa-lock text-[#0EA486]"></i> Définir un nouveau mot de passe
+                    </h3>
+                    <p class="text-xs text-gray-400">Remplacer le mot de passe de <span id="setPwdAdminName" class="font-semibold text-gray-600">l'administrateur</span></p>
+                </div>
+                <button class="closeSetNewPwdBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="setNewPwdForm" method="POST" class="p-6 space-y-4">
+                <input type="hidden" id="setPwdAdminId" name="id" value="">
+
+                <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                    <p class="text-xs text-gray-500">Administrateur concerné</p>
+                    <p class="text-sm font-bold text-[#0F172A]" id="setPwdAdminNameDisplay">...</p>
+                    <p class="text-[11px] text-gray-400" id="setPwdAdminEmailDisplay">...</p>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Nouveau mot de passe <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="setNewPassword" name="new_password"
+                            class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white"
+                            placeholder="••••••••" required minlength="8">
+                        <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="setNewPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
-                    <button class="closeSetNewPwdBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                        <i class="fas fa-times"></i>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Minimum 8 caractères</p>
+                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins une majuscule</p>
+                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un chiffre</p>
+                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un caractère spécial</p>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer le mot de passe <span class="text-red-500">*</span></label>
+                    <input type="password" id="setConfirmPassword" name="confirm_password"
+                        class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white"
+                        placeholder="••••••••" required>
+                </div>
+
+                <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-100">
+                    <p class="text-xs text-yellow-700">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        Ce mot de passe remplacera définitivement l'ancien. L'administrateur devra utiliser ce nouveau mot de passe.
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                    <button type="button" class="closeSetNewPwdBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                        Annuler
+                    </button>
+                    <button type="submit" id="confirmSetNewPwdBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-save"></i> Définir le mot de passe
                     </button>
                 </div>
-                
-                <form id="setNewPwdForm" method="POST" class="p-6 space-y-4">
-                    <input type="hidden" id="setPwdAdminId" name="id" value="">
-                    
-                    <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
-                        <p class="text-xs text-gray-500">Administrateur concerné</p>
-                        <p class="text-sm font-bold text-[#0F172A]" id="setPwdAdminNameDisplay">...</p>
-                        <p class="text-[11px] text-gray-400" id="setPwdAdminEmailDisplay">...</p>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nouveau mot de passe <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <input type="password" id="setNewPassword" name="new_password" 
-                                class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" 
-                                placeholder="••••••••" required minlength="8">
-                            <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="setNewPassword">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="mt-2 space-y-1">
-                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Minimum 8 caractères</p>
-                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins une majuscule</p>
-                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un chiffre</p>
-                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un caractère spécial</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer le mot de passe <span class="text-red-500">*</span></label>
-                        <input type="password" id="setConfirmPassword" name="confirm_password" 
-                            class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" 
-                            placeholder="••••••••" required>
-                    </div>
-
-                    <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-100">
-                        <p class="text-xs text-yellow-700">
-                            <i class="fas fa-exclamation-triangle mr-1"></i>
-                            Ce mot de passe remplacera définitivement l'ancien. L'administrateur devra utiliser ce nouveau mot de passe.
-                        </p>
-                    </div>
-
-                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                        <button type="button" class="closeSetNewPwdBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                            Annuler
-                        </button>
-                        <button type="submit" id="confirmSetNewPwdBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-save"></i> Définir le mot de passe
-                        </button>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
+    </div>
 
     <!-- MODAL : DÉSACTIVER ADMIN -->
     <div id="disableAdminModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1027,7 +1001,7 @@
             </div>
             <form id="disableAdminForm" method="POST">
                 <input type="hidden" id="disableAdminId" name="id" value="">
-                
+
                 <div class="p-6 space-y-4">
                     <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
                         <p class="text-sm text-yellow-700">
@@ -1051,7 +1025,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
                     <button type="button" class="closeDisableAdminBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
@@ -1080,7 +1054,7 @@
             </div>
             <form id="enableAdminForm" method="POST">
                 <input type="hidden" id="enableAdminId" name="id" value="">
-                
+
                 <div class="p-6 space-y-4">
                     <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                         <p class="text-sm text-emerald-700">
@@ -1094,7 +1068,7 @@
                         <p class="text-[11px] text-gray-400 mt-1" id="enableAdminEmail">...</p>
                     </div>
                 </div>
-                
+
                 <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
                     <button type="button" class="closeEnableAdminBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
@@ -1135,6 +1109,7 @@
                 overlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
+
             function closeSidebar() {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
@@ -1164,10 +1139,26 @@
             toastMessage.textContent = message;
 
             const styles = {
-                success: { bg: 'bg-emerald-100', color: 'text-emerald-600', icon: 'fa-check' },
-                error: { bg: 'bg-red-100', color: 'text-red-600', icon: 'fa-times' },
-                warning: { bg: 'bg-yellow-100', color: 'text-yellow-600', icon: 'fa-exclamation' },
-                info: { bg: 'bg-blue-100', color: 'text-blue-600', icon: 'fa-info' }
+                success: {
+                    bg: 'bg-emerald-100',
+                    color: 'text-emerald-600',
+                    icon: 'fa-check'
+                },
+                error: {
+                    bg: 'bg-red-100',
+                    color: 'text-red-600',
+                    icon: 'fa-times'
+                },
+                warning: {
+                    bg: 'bg-yellow-100',
+                    color: 'text-yellow-600',
+                    icon: 'fa-exclamation'
+                },
+                info: {
+                    bg: 'bg-blue-100',
+                    color: 'text-blue-600',
+                    icon: 'fa-info'
+                }
             };
 
             const style = styles[type] || styles.success;
@@ -1195,6 +1186,7 @@
                 modal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
             }
+
             function closeModal() {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
@@ -1207,7 +1199,10 @@
                 if (e.target === modal) closeModal();
             });
 
-            return { openModal, closeModal };
+            return {
+                openModal,
+                closeModal
+            };
         }
 
         // Toggle password visibility
@@ -1249,888 +1244,845 @@
         });
         // Modal test SMTP
 
+        // ============================================
+        // GESTION ADMINISTRATEURS
+        // ============================================
+
+        (function() {
+            'use strict';
+
+            const modal = document.getElementById('adminFormModal');
+            const form = document.getElementById('adminForm');
+            const closeBtns = document.querySelectorAll('.closeAdminFormBtn');
+            const openBtns = document.querySelectorAll('.openAdminFormBtn');
+            const title = document.getElementById('adminFormTitle');
+            const subtitle = document.getElementById('adminFormSubtitle');
+            const submitText = document.getElementById('adminSubmitText');
+            const adminId = document.getElementById('adminId');
+            const adminNom = document.getElementById('adminNom');
+            const adminEmail = document.getElementById('adminEmail');
+            const adminTelephone = document.getElementById('adminTelephone');
+            const adminRole = document.getElementById('adminRole');
+            const adminPassword = document.getElementById('adminPassword');
+            const adminPasswordConfirm = document.getElementById('adminPasswordConfirm');
+            const passwordLabel = document.getElementById('passwordLabel');
+
+            // ============================================
+            // 1. OUVERTURE MODAL (Création)
+            // ============================================
+            function openCreateModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                
+                // Réinitialiser le formulaire
+                form.reset();
+                adminId.value = '';
+                title.textContent = 'Nouvel administrateur';
+                subtitle.textContent = 'Créer un nouveau compte administrateur';
+                submitText.textContent = 'Enregistrer';
+                passwordLabel.innerHTML = 'Mot de passe <span class="text-red-500">*</span>';
+                adminPassword.required = true;
+                adminPasswordConfirm.required = true;
+                adminTelephone.value = '+229 01 47 85 47 58';
+                document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-save';
+            }
+
+            // ============================================
+            // 2. OUVERTURE MODAL (Modification)
+            // ============================================
+            function openEditModal(adminData) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                
+                // Remplir les champs
+                adminId.value = adminData.dataset.id;
+                adminNom.value = adminData.dataset.nom;
+                adminEmail.value = adminData.dataset.email;
+                adminTelephone.value = adminData.dataset.telephone || '+229 01 47 85 47 58';
+                adminRole.value = adminData.dataset.role || 'Admin';
+                
+                title.textContent = 'Modifier administrateur';
+                subtitle.textContent = 'Mettre à jour les informations du compte';
+                submitText.textContent = 'Mettre à jour';
+                passwordLabel.innerHTML = 'Nouveau mot de passe <span class="text-gray-400 text-xs font-normal">(laisser vide pour ne pas changer)</span>';
+                adminPassword.required = false;
+                adminPasswordConfirm.required = false;
+                adminPassword.value = '';
+                adminPasswordConfirm.value = '';
+                document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-edit';
+            }
+            // ============================================
+            // 3. FERMETURE MODAL
+            // ============================================
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            // ============================================
+            // 4. ÉVÉNEMENTS
+            // ============================================
+            
+            // Ouvrir pour création
+            document.querySelector('.openAdminFormBtn:not([data-id])')?.addEventListener('click', openCreateModal);
+            
+            // Ouvrir pour modification
+            document.querySelectorAll('.openAdminFormBtn[data-id]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    openEditModal(this);
+                });
+            });
+
+        
+
+            // Fermeture
+            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+
+            // ESC pour fermer
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+
+            // ============================================
+            // 5. SOUMISSION DU FORMULAIRE
+            // ============================================
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validation
+                const nom = adminNom.value.trim();
+                const email = adminEmail.value.trim();
+                const role = adminRole.value;
+                const password = adminPassword.value;
+                const passwordConfirm = adminPasswordConfirm.value;
+                const id = adminId.value;
+                
+                if (!nom || !email || !role) {
+                    showToast('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
+                    return;
+                }
+                
+                // Validation email
+                if (!email.includes('@') || !email.includes('.')) {
+                    showToast('Erreur', 'Email invalide', 'error');
+                    return;
+                }
+                
+                // Si création ou mot de passe modifié
+                if ((!id && password.length < 8) || (id && password && password.length < 8)) {
+                    showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
+                    return;
+                }
+                
+                if (password && password !== passwordConfirm) {
+                    showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+                    return;
+                }
+                
+                // Désactiver le bouton
+                const submitBtn = document.getElementById('adminSubmitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+                
+                // Préparer les données
+                const formData = new FormData(this);
+                
+                // Déterminer l'URL
+                const url = id ? '/back-end/routes/api.php?url=admin_update' : '/back-end/routes/api.php?url=admin_create';
+                
+                // Envoyer la requête
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Succès', data.message, 'success');
+                        closeModal();
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast('Erreur', data.error || 'Erreur lors de l\'opération', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (id ? 'Mettre à jour' : 'Enregistrer');
+                });
+            });
+
+        })();
 
         // ============================================
-// GESTION ADMINISTRATEURS
-// ============================================
+        // MODAL DÉFINIR NOUVEAU MOT DE PASSE
+        // ============================================
 
-(function() {
-    'use strict';
+        (function() {
+            'use strict';
 
-    const modal = document.getElementById('adminFormModal');
-    const form = document.getElementById('adminForm');
-    const closeBtns = document.querySelectorAll('.closeAdminFormBtn');
-    const openBtns = document.querySelectorAll('.openAdminFormBtn');
-    const title = document.getElementById('adminFormTitle');
-    const subtitle = document.getElementById('adminFormSubtitle');
-    const submitText = document.getElementById('adminSubmitText');
-    const adminId = document.getElementById('adminId');
-    const adminNom = document.getElementById('adminNom');
-    const adminEmail = document.getElementById('adminEmail');
-    const adminTelephone = document.getElementById('adminTelephone');
-    const adminRole = document.getElementById('adminRole');
-    const adminPassword = document.getElementById('adminPassword');
-    const adminPasswordConfirm = document.getElementById('adminPasswordConfirm');
-    const passwordLabel = document.getElementById('passwordLabel');
+            const modal = document.getElementById('setNewPwdModal');
+            const form = document.getElementById('setNewPwdForm');
+            const closeBtns = document.querySelectorAll('.closeSetNewPwdBtn');
+            const openBtns = document.querySelectorAll('.setNewPwdBtn');
 
-    // ============================================
-    // 1. OUVERTURE MODAL (Création)
-    // ============================================
-    function openCreateModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        
-        // Réinitialiser le formulaire
-        form.reset();
-        adminId.value = '';
-        title.textContent = 'Nouvel administrateur';
-        subtitle.textContent = 'Créer un nouveau compte administrateur';
-        submitText.textContent = 'Enregistrer';
-        passwordLabel.innerHTML = 'Mot de passe <span class="text-red-500">*</span>';
-        adminPassword.required = true;
-        adminPasswordConfirm.required = true;
-        adminTelephone.value = '+229 01 47 85 47 58';
-        document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-save';
-    }
+            const setPwdId = document.getElementById('setPwdAdminId');
+            const setPwdNameDisplay = document.getElementById('setPwdAdminNameDisplay');
+            const setPwdEmailDisplay = document.getElementById('setPwdAdminEmailDisplay');
+            const setNewPassword = document.getElementById('setNewPassword');
+            const setConfirmPassword = document.getElementById('setConfirmPassword');
 
-    // ============================================
-    // 2. OUVERTURE MODAL (Modification)
-    // ============================================
-    function openEditModal(adminData) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        
-        // Remplir les champs
-        adminId.value = adminData.dataset.id;
-        adminNom.value = adminData.dataset.nom;
-        adminEmail.value = adminData.dataset.email;
-        adminTelephone.value = adminData.dataset.telephone || '+229 01 47 85 47 58';
-        adminRole.value = adminData.dataset.role || 'Admin';
-        
-        title.textContent = 'Modifier administrateur';
-        subtitle.textContent = 'Mettre à jour les informations du compte';
-        submitText.textContent = 'Mettre à jour';
-        passwordLabel.innerHTML = 'Nouveau mot de passe <span class="text-gray-400 text-xs font-normal">(laisser vide pour ne pas changer)</span>';
-        adminPassword.required = false;
-        adminPasswordConfirm.required = false;
-        adminPassword.value = '';
-        adminPasswordConfirm.value = '';
-        document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-edit';
-    }
-    // ============================================
-    // 3. FERMETURE MODAL
-    // ============================================
-    function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
+            // ============================================
+            // 1. OUVERTURE DU MODAL
+            // ============================================
+            function openSetPwdModal(id, nom, email) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
 
-    // ============================================
-    // 4. ÉVÉNEMENTS
-    // ============================================
-    
-    // Ouvrir pour création
-    document.querySelector('.openAdminFormBtn:not([data-id])')?.addEventListener('click', openCreateModal);
-    
-    // Ouvrir pour modification
-    document.querySelectorAll('.openAdminFormBtn[data-id]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            openEditModal(this);
-        });
-    });
+                // Remplir les infos
+                setPwdId.value = id;
+                setPwdNameDisplay.textContent = nom || 'Administrateur';
+                setPwdEmailDisplay.textContent = email || 'email@ndigitmarket.com';
+                setNewPassword.value = '';
+                setConfirmPassword.value = '';
 
-   
-
-    // Fermeture
-    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
-
-    // ESC pour fermer
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeModal();
-        }
-    });
-
-    // ============================================
-    // 5. SOUMISSION DU FORMULAIRE
-    // ============================================
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Validation
-        const nom = adminNom.value.trim();
-        const email = adminEmail.value.trim();
-        const role = adminRole.value;
-        const password = adminPassword.value;
-        const passwordConfirm = adminPasswordConfirm.value;
-        const id = adminId.value;
-        
-        if (!nom || !email || !role) {
-            showToast('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
-            return;
-        }
-        
-        // Validation email
-        if (!email.includes('@') || !email.includes('.')) {
-            showToast('Erreur', 'Email invalide', 'error');
-            return;
-        }
-        
-        // Si création ou mot de passe modifié
-        if ((!id && password.length < 8) || (id && password && password.length < 8)) {
-            showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
-            return;
-        }
-        
-        if (password && password !== passwordConfirm) {
-            showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
-            return;
-        }
-        
-        // Désactiver le bouton
-        const submitBtn = document.getElementById('adminSubmitBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
-        
-        // Préparer les données
-        const formData = new FormData(this);
-        
-        // Déterminer l'URL
-        const url = id ? '/back-end/routes/api.php?url=admin_update' : '/back-end/routes/api.php?url=admin_create';
-        
-        // Envoyer la requête
-        fetch(url, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Succès', data.message, 'success');
-                closeModal();
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                showToast('Erreur', data.error || 'Erreur lors de l\'opération', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (id ? 'Mettre à jour' : 'Enregistrer');
-        });
-    });
-
-})();
-
-// ============================================
-// MODAL DÉFINIR NOUVEAU MOT DE PASSE
-// ============================================
-
-(function() {
-    'use strict';
-
-    const modal = document.getElementById('setNewPwdModal');
-    const form = document.getElementById('setNewPwdForm');
-    const closeBtns = document.querySelectorAll('.closeSetNewPwdBtn');
-    const openBtns = document.querySelectorAll('.setNewPwdBtn');
-    
-    const setPwdId = document.getElementById('setPwdAdminId');
-    const setPwdNameDisplay = document.getElementById('setPwdAdminNameDisplay');
-    const setPwdEmailDisplay = document.getElementById('setPwdAdminEmailDisplay');
-    const setNewPassword = document.getElementById('setNewPassword');
-    const setConfirmPassword = document.getElementById('setConfirmPassword');
-
-    // ============================================
-    // 1. OUVERTURE DU MODAL
-    // ============================================
-    function openSetPwdModal(id, nom, email) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        
-        // Remplir les infos
-        setPwdId.value = id;
-        setPwdNameDisplay.textContent = nom || 'Administrateur';
-        setPwdEmailDisplay.textContent = email || 'email@ndigitmarket.com';
-        setNewPassword.value = '';
-        setConfirmPassword.value = '';
-        
-        // Réinitialiser l'état du bouton
-        const submitBtn = document.getElementById('confirmSetNewPwdBtn');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
-    }
-
-    // ============================================
-    // 2. FERMETURE DU MODAL
-    // ============================================
-    function closeSetPwdModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-        form.reset();
-    }
-
-    // ============================================
-    // 3. ÉVÉNEMENTS
-    // ============================================
-    
-    // Ouvrir le modal
-    openBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const nom = this.dataset.nom;
-            const email = this.dataset.email;
-            openSetPwdModal(id, nom, email);
-        });
-    });
-
-    // Fermer le modal
-    closeBtns.forEach(btn => btn.addEventListener('click', closeSetPwdModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeSetPwdModal();
-    });
-
-    // ESC pour fermer
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeSetPwdModal();
-        }
-    });
-
-    // ============================================
-    // 4. SOUMISSION DU FORMULAIRE
-    // ============================================
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const id = setPwdId.value;
-        const password = setNewPassword.value;
-        const confirm = setConfirmPassword.value;
-
-        // Validation
-        if (!id) {
-            showToast('Erreur', 'ID administrateur manquant', 'error');
-            return;
-        }
-
-        if (!password || password.length < 8) {
-            showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
-            setNewPassword.focus();
-            return;
-        }
-
-        if (password !== confirm) {
-            showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
-            setConfirmPassword.focus();
-            return;
-        }
-
-        // Désactiver le bouton
-        const submitBtn = document.getElementById('confirmSetNewPwdBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
-
-        // Préparer les données
-        const formData = new FormData();
-        formData.append('id', id);
-        formData.append('new_password', password);
-
-        // Envoyer la requête
-        fetch('/back-end/routes/api.php?url=admin_reset_password', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Succès', data.message || 'Mot de passe défini avec succès', 'success');
-                closeSetPwdModal();
-                setTimeout(() => window.location.reload(), 1000);
-            } else {
-                showToast('Erreur', data.error || 'Erreur lors de la définition du mot de passe', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
-        });
-    });
-
-})();
-
-// ============================================
-// GESTION DES MODALS DÉSACTIVER/RÉACTIVER
-// ============================================
-
-(function() {
-    'use strict';
-
-    // ============================================
-    // 1. MODAL DÉSACTIVER ADMINISTRATEUR
-    // ============================================
-    const disableModal = document.getElementById('disableAdminModal');
-    const disableBtns = document.querySelectorAll('.disableAdminBtn');
-    const closeDisableBtns = document.querySelectorAll('.closeDisableAdminBtn');
-    const confirmDisableBtn = document.getElementById('confirmDisableAdminBtn');
-    const disableAdminName = document.getElementById('disableAdminName');
-    const disableAdminEmail = document.getElementById('disableAdminEmail');
-    const disableAdminId = document.getElementById('disableAdminId');
-    const disableReason = document.getElementById('disableReason');
-
-    // Ouvrir le modal de désactivation
-    function openDisableModal(id, nom, email) {
-        disableModal.classList.remove('hidden');
-        disableModal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        
-        disableAdminId.value = id;
-        disableAdminName.textContent = nom || 'Administrateur';
-        disableAdminEmail.textContent = email || 'email@ndigitmarket.com';
-        disableReason.value = '';
-    }
-
-    // Fermer le modal de désactivation
-    function closeDisableModal() {
-        disableModal.classList.add('hidden');
-        disableModal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    // Événements désactivation
-    disableBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const nom = this.dataset.nom;
-            const email = this.dataset.email;
-            openDisableModal(id, nom, email);
-        });
-    });
-
-    closeDisableBtns.forEach(btn => btn.addEventListener('click', closeDisableModal));
-    disableModal.addEventListener('click', function(e) {
-        if (e.target === disableModal) closeDisableModal();
-    });
-
-    // Confirmer la désactivation
-    if (confirmDisableBtn) {
-        confirmDisableBtn.addEventListener('click', function() {
-            const id = disableAdminId.value;
-            const reason = disableReason.value || 'Aucun motif spécifié';
-            
-            if (!id) {
-                showToast('Erreur', 'ID administrateur manquant', 'error');
-                return;
-            }
-            
-            // Désactiver le bouton
-            this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Désactivation...';
-            
-            const formData = new FormData();
-            formData.append('id', id);
-            formData.append('reason', reason);
-            
-            fetch('/back-end/routes/api.php?url=admin_disable', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Succès', data.message || 'Administrateur désactivé avec succès', 'success');
-                    closeDisableModal();
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast('Erreur', data.error || 'Erreur lors de la désactivation', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-            })
-            .finally(() => {
-                this.disabled = false;
-                this.innerHTML = '<i class="fas fa-ban"></i> Désactiver le compte';
-            });
-        });
-    }
-
-    // ============================================
-    // 2. MODAL RÉACTIVER ADMINISTRATEUR
-    // ============================================
-    const enableModal = document.getElementById('enableAdminModal');
-    const enableBtns = document.querySelectorAll('.enableAdminBtn');
-    const closeEnableBtns = document.querySelectorAll('.closeEnableAdminBtn');
-    const confirmEnableBtn = document.getElementById('confirmEnableAdminBtn');
-    const enableAdminName = document.getElementById('enableAdminName');
-    const enableAdminEmail = document.getElementById('enableAdminEmail');
-    const enableAdminId = document.getElementById('enableAdminId');
-
-    // Ouvrir le modal de réactivation
-    function openEnableModal(id, nom, email) {
-        enableModal.classList.remove('hidden');
-        enableModal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        
-        enableAdminId.value = id;
-        enableAdminName.textContent = nom || 'Administrateur';
-        enableAdminEmail.textContent = email || 'email@ndigitmarket.com';
-    }
-
-    // Fermer le modal de réactivation
-    function closeEnableModal() {
-        enableModal.classList.add('hidden');
-        enableModal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    // Événements réactivation
-    enableBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const nom = this.dataset.nom;
-            const email = this.dataset.email;
-            openEnableModal(id, nom, email);
-        });
-    });
-
-    closeEnableBtns.forEach(btn => btn.addEventListener('click', closeEnableModal));
-    enableModal.addEventListener('click', function(e) {
-        if (e.target === enableModal) closeEnableModal();
-    });
-
-    // Confirmer la réactivation
-    if (confirmEnableBtn) {
-        confirmEnableBtn.addEventListener('click', function() {
-            const id = enableAdminId.value;
-            
-            if (!id) {
-                showToast('Erreur', 'ID administrateur manquant', 'error');
-                return;
-            }
-            
-            // Désactiver le bouton
-            this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Réactivation...';
-            
-            const formData = new FormData();
-            formData.append('id', id);
-            
-            fetch('/back-end/routes/api.php?url=admin_enable', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Succès', data.message || 'Administrateur réactivé avec succès', 'success');
-                    closeEnableModal();
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast('Erreur', data.error || 'Erreur lors de la réactivation', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-            })
-            .finally(() => {
-                this.disabled = false;
-                this.innerHTML = '<i class="fas fa-check"></i> Réactiver le compte';
-            });
-        });
-    }
-
-    // ============================================
-    // 3. ESC POUR FERMER TOUS LES MODALS
-    // ============================================
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            if (disableModal && !disableModal.classList.contains('hidden')) {
-                closeDisableModal();
-            }
-            if (enableModal && !enableModal.classList.contains('hidden')) {
-                closeEnableModal();
-            }
-        }
-    });
-
-})();
-
-// ============================================
-// GESTION DES PARAMÈTRES SYSTÈME
-// ============================================
-
-(function() {
-    'use strict';
-
-    const form = document.getElementById('generalSettingsForm');
-    const maintenanceToggle = document.getElementById('maintenanceToggle');
-    const maintenanceSection = document.getElementById('maintenanceMessageSection');
-
-    // ============================================
-    // 1. AFFICHAGE/MASQUAGE DU MESSAGE DE MAINTENANCE
-    // ============================================
-    if (maintenanceToggle && maintenanceSection) {
-        maintenanceToggle.addEventListener('change', function() {
-            if (this.checked) {
-                maintenanceSection.classList.remove('hidden');
-                maintenanceSection.style.display = 'block';
-            } else {
-                maintenanceSection.classList.add('hidden');
-                maintenanceSection.style.display = 'none';
-            }
-        });
-    }
-
-    // ============================================
-    // 2. GESTION DES FICHIERS (Logo/Favicon)
-    // ============================================
-    function previewFile(file, container) {
-        if (!container) return;
-        
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            container.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
-            container.style.backgroundColor = 'transparent';
-            container.style.color = 'transparent';
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // Initialiser la gestion des fichiers
-    document.querySelectorAll('.border-dashed').forEach(container => {
-        const input = container.querySelector('input[type="file"]');
-        if (!input) return;
-
-        // Récupérer le conteneur de preview (le div avec w-16 h-16)
-        const previewContainer = container.closest('.flex')?.querySelector('.w-16.h-16');
-        const fileLabel = container.querySelector('p');
-
-        // Click sur le container = click sur l'input
-        container.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'INPUT') {
-                input.click();
-            }
-        });
-
-        // Drag over
-        container.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
-        });
-
-        // Drag leave
-        container.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
-        });
-
-        // Drop
-        container.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
-            
-            if (e.dataTransfer.files.length > 0) {
-                input.files = e.dataTransfer.files;
-                const file = e.dataTransfer.files[0];
-                
-                if (fileLabel) {
-                    fileLabel.textContent = ' ' + file.name;
-                    fileLabel.style.color = '#0EA486';
-                }
-                
-                previewFile(file, previewContainer);
-            }
-        });
-
-        // Change sur l'input (sélection manuelle)
-        input.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                const file = this.files[0];
-                
-                if (fileLabel) {
-                    fileLabel.textContent = ' ' + file.name;
-                    fileLabel.style.color = '#0EA486';
-                }
-                
-                previewFile(file, previewContainer);
-            }
-        });
-    });
-
-   // ============================================
-// 3. ENVOI DU FORMULAIRE
-// ============================================
-if (form) {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        console.log(' [LOG] 1 - Formulaire soumis');
-        
-        const formData = new FormData(this);
-        
-        // Afficher toutes les données du formulaire (sauf fichiers)
-        console.log(' [LOG] 2 - Données du formulaire:');
-        formData.forEach((value, key) => {
-            if (value instanceof File) {
-                console.log(`   ${key}: [FICHIER] ${value.name} (${value.size} bytes)`);
-            } else {
-                console.log(`   ${key}: ${value}`);
-            }
-        });
-
-        // SUPPRIMER les fichiers vides
-        if (formData.get('site_logo') && formData.get('site_logo').size === 0) {
-            formData.delete('site_logo');
-            console.log(' [LOG] 3 - site_logo supprimé (vide)');
-        }
-        if (formData.get('site_favicon') && formData.get('site_favicon').size === 0) {
-            formData.delete('site_favicon');
-            console.log(' [LOG] 4 - site_favicon supprimé (vide)');
-        }
-
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-        
-        showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
-        console.log(' [LOG] 5 - Bouton désactivé, toast affiché');
-
-        //  LOG: Afficher les données finales avant l'envoi
-        console.log(' [LOG] 6 - Données FINALES envoyées:');
-        formData.forEach((value, key) => {
-            if (value instanceof File) {
-                console.log(`   ${key}: [FICHIER] ${value.name} (${value.size} bytes)`);
-            } else {
-                console.log(`   ${key}: ${value}`);
-            }
-        });
-
-        console.log(' [LOG] 7 - Envoi de la requête fetch vers /back-end/routes/api.php?url=settings_general_update');
-        
-        fetch('/back-end/routes/api.php?url=settings_general_update', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            console.log(' [LOG] 8 - Réponse reçue, status:', response.status);
-            console.log(' [LOG] 8b - Headers:', response.headers);
-            return response.json();
-        })
-        .then(data => {
-            console.log(' [LOG] 9 - Données JSON reçues:', data);
-            
-            if (data.success) {
-                console.log(' [LOG] 10 - SUCCÈS: Paramètres mis à jour');
-                showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
-                
-                const lastUpdate = document.getElementById('lastUpdate');
-                if (lastUpdate) {
-                    const now = new Date();
-                    lastUpdate.textContent = now.toLocaleString('fr-FR');
-                }
-                
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                console.log(' [LOG] 10 - ÉCHEC: ', data.error || 'Erreur inconnue');
-                console.log(' [LOG] 10b - Détails:', data);
-                showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
-            }
-        })
-        .catch(error => {
-            console.error(' [LOG] 11 - ERREUR FETCH:', error);
-            console.error(' [LOG] 11b - Stack:', error.stack);
-            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            console.log(' [LOG] 12 - Bouton réactivé');
-        });
-    });
-}
-
-    // ============================================
-    // 4. PRÉSERVER LA PREVIEW EXISTANTE
-    // ============================================
-    document.querySelectorAll('.w-16.h-16.overflow-hidden').forEach(container => {
-        const img = container.querySelector('img');
-        if (img) {
-            container.style.backgroundColor = 'transparent';
-        }
-    });
-
-})();
-// ============================================
-// GESTION SMTP - Enregistrement & Test
-// ============================================
-(function() {
-    'use strict';
-
-    // ============================================
-    // 1. ENREGISTREMENT DES PARAMÈTRES SMTP
-    // ============================================
-    const smtpForm = document.getElementById('smtpSettingsForm');
-    
-    if (smtpForm) {
-        smtpForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Récupérer les données du formulaire
-            const formData = new FormData(this);
-            
-            // Afficher un toast de chargement
-            showToast('Enregistrement', 'Mise à jour des paramètres SMTP...', 'info');
-            
-            // Désactiver le bouton
-            const submitBtn = this.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
-            
-            // Envoyer la requête
-            fetch('/back-end/routes/api.php?url=settings_smtp_update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Succès', 'Paramètres SMTP enregistrés ', 'success');
-                    
-                    // Mettre à jour le statut
-                    const statusBadge = document.querySelector('.bg-amber-100, .bg-emerald-100');
-                    if (statusBadge) {
-                        const host = document.getElementById('smtp_host').value;
-                        if (host) {
-                            statusBadge.className = 'text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full';
-                            statusBadge.innerHTML = '<i class="fas fa-check mr-1"></i> Configuré';
-                        }
-                    }
-                } else {
-                    showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Impossible d\'enregistrer les paramètres', 'error');
-            })
-            .finally(() => {
+                // Réinitialiser l'état du bouton
+                const submitBtn = document.getElementById('confirmSetNewPwdBtn');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
+            }
+
+            // ============================================
+            // 2. FERMETURE DU MODAL
+            // ============================================
+            function closeSetPwdModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                form.reset();
+            }
+
+            // ============================================
+            // 3. ÉVÉNEMENTS
+            // ============================================
+
+            // Ouvrir le modal
+            openBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const nom = this.dataset.nom;
+                    const email = this.dataset.email;
+                    openSetPwdModal(id, nom, email);
+                });
             });
-        });
-    }
 
-    // ============================================
-    // 2. TEST SMTP - MODAL
-    // ============================================
-    const modal = document.getElementById('testSmtpModal');
-    const openBtn = document.getElementById('testSmtpBtn');
-    const closeBtns = document.querySelectorAll('.closeTestSmtpBtn');
-    const sendBtn = document.getElementById('sendTestEmailBtn');
-    const testEmailInput = document.getElementById('testEmailInput');
-    const testMessageInput = document.getElementById('testMessageInput');
-    const testResult = document.getElementById('testSmtpResult');
-    const testInfo = document.getElementById('testSmtpInfo');
+            // Fermer le modal
+            closeBtns.forEach(btn => btn.addEventListener('click', closeSetPwdModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeSetPwdModal();
+            });
 
-    function openModal() {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        // Réinitialiser
-        testResult.classList.add('hidden');
-        testInfo.classList.remove('hidden');
-        testEmailInput.value = '';
-        testMessageInput.value = '';
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
-    }
+            // ESC pour fermer
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    closeSetPwdModal();
+                }
+            });
 
-    function closeModal() {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
+            // ============================================
+            // 4. SOUMISSION DU FORMULAIRE
+            // ============================================
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-    if (openBtn) openBtn.addEventListener('click', openModal);
-    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
-    });
+                const id = setPwdId.value;
+                const password = setNewPassword.value;
+                const confirm = setConfirmPassword.value;
 
-    // ESC pour fermer
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeModal();
-        }
-    });
+                // Validation
+                if (!id) {
+                    showToast('Erreur', 'ID administrateur manquant', 'error');
+                    return;
+                }
 
-    // ============================================
-    // 3. ENVOI DU TEST SMTP
-    // ============================================
-    if (sendBtn) {
-        sendBtn.addEventListener('click', function() {
-            const email = testEmailInput.value.trim();
-            const message = testMessageInput.value.trim();
-            
-            if (!email) {
-                showToast('Erreur', 'Veuillez saisir un email destinataire', 'error');
-                testEmailInput.focus();
-                return;
+                if (!password || password.length < 8) {
+                    showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
+                    setNewPassword.focus();
+                    return;
+                }
+
+                if (password !== confirm) {
+                    showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+                    setConfirmPassword.focus();
+                    return;
+                }
+
+                // Désactiver le bouton
+                const submitBtn = document.getElementById('confirmSetNewPwdBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+
+                // Préparer les données
+                const formData = new FormData();
+                formData.append('id', id);
+                formData.append('new_password', password);
+
+                // Envoyer la requête
+                fetch('/back-end/routes/api.php?url=admin_reset_password', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast('Succès', data.message || 'Mot de passe défini avec succès', 'success');
+                            closeSetPwdModal();
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showToast('Erreur', data.error || 'Erreur lors de la définition du mot de passe', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
+                    });
+            });
+
+        })();
+
+        // ============================================
+        // GESTION DES MODALS DÉSACTIVER/RÉACTIVER
+        // ============================================
+
+        (function() {
+            'use strict';
+
+            // ============================================
+            // 1. MODAL DÉSACTIVER ADMINISTRATEUR
+            // ============================================
+            const disableModal = document.getElementById('disableAdminModal');
+            const disableBtns = document.querySelectorAll('.disableAdminBtn');
+            const closeDisableBtns = document.querySelectorAll('.closeDisableAdminBtn');
+            const confirmDisableBtn = document.getElementById('confirmDisableAdminBtn');
+            const disableAdminName = document.getElementById('disableAdminName');
+            const disableAdminEmail = document.getElementById('disableAdminEmail');
+            const disableAdminId = document.getElementById('disableAdminId');
+            const disableReason = document.getElementById('disableReason');
+
+            // Ouvrir le modal de désactivation
+            function openDisableModal(id, nom, email) {
+                disableModal.classList.remove('hidden');
+                disableModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+
+                disableAdminId.value = id;
+                disableAdminName.textContent = nom || 'Administrateur';
+                disableAdminEmail.textContent = email || 'email@ndigitmarket.com';
+                disableReason.value = '';
             }
-            
-            if (!email.includes('@') || !email.includes('.')) {
-                showToast('Erreur', 'Email invalide', 'error');
-                testEmailInput.focus();
-                return;
+
+            // Fermer le modal de désactivation
+            function closeDisableModal() {
+                disableModal.classList.add('hidden');
+                disableModal.classList.remove('flex');
+                document.body.style.overflow = '';
             }
-            
-            // Désactiver le bouton
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-            
-            // Afficher le résultat
-            testResult.classList.remove('hidden');
-            testResult.className = 'rounded-xl p-4 border border-blue-200 bg-blue-50';
-            testResult.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Envoi en cours...';
-            testInfo.classList.add('hidden');
-            
-            // Préparer les données
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('message', message);
-            
-            // Envoyer la requête
-            fetch('/back-end/routes/api.php?url=settings_smtp_test', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    testResult.className = 'rounded-xl p-4 border border-green-200 bg-green-50';
-                    testResult.innerHTML = `
+
+            // Événements désactivation
+            disableBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const nom = this.dataset.nom;
+                    const email = this.dataset.email;
+                    openDisableModal(id, nom, email);
+                });
+            });
+
+            closeDisableBtns.forEach(btn => btn.addEventListener('click', closeDisableModal));
+            disableModal.addEventListener('click', function(e) {
+                if (e.target === disableModal) closeDisableModal();
+            });
+
+            // Confirmer la désactivation
+            if (confirmDisableBtn) {
+                confirmDisableBtn.addEventListener('click', function() {
+                    const id = disableAdminId.value;
+                    const reason = disableReason.value || 'Aucun motif spécifié';
+
+                    if (!id) {
+                        showToast('Erreur', 'ID administrateur manquant', 'error');
+                        return;
+                    }
+
+                    // Désactiver le bouton
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Désactivation...';
+
+                    const formData = new FormData();
+                    formData.append('id', id);
+                    formData.append('reason', reason);
+
+                    fetch('/back-end/routes/api.php?url=admin_disable', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Succès', data.message || 'Administrateur désactivé avec succès', 'success');
+                                closeDisableModal();
+                                setTimeout(() => window.location.reload(), 1000);
+                            } else {
+                                showToast('Erreur', data.error || 'Erreur lors de la désactivation', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                        })
+                        .finally(() => {
+                            this.disabled = false;
+                            this.innerHTML = '<i class="fas fa-ban"></i> Désactiver le compte';
+                        });
+                });
+            }
+
+            // ============================================
+            // 2. MODAL RÉACTIVER ADMINISTRATEUR
+            // ============================================
+            const enableModal = document.getElementById('enableAdminModal');
+            const enableBtns = document.querySelectorAll('.enableAdminBtn');
+            const closeEnableBtns = document.querySelectorAll('.closeEnableAdminBtn');
+            const confirmEnableBtn = document.getElementById('confirmEnableAdminBtn');
+            const enableAdminName = document.getElementById('enableAdminName');
+            const enableAdminEmail = document.getElementById('enableAdminEmail');
+            const enableAdminId = document.getElementById('enableAdminId');
+
+            // Ouvrir le modal de réactivation
+            function openEnableModal(id, nom, email) {
+                enableModal.classList.remove('hidden');
+                enableModal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+
+                enableAdminId.value = id;
+                enableAdminName.textContent = nom || 'Administrateur';
+                enableAdminEmail.textContent = email || 'email@ndigitmarket.com';
+            }
+
+            // Fermer le modal de réactivation
+            function closeEnableModal() {
+                enableModal.classList.add('hidden');
+                enableModal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            // Événements réactivation
+            enableBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const nom = this.dataset.nom;
+                    const email = this.dataset.email;
+                    openEnableModal(id, nom, email);
+                });
+            });
+
+            closeEnableBtns.forEach(btn => btn.addEventListener('click', closeEnableModal));
+            enableModal.addEventListener('click', function(e) {
+                if (e.target === enableModal) closeEnableModal();
+            });
+
+            // Confirmer la réactivation
+            if (confirmEnableBtn) {
+                confirmEnableBtn.addEventListener('click', function() {
+                    const id = enableAdminId.value;
+
+                    if (!id) {
+                        showToast('Erreur', 'ID administrateur manquant', 'error');
+                        return;
+                    }
+
+                    // Désactiver le bouton
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Réactivation...';
+
+                    const formData = new FormData();
+                    formData.append('id', id);
+
+                    fetch('/back-end/routes/api.php?url=admin_enable', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Succès', data.message || 'Administrateur réactivé avec succès', 'success');
+                                closeEnableModal();
+                                setTimeout(() => window.location.reload(), 1000);
+                            } else {
+                                showToast('Erreur', data.error || 'Erreur lors de la réactivation', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                        })
+                        .finally(() => {
+                            this.disabled = false;
+                            this.innerHTML = '<i class="fas fa-check"></i> Réactiver le compte';
+                        });
+                });
+            }
+
+            // ============================================
+            // 3. ESC POUR FERMER TOUS LES MODALS
+            // ============================================
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (disableModal && !disableModal.classList.contains('hidden')) {
+                        closeDisableModal();
+                    }
+                    if (enableModal && !enableModal.classList.contains('hidden')) {
+                        closeEnableModal();
+                    }
+                }
+            });
+
+        })();
+
+        // ============================================
+        // GESTION DES PARAMÈTRES SYSTÈME
+        // ============================================
+
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('generalSettingsForm');
+            const maintenanceToggle = document.getElementById('maintenanceToggle');
+            const maintenanceSection = document.getElementById('maintenanceMessageSection');
+
+            // ============================================
+            // 1. AFFICHAGE/MASQUAGE DU MESSAGE DE MAINTENANCE
+            // ============================================
+            if (maintenanceToggle && maintenanceSection) {
+                maintenanceToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        maintenanceSection.classList.remove('hidden');
+                        maintenanceSection.style.display = 'block';
+                    } else {
+                        maintenanceSection.classList.add('hidden');
+                        maintenanceSection.style.display = 'none';
+                    }
+                });
+            }
+
+            // ============================================
+            // 2. GESTION DES FICHIERS (Logo/Favicon)
+            // ============================================
+            function previewFile(file, container) {
+                if (!container) return;
+
+                if (!file || !file.type.startsWith('image/')) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    container.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                    container.style.backgroundColor = 'transparent';
+                    container.style.color = 'transparent';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Initialiser la gestion des fichiers
+            document.querySelectorAll('.border-dashed').forEach(container => {
+                const input = container.querySelector('input[type="file"]');
+                if (!input) return;
+
+                // Récupérer le conteneur de preview (le div avec w-16 h-16)
+                const previewContainer = container.closest('.flex')?.querySelector('.w-16.h-16');
+                const fileLabel = container.querySelector('p');
+
+                // Click sur le container = click sur l'input
+                container.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'INPUT') {
+                        input.click();
+                    }
+                });
+
+                // Drag over
+                container.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+                });
+
+                // Drag leave
+                container.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+                });
+
+                // Drop
+                container.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+
+                    if (e.dataTransfer.files.length > 0) {
+                        input.files = e.dataTransfer.files;
+                        const file = e.dataTransfer.files[0];
+
+                        if (fileLabel) {
+                            fileLabel.textContent = ' ' + file.name;
+                            fileLabel.style.color = '#0EA486';
+                        }
+
+                        previewFile(file, previewContainer);
+                    }
+                });
+
+                // Change sur l'input (sélection manuelle)
+                input.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        const file = this.files[0];
+
+                        if (fileLabel) {
+                            fileLabel.textContent = ' ' + file.name;
+                            fileLabel.style.color = '#0EA486';
+                        }
+
+                        previewFile(file, previewContainer);
+                    }
+                });
+            });
+
+            // ============================================
+            // 3. ENVOI DU FORMULAIRE
+            // ============================================
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+                    showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
+
+                    console.log(' Données du formulaire:');
+                    formData.forEach((value, key) => {
+                        console.log(`${key}: ${value instanceof File ? value.name : value}`);
+                    });
+
+                    fetch('/back-end/routes/api.php?url=settings_general_update', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
+
+                                const lastUpdate = document.getElementById('lastUpdate');
+                                if (lastUpdate) {
+                                    const now = new Date();
+                                    lastUpdate.textContent = now.toLocaleString('fr-FR');
+                                }
+
+                                setTimeout(() => window.location.reload(), 1500);
+                            } else {
+                                showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                        });
+                });
+            }
+
+            // ============================================
+            // 4. PRÉSERVER LA PREVIEW EXISTANTE
+            // ============================================
+            document.querySelectorAll('.w-16.h-16.overflow-hidden').forEach(container => {
+                const img = container.querySelector('img');
+                if (img) {
+                    container.style.backgroundColor = 'transparent';
+                }
+            });
+
+        })();
+        // ============================================
+        // GESTION SMTP - Enregistrement & Test
+        // ============================================
+        (function() {
+            'use strict';
+
+            // ============================================
+            // 1. ENREGISTREMENT DES PARAMÈTRES SMTP
+            // ============================================
+            const smtpForm = document.getElementById('smtpSettingsForm');
+
+            if (smtpForm) {
+                smtpForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Récupérer les données du formulaire
+                    const formData = new FormData(this);
+
+                    // Afficher un toast de chargement
+                    showToast('Enregistrement', 'Mise à jour des paramètres SMTP...', 'info');
+
+                    // Désactiver le bouton
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+
+                    // Envoyer la requête
+                    fetch('/back-end/routes/api.php?url=settings_smtp_update', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Succès', 'Paramètres SMTP enregistrés ', 'success');
+
+                                // Mettre à jour le statut
+                                const statusBadge = document.querySelector('.bg-amber-100, .bg-emerald-100');
+                                if (statusBadge) {
+                                    const host = document.getElementById('smtp_host').value;
+                                    if (host) {
+                                        statusBadge.className = 'text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full';
+                                        statusBadge.innerHTML = '<i class="fas fa-check mr-1"></i> Configuré';
+                                    }
+                                }
+                            } else {
+                                showToast('Erreur', data.error || 'Erreur lors de l\'enregistrement', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            showToast('Erreur', 'Impossible d\'enregistrer les paramètres', 'error');
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+                        });
+                });
+            }
+
+            // ============================================
+            // 2. TEST SMTP - MODAL
+            // ============================================
+            const modal = document.getElementById('testSmtpModal');
+            const openBtn = document.getElementById('testSmtpBtn');
+            const closeBtns = document.querySelectorAll('.closeTestSmtpBtn');
+            const sendBtn = document.getElementById('sendTestEmailBtn');
+            const testEmailInput = document.getElementById('testEmailInput');
+            const testMessageInput = document.getElementById('testMessageInput');
+            const testResult = document.getElementById('testSmtpResult');
+            const testInfo = document.getElementById('testSmtpInfo');
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                // Réinitialiser
+                testResult.classList.add('hidden');
+                testInfo.classList.remove('hidden');
+                testEmailInput.value = '';
+                testMessageInput.value = '';
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            if (openBtn) openBtn.addEventListener('click', openModal);
+            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+
+            // ESC pour fermer
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+
+            // ============================================
+            // 3. ENVOI DU TEST SMTP
+            // ============================================
+            if (sendBtn) {
+                sendBtn.addEventListener('click', function() {
+                    const email = testEmailInput.value.trim();
+                    const message = testMessageInput.value.trim();
+
+                    if (!email) {
+                        showToast('Erreur', 'Veuillez saisir un email destinataire', 'error');
+                        testEmailInput.focus();
+                        return;
+                    }
+
+                    if (!email.includes('@') || !email.includes('.')) {
+                        showToast('Erreur', 'Email invalide', 'error');
+                        testEmailInput.focus();
+                        return;
+                    }
+
+                    // Désactiver le bouton
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+
+                    // Afficher le résultat
+                    testResult.classList.remove('hidden');
+                    testResult.className = 'rounded-xl p-4 border border-blue-200 bg-blue-50';
+                    testResult.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Envoi en cours...';
+                    testInfo.classList.add('hidden');
+
+                    // Préparer les données
+                    const formData = new FormData();
+                    formData.append('email', email);
+                    formData.append('message', message);
+
+                    // Envoyer la requête
+                    fetch('/back-end/routes/api.php?url=settings_smtp_test', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                testResult.className = 'rounded-xl p-4 border border-green-200 bg-green-50';
+                                testResult.innerHTML = `
                         <div class="flex items-start gap-3">
                             <i class="fas fa-check-circle text-green-600 text-xl mt-0.5"></i>
                             <div>
@@ -2140,10 +2092,10 @@ if (form) {
                             </div>
                         </div>
                     `;
-                    showToast('Succès', 'Email de test envoyé ', 'success');
-                } else {
-                    testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
-                    testResult.innerHTML = `
+                                showToast('Succès', 'Email de test envoyé ', 'success');
+                            } else {
+                                testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
+                                testResult.innerHTML = `
                         <div class="flex items-start gap-3">
                             <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
                             <div>
@@ -2153,13 +2105,13 @@ if (form) {
                             </div>
                         </div>
                     `;
-                    showToast('Erreur', data.error || 'Erreur lors de l\'envoi', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
-                testResult.innerHTML = `
+                                showToast('Erreur', data.error || 'Erreur lors de l\'envoi', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                            testResult.className = 'rounded-xl p-4 border border-red-200 bg-red-50';
+                            testResult.innerHTML = `
                     <div class="flex items-start gap-3">
                         <i class="fas fa-exclamation-circle text-red-600 text-xl mt-0.5"></i>
                         <div>
@@ -2168,80 +2120,32 @@ if (form) {
                         </div>
                     </div>
                 `;
-                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-            })
-            .finally(() => {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
-            });
-        });
-    }
-
-    // ============================================
-    // 4. TOGGLE PASSWORD
-    // ============================================
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const targetId = this.dataset.target;
-            const input = document.getElementById(targetId);
-            if (input) {
-                const type = input.type === 'password' ? 'text' : 'password';
-                input.type = type;
-                this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+                            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                        })
+                        .finally(() => {
+                            sendBtn.disabled = false;
+                            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le test';
+                        });
+                });
             }
-        });
-    });
 
-})();
-
-
-// ============================================
-// GESTION DES PAIEMENTS
-// ============================================
-
-(function() {
-    'use strict';
-
-    const form = document.getElementById('paymentSettingsForm');
-    
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
-            
-            showToast('Enregistrement', 'Mise a jour de la configuration des paiements...', 'info');
-            
-            fetch('/back-end/routes/api.php?url=settings_payment_update', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Succes', 'Configuration paiements mise a jour avec succes', 'success');
-                    setTimeout(() => window.location.reload(), 1500);
-                } else {
-                    showToast('Erreur', data.error || 'Erreur lors de la mise a jour', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur', 'Erreur de connexion au serveur', 'error');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+            // ============================================
+            // 4. TOGGLE PASSWORD
+            // ============================================
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const input = document.getElementById(targetId);
+                    if (input) {
+                        const type = input.type === 'password' ? 'text' : 'password';
+                        input.type = type;
+                        this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+                    }
+                });
             });
-        });
-    }
 
-})();
+        })();
     </script>
 </body>
+
 </html>

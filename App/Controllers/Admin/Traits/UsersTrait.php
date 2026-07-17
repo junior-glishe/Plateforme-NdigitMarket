@@ -28,6 +28,170 @@ trait UsersTrait
             statut ENUM('envoye','erreur') DEFAULT 'envoye',
             date_envoi TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
+        $this->ensureAutoIncrementId($db, 'email_campaigns');
+        $this->ensureAutoIncrementId($db, 'email_logs');
+    }
+
+    private function ensureAutoIncrementId(\PDO $db, string $table): void
+    {
+        try {
+            $schema = (string)$db->query('SELECT DATABASE()')->fetchColumn();
+            $stmt = $db->prepare("
+                SELECT EXTRA
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = ?
+                  AND TABLE_NAME = ?
+                  AND COLUMN_NAME = 'id'
+                LIMIT 1
+            ");
+            $stmt->execute([$schema, $table]);
+            $extra = strtolower((string)$stmt->fetchColumn());
+
+            if (str_contains($extra, 'auto_increment')) {
+                return;
+            }
+
+            $pkStmt = $db->prepare("
+                SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+                WHERE TABLE_SCHEMA = ?
+                  AND TABLE_NAME = ?
+                  AND CONSTRAINT_TYPE = 'PRIMARY KEY'
+            ");
+            $pkStmt->execute([$schema, $table]);
+
+            if ((int)$pkStmt->fetchColumn() === 0) {
+                $db->exec("ALTER TABLE `$table` ADD PRIMARY KEY (`id`)");
+            }
+
+            $db->exec("ALTER TABLE `$table` MODIFY `id` INT(11) NOT NULL AUTO_INCREMENT");
+        } catch (\Exception $e) {
+            error_log("[email_tables] Impossible de corriger $table.id AUTO_INCREMENT: " . $e->getMessage());
+        }
+    }
+
+    private function getSmtpSettings(\PDO $db): array
+    {
+        try {
+            $stmt = $db->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'smtp_%'");
+            $settings = [];
+            foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $settings[$row['setting_key']] = $row['setting_value'];
+            }
+            return $settings;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    private function smtpCommand($socket, string $command, array $expectedCodes): string
+    {
+        fwrite($socket, $command . "\r\n");
+        return $this->smtpRead($socket, $expectedCodes);
+    }
+
+    private function smtpRead($socket, array $expectedCodes): string
+    {
+        $response = '';
+        while (($line = fgets($socket, 515)) !== false) {
+            $response .= $line;
+            if (isset($line[3]) && $line[3] === ' ') {
+                break;
+            }
+        }
+
+        $code = (int)substr($response, 0, 3);
+        if (!in_array($code, $expectedCodes, true)) {
+            throw new \RuntimeException(trim($response) ?: 'Réponse SMTP inattendue');
+        }
+
+        return $response;
+    }
+
+    private function sendHtmlMail(string $email, string $subject, string $message, array $smtp = []): bool
+    {
+        if (!empty($smtp['smtp_host']) && !empty($smtp['smtp_username']) && !empty($smtp['smtp_password'])) {
+            return $this->sendHtmlMailViaSmtp($email, $subject, $message, $smtp);
+        }
+
+        $headers = [
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+            'From: NDIGITMARKET <no-reply@ndigitmarket.com>',
+            'Reply-To: support@ndigitmarket.com',
+            'X-Mailer: PHP/' . PHP_VERSION,
+        ];
+
+        return mail($email, $subject, $message, implode("\r\n", $headers));
+    }
+
+    private function sendHtmlMailViaSmtp(string $email, string $subject, string $message, array $smtp): bool
+    {
+        $host = trim((string)$smtp['smtp_host']);
+        $port = (int)($smtp['smtp_port'] ?? 587);
+        $encryption = strtoupper((string)($smtp['smtp_encryption'] ?? 'TLS'));
+        $remote = ($encryption === 'SSL' ? 'ssl://' : '') . $host;
+        $timeout = 20;
+
+        $socket = @stream_socket_client($remote . ':' . $port, $errno, $errstr, $timeout);
+        if (!$socket) {
+            throw new \RuntimeException("Connexion SMTP impossible : $errstr");
+        }
+
+        stream_set_timeout($socket, $timeout);
+
+        try {
+            $this->smtpRead($socket, [220]);
+            $serverName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+            $this->smtpCommand($socket, 'EHLO ' . $serverName, [250]);
+
+            if ($encryption === 'TLS') {
+                $this->smtpCommand($socket, 'STARTTLS', [220]);
+                if (!stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                    throw new \RuntimeException('Activation TLS impossible');
+                }
+                $this->smtpCommand($socket, 'EHLO ' . $serverName, [250]);
+            }
+
+            $this->smtpCommand($socket, 'AUTH LOGIN', [334]);
+            $this->smtpCommand($socket, base64_encode((string)$smtp['smtp_username']), [334]);
+            $this->smtpCommand($socket, base64_encode((string)$smtp['smtp_password']), [235]);
+
+            $fromEmail = trim((string)($smtp['smtp_from_email'] ?? $smtp['smtp_username']));
+            $fromName = trim((string)($smtp['smtp_from_name'] ?? 'NDIGITMARKET'));
+            $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+            $encodedFromName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
+
+            $this->smtpCommand($socket, 'MAIL FROM:<' . $fromEmail . '>', [250]);
+            $this->smtpCommand($socket, 'RCPT TO:<' . $email . '>', [250, 251]);
+            $this->smtpCommand($socket, 'DATA', [354]);
+
+            $body = str_replace(["\r\n", "\r"], "\n", $message);
+            $body = str_replace("\n.", "\n..", $body);
+            $data = [
+                'Date: ' . date('r'),
+                'From: ' . $encodedFromName . ' <' . $fromEmail . '>',
+                'Reply-To: ' . $fromEmail,
+                'To: <' . $email . '>',
+                'Subject: ' . $encodedSubject,
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8',
+                'Content-Transfer-Encoding: 8bit',
+                '',
+                $body,
+                '.',
+            ];
+            fwrite($socket, implode("\r\n", $data) . "\r\n");
+            $this->smtpRead($socket, [250]);
+            $this->smtpCommand($socket, 'QUIT', [221]);
+            fclose($socket);
+            return true;
+        } catch (\Throwable $e) {
+            @fwrite($socket, "QUIT\r\n");
+            @fclose($socket);
+            throw $e;
+        }
     }
 
     public function users()
@@ -461,6 +625,7 @@ trait UsersTrait
         $this->checkAuth();
         $db = \Database::getConnection();
         $this->ensureEmailTables($db);
+        $smtpSettings = $this->getSmtpSettings($db);
 
         $subject = trim((string)($_POST['subject'] ?? ''));
         $message = trim((string)($_POST['message'] ?? ''));
@@ -498,6 +663,7 @@ trait UsersTrait
 
             $sent = 0;
             $errors = 0;
+            $lastError = '';
             $logStmt = $db->prepare("INSERT INTO email_logs (email, sujet, statut) VALUES (?, ?, ?)");
 
             foreach ($recipients as $recipient) {
@@ -515,13 +681,21 @@ trait UsersTrait
                     $message
                 );
 
-                $headers = [
-                    'MIME-Version: 1.0',
-                    'Content-Type: text/html; charset=UTF-8',
-                    'From: NDIGITMARKET <no-reply@ndigitmarket.local>',
-                ];
-                $ok = @mail($email, $subject, $personalized, implode("\r\n", $headers));
-                $ok ? $sent++ : $errors++;
+                try {
+                    $ok = $this->sendHtmlMail($email, $subject, $personalized, $smtpSettings);
+                    if ($ok) {
+                        $sent++;
+                    } else {
+                        $errors++;
+                        $lastError = 'La fonction mail() PHP a refusé l\'envoi. Vérifiez la configuration SMTP/sendmail du serveur.';
+                        error_log("[send_custom_email] Échec mail() vers {$email}");
+                    }
+                } catch (\Throwable $mailError) {
+                    $ok = false;
+                    $errors++;
+                    $lastError = $mailError->getMessage();
+                    error_log("[send_custom_email] Échec SMTP vers {$email}: " . $mailError->getMessage());
+                }
                 $logStmt->execute([$email, $subject, $ok ? 'envoye' : 'erreur']);
             }
 
@@ -530,12 +704,18 @@ trait UsersTrait
 
             $db->commit();
             $this->logAction('send_custom_email', 0, "Campagne #$campaignId : $sent envoyé(s), $errors erreur(s)");
+            $success = $sent > 0 && $errors === 0;
+            $partial = $sent > 0 && $errors > 0;
+            $messageText = $partial
+                ? "Campagne partielle : $sent envoyé(s), $errors erreur(s)"
+                : ($success ? "Campagne terminée : $sent envoyé(s)" : "Aucun email envoyé : $errors erreur(s). $lastError");
+
             $this->jsonResponse([
-                'success' => true,
-                'message' => "Campagne terminée : $sent envoyé(s), $errors erreur(s)",
+                'success' => $success || $partial,
+                'message' => $messageText,
                 'sent' => $sent,
                 'errors' => $errors,
-            ]);
+            ], ($success || $partial) ? 200 : 500);
         } catch (\Exception $e) {
             $db->rollBack();
             $this->jsonResponse(['success' => false, 'message' => 'Erreur campagne : ' . $e->getMessage()], 500);

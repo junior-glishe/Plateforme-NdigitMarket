@@ -1,11 +1,5 @@
 <?php
 
-/**
- * NDIGITMARKET - Front controller
- *
- * Point d'entrée unique. Charge la configuration, initialise l'autoloader
-
- */
 
 declare(strict_types=1);
 
