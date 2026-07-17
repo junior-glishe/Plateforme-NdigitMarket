@@ -379,8 +379,7 @@ switch ($url) {
         $controller->index();
         break;
 
-        // API - Paramètres généraux
-    // API - Mettre à jour les paramètres généraux
+    // API - Paramètres généraux
     case 'settings_general_update':
         require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
         $controller = new SettingController($pdo);

@@ -42,7 +42,7 @@
             </div>
         </header>
 
-        <!-- PARAMÈTRES GÉNÉRAUX -->
+        
        <!-- ============================================
      PARAMÈTRES GÉNÉRAUX
      ============================================ -->
@@ -56,7 +56,7 @@
                 </span>
             </div>
 
-            <form id="generalSettingsForm" class="space-y-4" method="POST">
+            <form id="generalSettingsForm" class="space-y-4" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="_method" value="POST">
                 
                 <!-- Infos plateforme -->
@@ -82,10 +82,10 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Devise principale <span class="text-red-500">*</span></label>
-                            <select name="currency" id="currency" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] transition">
-                                <option value="FCFA" <?= ($settings['currency'] ?? 'FCFA') === 'FCFA' ? 'selected' : '' ?>>FCFA (Franc CFA)</option>
-                                <option value="EUR" <?= ($settings['currency'] ?? 'FCFA') === 'EUR' ? 'selected' : '' ?>>EUR (Euro)</option>
-                                <option value="USD" <?= ($settings['currency'] ?? 'FCFA') === 'USD' ? 'selected' : '' ?>>USD (Dollar)</option>
+                            <select name="site_currency" id="site_currency" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] transition">
+                                <option value="FCFA" <?= ($settings['site_currency'] ?? 'FCFA') === 'FCFA' ? 'selected' : '' ?>>FCFA (Franc CFA)</option>
+                                <option value="EUR" <?= ($settings['site_currency'] ?? 'FCFA') === 'EUR' ? 'selected' : '' ?>>EUR (Euro)</option>
+                                <option value="USD" <?= ($settings['site_currency'] ?? 'FCFA') === 'USD' ? 'selected' : '' ?>>USD (Dollar)</option>
                             </select>
                         </div>
                     </div>
@@ -97,38 +97,54 @@
                         <i class="fas fa-image text-[#0EA486]"></i> Logo et Favicon
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Logo principal -->
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Logo principal</label>
                             <div class="flex items-center gap-3">
-                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm">
-                                    <?= substr($settings['site_logo'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-sm overflow-hidden">
+                                    <?php if (!empty($settings['site_logo']) && file_exists(__DIR__ . '/../../public/assets/images/' . $settings['site_logo'])): ?>
+                                        <img src="/back-end/public/assets/images/<?= $settings['site_logo'] ?>" alt="Logo" class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
+                                    <label for="site_logo" class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer block">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
-                                        <p class="text-[10px] text-gray-500">PNG, SVG · max 500 KB</p>
-                                        <input type="file" name="site_logo" id="site_logo" accept="image/png,image/svg+xml" class="hidden">
-                                    </div>
+                                        <p class="text-[10px] text-gray-500">PNG, SVG, JPG · max 2 MB</p>
+                                        <input type="file" name="site_logo" id="site_logo" accept="image/png,image/svg+xml,image/jpeg" class="hidden">
+                                    </label>
+                                    <?php if (!empty($settings['site_logo'])): ?>
+                                        <p class="text-[10px] text-gray-400 mt-1">Fichier actuel: <?= basename($settings['site_logo']) ?></p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Favicon -->
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Favicon</label>
                             <div class="flex items-center gap-3">
-                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm">
-                                    <?= substr($settings['site_favicon'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                <div class="w-16 h-16 bg-gradient-to-br from-[#0EA486] to-[#0c8f75] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm overflow-hidden">
+                                    <?php if (!empty($settings['site_favicon']) && file_exists(__DIR__ . '/../../public/assets/images/' . $settings['site_favicon'])): ?>
+                                        <img src="/back-end/public/assets/images/<?= $settings['site_favicon'] ?>" alt="Favicon" class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <?= substr($settings['site_name'] ?? 'NDIGITMARKET', 0, 1) ?>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer">
+                                    <label for="site_favicon" class="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-[#0EA486] transition cursor-pointer block">
                                         <i class="fas fa-cloud-upload-alt text-lg text-gray-300 mb-1"></i>
-                                        <p class="text-[10px] text-gray-500">ICO, PNG · 32x32 ou 64x64</p>
-                                        <input type="file" name="site_favicon" id="site_favicon" accept="image/png,image/x-icon" class="hidden">
-                                    </div>
+                                        <p class="text-[10px] text-gray-500">ICO, PNG · 16x16, 32x32 ou 64x64</p>
+                                        <input type="file" name="site_favicon" id="site_favicon" accept="image/png,image/x-icon,image/vnd.microsoft.icon" class="hidden">
+                                    </label>
+                                    <?php if (!empty($settings['site_favicon'])): ?>
+                                        <p class="text-[10px] text-gray-400 mt-1">Fichier actuel: <?= basename($settings['site_favicon']) ?></p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
                 <!-- Réseaux sociaux -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition">
@@ -653,14 +669,13 @@
                                                 </button>
                                                 
                                                 <!-- Réinitialiser mot de passe -->
-                                                <button class="resetPasswordBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                                <button class="setNewPwdBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
                                                         data-id="<?= $admin['id'] ?>"
                                                         data-nom="<?= htmlspecialchars($admin['nom']) ?>"
                                                         data-email="<?= htmlspecialchars($admin['email']) ?>"
-                                                        title="Réinitialiser mot de passe">
+                                                        title="Définir nouveau mot de passe">
                                                     <i class="fas fa-key text-xs"></i>
                                                 </button>
-                                                
                                                 <!-- Désactiver / Réactiver -->
                                                 <?php if ($isActive): ?>
                                                     <button class="disableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" 
@@ -901,52 +916,72 @@
             </form>
         </div>
     </div>
-
-    <!-- MODAL : DÉFINIR NOUVEAU MOT DE PASSE -->
-    <div id="setNewPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-lock text-[#0EA486]"></i> Définir un nouveau mot de passe
-                    </h3>
-                    <p class="text-xs text-gray-400">Remplacer le mot de passe manuellement</p>
+        <!-- MODAL : DÉFINIR NOUVEAU MOT DE PASSE -->
+        <div id="setNewPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                            <i class="fas fa-lock text-[#0EA486]"></i> Définir un nouveau mot de passe
+                        </h3>
+                        <p class="text-xs text-gray-400">Remplacer le mot de passe de <span id="setPwdAdminName" class="font-semibold text-gray-600">l'administrateur</span></p>
+                    </div>
+                    <button class="closeSetNewPwdBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <button class="closeSetNewPwdBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Nouveau mot de passe <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input type="password" id="newAdminPwd" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                        <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="newAdminPwd">
-                            <i class="fas fa-eye"></i>
+                
+                <form id="setNewPwdForm" method="POST" class="p-6 space-y-4">
+                    <input type="hidden" id="setPwdAdminId" name="id" value="">
+                    
+                    <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                        <p class="text-xs text-gray-500">Administrateur concerné</p>
+                        <p class="text-sm font-bold text-[#0F172A]" id="setPwdAdminNameDisplay">...</p>
+                        <p class="text-[11px] text-gray-400" id="setPwdAdminEmailDisplay">...</p>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nouveau mot de passe <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="password" id="setNewPassword" name="new_password" 
+                                class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" 
+                                placeholder="••••••••" required minlength="8">
+                            <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="setNewPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Minimum 8 caractères</p>
+                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins une majuscule</p>
+                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un chiffre</p>
+                            <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un caractère spécial</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer le mot de passe <span class="text-red-500">*</span></label>
+                        <input type="password" id="setConfirmPassword" name="confirm_password" 
+                            class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" 
+                            placeholder="••••••••" required>
+                    </div>
+
+                    <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-100">
+                        <p class="text-xs text-yellow-700">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Ce mot de passe remplacera définitivement l'ancien. L'administrateur devra utiliser ce nouveau mot de passe.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                        <button type="button" class="closeSetNewPwdBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                            Annuler
+                        </button>
+                        <button type="submit" id="confirmSetNewPwdBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-save"></i> Définir le mot de passe
                         </button>
                     </div>
-                    <div class="mt-2 space-y-1">
-                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Minimum 8 caractères</p>
-                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins une majuscule</p>
-                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un chiffre</p>
-                        <p class="text-[10px] text-gray-500 flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Au moins un caractère spécial</p>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer le mot de passe <span class="text-red-500">*</span></label>
-                    <input type="password" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end gap-2">
-                <button class="closeSetNewPwdBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                    Annuler
-                </button>
-                <button id="confirmSetNewPwdBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-save"></i> Définir le mot de passe
-                </button>
+                </form>
             </div>
         </div>
-    </div>
 
     <!-- MODAL : DÉSACTIVER ADMIN -->
     <div id="disableAdminModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1380,41 +1415,49 @@
 
 
 
-
 // ============================================
-// MODAL RÉINITIALISER MOT DE PASSE
+// MODAL DÉFINIR NOUVEAU MOT DE PASSE
 // ============================================
 
 (function() {
     'use strict';
 
-    const modal = document.getElementById('resetPwdModal');
-    const form = document.getElementById('resetPwdForm');
-    const closeBtns = document.querySelectorAll('.closeResetPwdBtn');
-    const openBtns = document.querySelectorAll('.resetPasswordBtn');
+    const modal = document.getElementById('setNewPwdModal');
+    const form = document.getElementById('setNewPwdForm');
+    const closeBtns = document.querySelectorAll('.closeSetNewPwdBtn');
+    const openBtns = document.querySelectorAll('.setNewPwdBtn');
     
-    const resetId = document.getElementById('resetAdminId');
-    const resetNom = document.getElementById('resetAdminNom');
-    const resetEmail = document.getElementById('resetAdminEmail');
+    const setPwdId = document.getElementById('setPwdAdminId');
+    const setPwdNameDisplay = document.getElementById('setPwdAdminNameDisplay');
+    const setPwdEmailDisplay = document.getElementById('setPwdAdminEmailDisplay');
+    const setNewPassword = document.getElementById('setNewPassword');
+    const setConfirmPassword = document.getElementById('setConfirmPassword');
 
     // ============================================
     // 1. OUVERTURE DU MODAL
     // ============================================
-    function openResetModal(id, nom, email) {
+    function openSetPwdModal(id, nom, email) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
         
         // Remplir les infos
-        resetId.value = id;
-        resetNom.textContent = nom || 'Administrateur';
-        resetEmail.textContent = email || 'email@ndigitmarket.com';
+        setPwdId.value = id;
+        setPwdNameDisplay.textContent = nom || 'Administrateur';
+        setPwdEmailDisplay.textContent = email || 'email@ndigitmarket.com';
+        setNewPassword.value = '';
+        setConfirmPassword.value = '';
+        
+        // Réinitialiser l'état du bouton
+        const submitBtn = document.getElementById('confirmSetNewPwdBtn');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
     }
 
     // ============================================
     // 2. FERMETURE DU MODAL
     // ============================================
-    function closeResetModal() {
+    function closeSetPwdModal() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
         document.body.style.overflow = '';
@@ -1431,22 +1474,20 @@
             const id = this.dataset.id;
             const nom = this.dataset.nom;
             const email = this.dataset.email;
-            openResetModal(id, nom, email);
+            openSetPwdModal(id, nom, email);
         });
     });
 
     // Fermer le modal
-    closeBtns.forEach(btn => btn.addEventListener('click', closeResetModal));
-    
-    // Fermer en cliquant sur le fond
+    closeBtns.forEach(btn => btn.addEventListener('click', closeSetPwdModal));
     modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeResetModal();
+        if (e.target === modal) closeSetPwdModal();
     });
 
     // ESC pour fermer
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-            closeResetModal();
+            closeSetPwdModal();
         }
     });
 
@@ -1456,22 +1497,38 @@
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const id = resetId.value;
-        
+        const id = setPwdId.value;
+        const password = setNewPassword.value;
+        const confirm = setConfirmPassword.value;
+
+        // Validation
         if (!id) {
             showToast('Erreur', 'ID administrateur manquant', 'error');
             return;
         }
-        
+
+        if (!password || password.length < 8) {
+            showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
+            setNewPassword.focus();
+            return;
+        }
+
+        if (password !== confirm) {
+            showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+            setConfirmPassword.focus();
+            return;
+        }
+
         // Désactiver le bouton
-        const submitBtn = document.getElementById('confirmResetPwdBtn');
-        const originalText = submitBtn.innerHTML;
+        const submitBtn = document.getElementById('confirmSetNewPwdBtn');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-        
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+
         // Préparer les données
-        const formData = new FormData(this);
-        
+        const formData = new FormData();
+        formData.append('id', id);
+        formData.append('new_password', password);
+
         // Envoyer la requête
         fetch('/back-end/routes/api.php?url=admin_reset_password', {
             method: 'POST',
@@ -1480,10 +1537,11 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showToast('Succès', data.message || 'Lien de réinitialisation envoyé avec succès', 'success');
-                closeResetModal();
+                showToast('Succès', data.message || 'Mot de passe défini avec succès', 'success');
+                closeSetPwdModal();
+                setTimeout(() => window.location.reload(), 1000);
             } else {
-                showToast('Erreur', data.error || 'Erreur lors de l\'envoi', 'error');
+                showToast('Erreur', data.error || 'Erreur lors de la définition du mot de passe', 'error');
             }
         })
         .catch(error => {
@@ -1492,14 +1550,11 @@
         })
         .finally(() => {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Définir le mot de passe';
         });
     });
 
 })();
-
-
-
 
 
 
@@ -1734,7 +1789,7 @@
 
 
 
-        // ============================================
+// ============================================
 // GESTION DES PARAMÈTRES SYSTÈME
 // ============================================
 
@@ -1761,24 +1816,106 @@
     }
 
     // ============================================
-    // 2. ENVOI DU FORMULAIRE
+    // 2. GESTION DES FICHIERS (Logo/Favicon)
+    // ============================================
+    function previewFile(file, container) {
+        if (!container) return;
+        
+        if (!file || !file.type.startsWith('image/')) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            container.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+            container.style.backgroundColor = 'transparent';
+            container.style.color = 'transparent';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Initialiser la gestion des fichiers
+    document.querySelectorAll('.border-dashed').forEach(container => {
+        const input = container.querySelector('input[type="file"]');
+        if (!input) return;
+
+        // Récupérer le conteneur de preview (le div avec w-16 h-16)
+        const previewContainer = container.closest('.flex')?.querySelector('.w-16.h-16');
+        const fileLabel = container.querySelector('p');
+
+        // Click sur le container = click sur l'input
+        container.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                input.click();
+            }
+        });
+
+        // Drag over
+        container.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
+        });
+
+        // Drag leave
+        container.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+        });
+
+        // Drop
+        container.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
+            
+            if (e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                const file = e.dataTransfer.files[0];
+                
+                if (fileLabel) {
+                    fileLabel.textContent = '📎 ' + file.name;
+                    fileLabel.style.color = '#0EA486';
+                }
+                
+                previewFile(file, previewContainer);
+            }
+        });
+
+        // Change sur l'input (sélection manuelle)
+        input.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                
+                if (fileLabel) {
+                    fileLabel.textContent = '📎 ' + file.name;
+                    fileLabel.style.color = '#0EA486';
+                }
+                
+                previewFile(file, previewContainer);
+            }
+        });
+    });
+
+    // ============================================
+    // 3. ENVOI DU FORMULAIRE
     // ============================================
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Récupérer les données du formulaire
             const formData = new FormData(this);
-            
-            // Désactiver le bouton
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
+            
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
             
             showToast('Enregistrement', 'Mise à jour des paramètres...', 'info');
             
-            // Envoyer la requête
+            console.log('📋 Données du formulaire:');
+            formData.forEach((value, key) => {
+                console.log(`${key}: ${value instanceof File ? value.name : value}`);
+            });
+
             fetch('/back-end/routes/api.php?url=settings_general_update', {
                 method: 'POST',
                 body: formData
@@ -1786,16 +1923,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Succès', 'Paramètres mis à jour avec succès ', 'success');
+                    showToast('Succès', 'Paramètres mis à jour avec succès ✅', 'success');
                     
-                    // Mettre à jour la date
                     const lastUpdate = document.getElementById('lastUpdate');
                     if (lastUpdate) {
                         const now = new Date();
                         lastUpdate.textContent = now.toLocaleString('fr-FR');
                     }
                     
-                    // Recharger la page après 2s
                     setTimeout(() => window.location.reload(), 1500);
                 } else {
                     showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
@@ -1813,64 +1948,16 @@
     }
 
     // ============================================
-    // 3. GESTION DES FICHIERS (Logo/Favicon)
+    // 4. PRÉSERVER LA PREVIEW EXISTANTE
     // ============================================
-    document.querySelectorAll('.border-dashed').forEach(container => {
-        container.addEventListener('click', function() {
-            const input = this.querySelector('input[type="file"]');
-            if (input) input.click();
-        });
-        
-        container.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('border-[#0EA486]', 'bg-[#0EA486]/5');
-        });
-        
-        container.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
-        });
-        
-        container.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('border-[#0EA486]', 'bg-[#0EA486]/5');
-            const input = this.querySelector('input[type="file"]');
-            if (input && e.dataTransfer.files.length > 0) {
-                input.files = e.dataTransfer.files;
-                // Afficher le nom du fichier
-                const label = this.querySelector('p');
-                if (label) {
-                    label.textContent = '📎 ' + e.dataTransfer.files[0].name;
-                }
-            }
-        });
-    });
-
-    // Afficher le nom du fichier sélectionné
-    document.querySelectorAll('input[type="file"]').forEach(input => {
-        input.addEventListener('change', function() {
-            const container = this.closest('.border-dashed');
-            const label = container?.querySelector('p');
-            if (label && this.files.length > 0) {
-                label.textContent = '📎 ' + this.files[0].name;
-            }
-        });
+    document.querySelectorAll('.w-16.h-16.overflow-hidden').forEach(container => {
+        const img = container.querySelector('img');
+        if (img) {
+            container.style.backgroundColor = 'transparent';
+        }
     });
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

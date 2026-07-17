@@ -47,53 +47,73 @@ class SettingController {
     // API PARAMÈTRES GÉNÉRAUX
     // ============================================
 
-/**
- * API - Mettre à jour les paramètres généraux*/
 // App/Controllers/Admin/SettingController.php
 
+/**
+ * Mettre à jour les paramètres généraux
+ */
 public function updateGeneralSettings() {
+     // 🔥 FORCER L'AFFICHAGE DES ERREURS
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('log_errors', 1);
+    
+    // 🔥 LOG
+    error_log("=== 🚀 updateGeneralSettings START ===");
+    error_log("📌 POST: " . print_r($_POST, true));
+    error_log("📌 FILES: " . print_r($_FILES, true));
+    
+    try {
+        // ... le reste du code
+    } catch (Exception $e) {
+        // 🔥 AFFICHER L'ERREUR DANS LA RÉPONSE
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        exit();
+    }
+    
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        $this->jsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
         return;
     }
     
-    // DEBUG - Voir exactement ce qui est envoyé
-    error_log("=== POST DATA ===");
-    error_log(print_r($_POST, true));
-    
-    $data = [
-        'site_name' => trim($_POST['site_name'] ?? ''),
-        'site_tagline' => trim($_POST['site_tagline'] ?? ''),
-        'site_email' => trim($_POST['site_email'] ?? ''),
-        'site_currency' => trim($_POST['currency'] ?? 'FCFA'),
-        'site_logo' => trim($_POST['site_logo'] ?? ''),
-        'site_favicon' => trim($_POST['site_favicon'] ?? ''),
-        'commission_rate' => trim($_POST['commission_rate'] ?? '10'),
-        'min_withdrawal' => trim($_POST['min_withdrawal'] ?? '5000'),
-        'maintenance_mode' => isset($_POST['maintenance_mode']) ? '1' : '0',
-        'maintenance_message' => trim($_POST['maintenance_message'] ?? ''),
-        'facebook_url' => trim($_POST['facebook_url'] ?? ''),
-        'twitter_url' => trim($_POST['twitter_url'] ?? ''),
-        'instagram_url' => trim($_POST['instagram_url'] ?? ''),
-        'linkedin_url' => trim($_POST['linkedin_url'] ?? '')
-    ];
-    
-    // DEBUG - Voir les données préparées
-    error_log("=== DATA TO SAVE ===");
-    error_log(print_r($data, true));
-    
-    $result = $this->model->updateGeneralSettings($data);
-    
-    // DEBUG - Voir le résultat
-    error_log("=== RESULT ===");
-    error_log(var_export($result, true));
-    
-    if ($result) {
-        $this->jsonResponse(['success' => true, 'message' => 'Paramètres généraux mis à jour']);
-    } else {
-        $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour des paramètres'], 500);
+    try {
+        // 1. Récupérer TOUTES les données POST
+        $data = [];
+        foreach ($_POST as $key => $value) {
+            $data[$key] = trim($value);
+        }
+        
+        // 2. Récupérer les fichiers
+        $files = [];
+        if (isset($_FILES['site_logo']) && $_FILES['site_logo']['error'] === UPLOAD_ERR_OK) {
+            $files['site_logo'] = $_FILES['site_logo'];
+        }
+        if (isset($_FILES['site_favicon']) && $_FILES['site_favicon']['error'] === UPLOAD_ERR_OK) {
+            $files['site_favicon'] = $_FILES['site_favicon'];
+        }
+        
+        // 3. Appeler le modèle
+        $result = $this->model->updateGeneralSettings($data, $files);
+        
+        if ($result) {
+            $this->jsonResponse(['success' => true, 'message' => 'Paramètres mis à jour avec succès']);
+        } else {
+            $this->jsonResponse(['success' => false, 'error' => 'Erreur lors de la mise à jour'], 500);
+        }
+        
+    } catch (Exception $e) {
+        error_log("❌ Erreur: " . $e->getMessage());
+        $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
     }
 }
+
 /**
  * API - Mettre à jour tous les paramètres (généraux + SMTP + paiement)
  */
