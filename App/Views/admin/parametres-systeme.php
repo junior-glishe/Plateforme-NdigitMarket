@@ -562,7 +562,6 @@
                         <tbody class="divide-y divide-gray-100">
                             <?php if (!empty($admins)): ?>
                                 <?php foreach ($admins as $admin): 
-                                    // Couleurs par rôle
                                     $roleColors = [
                                         'Super Admin' => 'bg-red-100 text-red-700',
                                         'Admin' => 'bg-indigo-100 text-indigo-700',
@@ -571,7 +570,6 @@
                                     ];
                                     $roleColor = $roleColors[$admin['role'] ?? ''] ?? 'bg-gray-100 text-gray-700';
                                     
-                                    // Icônes par rôle
                                     $roleIcons = [
                                         'Super Admin' => 'crown',
                                         'Admin' => 'user-shield',
@@ -580,15 +578,38 @@
                                     ];
                                     $roleIcon = $roleIcons[$admin['role'] ?? ''] ?? 'user';
                                     
-                                    // Couleurs de statut
+                                    // Gestion du statut
                                     $status = $admin['statut'] ?? 'actif';
                                     $isActive = $status === 'actif';
-                                    $statusColor = $isActive ? 'text-emerald-700 bg-emerald-100' : 'text-gray-600 bg-gray-100';
-                                    $statusIcon = $isActive ? 'circle' : 'pause';
-                                    $statusText = $isActive ? 'Actif' : 'Désactivé';
-                                    $rowOpacity = $isActive ? '' : 'opacity-60';
                                     
-                                    // Initiales
+                                    if ($isActive) {
+                                        $statusColor = 'text-emerald-700 bg-emerald-100';
+                                        $statusIcon = 'circle';
+                                        $statusText = 'Actif';
+                                        $rowOpacity = '';
+                                        $actionButtons = '
+                                            <button class="disableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" 
+                                                    data-id="' . $admin['id'] . '"
+                                                    data-nom="' . htmlspecialchars($admin['nom']) . '"
+                                                    title="Désactiver">
+                                                <i class="fas fa-ban text-xs"></i>
+                                            </button>
+                                        ';
+                                    } else {
+                                        $statusColor = 'text-gray-600 bg-gray-100';
+                                        $statusIcon = 'pause';
+                                        $statusText = 'Inactif';
+                                        $rowOpacity = 'opacity-60';
+                                        $actionButtons = '
+                                            <button class="enableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
+                                                    data-id="' . $admin['id'] . '"
+                                                    data-nom="' . htmlspecialchars($admin['nom']) . '"
+                                                    title="Réactiver">
+                                                <i class="fas fa-check-circle text-xs"></i>
+                                            </button>
+                                        ';
+                                    }
+                                    
                                     $initial = strtoupper(substr($admin['nom'] ?? 'A', 0, 1));
                                 ?>
                                     <tr class="hover:bg-gray-50/50 transition <?= $rowOpacity ?>">
@@ -613,8 +634,8 @@
                                             </span>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <span class="text-[10px] font-semibold <?= $statusColor ?> px-2 py-1 rounded-full">
-                                                <i class="fas fa-<?= $statusIcon ?> text-[6px] mr-1"></i>
+                                            <span class="text-[10px] font-semibold <?= $statusColor ?> px-2 py-1 rounded-full inline-flex items-center gap-1">
+                                                <i class="fas fa-<?= $statusIcon ?> text-[6px]"></i>
                                                 <?= $statusText ?>
                                             </span>
                                         </td>
@@ -625,6 +646,7 @@
                                                         data-id="<?= $admin['id'] ?>"
                                                         data-nom="<?= htmlspecialchars($admin['nom']) ?>"
                                                         data-email="<?= htmlspecialchars($admin['email']) ?>"
+                                                        data-telephone="<?= htmlspecialchars($admin['telephone'] ?? '') ?>"
                                                         data-role="<?= htmlspecialchars($admin['role']) ?>"
                                                         data-image="<?= htmlspecialchars($admin['image_auteur'] ?? '') ?>"
                                                         title="Modifier">
@@ -632,7 +654,7 @@
                                                 </button>
                                                 
                                                 <!-- Réinitialiser mot de passe -->
-                                                <button class="openResetPwdBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
+                                                <button class="resetPasswordBtn w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition" 
                                                         data-id="<?= $admin['id'] ?>"
                                                         data-nom="<?= htmlspecialchars($admin['nom']) ?>"
                                                         title="Réinitialiser mot de passe">
@@ -640,21 +662,7 @@
                                                 </button>
                                                 
                                                 <!-- Désactiver / Réactiver -->
-                                                <?php if ($isActive): ?>
-                                                    <button class="openDisableAdminBtn w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 flex items-center justify-center transition" 
-                                                            data-id="<?= $admin['id'] ?>"
-                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                            title="Désactiver">
-                                                        <i class="fas fa-ban text-xs"></i>
-                                                    </button>
-                                                <?php else: ?>
-                                                    <button class="openEnableAdminBtn w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 flex items-center justify-center transition" 
-                                                            data-id="<?= $admin['id'] ?>"
-                                                            data-nom="<?= htmlspecialchars($admin['nom']) ?>"
-                                                            title="Réactiver">
-                                                        <i class="fas fa-check-circle text-xs"></i>
-                                                    </button>
-                                                <?php endif; ?>
+                                                <?= $actionButtons ?>
                                             </div>
                                         </td>
                                     </tr>
@@ -722,108 +730,111 @@
 
     <!-- MODAL : CRÉER / MODIFIER ADMIN -->
     <div id="adminFormModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
-                <div>
-                    <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
-                        <i class="fas fa-user-shield text-[#0EA486]"></i> <span id="adminFormTitle">Nouvel administrateur</span>
-                    </h3>
-                    <p class="text-xs text-gray-400">Créer ou modifier un compte administrateur</p>
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[92vh] overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#0EA486]/5 to-transparent">
+                    <div>
+                        <h3 class="text-lg font-bold text-[#0F172A] flex items-center gap-2">
+                            <i class="fas fa-user-shield text-[#0EA486]"></i> 
+                            <span id="adminFormTitle">Nouvel administrateur</span>
+                        </h3>
+                        <p class="text-xs text-gray-400" id="adminFormSubtitle">Créer un nouveau compte administrateur</p>
+                    </div>
+                    <button class="closeAdminFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <button class="closeAdminFormBtn w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
 
-            <form class="p-6 overflow-y-auto space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom complet <span class="text-red-500">*</span></label>
-                        <input type="text" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Jean Dupont">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Email <span class="text-red-500">*</span></label>
-                        <input type="email" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="admin@ndigitmarket.com">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Téléphone</label>
-                        <input type="tel" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="+221 ...">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Rôle <span class="text-red-500">*</span></label>
-                        <select class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                            <option>Super Admin</option>
-                            <option>Admin</option>
-                            <option>Modérateur</option>
-                            <option>Support</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Mot de passe <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <input type="password" id="adminPassword" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
-                            <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="adminPassword">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                <form id="adminForm" class="p-6 overflow-y-auto space-y-4">
+                    <input type="hidden" id="adminId" name="id" value="">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom complet <span class="text-red-500">*</span></label>
+                            <input type="text" id="adminNom" name="nom" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="Ex: Jean Dupont" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Email <span class="text-red-500">*</span></label>
+                            <input type="email" id="adminEmail" name="email" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="admin@ndigitmarket.com" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Téléphone</label>
+                            <input type="tel" id="adminTelephone" name="telephone" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="+229 01 47 85 47 58" value="+229 01 47 85 47 58">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Rôle <span class="text-red-500">*</span></label>
+                            <select id="adminRole" name="role" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]" required>
+                                <option value="Super Admin">Super Admin</option>
+                                <option value="Admin" selected>Admin</option>
+                                <option value="Modérateur">Modérateur</option>
+                                <option value="Support">Support</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block" id="passwordLabel">Mot de passe <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="adminPassword" name="mdp" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
+                                <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="adminPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer mot de passe</label>
+                            <input type="password" id="adminPasswordConfirm" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
                         </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Confirmer mot de passe <span class="text-red-500">*</span></label>
-                        <input type="password" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white" placeholder="••••••••">
-                    </div>
-                </div>
 
-                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <h5 class="text-xs font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
-                        <i class="fas fa-key text-[#0EA486]"></i> Permissions
-                    </h5>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Gestion utilisateurs</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Gestion vendeurs</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Gestion produits</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Gestion commandes</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Finances</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Paramètres système</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Contenus & bannières</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                            <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
-                            <span>Support client</span>
-                        </label>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <h5 class="text-xs font-semibold text-gray-600 uppercase mb-3 flex items-center gap-2">
+                            <i class="fas fa-key text-[#0EA486]"></i> Permissions
+                        </h5>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Gestion utilisateurs</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Gestion vendeurs</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Gestion produits</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Gestion commandes</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Finances</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Paramètres système</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Contenus & bannières</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-300 text-[#0EA486]">
+                                <span>Support client</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
-                    <button type="button" class="closeAdminFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
-                        Annuler
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-save"></i> Enregistrer
-                    </button>
-                </div>
-            </form>
+                    <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
+                        <button type="button" class="closeAdminFormBtn px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                            Annuler
+                        </button>
+                        <button type="submit" id="adminSubmitBtn" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-save"></i> <span id="adminSubmitText">Enregistrer</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
     <!-- MODAL : RÉINITIALISER MOT DE PASSE -->
     <div id="resetPwdModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -1144,162 +1155,254 @@
         // Modal test SMTP
         
 
-        // Modal admin form (create/edit)
-        (function() {
-            const modal = document.getElementById('adminFormModal');
-            const openBtns = document.querySelectorAll('.openAdminFormBtn, #openAdminFormBtn');
-            const closeBtns = document.querySelectorAll('.closeAdminFormBtn');
-            const title = document.getElementById('adminFormTitle');
+        // ============================================
+// GESTION ADMINISTRATEURS
+// ============================================
 
-            function openModal(isEdit = false) {
-                title.textContent = isEdit ? 'Modifier l\'administrateur' : 'Nouvel administrateur';
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-            }
+(function() {
+    'use strict';
 
-            openBtns.forEach(btn => btn.addEventListener('click', function() {
-                const isEdit = this.classList.contains('openAdminFormBtn');
-                openModal(isEdit);
-            }));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
+    const modal = document.getElementById('adminFormModal');
+    const form = document.getElementById('adminForm');
+    const closeBtns = document.querySelectorAll('.closeAdminFormBtn');
+    const openBtns = document.querySelectorAll('.openAdminFormBtn');
+    const title = document.getElementById('adminFormTitle');
+    const subtitle = document.getElementById('adminFormSubtitle');
+    const submitText = document.getElementById('adminSubmitText');
+    const adminId = document.getElementById('adminId');
+    const adminNom = document.getElementById('adminNom');
+    const adminEmail = document.getElementById('adminEmail');
+    const adminTelephone = document.getElementById('adminTelephone');
+    const adminRole = document.getElementById('adminRole');
+    const adminPassword = document.getElementById('adminPassword');
+    const adminPasswordConfirm = document.getElementById('adminPasswordConfirm');
+    const passwordLabel = document.getElementById('passwordLabel');
 
-            modal.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                closeModal();
-                showToast('Succès', 'Le compte administrateur a été enregistré', 'success');
-            });
-        })();
+    // ============================================
+    // 1. OUVERTURE MODAL (Création)
+    // ============================================
+    function openCreateModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        // Réinitialiser le formulaire
+        form.reset();
+        adminId.value = '';
+        title.textContent = 'Nouvel administrateur';
+        subtitle.textContent = 'Créer un nouveau compte administrateur';
+        submitText.textContent = 'Enregistrer';
+        passwordLabel.innerHTML = 'Mot de passe <span class="text-red-500">*</span>';
+        adminPassword.required = true;
+        adminPasswordConfirm.required = true;
+        adminTelephone.value = '+229 01 47 85 47 58';
+        document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-save';
+    }
 
-        // Modal reset password
-        (function() {
-            const modal = document.getElementById('resetPwdModal');
-            const openBtns = document.querySelectorAll('.openResetPwdBtn');
-            const closeBtns = document.querySelectorAll('.closeResetPwdBtn');
-            const confirmBtn = document.getElementById('confirmResetPwdBtn');
+    // ============================================
+    // 2. OUVERTURE MODAL (Modification)
+    // ============================================
+    function openEditModal(adminData) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        
+        // Remplir les champs
+        adminId.value = adminData.dataset.id;
+        adminNom.value = adminData.dataset.nom;
+        adminEmail.value = adminData.dataset.email;
+        adminTelephone.value = adminData.dataset.telephone || '+229 01 47 85 47 58';
+        adminRole.value = adminData.dataset.role || 'Admin';
+        
+        title.textContent = 'Modifier administrateur';
+        subtitle.textContent = 'Mettre à jour les informations du compte';
+        submitText.textContent = 'Mettre à jour';
+        passwordLabel.innerHTML = 'Nouveau mot de passe <span class="text-gray-400 text-xs font-normal">(laisser vide pour ne pas changer)</span>';
+        adminPassword.required = false;
+        adminPasswordConfirm.required = false;
+        adminPassword.value = '';
+        adminPasswordConfirm.value = '';
+        document.querySelector('#adminSubmitBtn .fas').className = 'fas fa-edit';
+    }
 
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            openBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            confirmBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Lien envoyé', 'Un email de réinitialisation a été envoyé', 'success');
-            });
-        })();
-
-        // Modal set new password
-        (function() {
-            const modal = document.getElementById('setNewPwdModal');
-            const closeBtns = document.querySelectorAll('.closeSetNewPwdBtn');
-            const confirmBtn = document.getElementById('confirmSetNewPwdBtn');
-
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            confirmBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Mot de passe défini', 'Le nouveau mot de passe a été enregistré', 'success');
-            });
-        })();
-
-        // Modal disable admin
-        (function() {
-            const modal = document.getElementById('disableAdminModal');
-            const openBtns = document.querySelectorAll('.openDisableAdminBtn');
-            const closeBtns = document.querySelectorAll('.closeDisableAdminBtn');
-            const confirmBtn = document.getElementById('confirmDisableAdminBtn');
-
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            openBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            confirmBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Compte désactivé', 'L\'administrateur a été désactivé', 'warning');
-            });
-        })();
-
-        // Modal enable admin
-        (function() {
-            const modal = document.getElementById('enableAdminModal');
-            const openBtns = document.querySelectorAll('.openEnableAdminBtn');
-            const closeBtns = document.querySelectorAll('.closeEnableAdminBtn');
-            const confirmBtn = document.getElementById('confirmEnableAdminBtn');
-
-            function openModal() {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-            function closeModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            openBtns.forEach(btn => btn.addEventListener('click', openModal));
-            closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal();
-            });
-
-            confirmBtn.addEventListener('click', function() {
-                closeModal();
-                showToast('Compte réactivé', 'L\'administrateur a été réactivé', 'success');
-            });
-        })();
-
-        // ESC pour fermer tous les modals
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(modal => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
+     // ============================================
+    // 1. DÉSACTIVER UN ADMINISTRATEUR
+    // ============================================
+    document.querySelectorAll('.disableAdminBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nom = this.dataset.nom;
+            
+            if (confirm(`Êtes-vous sûr de vouloir désactiver l'administrateur "${nom}" ?`)) {
+                const formData = new FormData();
+                formData.append('id', id);
+                
+                fetch('/back-end/routes/api.php?url=admin_disable', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Succès', data.message, 'success');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast('Erreur', data.error || 'Erreur lors de la désactivation', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showToast('Erreur', 'Erreur de connexion au serveur', 'error');
                 });
-                document.body.style.overflow = '';
             }
         });
+    });
 
+    // ============================================
+    // 2. RÉACTIVER UN ADMINISTRATEUR
+    // ============================================
+    document.querySelectorAll('.enableAdminBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nom = this.dataset.nom;
+            
+            if (confirm(`Êtes-vous sûr de vouloir réactiver l'administrateur "${nom}" ?`)) {
+                const formData = new FormData();
+                formData.append('id', id);
+                
+                fetch('/back-end/routes/api.php?url=admin_enable', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Succès', data.message, 'success');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showToast('Erreur', data.error || 'Erreur lors de la réactivation', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+                });
+            }
+        });
+    });
+
+
+    // ============================================
+    // 3. FERMETURE MODAL
+    // ============================================
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    // ============================================
+    // 4. ÉVÉNEMENTS
+    // ============================================
+    
+    // Ouvrir pour création
+    document.querySelector('.openAdminFormBtn:not([data-id])')?.addEventListener('click', openCreateModal);
+    
+    // Ouvrir pour modification
+    document.querySelectorAll('.openAdminFormBtn[data-id]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            openEditModal(this);
+        });
+    });
+
+    // Fermeture
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // ESC pour fermer
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // ============================================
+    // 5. SOUMISSION DU FORMULAIRE
+    // ============================================
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validation
+        const nom = adminNom.value.trim();
+        const email = adminEmail.value.trim();
+        const role = adminRole.value;
+        const password = adminPassword.value;
+        const passwordConfirm = adminPasswordConfirm.value;
+        const id = adminId.value;
+        
+        if (!nom || !email || !role) {
+            showToast('Erreur', 'Veuillez remplir tous les champs obligatoires', 'error');
+            return;
+        }
+        
+        // Validation email
+        if (!email.includes('@') || !email.includes('.')) {
+            showToast('Erreur', 'Email invalide', 'error');
+            return;
+        }
+        
+        // Si création ou mot de passe modifié
+        if ((!id && password.length < 8) || (id && password && password.length < 8)) {
+            showToast('Erreur', 'Le mot de passe doit contenir au moins 8 caractères', 'error');
+            return;
+        }
+        
+        if (password && password !== passwordConfirm) {
+            showToast('Erreur', 'Les mots de passe ne correspondent pas', 'error');
+            return;
+        }
+        
+        // Désactiver le bouton
+        const submitBtn = document.getElementById('adminSubmitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> En cours...';
+        
+        // Préparer les données
+        const formData = new FormData(this);
+        
+        // Déterminer l'URL
+        const url = id ? '/back-end/routes/api.php?url=admin_update' : '/back-end/routes/api.php?url=admin_create';
+        
+        // Envoyer la requête
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Succès', data.message, 'success');
+                closeModal();
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de l\'opération', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur', 'Erreur de connexion au serveur', 'error');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> ' + (id ? 'Mettre à jour' : 'Enregistrer');
+        });
+    });
+
+})();
+
+        
 
 
 

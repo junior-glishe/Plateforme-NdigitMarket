@@ -596,7 +596,11 @@ ALTER TABLE admin ADD COLUMN IF NOT EXISTS statut VARCHAR(50) DEFAULT 'actif';
 
 -- Ajouter la colonne derniere_connexion si elle n'existe pas
 ALTER TABLE admin ADD COLUMN IF NOT EXISTS derniere_connexion DATETIME NULL;
+-- Ajouter la colonne telephone
+ALTER TABLE admin ADD COLUMN IF NOT EXISTS telephone VARCHAR(20) NULL AFTER email;
 
+-- Vérifier la structure
+DESCRIBE admin;
 
 
 

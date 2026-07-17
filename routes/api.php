@@ -415,40 +415,39 @@ switch ($url) {
         $controller->testSmtp();
         break;
 
-
-    // API - Créer administrateur
-    case 'settings_admin_create':
-        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
-        $controller = new SettingController($pdo);
+    // Créer un administrateur
+    case 'admin_create':
+        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
+        $controller = new AdminController($pdo);
         $controller->createAdmin();
         break;
 
-    // API - Mettre à jour administrateur
-    case 'settings_admin_update':
-        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
-        $controller = new SettingController($pdo);
+    // Mettre à jour un administrateur
+    case 'admin_update':
+        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
+        $controller = new AdminController($pdo);
         $controller->updateAdmin();
         break;
 
-    // API - Désactiver administrateur
-    case 'settings_admin_disable':
-        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
-        $controller = new SettingController($pdo);
+    // Désactiver un administrateur
+    case 'admin_disable':
+        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
+        $controller = new AdminController($pdo);
         $controller->disableAdmin();
         break;
 
-    // API - Réactiver administrateur
-    case 'settings_admin_enable':
-        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
-        $controller = new SettingController($pdo);
+    // Réactiver un administrateur
+    case 'admin_enable':
+        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
+        $controller = new AdminController($pdo);
         $controller->enableAdmin();
         break;
 
-    // API - Réinitialiser mot de passe admin
-    case 'settings_admin_reset_password':
-        require_once __DIR__ . '/../App/Controllers/Admin/SettingController.php';
-        $controller = new SettingController($pdo);
-        $controller->resetAdminPassword();
+    // Réinitialiser mot de passe
+    case 'admin_reset_password':
+        require_once __DIR__ . '/../App/Controllers/Admin/AdminController.php';
+        $controller = new AdminController($pdo);
+        $controller->resetPassword();
         break;
 
         // ============================================

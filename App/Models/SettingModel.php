@@ -151,9 +151,11 @@ public function updateGeneralSettings($data) {
                     id_gestion as id,
                     nom,
                     email,
+                    telephone,
                     image_auteur,
                     role,
-                    statut
+                    statut,
+                    derniere_connexion
                 FROM admin
                 ORDER BY id_gestion ASC
             ");
@@ -164,13 +166,38 @@ public function updateGeneralSettings($data) {
         }
     }
 
+     /**
+     * Récupérer un administrateur par ID
+     */
+    public function getAdminById($id) {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    id_gestion as id,
+                    nom,
+                    email,
+                    telephone,
+                    image_auteur,
+                    role,
+                    statut
+                FROM admin
+                WHERE id_gestion = ?
+            ");
+            $stmt->execute([$id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur getAdminById: " . $e->getMessage());
+            return null;
+        }
+    }
+
     /**
      * Compter les administrateurs
      */
     public function countAdmins() {
         try {
             $stmt = $this->pdo->query("
-                 SELECT 
+                  SELECT 
                     COUNT(*) as total,
                     SUM(CASE WHEN statut = 'actif' THEN 1 ELSE 0 END) as actifs,
                     SUM(CASE WHEN role = 'Super Admin' THEN 1 ELSE 0 END) as super_admins
@@ -191,12 +218,13 @@ public function updateGeneralSettings($data) {
             $hashedPassword = password_hash($data['mdp'], PASSWORD_DEFAULT);
             
             $stmt = $this->pdo->prepare("
-                INSERT INTO admin (nom, email, mdp, image_auteur, role, statut) 
-                VALUES (?, ?, ?, ?, ?, 'actif')
+                INSERT INTO admin (nom, email, telephone, mdp, image_auteur, role, statut) 
+                VALUES (?, ?, ?, ?, ?, ?, 'actif')
             ");
             return $stmt->execute([
                 $data['nom'],
                 $data['email'],
+                $data['telephone'] ?? '',
                 $hashedPassword,
                 $data['image_auteur'] ?? 'uploads/default.png',
                 $data['role']
@@ -207,22 +235,24 @@ public function updateGeneralSettings($data) {
         }
     }
 
-    /**
+     /**
      * Mettre à jour un administrateur
      */
     public function updateAdmin($id, $data) {
         try {
-            $sql = "UPDATE admin SET nom = ?, email = ?, role = ? WHERE id_gestion = ?";
-            $params = [$data['nom'], $data['email'], $data['role'], $id];
+            $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, role = ? WHERE id_gestion = ?";
+            $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['role'], $id];
             
+            // Si mot de passe fourni
             if (!empty($data['mdp'])) {
-                $sql = "UPDATE admin SET nom = ?, email = ?, mdp = ?, role = ? WHERE id_gestion = ?";
-                $params = [$data['nom'], $data['email'], password_hash($data['mdp'], PASSWORD_DEFAULT), $data['role'], $id];
+                $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, mdp = ?, role = ? WHERE id_gestion = ?";
+                $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', password_hash($data['mdp'], PASSWORD_DEFAULT), $data['role'], $id];
             }
             
+            // Si image fournie
             if (!empty($data['image_auteur'])) {
-                $sql = "UPDATE admin SET nom = ?, email = ?, image_auteur = ?, role = ? WHERE id_gestion = ?";
-                $params = [$data['nom'], $data['email'], $data['image_auteur'], $data['role'], $id];
+                $sql = "UPDATE admin SET nom = ?, email = ?, telephone = ?, image_auteur = ?, role = ? WHERE id_gestion = ?";
+                $params = [$data['nom'], $data['email'], $data['telephone'] ?? '', $data['image_auteur'], $data['role'], $id];
             }
             
             $stmt = $this->pdo->prepare($sql);
@@ -233,10 +263,9 @@ public function updateGeneralSettings($data) {
         }
     }
 
-
-   /**
+    /**
      * Désactiver un administrateur
-*/
+     */
     public function disableAdmin($id) {
         try {
             $stmt = $this->pdo->prepare("UPDATE admin SET statut = 'inactif' WHERE id_gestion = ?");
@@ -274,7 +303,7 @@ public function updateGeneralSettings($data) {
         }
     }
 
-     /**
+    /**
      * Vérifier si un email existe déjà
      */
     public function emailExists($email, $excludeId = null) {
@@ -296,8 +325,6 @@ public function updateGeneralSettings($data) {
             return false;
         }
     }
-
-
     // ============================================
     // TABLE DES PARAMÈTRES
     // ============================================
