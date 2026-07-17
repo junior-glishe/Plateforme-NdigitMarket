@@ -581,7 +581,8 @@
                         <h5 class="text-xs font-semibold text-gray-500 uppercase mb-3 flex items-center gap-2">
                             <i class="fas fa-eye text-[#0EA486]"></i> Aperçu en temps réel
                         </h5>
-                        <div id="bannerPreview" class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg">
+                        <div id="bannerPreview" class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg"
+                        style="background-image: url('/back-end/public/uploads/bannieres/<?= htmlspecialchars($banniere['image'] ?? '') ?>'); background-size: cover; background-position: center; <?= empty($banniere['image']) ? 'background: linear-gradient(135deg, #6366f1, #8b5cf6);' : '' ?>">
                             <div class="absolute inset-0 bg-black/30"></div>
                             <div class="relative text-center text-white px-6">
                                 <p id="previewSubtitle" class="text-sm font-bold uppercase tracking-wider mb-2">Sous-titre</p>
@@ -622,17 +623,24 @@
                         <i class="fas fa-desktop text-[#0EA486]"></i> Version desktop
                     </h5>
                     <div id="previewDesktop" class="rounded-2xl h-64 flex items-center justify-center relative overflow-hidden shadow-lg"
-                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                        >
                         <div class="absolute inset-0 bg-black/30"></div>
-                        <div class="relative text-center text-white px-6 z-10">
-                            <p id="previewDesktopSubtitle" class="text-sm font-bold uppercase tracking-wider mb-2">Promo</p>
-                            <p id="previewDesktopTitle" class="text-3xl font-extrabold mb-4">Titre de la bannière</p>
-                            <button id="previewDesktopButton" class="px-6 py-2.5 bg-white text-[#0F172A] rounded-xl text-sm font-bold hover:scale-105 transition">
-                                Voir les offres
-                            </button>
+                            <div class="relative text-center text-white px-6 z-10">
+                                <div id="previewDesktop" class="rounded-2xl w-full h-64 md:h-80 lg:h-96 flex items-center justify-center relative overflow-hidden shadow-lg bg-cover bg-center"
+                                    style="background-image: url('/back-end/public/uploads/bannieres/<?= htmlspecialchars($banniere['image'] ?? '') ?>'); background-size: cover; background-position: center;">
+                                    <!-- Overlay sombre pour la lisibilité -->
+                                    <div class="absolute inset-0 bg-black/40"></div>
+                                    <div class="relative text-center text-white px-6 z-10">
+                                        <p id="previewDesktopSubtitle" class="text-sm md:text-base font-bold uppercase tracking-wider mb-2"><?= htmlspecialchars($banniere['sous_titre'] ?? 'Promo') ?></p>
+                                        <p id="previewDesktopTitle" class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4"><?= htmlspecialchars($banniere['titre'] ?? 'Titre de la bannière') ?></p>
+                                        <button id="previewDesktopButton" class="px-6 py-2.5 bg-white text-[#0F172A] rounded-xl text-sm md:text-base font-bold hover:scale-105 transition">
+                                            <?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                 <!-- Preview mobile -->
                 <div>
@@ -640,14 +648,15 @@
                         <i class="fas fa-mobile-alt text-[#0EA486]"></i> Version mobile
                     </h5>
                     <div class="max-w-sm mx-auto">
-                        <div id="previewMobile" class="rounded-2xl h-48 flex items-center justify-center relative overflow-hidden shadow-lg"
-                            style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
-                            <div class="absolute inset-0 bg-black/30"></div>
+                        <div id="previewMobile" class="rounded-2xl h-48 w-full flex items-center justify-center relative overflow-hidden shadow-lg bg-cover bg-center"
+                            style="background-image: url('/back-end/public/uploads/bannieres/<?= htmlspecialchars($banniere['image'] ?? '') ?>'); background-size: cover; background-position: center; <?= empty($banniere['image']) ? 'background: linear-gradient(135deg, #6366f1, #8b5cf6);' : '' ?>">
+                            <!-- Overlay sombre pour la lisibilité -->
+                            <div class="absolute inset-0 bg-black/40"></div>
                             <div class="relative text-center text-white px-4 z-10">
-                                <p id="previewMobileSubtitle" class="text-xs font-bold uppercase tracking-wider mb-1">Promo</p>
-                                <p id="previewMobileTitle" class="text-xl font-extrabold mb-3">Titre de la bannière</p>
-                                <button id="previewMobileButton" class="px-4 py-2 bg-white text-[#0F172A] rounded-lg text-xs font-bold">
-                                    Voir les offres
+                                <p id="previewMobileSubtitle" class="text-xs font-bold uppercase tracking-wider mb-1"><?= htmlspecialchars($banniere['sous_titre'] ?? 'Promo') ?></p>
+                                <p id="previewMobileTitle" class="text-lg md:text-xl font-extrabold mb-3"><?= htmlspecialchars($banniere['titre'] ?? 'Titre de la bannière') ?></p>
+                                <button id="previewMobileButton" class="px-4 py-2 bg-white text-[#0F172A] rounded-lg text-xs font-bold hover:scale-105 transition">
+                                    <?= htmlspecialchars($banniere['texte_bouton'] ?? 'Voir les offres') ?>
                                 </button>
                             </div>
                         </div>
