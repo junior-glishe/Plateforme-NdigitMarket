@@ -810,7 +810,7 @@ class SettingModel
                 </div>
             </div>
         </body>
-        </html>';
+        </html>';   
 
         // Envoyer l'email
         $this->sendSmtpMail($smtp, $toEmail, ' Test SMTP - NDIGITMARKET', $body);
