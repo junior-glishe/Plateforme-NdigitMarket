@@ -621,44 +621,212 @@ class SettingModel
      * Tester la configuration SMTP
      */
     public function testSmtp($toEmail, $message = '')
-    {
-        try {
-            // Récupérer les paramètres SMTP depuis la BDD
-            $smtp = $this->getSmtpSettings();
+{
+    try {
+        // Récupérer les paramètres SMTP depuis la BDD
+        $smtp = $this->getSmtpSettings();
 
-            // Vérifier que la configuration est complète
-            if (empty($smtp['smtp_host']) || empty($smtp['smtp_username']) || empty($smtp['smtp_password'])) {
-                return ['success' => false, 'error' => 'Configuration SMTP incomplète'];
-            }
-
-            $fromEmail = $smtp['smtp_from_email'] ?? $smtp['smtp_username'];
-
-            // Corps du message
-            $body = "Bonjour,\n\n";
-            $body .= "Ceci est un email de test envoyé depuis la plateforme NDIGITMARKET.\n\n";
-            $body .= "La configuration SMTP fonctionne correctement.\n\n";
-            if (!empty($message)) {
-                $body .= "Message personnel :\n" . $message . "\n\n";
-            }
-            $body .= "---\n";
-            $body .= "Serveur : " . $smtp['smtp_host'] . "\n";
-            $body .= "Port : " . $smtp['smtp_port'] . "\n";
-            $body .= "Sécurité : " . $smtp['smtp_encryption'] . "\n";
-            $body .= "Expéditeur : " . $fromEmail . "\n\n";
-            $body .= "© " . date('Y') . " NDIGITMARKET";
-
-            $this->sendSmtpMail($smtp, $toEmail, 'Test SMTP - NDIGITMARKET', nl2br($body));
-
-            return ['success' => true, 'message' => 'Email envoyé avec succès'];
-        } catch (Exception $e) {
-            error_log("Erreur SMTP test: " . $e->getMessage());
-            return ['success' => false, 'error' => $e->getMessage()];
+        // Vérifier que la configuration est complète
+        if (empty($smtp['smtp_host']) || empty($smtp['smtp_username']) || empty($smtp['smtp_password'])) {
+            return ['success' => false, 'error' => 'Configuration SMTP incomplète'];
         }
+
+        $fromEmail = $smtp['smtp_from_email'] ?? $smtp['smtp_username'];
+        $fromName = $smtp['smtp_from_name'] ?? 'NDIGITMARKET';
+
+        // Corps du message en HTML avec design
+        $body = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Test SMTP - NDIGITMARKET</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f7fa;
+                    margin: 0;
+                    padding: 20px;
+                    color: #1F2937;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: #ffffff;
+                    border-radius: 16px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                    overflow: hidden;
+                    border: 1px solid #e5e7eb;
+                }
+                .header {
+                    background: linear-gradient(135deg, #0EA486 0%, #0c8f75 100%);
+                    padding: 30px 40px;
+                    text-align: center;
+                    color: white;
+                }
+                .header h1 {
+                    font-size: 24px;
+                    margin: 0;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                }
+                .header p {
+                    font-size: 14px;
+                    margin: 5px 0 0;
+                    opacity: 0.9;
+                }
+                .content {
+                    padding: 40px;
+                    line-height: 1.6;
+                }
+                .content .greeting {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #0F172A;
+                    margin-bottom: 10px;
+                }
+                .content .message {
+                    color: #4B5563;
+                    font-size: 15px;
+                }
+                .content .divider {
+                    border: none;
+                    border-top: 2px solid #E5E7EB;
+                    margin: 25px 0;
+                }
+                .content .info-box {
+                    background: #F9FAFB;
+                    border-left: 4px solid #0EA486;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .content .info-box strong {
+                    color: #0F172A;
+                }
+                .content .info-box .label {
+                    color: #6B7280;
+                    font-size: 13px;
+                }
+                .content .info-box .value {
+                    color: #0F172A;
+                    font-weight: 600;
+                }
+                .badge {
+                    display: inline-block;
+                    background: #D1FAE5;
+                    color: #065F46;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+                .footer {
+                    background: #F9FAFB;
+                    padding: 20px 40px;
+                    text-align: center;
+                    border-top: 1px solid #E5E7EB;
+                    font-size: 12px;
+                    color: #6B7280;
+                }
+                .footer a {
+                    color: #0EA486;
+                    text-decoration: none;
+                }
+                .footer a:hover {
+                    text-decoration: underline;
+                }
+                .social-links {
+                    margin-top: 10px;
+                }
+                .social-links a {
+                    margin: 0 8px;
+                    color: #6B7280;
+                    text-decoration: none;
+                }
+                .social-links a:hover {
+                    color: #0EA486;
+                }
+                .note {
+                    font-size: 12px;
+                    color: #9CA3AF;
+                    margin-top: 15px;
+                    padding: 10px;
+                    background: #F3F4F6;
+                    border-radius: 8px;
+                    text-align: center;
+                }
+                @media (max-width: 480px) {
+                    .header { padding: 20px; }
+                    .content { padding: 20px; }
+                    .footer { padding: 15px 20px; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <!-- Header -->
+                <div class="header">
+                    <h1> NDIGITMARKET</h1>
+                </div>
+
+                <!-- Content -->
+                <div class="content">
+                    <div class="greeting">
+                        Bonjour,
+                    </div>
+
+                    <div class="message">
+                        <p>Ce mail vous a été envoyé depuis la plateforme <strong>NDIGITMARKET</strong>.</p>
+                    </div>
+
+                    <hr class="divider">
+
+                    <!-- Message personnel -->
+                    ' . (!empty($message) ? '
+                    <div style="background: #F0FDF4; padding: 15px 20px; border-radius: 8px; border: 1px solid #BBF7D0; margin-bottom: 20px;">
+                        <p style="margin: 0; color: #065F46; font-size: 14px; font-style: italic;">
+                            " ' . htmlspecialchars($message) . ' "
+                        </p>
+                    </div>
+                    ' : '') . '                    
+
+                    <div class="note">
+                        <i class="fas fa-info-circle"></i>
+                        Cet email a été envoyé automatiquement depuis NDIGITMARKET.
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                    <p style="margin: 0;">
+                        &copy; ' . date('Y') . ' <strong>NDIGITMARKET</strong> · Tous droits réservés
+                    </p>
+                    <div class="social-links">
+                        <span style="color: #9CA3AF; font-size: 11px;">
+                            Ceci est un message automatique, merci de ne pas y répondre.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>';
+
+        // Envoyer l'email
+        $this->sendSmtpMail($smtp, $toEmail, ' Test SMTP - NDIGITMARKET', $body);
+
+        return ['success' => true, 'message' => 'Email envoyé avec succès'];
+    } catch (Exception $e) {
+        error_log("Erreur SMTP test: " . $e->getMessage());
+        return ['success' => false, 'error' => $e->getMessage()];
     }
+}
 
     private function smtpRead($socket, array $expectedCodes)
     {
-        $response = '';
+
+        
+    $response = '';
         while (($line = fgets($socket, 515)) !== false) {
             $response .= $line;
             if (isset($line[3]) && $line[3] === ' ') {
