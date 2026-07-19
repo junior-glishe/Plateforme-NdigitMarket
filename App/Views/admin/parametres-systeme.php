@@ -261,15 +261,18 @@
                         <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                             <i class="fas fa-key text-[#0EA486]"></i> Configuration FedaPay
                         </h4>
-                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">
-                            <i class="fas fa-check mr-1"></i>Connecté
+                        <span class="text-[10px] font-semibold <?= !empty($settings['fedapay_public_key']) ? 'text-emerald-700 bg-emerald-100' : 'text-amber-700 bg-amber-100' ?> px-2 py-1 rounded-full">
+                            <i class="fas fa-<?= !empty($settings['fedapay_public_key']) ? 'check' : 'exclamation-triangle' ?> mr-1"></i>
+                            <?= !empty($settings['fedapay_public_key']) ? 'Configuré' : 'Non configuré' ?>
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API publique <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" id="fedapayPublicKey" value="pub_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="password" name="fedapay_public_key" id="fedapayPublicKey" 
+                                    value="<?= htmlspecialchars($settings['fedapay_public_key'] ?? '') ?>" 
+                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapayPublicKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -278,7 +281,9 @@
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Clé API secrète <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" id="fedapaySecretKey" value="sec_test_xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                                <input type="password" name="fedapay_secret_key" id="fedapaySecretKey" 
+                                    value="<?= htmlspecialchars($settings['fedapay_secret_key'] ?? '') ?>" 
+                                    class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="fedapaySecretKey">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -287,18 +292,18 @@
                         <div class="md:col-span-2">
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mode</label>
                             <div class="flex gap-2">
-                                <label class="flex-1 flex items-center gap-2 p-3 bg-blue-50 border-2 border-blue-200 rounded-xl cursor-pointer">
-                                    <input type="radio" name="fedapayMode" value="test" checked class="w-4 h-4 text-blue-500">
+                                <label class="flex-1 flex items-center gap-2 p-3 <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50 border-2 border-gray-200' ?> rounded-xl cursor-pointer">
+                                    <input type="radio" name="fedapay_mode" value="test" <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'checked' : '' ?> class="w-4 h-4 text-blue-500">
                                     <div>
-                                        <p class="text-xs font-semibold text-blue-700">Test / Sandbox</p>
-                                        <p class="text-[10px] text-blue-600">Transactions fictives</p>
+                                        <p class="text-xs font-semibold <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'text-blue-700' : 'text-gray-700' ?>">Test / Sandbox</p>
+                                        <p class="text-[10px] <?= ($settings['fedapay_mode'] ?? 'test') === 'test' ? 'text-blue-600' : 'text-gray-500' ?>">Transactions fictives</p>
                                     </div>
                                 </label>
-                                <label class="flex-1 flex items-center gap-2 p-3 bg-gray-50 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
-                                    <input type="radio" name="fedapayMode" value="live" class="w-4 h-4 text-[#0EA486]">
+                                <label class="flex-1 flex items-center gap-2 p-3 <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'bg-emerald-50 border-2 border-emerald-200' : 'bg-gray-50 border-2 border-gray-200' ?> rounded-xl cursor-pointer">
+                                    <input type="radio" name="fedapay_mode" value="live" <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'checked' : '' ?> class="w-4 h-4 text-[#0EA486]">
                                     <div>
-                                        <p class="text-xs font-semibold text-gray-700">Production / Live</p>
-                                        <p class="text-[10px] text-gray-500">Transactions réelles</p>
+                                        <p class="text-xs font-semibold <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'text-emerald-700' : 'text-gray-700' ?>">Production / Live</p>
+                                        <p class="text-[10px] <?= ($settings['fedapay_mode'] ?? 'test') === 'live' ? 'text-emerald-600' : 'text-gray-500' ?>">Transactions réelles</p>
                                     </div>
                                 </label>
                             </div>
@@ -312,7 +317,7 @@
                         <i class="fas fa-wallet text-[#0EA486]"></i> Modes de paiement activés
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_mobile_money'] ?? '1') == '1' ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-mobile-alt text-[#0EA486]"></i>
@@ -322,9 +327,9 @@
                                     <p class="text-[10px] text-gray-500">Orange, MTN, Moov, Wave</p>
                                 </div>
                             </div>
-                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_mobile_money" <?= ($settings['payment_mobile_money'] ?? '1') == '1' ? 'checked' : '' ?> class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer">
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_card'] ?? '1') == '1' ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
                                     <i class="fas fa-credit-card text-[#0EA486]"></i>
@@ -334,31 +339,31 @@
                                     <p class="text-[10px] text-gray-500">Visa, Mastercard</p>
                                 </div>
                             </div>
-                            <input type="checkbox" checked class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_card" <?= ($settings['payment_card'] ?? '1') == '1' ? 'checked' : '' ?> class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_bank_transfer'] ?? '0') == '1' ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-university text-gray-500"></i>
+                                    <i class="fas fa-university <?= ($settings['payment_bank_transfer'] ?? '0') == '1' ? 'text-[#0EA486]' : 'text-gray-500' ?>"></i>
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-[#0F172A]">Virement bancaire</p>
                                     <p class="text-[10px] text-gray-500">Transfert direct</p>
                                 </div>
                             </div>
-                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_bank_transfer" <?= ($settings['payment_bank_transfer'] ?? '0') == '1' ? 'checked' : '' ?> class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
-                        <label class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-300">
+                        <label class="flex items-center justify-between p-3 <?= ($settings['payment_paypal'] ?? '0') == '1' ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200' ?> border rounded-xl cursor-pointer">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                                    <i class="fab fa-paypal text-blue-600"></i>
+                                    <i class="fab fa-paypal <?= ($settings['payment_paypal'] ?? '0') == '1' ? 'text-blue-600' : 'text-gray-400' ?>"></i>
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-[#0F172A]">PayPal</p>
                                     <p class="text-[10px] text-gray-500">International</p>
                                 </div>
                             </div>
-                            <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
+                            <input type="checkbox" name="payment_paypal" <?= ($settings['payment_paypal'] ?? '0') == '1' ? 'checked' : '' ?> class="w-5 h-5 rounded border-gray-300 text-[#0EA486]">
                         </label>
                     </div>
                 </div>
@@ -371,27 +376,31 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant minimum de commande (FCFA)</label>
-                            <input type="number" value="500" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="min_order_amount" value="<?= htmlspecialchars($settings['min_order_amount'] ?? '500') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Montant maximum de commande (FCFA)</label>
-                            <input type="number" value="5000000" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="max_order_amount" value="<?= htmlspecialchars($settings['max_order_amount'] ?? '5000000') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de remboursement (jours)</label>
-                            <input type="number" value="7" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="refund_days" value="<?= htmlspecialchars($settings['refund_days'] ?? '7') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                             <p class="text-[10px] text-gray-400 mt-1">Durée pendant laquelle un remboursement peut être demandé</p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Délai de versement vendeur (jours)</label>
-                            <input type="number" value="30" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
+                            <input type="number" name="vendor_payout_days" value="<?= htmlspecialchars($settings['vendor_payout_days'] ?? '30') ?>" 
+                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                             <p class="text-[10px] text-gray-400 mt-1">Fréquence des versements aux vendeurs</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-2">
-                    <button type="button" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
+                    <button type="button" id="resetPaymentForm" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium">
                         Annuler
                     </button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#0EA486] hover:bg-[#0c8f75] text-white text-sm font-semibold flex items-center gap-2 shadow-sm">
@@ -414,39 +423,40 @@
                 $smtp = $smtpSettings ?? [];
                 ?>
 
+                <!-- Serveur SMTP -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2">
                             <i class="fas fa-server text-[#0EA486]"></i> Serveur SMTP
                         </h4>
-                        <span class="text-[10px] font-semibold <?= !empty($smtp['smtp_host']) ? 'text-emerald-700 bg-emerald-100' : 'text-amber-700 bg-amber-100' ?> px-2 py-1 rounded-full">
-                            <i class="fas fa-<?= !empty($smtp['smtp_host']) ? 'check' : 'exclamation-triangle' ?> mr-1"></i>
-                            <?= !empty($smtp['smtp_host']) ? 'Configuré' : 'Non configuré' ?>
+                        <span class="text-[10px] font-semibold <?= !empty($smtpSettings['smtp_host']) ? 'text-emerald-700 bg-emerald-100' : 'text-amber-700 bg-amber-100' ?> px-2 py-1 rounded-full">
+                            <i class="fas fa-<?= !empty($smtpSettings['smtp_host']) ? 'check' : 'exclamation-triangle' ?> mr-1"></i>
+                            <?= !empty($smtpSettings['smtp_host']) ? 'Configuré' : 'Non configuré' ?>
                         </span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-2">
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Serveur SMTP <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_host" id="smtp_host" value="<?= htmlspecialchars($smtp['smtp_host'] ?? '') ?>"
+                            <input type="text" name="smtp_host" id="smtp_host" value="<?= htmlspecialchars($smtpSettings['smtp_host'] ?? '') ?>"
                                 placeholder="ex: smtp.gmail.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Port <span class="text-red-500">*</span></label>
-                            <input type="number" name="smtp_port" id="smtp_port" value="<?= htmlspecialchars($smtp['smtp_port'] ?? '') ?>"
+                            <input type="number" name="smtp_port" id="smtp_port" value="<?= htmlspecialchars($smtpSettings['smtp_port'] ?? '') ?>"
                                 placeholder="587"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom d'utilisateur <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_username" id="smtp_username" value="<?= htmlspecialchars($smtp['smtp_username'] ?? '') ?>"
+                            <input type="text" name="smtp_username" id="smtp_username" value="<?= htmlspecialchars($smtpSettings['smtp_username'] ?? '') ?>"
                                 placeholder="noreply@domaine.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Mot de passe <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="password" id="smtp_password" name="smtp_password" value="<?= htmlspecialchars($smtp['smtp_password'] ?? '') ?>"
+                                <input type="password" id="smtp_password" name="smtp_password" value="<?= htmlspecialchars($smtpSettings['smtp_password'] ?? '') ?>"
                                     placeholder="••••••••"
                                     class="w-full px-3 py-2.5 pr-20 bg-gray-50 border border-gray-100 rounded-xl text-sm font-mono focus:outline-none focus:border-[#0EA486] focus:bg-white">
                                 <button type="button" class="toggle-password absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-[#0EA486]" data-target="smtp_password">
@@ -457,14 +467,15 @@
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Sécurité</label>
                             <select name="smtp_encryption" id="smtp_encryption" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486]">
-                                <option value="TLS" <?= ($smtp['smtp_encryption'] ?? '') === 'TLS' ? 'selected' : '' ?>>TLS (recommandé)</option>
-                                <option value="SSL" <?= ($smtp['smtp_encryption'] ?? '') === 'SSL' ? 'selected' : '' ?>>SSL</option>
-                                <option value="none" <?= ($smtp['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>Aucune</option>
+                                <option value="TLS" <?= ($smtpSettings['smtp_encryption'] ?? '') === 'TLS' ? 'selected' : '' ?>>TLS (recommandé)</option>
+                                <option value="SSL" <?= ($smtpSettings['smtp_encryption'] ?? '') === 'SSL' ? 'selected' : '' ?>>SSL</option>
+                                <option value="none" <?= ($smtpSettings['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>Aucune</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
+                <!-- Expéditeur -->
                 <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <h4 class="text-sm font-bold text-[#0F172A] flex items-center gap-2 mb-4">
                         <i class="fas fa-at text-[#0EA486]"></i> Expéditeur
@@ -472,13 +483,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Email expéditeur <span class="text-red-500">*</span></label>
-                            <input type="email" name="smtp_from_email" id="smtp_from_email" value="<?= htmlspecialchars($smtp['smtp_from_email'] ?? '') ?>"
+                            <input type="email" name="smtp_from_email" id="smtp_from_email" value="<?= htmlspecialchars($smtpSettings['smtp_from_email'] ?? '') ?>"
                                 placeholder="noreply@domaine.com"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-600 mb-1 block">Nom affiché <span class="text-red-500">*</span></label>
-                            <input type="text" name="smtp_from_name" id="smtp_from_name" value="<?= htmlspecialchars($smtp['smtp_from_name'] ?? '') ?>"
+                            <input type="text" name="smtp_from_name" id="smtp_from_name" value="<?= htmlspecialchars($smtpSettings['smtp_from_name'] ?? '') ?>"
                                 placeholder="Nom de l'entreprise"
                                 class="w-full px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#0EA486] focus:bg-white">
                         </div>
@@ -1204,27 +1215,6 @@
                 closeModal
             };
         }
-
-        // Toggle password visibility
-        (function() {
-            document.querySelectorAll('.toggle-password').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    }
-                });
-            });
-        })();
-
         // Mode maintenance toggle
         (function() {
             const toggle = document.getElementById('maintenanceToggle');
@@ -1238,11 +1228,119 @@
             });
         })();
 
-        document.getElementById('paymentSettingsForm').addEventListener('submit', function(e) {
+
+       // ============================================
+// GESTION DES PAIEMENTS
+// ============================================
+(function() {
+    'use strict';
+
+    const paymentForm = document.getElementById('paymentSettingsForm');
+
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            showToast('Paiements enregistrés', 'La configuration des paiements a été mise à jour', 'success');
+
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            //  Gérer les checkbox correctement
+            const checkboxes = this.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                // Supprimer l'ancienne valeur du FormData
+                formData.delete(cb.name);
+                // Ajouter la nouvelle valeur
+                formData.append(cb.name, cb.checked ? '1' : '0');
+            });
+
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+            showToast('Enregistrement', 'Mise à jour de la configuration paiements...', 'info');
+
+            fetch('/back-end/routes/api.php?url=settings_payment_update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Succès', 'Configuration paiements mise à jour ', 'success');
+                    
+                    // Mettre à jour le statut
+                    const statusBadge = document.querySelector('.text-amber-700, .text-emerald-700');
+                    if (statusBadge) {
+                        const publicKey = document.getElementById('fedapayPublicKey').value;
+                        if (publicKey) {
+                            statusBadge.className = 'text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full';
+                            statusBadge.innerHTML = '<i class="fas fa-check mr-1"></i> Configuré';
+                        }
+                    }
+                } else {
+                    showToast('Erreur', data.error || 'Erreur lors de la mise à jour', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showToast('Erreur', 'Impossible de contacter le serveur', 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+            });
         });
-        // Modal test SMTP
+    }
+
+    // Bouton Annuler
+    const resetBtn = document.getElementById('resetPaymentForm');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            location.reload();
+        });
+    }
+
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // ============================================
         // GESTION ADMINISTRATEURS
@@ -2130,16 +2228,23 @@
             }
 
             // ============================================
-            // 4. TOGGLE PASSWORD
+            // 4. TOGGLE PASSWORD (Afficher/Masquer)
             // ============================================
-            document.querySelectorAll('.toggle-password').forEach(btn => {
-                btn.addEventListener('click', function() {
+            // ============================================
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
                     const targetId = this.dataset.target;
                     const input = document.getElementById(targetId);
+                    
                     if (input) {
-                        const type = input.type === 'password' ? 'text' : 'password';
-                        input.type = type;
-                        this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+                        // Basculer le type
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        } else {
+                            input.type = 'password';
+                            this.innerHTML = '<i class="fas fa-eye"></i>';
+                        }
                     }
                 });
             });

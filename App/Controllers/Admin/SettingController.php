@@ -25,6 +25,8 @@ class SettingController
         // Récupérer tous les paramètres
         $settings = $this->model->getAllSettings();
 
+        $smtpSettings = $this->model->getSmtpSettings();
+
         // Récupérer les administrateurs
         $admins = $this->model->getAdmins();
         $adminStats = $this->model->countAdmins();
@@ -41,6 +43,7 @@ class SettingController
             'admins' => $admins,
             'adminStats' => $adminStats,
             'lastConnection' => $lastConnection,
+            'smtpSettings' => $smtpSettings, 
             'currentPage' => 'parametres-systeme'
         ]);
     }
@@ -89,32 +92,40 @@ class SettingController
      * Mettre à jour la configuration des paiements
      */
     public function updatePaymentSettings()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
-            return;
-        }
-
-        $data = [
-            'fedapay_public_key' => $_POST['fedapay_public_key'] ?? '',
-            'fedapay_secret_key' => $_POST['fedapay_secret_key'] ?? '',
-            'fedapay_mode' => $_POST['fedapay_mode'] ?? 'test',
-            'payment_mobile_money' => isset($_POST['payment_mobile_money']) ? '1' : '0',
-            'payment_card' => isset($_POST['payment_card']) ? '1' : '0',
-            'payment_bank_transfer' => isset($_POST['payment_bank_transfer']) ? '1' : '0',
-            'payment_paypal' => isset($_POST['payment_paypal']) ? '1' : '0',
-            'min_order_amount' => $_POST['min_order_amount'] ?? '500',
-            'max_order_amount' => $_POST['max_order_amount'] ?? '5000000',
-            'refund_days' => $_POST['refund_days'] ?? '7',
-            'vendor_payout_days' => $_POST['vendor_payout_days'] ?? '30'
-        ];
-
-        if ($this->model->updateSettings($data)) {
-            $this->jsonResponse(['success' => true, 'message' => 'Configuration paiements mise à jour']);
-        } else {
-            $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
-        }
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $this->jsonResponse(['error' => 'Méthode non autorisée'], 405);
+        return;
     }
+
+ 
+    //  FORCER LES VALEURS DES CHECKBOX
+    $paymentMobileMoney = isset($_POST['payment_mobile_money']) ? $_POST['payment_mobile_money'] : '0';
+    $paymentCard = isset($_POST['payment_card']) ? $_POST['payment_card'] : '0';
+    $paymentBankTransfer = isset($_POST['payment_bank_transfer']) ? $_POST['payment_bank_transfer'] : '0';
+    $paymentPaypal = isset($_POST['payment_paypal']) ? $_POST['payment_paypal'] : '0';
+
+    $data = [
+        'fedapay_public_key' => $_POST['fedapay_public_key'] ?? '',
+        'fedapay_secret_key' => $_POST['fedapay_secret_key'] ?? '',
+        'fedapay_mode' => $_POST['fedapay_mode'] ?? 'test',
+        'payment_mobile_money' => $paymentMobileMoney,
+        'payment_card' => $paymentCard,
+        'payment_bank_transfer' => $paymentBankTransfer,
+        'payment_paypal' => $paymentPaypal,
+        'min_order_amount' => $_POST['min_order_amount'] ?? '500',
+        'max_order_amount' => $_POST['max_order_amount'] ?? '5000000',
+        'refund_days' => $_POST['refund_days'] ?? '7',
+        'vendor_payout_days' => $_POST['vendor_payout_days'] ?? '30'
+    ];
+
+
+    if ($this->model->updateSettings($data)) {
+        $this->jsonResponse(['success' => true, 'message' => 'Configuration paiements mise à jour']);
+    } else {
+        $this->jsonResponse(['error' => 'Erreur lors de la mise à jour'], 500);
+    }
+}
 
     // ============================================
     // API CONFIGURATION SMTP

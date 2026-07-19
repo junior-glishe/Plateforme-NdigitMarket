@@ -634,6 +634,17 @@ class SettingModel
         $fromEmail = $smtp['smtp_from_email'] ?? $smtp['smtp_username'];
         $fromName = $smtp['smtp_from_name'] ?? 'NDIGITMARKET';
 
+        $heure = (int)date('H');
+        if ($heure >= 6 && $heure < 12) {
+            $salutation = 'Bonjour';
+        } elseif ($heure >= 12 && $heure < 18) {
+            $salutation = 'Bonsoir';
+        } elseif ($heure >= 18 && $heure < 22) {
+            $salutation = 'Bonsoir';
+        } else {
+            $salutation = 'Bonsoir';
+        }
+
         // Corps du message en HTML avec design
         $body = '
         <!DOCTYPE html>
@@ -773,7 +784,7 @@ class SettingModel
                 <!-- Content -->
                 <div class="content">
                     <div class="greeting">
-                        Bonjour,
+                        ' . $salutation . ',
                     </div>
 
                     <div class="message">
