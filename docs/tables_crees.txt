@@ -605,6 +605,678 @@ DESCRIBE admin;
 
 
 
+ICI COMMENCE LE VRAI FICHIER
+
+D'abord les tables à créér
+CREATE TABLE `admin_logs` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) DEFAULT NULL,
+  `admin_email` varchar(255) DEFAULT NULL,
+  `admin_name` varchar(255) DEFAULT NULL,
+  `action` varchar(100) NOT NULL,
+  `action_description` text DEFAULT NULL,
+  `entity_type` varchar(100) DEFAULT NULL,
+  `entity_id` varchar(100) DEFAULT NULL,
+  `target_user_id` int(11) DEFAULT NULL,
+  `details` text DEFAULT NULL,
+  `status` varchar(20) DEFAULT 'success',
+  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`metadata`)),
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `level` enum('info','warning','critical') DEFAULT 'info',
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `bannieres` (
+  `id` int(11) NOT NULL,
+  `titre` varchar(255) NOT NULL,
+  `sous_titre` varchar(255) DEFAULT NULL,
+  `image` varchar(255) NOT NULL,
+  `texte_bouton` varchar(100) DEFAULT 'Voir les offres',
+  `url_destination` varchar(500) NOT NULL,
+  `date_debut` datetime NOT NULL,
+  `date_fin` datetime NOT NULL,
+  `statut` enum('active','inactive') DEFAULT 'active',
+  `ordre_affichage` int(11) DEFAULT 0,
+  `vues` int(11) DEFAULT 0,
+  `clics` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `banniere_stats` (
+  `id` int(11) NOT NULL,
+  `banniere_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `vues` int(11) DEFAULT 0,
+  `clics` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `codes_promo` (
+  `id` int(11) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `type` enum('percentage','fixed') DEFAULT 'percentage',
+  `valeur` decimal(10,2) NOT NULL,
+  `montant_minimum` decimal(10,2) DEFAULT 0.00,
+  `utilisations_max` int(11) DEFAULT NULL,
+  `utilisations_actuelles` int(11) DEFAULT 0,
+  `date_expiration` datetime NOT NULL,
+  `categorie_id` int(11) DEFAULT NULL,
+  `produit_id` int(11) DEFAULT NULL,
+  `utilisateur_id` int(11) DEFAULT NULL,
+  `statut` enum('active','inactive','expire') DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `email_templates` (
+  `id` int(11) NOT NULL,
+  `nom` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `declencheur` varchar(255) NOT NULL,
+  `objet` varchar(255) NOT NULL,
+  `contenu` text NOT NULL,
+  `bouton_texte` varchar(100) DEFAULT 'Voir les offres',
+  `bouton_url` varchar(500) DEFAULT '#',
+  `bg_color` varchar(50) DEFAULT 'bg-amber-100',
+  `text_color` varchar(50) DEFAULT 'text-amber-600',
+  `icon` varchar(50) DEFAULT 'fa-envelope-open-text',
+  `statut` enum('active','inactive') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `mass_emails` (
+  `id` int(11) NOT NULL,
+  `nom` varchar(255) NOT NULL,
+  `sujet` varchar(255) NOT NULL,
+  `contenu` text NOT NULL,
+  `bouton_texte` varchar(255) DEFAULT NULL,
+  `bouton_url` varchar(500) DEFAULT NULL,
+  `cible` varchar(50) NOT NULL,
+  `cible_label` varchar(100) DEFAULT NULL,
+  `cible_class` varchar(50) DEFAULT NULL,
+  `envoyes` int(11) DEFAULT 0,
+  `ouverts` int(11) DEFAULT 0,
+  `cliques` int(11) DEFAULT 0,
+  `desabonnes` int(11) DEFAULT 0,
+  `statut` enum('envoye','planifie','erreur') DEFAULT 'planifie',
+  `bg_color` varchar(50) DEFAULT 'bg-gradient-to-br from-indigo-100 to-purple-100',
+  `text_color` varchar(50) DEFAULT 'text-indigo-600',
+  `icon` varchar(50) DEFAULT 'fa-envelope-open-text',
+  `date_envoi` timestamp NOT NULL DEFAULT current_timestamp(),
+  `date_planification` timestamp NULL DEFAULT NULL,
+  `date_creation` datetime DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `mass_email_clics` (
+  `id` int(11) NOT NULL,
+  `campagne_id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `lien` varchar(500) NOT NULL,
+  `date_clic` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `lien` varchar(500) DEFAULT NULL,
+  `icone` varchar(50) DEFAULT 'fa-bell',
+  `couleur` varchar(20) DEFAULT 'blue',
+  `est_lu` tinyint(1) DEFAULT 0,
+  `priorite` enum('low','medium','high') DEFAULT 'medium',
+  `source_type` varchar(50) DEFAULT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `notification_settings` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `activer` tinyint(1) DEFAULT 1,
+  `email_notification` tinyint(1) DEFAULT 1,
+  `seuil_commande` decimal(10,2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `produit_views` (
+  `id` int(11) NOT NULL,
+  `produit_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `promo_utilisations` (
+  `id` int(11) NOT NULL,
+  `code_promo_id` int(11) NOT NULL,
+  `commande_id` int(11) NOT NULL,
+  `utilisateur_id` int(11) NOT NULL,
+  `montant_initial` decimal(10,2) NOT NULL,
+  `remise` decimal(10,2) NOT NULL,
+  `montant_final` decimal(10,2) NOT NULL,
+  `date_utilisation` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `remboursements` (
+  `id` int(11) NOT NULL,
+  `commande_id` int(11) NOT NULL,
+  `id_client` int(11) DEFAULT NULL,
+  `id_vendeur` int(11) DEFAULT NULL,
+  `montant` decimal(14,2) NOT NULL,
+  `commission_recuperee` decimal(14,2) DEFAULT 0.00,
+  `motif` text NOT NULL,
+  `statut` enum('effectue','en_cours','annule') NOT NULL DEFAULT 'en_cours',
+  `admin_id` int(11) DEFAULT NULL,
+  `notifier_acheteur` tinyint(1) DEFAULT 1,
+  `notifier_vendeur` tinyint(1) DEFAULT 1,
+  `date_creation` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL,
+  `produit_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `commande_id` int(11) DEFAULT NULL,
+  `note` int(11) NOT NULL DEFAULT 1 COMMENT '1 à 5',
+  `titre` varchar(255) DEFAULT NULL,
+  `commentaire` text DEFAULT NULL,
+  `statut` enum('en_attente','approuve','refuse') DEFAULT 'en_attente',
+  `date_creation` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `settings` (
+  `id` int(11) NOT NULL,
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+Ensuite les tables à mettre à jour
+
+ALTER TABLE `admin` ADD COLUMN `telephone` varchar(20) DEFAULT NULL;
+ALTER TABLE `admin` ADD COLUMN `statut` varchar(50) DEFAULT 'actif';
+ALTER TABLE `admin` ADD COLUMN `derniere_connexion` datetime DEFAULT NULL;
+ALTER TABLE `categories` ADD COLUMN `slug` varchar(255) DEFAULT NULL;
+ALTER TABLE `categories` ADD COLUMN `description` text DEFAULT NULL;
+ALTER TABLE `categories` ADD COLUMN `icone` varchar(255) DEFAULT 'fa-solid fa-globe';
+ALTER TABLE `categories` ADD COLUMN `couleur` varchar(50) DEFAULT 'blue';
+ALTER TABLE `categories` ADD COLUMN `statut` enum('active','inactive') DEFAULT 'active';
+ALTER TABLE `categories` ADD COLUMN `ordre_affichage` int(11) DEFAULT 0;
+-- MODIFY categories.sous_categories
+ALTER TABLE `categories` MODIFY COLUMN `sous_categories` text DEFAULT NULL;
+-- MODIFY categories.image_cat
+ALTER TABLE `categories` MODIFY COLUMN `image_cat` varchar(255) DEFAULT NULL;
+ALTER TABLE `categories` ADD COLUMN `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp();
+ALTER TABLE `commande` ADD COLUMN `quantite` int(11) DEFAULT 1;
+ALTER TABLE `commande` ADD COLUMN `statut` varchar(50) DEFAULT 'livree';
+ALTER TABLE `email_logs` ADD COLUMN `type` enum('transactionnel','masse') DEFAULT 'transactionnel';
+ALTER TABLE `email_logs` ADD COLUMN `campagne_id` int(11) DEFAULT NULL;
+ALTER TABLE `email_logs` ADD COLUMN `template_id` int(11) DEFAULT NULL;
+ALTER TABLE `email_logs` ADD COLUMN `destinataire` varchar(255) DEFAULT NULL;
+ALTER TABLE `email_logs` ADD COLUMN `ouvert` tinyint(1) DEFAULT 0;
+ALTER TABLE `email_logs` ADD COLUMN `clic` tinyint(1) DEFAULT 0;
+ALTER TABLE `email_logs` ADD COLUMN `desabonne` tinyint(1) DEFAULT 0;
+ALTER TABLE `utilisateur` ADD COLUMN `pays` varchar(100) DEFAULT NULL;
+ALTER TABLE `utilisateur` ADD COLUMN `date_inscription` timestamp NULL DEFAULT current_timestamp();
+ALTER TABLE `utilisateur` ADD COLUMN `created_at` timestamp NULL DEFAULT current_timestamp();
+
+Enfin les insertions
+
+INSERT INTO `admin_logs` (`id`, `admin_id`, `admin_email`, `admin_name`, `action`, `action_description`, `entity_type`, `entity_id`, `target_user_id`, `details`, `status`, `metadata`, `ip_address`, `user_agent`, `level`, `created_at`) VALUES
+(11, 1, 'missambounawane8@gmail.com', 'NTECH DIGIT', 'connexion_admin', 'Connexion réussie depuis le dashboard', NULL, NULL, NULL, NULL, 'success', NULL, '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0;
+
+INSERT INTO `banniere_stats` (`id`, `banniere_id`, `date`, `vues`, `clics`) VALUES
+(1, 1, '2025-11-20', 2500, 650),
+(2, 1, '2025-11-21', 3200, 800),
+(3, 1, '2025-11-22', 2800, 720),
+(4, 1, '2025-11-23', 2100, 530),
+(5, 1, '2025-11-24', 1980, 500),
+(6, 6, '2026-07-15', 210, 45),
+(7, 6, '2026-07-16', 185, 38),
+(8, 6, '2026-07-17', 250, 52),
+(9, 6, '2026-07-18', 320, 68),
+(10, 6, '2026-07-19', 180, 35),
+(11, 7, '2026-09-01', 150, 35),
+(12, 7, '2026-09-02', 220, 52),
+(13, 7, '2026-09-03', 180, 42),
+(14, 8, '2026-08-01', 350, 85),
+(15, 8, '2026-08-02', 280, 65),
+(16, 8, '2026-08-03', 400, 95),
+(17, 9, '2026-11-28', 520, 150),
+(18, 9, '2026-11-29', 680, 210),
+(19, 9, '2026-11-30', 450, 130),
+(20, 10, '2026-07-01', 120, 28),
+(21, 10, '2026-07-02', 180, 40),
+(22, 10, '2026-07-03', 150, 32);
+
+INSERT INTO `bannieres` (`id`, `titre`, `sous_titre`, `image`, `texte_bouton`, `url_destination`, `date_debut`, `date_fin`, `statut`, `ordre_affichage`, `vues`, `clics`, `created_at`, `updated_at`) VALUES
+(1, 'Black Friday 2025', 'Jusqu\'à -70% sur tous les templates', '020.jpg', 'Voir les offres', 'https://ndigitmarket.com/promotions/black-friday', '2025-11-20 00:00:00', '2025-12-30 23:59:00', 'active', 0, 12580, 3200, '2026-07-04 11:20:21', '2026-07-17 18:05:48'),
+(2, 'Nouveaux Templates WordPress', 'Découvrez notre collection de thèmes premium', '020.jpg', 'Explorer', 'https://ndigitmarket.com/categories/wordpress', '2025-07-01 00:00:00', '2025-12-31 23:59:59', 'active', 2, 8450, 2100, '2026-07-04 11:20:21', '2026-07-17 18:05:48'),
+(3, 'Promo Été 2028', 'Réductions exceptionnelles sur les packs', '020.jpg', 'Profiter', 'https://ndigitmarket.com/promotions/ete-2025', '2025-06-01 00:00:00', '2025-08-31 23:59:00', 'active', 0, 3200, 850, '2026-07-04 11:20:21', '2026-07-17 22:52:27'),
+(6, 'Solde d\'été - Jusqu\'à 60%', 'Profitez des soldes exceptionnels sur tous nos templates et plugins avant la fin du mois !', '020.jpg', 'Voir les offres', '/promotions/soldes-ete-2026', '2026-07-15 00:00:00', '2026-08-15 23:59:59', 'active', 1, 1800, 420, '2026-07-12 11:53:30', '2026-07-17 18:05:48'),
+(7, 'Semaine du Développeur', 'Tous les templates React, Vue.js et Flutter à -40% pendant 7 jours', '020.jpg', 'En profiter', '/promotions/semaine-developpeur', '2026-09-01 00:00:00', '2026-09-07 23:59:59', 'active', 2, 950, 280, '2026-07-12 11:53:30', '2026-07-17 18:05:48'),
+(8, 'Pack Premium - 5 Templates au Prix de 3', 'Choisissez 5 templates dans notre catalogue, payez seulement 3 !', '020.jpg', 'Voir les packs', '/promotions/pack-premium', '2026-08-01 00:00:00', '2026-10-31 23:59:59', 'active', 3, 2100, 560, '2026-07-12 11:53:30', '2026-07-17 18:05:48'),
+(17, 'Sed rerum est id aut', 'Possimus aperiam do', '1784328811_vlcsnap-2026-05-15-13h07m29s551.png', 'Magnam commodo eaque', 'https://www.titisajari.org', '1972-12-07 13:27:00', '2019-11-03 11:50:00', 'active', 10, 0, 0, '2026-07-17 22:53:31', '2026-07-17 22:53:31');
+
+INSERT INTO `codes_promo` (`id`, `code`, `type`, `valeur`, `montant_minimum`, `utilisations_max`, `utilisations_actuelles`, `date_expiration`, `categorie_id`, `produit_id`, `utilisateur_id`, `statut`, `created_at`, `updated_at`) VALUES
+(2, 'BLACKFRIDAY30', 'percentage', 30.00, 15000.00, 100, 67, '2025-11-30 23:59:59', 1, NULL, NULL, 'inactive', '2026-07-04 11:20:21', '2026-07-13 12:11:30'),
+(3, 'ETE2025', 'fixed', 5000.00, 25000.00, 50, 12, '2025-08-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-04 11:20:21', '2026-07-13 11:08:43'),
+(4, 'WELCOME10', 'percentage', 10.00, 0.00, 200, 189, '2025-12-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-04 11:20:21', '2026-07-04 11:20:21'),
+(5, 'VIP15', 'percentage', 15.00, 20000.00, 30, 25, '2026-01-15 23:59:59', 2, NULL, NULL, 'active', '2026-07-04 11:20:21', '2026-07-04 11:20:21'),
+(6, 'SUMMER30', 'percentage', 30.00, 3000.00, 120, 0, '2026-08-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:55:33'),
+(7, 'FLASH2026', 'percentage', 60.00, 15000.00, 15, 0, '2026-07-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:55:33'),
+(8, 'TEMPLATE25', 'percentage', 25.00, 4000.00, 60, 0, '2026-09-15 23:59:59', 3, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:55:33'),
+(9, 'PLUGIN40', 'percentage', 40.00, 2500.00, 45, 0, '2026-10-01 23:59:59', NULL, 4, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:55:33'),
+(10, 'LOYALTY20', 'percentage', 20.00, 0.00, 800, 0, '2026-12-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:55:33'),
+(11, 'XMAS2026', 'percentage', 35.00, 8000.00, 100, 0, '2026-12-24 23:59:59', NULL, NULL, NULL, 'expire', '2026-07-12 11:53:30', '2026-07-13 12:11:58'),
+(12, 'FRAMEWORK30', 'percentage', 30.00, 20000.00, 25, 0, '2026-11-30 23:59:59', 4, NULL, NULL, 'inactive', '2026-07-12 11:53:30', '2026-07-13 12:11:30'),
+(13, 'ECOMMERCE15', 'percentage', 15.00, 5000.00, 50, 0, '2026-10-15 23:59:59', 2, NULL, NULL, 'inactive', '2026-07-12 11:53:30', '2026-07-13 12:11:30'),
+(14, 'VIP50', 'percentage', 50.00, 0.00, 50, 0, '2026-12-31 23:59:59', NULL, NULL, NULL, 'expire', '2026-07-12 11:53:30', '2026-07-13 12:11:58'),
+(30, 'CREATIVE20', 'percentage', 20.00, 1500.00, 35, 0, '2026-08-31 23:59:59', 5, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:53:30'),
+(31, 'DEVELOPER2026', 'percentage', 35.00, 10000.00, 30, 0, '2026-09-30 23:59:59', NULL, NULL, NULL, 'inactive', '2026-07-12 11:53:30', '2026-07-13 12:11:30'),
+(32, 'SECURITY25', 'percentage', 25.00, 3500.00, 40, 0, '2026-10-31 23:59:59', 6, NULL, NULL, 'inactive', '2026-07-12 11:53:30', '2026-07-13 12:11:30'),
+(33, 'START2026', 'percentage', 40.00, 500.00, 200, 0, '2026-12-31 23:59:59', NULL, NULL, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:53:30'),
+(34, 'MOBILE30', 'percentage', 30.00, 12000.00, 20, 0, '2026-09-30 23:59:59', NULL, 7, NULL, 'active', '2026-07-12 11:53:30', '2026-07-12 11:53:30'),
+(35, 'FINAL15', 'percentage', 15.00, 0.00, 500, 0, '2026-12-31 23:59:59', NULL, NULL, NULL, 'expire', '2026-07-12 11:53:30', '2026-07-13 12:11:58'),
+(36, 'PROMO-0SSFTEMP', 'percentage', 50.00, 10000.00, NULL, 0, '2026-07-15 12:05:00', NULL, NULL, NULL, 'inactive', '2026-07-13 11:05:43', '2026-07-13 12:11:30'),
+(39, 'PROMO-C9UFBOTS', 'percentage', 50.00, 1000.00, 100, 0, '2026-07-22 13:09:00', 15, NULL, NULL, 'active', '2026-07-13 12:09:13', '2026-07-13 12:09:13');
+
+INSERT INTO `email_templates` (`id`, `nom`, `slug`, `declencheur`, `objet`, `contenu`, `bouton_texte`, `bouton_url`, `bg_color`, `text_color`, `icon`, `statut`, `created_at`, `updated_at`) VALUES
+(1, 'Bienvenue', 'welcome', 'Inscription utilisateur', 'Bienvenue sur NDIGITMARKET !', 'Nous sommes ravis de vous accueillir sur NDIGITMARKET. Votre compte a été créé avec succès. Découvrez dès maintenant notre catalogue de templates et produits.', 'Découvrir le catalogue', '/catalogue', 'bg-emerald-100', 'text-emerald-600', 'fa-hand-wave', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(2, 'Confirmation commande', 'order_confirmation', 'Paiement réussi', 'Confirmation de votre commande', 'Votre commande a été confirmée. Vous recevrez un lien de téléchargement sous 24h.', 'Voir ma commande', '/commandes', 'bg-blue-100', 'text-blue-600', 'fa-check-circle', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(3, 'Lien de téléchargement', 'download_link', 'Paiement réussi', 'Votre lien de téléchargement', 'Votre produit est prêt à être téléchargé. Cliquez sur le bouton ci-dessous pour accéder à votre fichier.', 'Télécharger', '/telechargement', 'bg-purple-100', 'text-purple-600', 'fa-download', 'inactive', '2026-07-14 04:19:45', '2026-07-14 04:32:50'),
+(4, 'Boutique approuvée', 'shop_approved', 'Admin approuve la demande', 'Votre boutique est approuvée !', 'Félicitations ! Votre demande d\'ouverture de boutique a été approuvée. Vous pouvez dès maintenant publier vos produits.', 'Gérer ma boutique', '/vendeur/boutique', 'bg-green-100', 'text-green-600', 'fa-store', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(5, 'Boutique refusée', 'shop_rejected', 'Admin refuse la demande', 'Mise à jour de votre demande boutique', 'Nous vous remercions pour votre demande d\'ouverture de boutique. Après examen, nous ne pouvons pas l\'approuver pour le moment. Pour plus d\'informations, contactez notre support.', 'Contacter le support', '/support', 'bg-red-100', 'text-red-600', 'fa-store-slash', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(6, 'Produit approuvé', 'product_approved', 'Admin valide le produit', 'Votre produit est en ligne !', 'Votre produit a été approuvé et est maintenant disponible à la vente sur NDIGITMARKET.', 'Voir mon produit', '/vendeur/produits', 'bg-indigo-100', 'text-indigo-600', 'fa-check', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(7, 'Produit refusé', 'product_rejected', 'Admin refuse le produit', 'Mise à jour de votre produit', 'Votre produit n\'a pas été approuvé. Veuillez consulter les commentaires du modérateur et soumettre une nouvelle version.', 'Modifier le produit', '/vendeur/produits', 'bg-red-100', 'text-red-600', 'fa-times', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(8, 'Versement effectué', 'versement-effectu', 'Admin marque le versement', 'Versement effectué', 'Votre versement a été effectué avec succès. Le montant a été transféré sur votre compte. Merci de vérifier !', 'Voir mes versements', '/vendeur/versements', 'bg-amber-100', 'text-amber-600', 'fa-envelope-open-text', 'inactive', '2026-07-14 04:19:45', '2026-07-14 04:53:44'),
+(9, 'Remboursement', 'refund', 'Admin initie un remboursement', 'Remboursement de votre commande', 'Un remboursement a été initié pour votre commande. Le montant vous sera reversé sous 48h.', 'Voir le suivi', '/commandes', 'bg-orange-100', 'text-orange-600', 'fa-rotate-left', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45'),
+(10, 'Réinitialisation mot de passe', 'password_reset', 'Demande reset password', 'Réinitialisation de votre mot de passe', 'Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour définir un nouveau mot de passe.', 'Réinitialiser le mot de passe', '/reset-password', 'bg-amber-100', 'text-amber-600', 'fa-key', 'active', '2026-07-14 04:19:45', '2026-07-14 04:19:45');
+
+INSERT INTO `mass_email_clics` (`id`, `campagne_id`, `email`, `lien`, `date_clic`) VALUES
+(1, 1, 'amine.adam@gmail.com', 'https://ndigitmarket.com/bienvenue', '2026-06-01 07:18:22'),
+(2, 1, 'sarah.koffi@gmail.com', 'https://ndigitmarket.com/offres', '2026-06-01 07:25:41'),
+(3, 2, 'cedric.yovo@gmail.com', 'https://ndigitmarket.com/soldes', '2026-06-08 08:15:33'),
+(4, 2, 'fatou.diallo@gmail.com', 'https://ndigitmarket.com/soldes/electronique', '2026-06-08 08:26:18'),
+(5, 2, 'patrick.ahouansou@gmail.com', 'https://ndigitmarket.com/promotions', '2026-06-08 09:04:59'),
+(6, 3, 'esther.bio@gmail.com', 'https://ndigitmarket.com/smartphones', '2026-06-12 09:32:44'),
+(7, 3, 'moussa.sow@gmail.com', 'https://ndigitmarket.com/android', '2026-06-12 10:15:20'),
+(8, 3, 'olivia.gomez@gmail.com', 'https://ndigitmarket.com/iphone', '2026-06-12 10:42:15'),
+(9, 4, 'stephane.agossou@gmail.com', 'https://ndigitmarket.com/devenir-vendeur', '2026-06-18 07:54:02'),
+(10, 4, 'laura.mensah@gmail.com', 'https://ndigitmarket.com/inscription-vendeur', '2026-06-18 08:16:40'),
+(11, 5, 'richard.antoine@gmail.com', 'https://ndigitmarket.com/formations', '2026-06-20 08:45:33'),
+(12, 5, 'agnes.kouame@gmail.com', 'https://ndigitmarket.com/videos', '2026-06-20 09:22:54'),
+(13, 6, 'michael.smith@gmail.com', 'https://ndigitmarket.com/blog', '2026-06-25 07:34:15'),
+(14, 6, 'brigitte.yao@gmail.com', 'https://ndigitmarket.com/actualites', '2026-06-25 08:11:28'),
+(15, 7, 'emmanuel.zinsou@gmail.com', 'https://ndigitmarket.com/maintenance', '2026-06-27 17:14:12'),
+(16, 8, 'christine.ossa@gmail.com', 'https://ndigitmarket.com/cashback', '2026-07-01 07:42:27'),
+(17, 8, 'lucien.houngbedji@gmail.com', 'https://ndigitmarket.com/offres-cashback', '2026-07-01 08:13:49'),
+(18, 9, 'nadia.traore@gmail.com', 'https://ndigitmarket.com/challenge', '2026-07-02 09:35:14'),
+(19, 9, 'fred.kouassi@gmail.com', 'https://ndigitmarket.com/reglement', '2026-07-02 10:18:32'),
+(20, 10, 'anais.gnahore@gmail.com', 'https://ndigitmarket.com/parrainage', '2026-07-03 10:44:27'),
+(21, 10, 'ismael.boni@gmail.com', 'https://ndigitmarket.com/inviter', '2026-07-03 11:18:41'),
+(22, 11, 'pauline.adje@gmail.com', 'https://ndigitmarket.com/flash-sale', '2026-07-04 07:27:55'),
+(23, 11, 'vincent.dossou@gmail.com', 'https://ndigitmarket.com/offres-weekend', '2026-07-04 08:46:13'),
+(24, 12, 'clarisse.ade@gmail.com', 'https://ndigitmarket.com/download', '2026-07-05 08:58:41'),
+(25, 12, 'martin.soglo@gmail.com', 'https://ndigitmarket.com/nouveautes', '2026-07-05 09:17:32'),
+(26, 13, 'benoit.hountondji@gmail.com', 'https://ndigitmarket.com/tendances', '2026-07-06 09:41:15'),
+(27, 13, 'laetitia.tossa@gmail.com', 'https://ndigitmarket.com/top-produits', '2026-07-06 10:03:26'),
+(28, 14, 'kevin.kodjo@gmail.com', 'https://ndigitmarket.com/documents', '2026-07-07 08:16:12'),
+(29, 15, 'david.agbo@gmail.com', 'https://ndigitmarket.com/fidelite', '2026-07-08 08:18:29'),
+(30, 15, 'estelle.soumanou@gmail.com', 'https://ndigitmarket.com/points', '2026-07-08 09:24:50'),
+(31, 16, 'jean.ahouansou@gmail.com', 'https://ndigitmarket.com/newsletter', '2026-07-09 07:47:13'),
+(32, 16, 'marie.kouassi@gmail.com', 'https://ndigitmarket.com/blog/juillet', '2026-07-09 08:34:05'),
+(33, 17, 'contact@techvision.bj', 'https://ndigitmarket.com/ete', '2026-07-10 08:42:58'),
+(34, 17, 'contact@africashop.bj', 'https://ndigitmarket.com/promotions-ete', '2026-07-10 09:11:37'),
+(35, 18, 'vendeur01@gmail.com', 'https://ndigitmarket.com/formation-avancee', '2026-07-11 10:24:46'),
+(36, 18, 'vendeur02@gmail.com', 'https://ndigitmarket.com/tutoriels', '2026-07-11 10:57:54'),
+(37, 22, 'client01@gmail.com', 'https://ndigitmarket.com/vip', '2026-07-12 09:32:13'),
+(38, 22, 'client02@gmail.com', 'https://ndigitmarket.com/offres-vip', '2026-07-12 09:51:27'),
+(39, 25, 'client03@gmail.com', 'https://ndigitmarket.com/webinaire', '2026-07-14 07:16:44'),
+(40, 25, 'client04@gmail.com', 'https://ndigitmarket.com/inscription-webinaire', '2026-07-14 07:45:31'),
+(41, 26, 'client05@gmail.com', 'https://ndigitmarket.com/anniversaire', '2026-07-14 08:42:56'),
+(42, 26, 'client06@gmail.com', 'https://ndigitmarket.com/cadeau', '2026-07-14 09:13:38'),
+(43, 27, 'client07@gmail.com', 'https://ndigitmarket.com/top-ventes', '2026-07-14 10:36:41'),
+(44, 27, 'client08@gmail.com', 'https://ndigitmarket.com/meilleures-offres', '2026-07-14 10:58:12'),
+(45, 28, 'client09@gmail.com', 'https://ndigitmarket.com/securite', '2026-07-14 13:02:19'),
+(46, 28, 'client10@gmail.com', 'https://ndigitmarket.com/2fa', '2026-07-14 13:28:45'),
+(47, 30, 'client11@gmail.com', 'https://ndigitmarket.com/panier', '2026-07-14 14:47:11'),
+(48, 30, 'client12@gmail.com', 'https://ndigitmarket.com/finaliser-commande', '2026-07-14 15:05:27'),
+(49, 30, 'client13@gmail.com', 'https://ndigitmarket.com/promotion-panier', '2026-07-14 15:34:52'),
+(50, 30, 'client14@gmail.com', 'https://ndigitmarket.com/checkout', '2026-07-14 15:58:18');
+
+INSERT INTO `mass_emails` (`id`, `nom`, `sujet`, `contenu`, `bouton_texte`, `bouton_url`, `cible`, `cible_label`, `cible_class`, `envoyes`, `ouverts`, `cliques`, `desabonnes`, `statut`, `bg_color`, `text_color`, `icon`, `date_envoi`, `date_planification`, `date_creation`, `created_at`, `updated_at`) VALUES
+(1, 'Campagne Bienvenue', 'Bienvenue sur NdigitMarket', 'Merci de rejoindre notre marketplace. Découvrez nos meilleurs vendeurs et profitez de vos premiers avantages.', NULL, NULL, 'clients', 'Clients', 'bg-blue-100', 11, 7, 3, 0, 'envoye', 'bg-gradient-to-br from-blue-100 to-cyan-100', 'text-blue-600', 'fa-handshake', '2026-06-01 07:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(2, 'Soldes de Juin', 'Soldes exceptionnelles jusqu\'à -50 %', 'Des centaines de produits sont en promotion pendant une durée limitée.', NULL, NULL, 'clients', 'Clients', 'bg-red-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-red-100 to-pink-100', 'text-red-600', 'fa-tags', '2026-06-08 08:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(3, 'Promotion Smartphones', 'Les smartphones sont en promotion', 'Profitez de réductions exclusives sur les smartphones Android et iPhone.', NULL, NULL, 'clients', 'Clients', 'bg-green-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-green-100 to-emerald-100', 'text-green-600', 'fa-mobile-screen', '2026-06-12 09:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(4, 'Recrutement Vendeurs', 'Rejoignez notre marketplace', 'Développez votre activité en devenant vendeur sur NdigitMarket.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-indigo-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-purple-100', 'text-indigo-600', 'fa-store', '2026-06-18 07:30:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(5, 'Formation Vendeurs', 'Formation gratuite pour vendeurs', 'Découvrez toutes les fonctionnalités disponibles pour augmenter vos ventes.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-yellow-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-yellow-100 to-orange-100', 'text-yellow-600', 'fa-graduation-cap', '2026-06-20 08:15:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(6, 'Newsletter Juin', 'Les nouveautés du mois', 'Retrouvez les dernières fonctionnalités et nouveautés de la plateforme.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-gray-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-slate-100 to-gray-200', 'text-gray-700', 'fa-newspaper', '2026-06-25 07:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(7, 'Maintenance', 'Maintenance programmée', 'Une maintenance est prévue cette nuit entre 01h et 03h.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-orange-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-orange-100 to-amber-100', 'text-orange-600', 'fa-screwdriver-wrench', '2026-06-27 17:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(8, 'Lancement Cashback', 'Découvrez le Cashback', 'Profitez désormais d\'un système de cashback sur vos achats.', NULL, NULL, 'clients', 'Clients', 'bg-emerald-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-emerald-100 to-green-100', 'text-emerald-600', 'fa-coins', '2026-07-01 07:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(9, 'Challenge Vendeurs', 'Concours des meilleurs vendeurs', 'Les vendeurs les plus performants recevront des récompenses.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-violet-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-violet-100 to-fuchsia-100', 'text-violet-600', 'fa-trophy', '2026-07-02 09:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(10, 'Programme Ambassadeur', 'Invitez vos amis', 'Invitez vos proches et gagnez des récompenses.', NULL, NULL, 'clients', 'Clients', 'bg-cyan-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-cyan-100 to-sky-100', 'text-cyan-600', 'fa-user-group', '2026-07-03 10:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(11, 'Offres Flash', 'Flash Sale du week-end', 'Des réductions exceptionnelles pendant 48 heures.', NULL, NULL, 'clients', 'Clients', 'bg-red-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-rose-100 to-red-100', 'text-rose-600', 'fa-bolt', '2026-07-04 07:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(12, 'Mise à jour Application', 'Nouvelle version disponible', 'Découvrez les améliorations de la plateforme.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-blue-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-blue-100 to-indigo-100', 'text-blue-700', 'fa-download', '2026-07-05 08:30:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(13, 'Produits Tendances', 'Les meilleures ventes du moment', 'Découvrez les produits les plus populaires cette semaine.', NULL, NULL, 'clients', 'Clients', 'bg-pink-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-pink-100 to-rose-100', 'text-pink-600', 'fa-fire', '2026-07-06 09:15:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(14, 'Vérification Boutique', 'Complétez votre profil vendeur', 'Ajoutez les documents manquants afin de finaliser votre boutique.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-yellow-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-yellow-100 to-amber-100', 'text-amber-700', 'fa-file-circle-check', '2026-07-07 07:45:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(15, 'Programme Fidélité', 'Cumulez des points', 'Chaque achat vous rapporte désormais des points fidélité.', NULL, NULL, 'clients', 'Clients', 'bg-green-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-lime-100 to-green-100', 'text-green-700', 'fa-gift', '2026-07-08 08:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(16, 'Newsletter Juillet', 'Les actualités de juillet', 'Retrouvez toutes les nouveautés de juillet.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-gray-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-gray-100 to-slate-100', 'text-slate-700', 'fa-envelope-open-text', '2026-07-09 07:30:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(17, 'Campagne Été', 'Les offres de l\'été arrivent', 'Préparez vos vacances avec nos meilleures promotions.', NULL, NULL, 'clients', 'Clients', 'bg-orange-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-orange-100 to-yellow-100', 'text-orange-600', 'fa-sun', '2026-07-10 08:20:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(18, 'Formation Marketplace', 'Nouvelles vidéos de formation', 'Maîtrisez toutes les fonctionnalités de votre espace vendeur.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-indigo-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-blue-100', 'text-indigo-700', 'fa-video', '2026-07-11 10:10:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(19, 'Préparation Black Friday', 'Préparez vos meilleures offres', 'Commencez dès maintenant à préparer vos promotions Black Friday.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-purple-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-purple-100 to-fuchsia-100', 'text-purple-700', 'fa-calendar-days', '2026-07-14 05:02:45', '2026-11-15 08:00:00', '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 05:02:45'),
+(20, 'Newsletter Août', 'Les nouveautés du mois d\'août', 'Découvrez les nouvelles fonctionnalités à venir.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-blue-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-sky-100 to-blue-100', 'text-sky-700', 'fa-calendar-check', '2026-07-14 05:02:45', '2026-08-01 07:00:00', '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 05:02:45'),
+(21, 'Maintenance exceptionnelle', 'Interruption temporaire des services', 'Une intervention technique exceptionnelle est programmée.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-red-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-red-100 to-orange-100', 'text-red-700', 'fa-server', '2026-07-14 05:02:45', '2026-07-30 22:00:00', '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 05:02:45'),
+(22, 'Campagne VIP', 'Offres réservées aux clients VIP', 'Des remises exclusives vous attendent.', NULL, NULL, 'clients', 'Clients VIP', 'bg-yellow-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-yellow-100 to-amber-100', 'text-yellow-700', 'fa-crown', '2026-07-12 09:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(23, 'Erreur SMTP', 'Campagne interrompue', 'Une erreur SMTP est survenue pendant l\'envoi.', NULL, NULL, 'tous', 'Tous', 'bg-red-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-red-100 to-pink-100', 'text-red-600', 'fa-triangle-exclamation', '2026-07-13 13:20:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(24, 'Campagne Fournitures', 'Retour des fournitures scolaires', 'Découvrez notre sélection spéciale rentrée.', NULL, NULL, 'clients', 'Clients', 'bg-green-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-green-100 to-teal-100', 'text-green-700', 'fa-school', '2026-07-14 05:02:45', '2026-08-20 08:00:00', '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 05:02:45'),
+(25, 'Invitation Webinar', 'Webinaire spécial vendeurs', 'Participez gratuitement à notre conférence en ligne.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-cyan-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-cyan-100 to-blue-100', 'text-cyan-700', 'fa-chalkboard-user', '2026-07-14 07:00:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(26, 'Campagne Anniversaire', 'Joyeux anniversaire !', 'Profitez d\'une remise exceptionnelle pour votre anniversaire.', NULL, NULL, 'clients', 'Clients', 'bg-pink-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-pink-100 to-rose-100', 'text-pink-700', 'fa-cake-candles', '2026-07-14 08:30:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(27, 'Top Produits', 'Les meilleures ventes de la semaine', 'Découvrez les produits préférés de nos utilisateurs.', NULL, NULL, 'clients', 'Clients', 'bg-blue-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-blue-100 to-indigo-100', 'text-indigo-700', 'fa-ranking-star', '2026-07-14 10:15:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(28, 'Audit Sécurité', 'Renforcez la sécurité de votre compte', 'Activez la double authentification dès maintenant.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-gray-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-slate-100 to-gray-100', 'text-slate-700', 'fa-shield-halved', '2026-07-14 12:45:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(29, 'Campagne Rentrée', 'Préparez la rentrée avec nos offres', 'Les promotions de rentrée arrivent bientôt.', NULL, NULL, 'clients', 'Clients', 'bg-orange-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-orange-100 to-red-100', 'text-orange-700', 'fa-cart-shopping', '2026-07-14 05:02:45', '2026-08-25 08:00:00', '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 05:02:45'),
+(30, 'Relance Panier', 'Vous avez oublié un article', 'Finalisez votre achat avant la fin de la promotion.', NULL, NULL, 'clients', 'Clients', 'bg-indigo-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-violet-100', 'text-indigo-700', 'fa-cart-arrow-down', '2026-07-14 14:30:00', NULL, '2026-07-14 10:10:17', '2026-07-14 05:02:45', '2026-07-14 06:36:29'),
+(31, 'Préparation Black Friday (Copie)', 'Préparez vos meilleures offres', 'Commencez dès maintenant à préparer vos promotions Black Friday.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-purple-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-purple-100 to-fuchsia-100', 'text-purple-700', 'fa-calendar-days', '2026-07-14 05:23:29', NULL, '2026-07-14 10:10:17', '2026-07-14 05:23:29', '2026-07-14 05:25:19'),
+(32, 'Campagne Fournitures (Copie)', 'Retour des fournitures scolaires', 'Découvrez notre sélection spéciale rentrée.', NULL, NULL, 'clients', 'Clients', 'bg-green-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-green-100 to-teal-100', 'text-green-700', 'fa-school', '2026-07-14 05:23:47', NULL, '2026-07-14 10:10:17', '2026-07-14 05:23:47', '2026-07-14 05:25:28'),
+(33, 'Maintenance exceptionnelle (Copie)', 'Interruption temporaire des services', 'Une intervention technique exceptionnelle est programmée.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-red-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-red-100 to-orange-100', 'text-red-700', 'fa-server', '2026-07-14 05:24:02', NULL, '2026-07-14 10:10:17', '2026-07-14 05:24:02', '2026-07-14 05:25:43'),
+(34, 'Newsletter Août (Copie)', 'Les nouveautés du mois d\'août', 'Découvrez les nouvelles fonctionnalités à venir.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-blue-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-sky-100 to-blue-100', 'text-sky-700', 'fa-calendar-check', '2026-07-14 05:24:17', NULL, '2026-07-14 10:10:17', '2026-07-14 05:24:17', '2026-07-14 05:24:17'),
+(35, 'Invitation Webinar (Copie)', 'Webinaire spécial vendeurs', 'Participez gratuitement à notre conférence en ligne.', NULL, NULL, 'vendeurs', 'Vendeurs', 'bg-cyan-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-cyan-100 to-blue-100', 'text-cyan-700', 'fa-chalkboard-user', '2026-07-14 05:24:36', NULL, '2026-07-14 10:10:17', '2026-07-14 05:24:36', '2026-07-14 05:24:50'),
+(36, 'Maintenance exceptionnelle (Copie) (Copie)', 'Interruption temporaire des services', 'Une intervention technique exceptionnelle est programmée.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-red-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-red-100 to-orange-100', 'text-red-700', 'fa-server', '2026-07-14 06:08:21', NULL, '2026-07-14 10:10:17', '2026-07-14 06:08:21', '2026-07-14 06:08:39'),
+(37, 'Top Produits (Copie)', 'Les meilleures ventes de la semaine', 'Découvrez les produits préférés de nos utilisateurs.', NULL, NULL, 'clients', 'Clients', 'bg-blue-100', 0, 0, 0, 0, 'erreur', 'bg-gradient-to-br from-blue-100 to-indigo-100', 'text-indigo-700', 'fa-ranking-star', '2026-07-14 06:08:32', NULL, '2026-07-14 10:10:17', '2026-07-14 06:08:32', '2026-07-14 06:27:20'),
+(38, 'Maintenance exceptionnelle (Copie) (Copie) (Copie)', 'Interruption temporaire des services', 'Une intervention technique exceptionnelle est programmée.', NULL, NULL, 'tous', 'Tous les utilisateurs', 'bg-red-100', 0, 0, 0, 0, 'planifie', 'bg-gradient-to-br from-red-100 to-orange-100', 'text-red-700', 'fa-server', '2026-07-14 06:27:12', NULL, '2026-07-14 10:10:17', '2026-07-14 06:27:12', '2026-07-14 06:27:12'),
+(39, 'Jennifer Mcfadden', 'Consequatur Ea repr', 'Quis dolorem rem inc', 'Suscipit eum suscipi', 'https://www.segumolonono.info', 'buyers', 'Acheteurs actifs', 'text-emerald-700 bg-emerald-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-purple-100', 'text-indigo-600', 'fa-envelope-open-text', '2026-07-14 09:11:10', NULL, '2026-07-14 10:11:10', '2026-07-14 09:11:10', '2026-07-14 09:11:10'),
+(40, 'Aaron Wyatt', 'Nihil voluptas molli', 'Itaque do excepturi', 'Officiis fugit quib', 'https://www.pylobedynahiref.com', 'all', 'Tous les utilisateurs', 'text-blue-700 bg-blue-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-purple-100', 'text-indigo-600', 'fa-envelope-open-text', '2026-07-14 09:11:54', NULL, '2026-07-14 10:11:54', '2026-07-14 09:11:54', '2026-07-14 09:11:54'),
+(41, 'Perry Blevins', 'Occaecat mollitia id', 'Proident commodi fu', 'Aute deserunt eius q', 'https://www.qijud.biz', 'vendors', 'Tous les vendeurs', 'text-purple-700 bg-purple-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-purple-100', 'text-indigo-600', 'fa-envelope-open-text', '2026-07-14 09:12:12', NULL, '2026-07-14 10:12:12', '2026-07-14 09:12:12', '2026-07-14 09:12:12'),
+(42, 'Test Manuel', 'Test Objet', 'Test Contenu', '', '#', 'all', 'Tous les utilisateurs', 'text-blue-700 bg-blue-100', 0, 0, 0, 0, 'envoye', 'bg-gradient-to-br from-indigo-100 to-purple-100', 'text-indigo-600', 'fa-envelope-open-text', '2026-07-14 09:13:13', NULL, '2026-07-14 10:13:13', '2026-07-14 09:13:13', '2026-07-14 09:13:13');
+
+INSERT INTO `notification_settings` (`id`, `type`, `activer`, `email_notification`, `seuil_commande`, `created_at`, `updated_at`) VALUES
+(1, 'vendor_request', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(2, 'product_moderation', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(3, 'order_high', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(4, 'order_problem', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(5, 'support_message', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(6, 'security_alert', 1, 1, NULL, '2026-07-13 12:44:26', '2026-07-13 12:44:26'),
+(7, 'stock_alert', 1, 1, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(8, 'payment_success', 1, 0, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(9, 'payment_failed', 1, 1, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(10, 'refund_request', 1, 1, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(11, 'delivery_delay', 1, 1, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(12, 'promotion', 1, 0, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(13, 'maintenance', 1, 0, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(14, 'system_update', 1, 1, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(15, 'customer_review', 1, 0, NULL, '2026-07-13 16:15:17', '2026-07-13 16:15:17'),
+(16, 'fraud_detection', 1, 1, 1000000.00, '2026-07-13 16:15:17', '2026-07-13 16:15:17');
+
+INSERT INTO `notifications` (`id`, `type`, `title`, `message`, `lien`, `icone`, `couleur`, `est_lu`, `priorite`, `source_type`, `source_id`, `created_at`, `updated_at`) VALUES
+(1, 'vendor_request', 'Nouvelle demande vendeur', 'Jean Dupont a soumis une demande pour ouvrir la boutique \"ElectroShop Pro\"', '/admin/vendeurs/15', 'fa-user-plus', 'yellow', 1, 'high', 'user', 15, '2026-07-10 07:30:00', '2026-07-13 16:06:26'),
+(4, 'order_problem', 'Commande signalée comme problématique', 'La commande #156 a été signalée : paiement non confirmé après 48h', '/admin/commandes/156', 'fa-exclamation-triangle', 'red', 1, 'high', 'order', 156, '2026-07-08 15:10:00', '2026-07-13 16:06:21'),
+(6, 'security_alert', 'Tentative de connexion suspecte', 'Une tentative de connexion admin a été détectée depuis l\'IP 192.168.1.45 (Paris, France)', NULL, 'fa-shield-alt', 'purple', 1, 'high', 'system', NULL, '2026-07-07 22:15:00', '2026-07-13 16:10:22'),
+(7, 'vendor_request', 'Nouvelle demande vendeur', 'Marc Leroy a soumis une demande pour ouvrir la boutique \"Tech Solutions\"', '/admin/vendeurs/18', 'fa-user-plus', 'yellow', 1, 'high', 'user', 18, '2026-07-07 09:00:00', '2026-07-07 13:30:00'),
+(8, 'product_moderation', 'Nouveau produit à modérer', 'Le produit \"PSD Landing Page\" a été soumis par le vendeur Julie Moreau', '/admin/produits/56', 'fa-file-code', 'indigo', 1, 'high', 'product', 56, '2026-07-07 07:30:00', '2026-07-07 11:00:00'),
+(9, 'order_high', 'Commande importante reçue', 'Une commande de 185 000 FCFA a été passée par Thomas Martin pour le produit \"Plugin SEO Pro\"', '/admin/commandes/134', 'fa-shopping-cart', 'emerald', 1, 'medium', 'order', 134, '2026-07-06 14:20:00', '2026-07-06 17:00:00'),
+(10, 'order_problem', 'Commande signalée comme problématique', 'La commande #142 a été signalée : adresse de livraison invalide', '/admin/commandes/142', 'fa-exclamation-triangle', 'red', 1, 'high', 'order', 142, '2026-07-06 10:30:00', '2026-07-06 14:00:00'),
+(11, 'support_message', 'Nouveau message support', 'Lucas Petit a envoyé un message concernant \"Problème d\'installation du thème\"', '/admin/support/28', 'fa-envelope', 'blue', 1, 'medium', 'ticket', 28, '2026-07-05 13:00:00', '2026-07-05 15:30:00'),
+(12, 'security_alert', 'Tentative de connexion suspecte', 'Une tentative de connexion admin a été détectée depuis l\'IP 203.0.113.42 (New York, USA)', NULL, 'fa-shield-alt', 'purple', 1, 'high', 'system', NULL, '2026-07-05 01:30:00', '2026-07-05 07:00:00'),
+(13, 'vendor_request', 'Nouvelle demande vendeur', 'Emma Bernard a soumis une demande pour ouvrir la boutique \"Fashion Design\"', '/admin/vendeurs/22', 'fa-user-plus', 'yellow', 1, 'high', 'user', 22, '2026-07-04 08:45:00', '2026-07-14 09:16:52'),
+(14, 'product_moderation', 'Nouveau produit à modérer', 'Le produit \"Template HTML Restaurant\" a été soumis par le vendeur David Simon', '/admin/produits/67', 'fa-file-code', 'indigo', 1, 'high', 'product', 67, '2026-07-04 06:20:00', '2026-07-14 09:16:52'),
+(15, 'order_high', 'Commande importante reçue', 'Une commande de 320 000 FCFA a été passée par Claire Dubois pour le produit \"Theme Flutter Mobile\"', '/admin/commandes/145', 'fa-shopping-cart', 'emerald', 1, 'medium', 'order', 145, '2026-07-03 15:40:00', '2026-07-03 18:00:00'),
+(16, 'support_message', 'Nouveau message support', 'Antoine Rousseau a envoyé un message concernant \"Demande de remboursement\"', '/admin/support/35', 'fa-envelope', 'blue', 1, 'high', 'ticket', 35, '2026-07-03 09:15:00', '2026-07-14 10:56:52'),
+(17, 'security_alert', 'Tentative de connexion suspecte', 'Une tentative de connexion admin a été détectée depuis l\'IP 45.33.22.11 (Londres, UK)', NULL, 'fa-shield-alt', 'purple', 1, 'high', 'system', NULL, '2026-07-02 21:00:00', '2026-07-14 10:56:52'),
+(18, 'vendor_request', 'Nouvelle demande vendeur', 'Nina Laurent a soumis une demande pour ouvrir la boutique \"Art & Design\"', '/admin/vendeurs/25', 'fa-user-plus', 'yellow', 1, 'high', 'user', 25, '2026-07-02 07:00:00', '2026-07-14 10:56:52'),
+(19, 'product_moderation', 'Nouveau produit à modérer', 'Le produit \"Plugin WordPress Booking\" a été soumis par le vendeur Michel Garcia', '/admin/produits/78', 'fa-file-code', 'indigo', 1, 'high', 'product', 78, '2026-07-01 12:30:00', '2026-07-14 09:16:52'),
+(20, 'order_high', 'Commande importante reçue', 'Une commande de 450 000 FCFA a été passée par Isabelle Roux pour le produit \"Bundle Templates Pro\"', '/admin/commandes/158', 'fa-shopping-cart', 'emerald', 1, 'high', 'order', 158, '2026-07-01 10:00:00', '2026-07-14 09:16:52'),
+(24, 'product_moderation', 'Produit refusé', 'Le produit \"Sac Premium\" ne respecte pas les règles de publication.', '/admin/products/115', 'fa-ban', 'red', 1, 'high', 'product', 115, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(25, 'product_moderation', 'Produit en attente', 'Le produit \"Clavier Gamer RGB\" attend une validation.', '/admin/products/133', 'fa-clock', 'yellow', 1, 'medium', 'product', 133, '2026-07-13 16:15:03', '2026-07-13 20:30:54'),
+(26, 'order_high', 'Commande importante', 'Une commande de 980 000 FCFA vient d\'être enregistrée.', '/admin/orders/501', 'fa-shopping-cart', 'green', 1, 'high', 'order', 501, '2026-07-13 16:15:03', '2026-07-13 20:39:28'),
+(28, 'order_problem', 'Paiement échoué', 'Le paiement de la commande #503 a échoué.', '/admin/orders/503', 'fa-credit-card', 'red', 1, 'high', 'order', 503, '2026-07-13 16:15:03', '2026-07-13 20:51:51'),
+(29, 'order_problem', 'Commande annulée', 'Le client a annulé la commande #504.', '/admin/orders/504', 'fa-times-circle', 'orange', 1, 'medium', 'order', 504, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(30, 'order_problem', 'Livraison retardée', 'La commande #505 accuse un retard de livraison.', '/admin/orders/505', 'fa-truck', 'orange', 1, 'medium', 'order', 505, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(31, 'support_message', 'Nouveau ticket', 'Le client Jean Dupont a créé un ticket de support.', '/admin/support/18', 'fa-headset', 'blue', 1, 'medium', 'user', 18, '2026-07-13 16:15:03', '2026-07-14 09:08:29'),
+(32, 'support_message', 'Réclamation client', 'Une réclamation a été déposée concernant une commande.', '/admin/support/19', 'fa-comment-dots', 'blue', 1, 'medium', 'user', 19, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(34, 'security_alert', 'Connexion suspecte', 'Connexion détectée depuis une nouvelle adresse IP.', '/admin/security', 'fa-shield-alt', 'red', 1, 'high', 'system', NULL, '2026-07-13 16:15:03', '2026-07-13 20:51:41'),
+(35, 'security_alert', 'Tentatives de connexion', 'Plusieurs tentatives de connexion échouées détectées.', '/admin/security', 'fa-lock', 'red', 1, 'high', 'system', NULL, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(36, 'security_alert', 'Mot de passe modifié', 'Le mot de passe du Super Admin a été modifié.', '/admin/security', 'fa-key', 'green', 1, 'medium', 'system', NULL, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(37, 'vendor_request', 'Documents incomplets', 'Le vendeur Smart Business doit compléter ses documents.', '/admin/vendors/43', 'fa-file', 'yellow', 1, 'medium', 'user', 43, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(38, 'product_moderation', 'Produit expiré', 'Le produit \"Écouteurs Bluetooth\" a expiré.', '/admin/products/140', 'fa-box-open', 'orange', 1, 'low', 'product', 140, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(39, 'order_high', 'Record de ventes', 'Une commande dépasse le seuil de 1 500 000 FCFA.', '/admin/orders/506', 'fa-chart-line', 'green', 1, 'high', 'order', 506, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(40, 'support_message', 'Message interne', 'Le modérateur a laissé une note interne.', '/admin/support/21', 'fa-envelope', 'blue', 1, 'low', 'user', 21, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(41, 'security_alert', 'Session expirée', 'Une session administrateur a expiré automatiquement.', '/admin/security', 'fa-user-lock', 'gray', 1, 'low', 'system', NULL, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(42, 'vendor_request', 'Nouveau commerçant', 'Fashion City souhaite vendre sur la plateforme.', '/admin/vendors/44', 'fa-store-alt', 'blue', 1, 'medium', 'user', 44, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(43, 'product_moderation', 'Image non conforme', 'Le produit \"Chaussures Sport\" contient une image interdite.', '/admin/products/145', 'fa-image', 'red', 1, 'high', 'product', 145, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(44, 'order_problem', 'Adresse invalide', 'La commande #507 possède une adresse incomplète.', '/admin/orders/507', 'fa-map-marker-alt', 'orange', 1, 'medium', 'order', 507, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(45, 'order_problem', 'Stock insuffisant', 'Impossible de traiter la commande #508 faute de stock.', '/admin/orders/508', 'fa-boxes', 'red', 1, 'high', 'order', 508, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(46, 'support_message', 'Question vendeur', 'Un vendeur demande de l\'aide concernant ses produits.', '/admin/support/22', 'fa-comments', 'blue', 1, 'medium', 'user', 22, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(47, 'security_alert', 'Accès administrateur', 'Un nouvel administrateur a été créé.', '/admin/users', 'fa-user-shield', 'green', 1, 'medium', 'user', 55, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(48, 'vendor_request', 'Demande rejetée', 'La demande du vendeur Easy Shop a été rejetée.', '/admin/vendors/45', 'fa-user-times', 'red', 1, 'medium', 'user', 45, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(49, 'product_moderation', 'Produit validé', 'Le produit \"PC Portable Lenovo\" a été validé.', '/admin/products/150', 'fa-check-circle', 'green', 1, 'low', 'product', 150, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(50, 'order_high', 'Commande entreprise', 'Une entreprise a passé une commande groupée.', '/admin/orders/509', 'fa-building', 'green', 1, 'high', 'order', 509, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(51, 'support_message', 'Conversation clôturée', 'Le ticket #23 a été résolu avec succès.', '/admin/support/23', 'fa-check', 'green', 1, 'low', 'user', 23, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(52, 'security_alert', 'Sauvegarde réussie', 'La sauvegarde quotidienne de la base est terminée.', '/admin/system', 'fa-database', 'green', 1, 'low', 'system', NULL, '2026-07-13 16:15:03', '2026-07-13 16:15:03'),
+(53, 'vendor_request', 'Compte suspendu', 'Le vendeur Mobile Express a été suspendu.', '/admin/vendors/46', 'fa-user-slash', 'red', 1, 'high', 'user', 46, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(54, 'product_moderation', 'Produit dupliqué', 'Le produit \"Power Bank 20000mAh\" semble dupliqué.', '/admin/products/151', 'fa-copy', 'yellow', 1, 'medium', 'product', 151, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(55, 'order_problem', 'Retour demandé', 'Le client souhaite retourner la commande #510.', '/admin/orders/510', 'fa-undo', 'orange', 1, 'medium', 'order', 510, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(56, 'support_message', 'Avis négatif', 'Un client a laissé un avis d\'une étoile.', '/admin/support/24', 'fa-star', 'orange', 1, 'medium', 'user', 24, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(57, 'security_alert', 'Maintenance programmée', 'Une maintenance est prévue cette nuit à 02h00.', '/admin/system', 'fa-tools', 'blue', 1, 'low', 'system', NULL, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(58, 'product_moderation', 'Description incomplète', 'Le produit \"Tablette Android\" doit être complété.', '/admin/products/152', 'fa-edit', 'yellow', 1, 'medium', 'product', 152, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(59, 'order_high', 'Pic de commandes', 'Le nombre de commandes dépasse la moyenne habituelle.', '/admin/orders', 'fa-chart-bar', 'green', 1, 'medium', 'system', NULL, '2026-07-13 16:15:03', '2026-07-14 09:16:52'),
+(60, 'support_message', 'Nouveau message vendeur', 'Le vendeur Electro Market a envoyé un nouveau message.', '/admin/support/25', 'fa-paper-plane', 'blue', 1, 'medium', 'user', 25, '2026-07-13 16:15:03', '2026-07-14 09:16:52');
+
+INSERT INTO `produit_views` (`id`, `produit_id`, `user_id`, `ip_address`, `date_creation`) VALUES
+(1, 1, 1, '192.168.1.1', '2026-07-14 15:50:40'),
+(2, 1, 2, '192.168.1.2', '2026-07-14 15:50:40'),
+(3, 1, 3, '192.168.1.3', '2026-07-14 15:50:40'),
+(4, 2, 1, '192.168.1.4', '2026-07-14 15:50:40'),
+(5, 2, 4, '192.168.1.5', '2026-07-14 15:50:40'),
+(6, 3, 2, '192.168.1.6', '2026-07-14 15:50:40'),
+(7, 3, 5, '192.168.1.7', '2026-07-14 15:50:40'),
+(8, 4, 3, '192.168.1.8', '2026-07-14 15:50:40'),
+(9, 4, 1, '192.168.1.9', '2026-07-14 15:50:40'),
+(10, 5, 2, '192.168.1.10', '2026-07-14 15:50:40'),
+(11, 1, NULL, '192.168.58.205', '2026-07-05 16:16:39'),
+(12, 1, 17, '192.168.208.28', '2026-07-12 16:16:39'),
+(13, 1, 42, '192.168.119.213', '2026-06-22 16:16:39'),
+(14, 1, NULL, '192.168.192.128', '2026-07-08 16:16:39'),
+(15, 1, NULL, '192.168.33.79', '2026-07-10 16:16:39'),
+(16, 1, NULL, '192.168.14.136', '2026-06-30 16:16:39'),
+(17, 1, NULL, '192.168.52.46', '2026-07-07 16:16:39'),
+(18, 1, NULL, '192.168.184.219', '2026-07-12 16:16:39'),
+(19, 1, 46, '192.168.90.13', '2026-07-09 16:16:39'),
+(20, 1, NULL, '192.168.180.240', '2026-06-28 16:16:39'),
+(21, 2, 42, '192.168.203.128', '2026-07-12 16:16:39'),
+(22, 2, 3, '192.168.6.246', '2026-06-23 16:16:39'),
+(23, 2, NULL, '192.168.16.185', '2026-07-02 16:16:39'),
+(24, 2, 49, '192.168.176.133', '2026-06-29 16:16:39'),
+(25, 2, 2, '192.168.185.146', '2026-06-25 16:16:39'),
+(26, 2, NULL, '192.168.166.7', '2026-07-10 16:16:39'),
+(27, 2, NULL, '192.168.147.105', '2026-07-06 16:16:39'),
+(28, 2, NULL, '192.168.9.247', '2026-06-23 16:16:39'),
+(29, 2, NULL, '192.168.175.26', '2026-07-02 16:16:39'),
+(30, 2, NULL, '192.168.95.8', '2026-07-14 16:16:39'),
+(31, 3, 32, '192.168.173.128', '2026-07-01 16:16:39'),
+(32, 3, NULL, '192.168.246.47', '2026-07-14 16:16:39'),
+(33, 3, NULL, '192.168.25.144', '2026-06-30 16:16:39'),
+(34, 3, NULL, '192.168.28.189', '2026-07-04 16:16:39'),
+(35, 3, NULL, '192.168.68.76', '2026-06-25 16:16:39'),
+(36, 3, NULL, '192.168.165.155', '2026-07-13 16:16:39'),
+(37, 3, NULL, '192.168.15.75', '2026-07-07 16:16:39'),
+(38, 3, NULL, '192.168.1.74', '2026-07-02 16:16:39'),
+(39, 3, NULL, '192.168.152.205', '2026-07-08 16:16:39'),
+(40, 3, NULL, '192.168.36.103', '2026-06-28 16:16:39'),
+(41, 4, NULL, '192.168.5.210', '2026-07-13 16:16:39'),
+(42, 4, NULL, '192.168.28.245', '2026-07-01 16:16:39'),
+(43, 4, NULL, '192.168.48.91', '2026-07-08 16:16:39'),
+(44, 4, 40, '192.168.169.238', '2026-06-25 16:16:39'),
+(45, 4, NULL, '192.168.51.12', '2026-06-27 16:16:39'),
+(46, 4, NULL, '192.168.24.126', '2026-07-10 16:16:39'),
+(47, 4, NULL, '192.168.183.59', '2026-06-16 16:16:39'),
+(48, 4, 26, '192.168.155.138', '2026-06-19 16:16:39'),
+(49, 4, NULL, '192.168.126.249', '2026-07-03 16:16:39'),
+(50, 4, 15, '192.168.26.173', '2026-07-13 16:16:39'),
+(51, 5, NULL, '192.168.142.181', '2026-06-19 16:16:39'),
+(52, 5, 40, '192.168.27.39', '2026-07-02 16:16:39'),
+(53, 5, NULL, '192.168.137.95', '2026-07-08 16:16:39'),
+(54, 5, 42, '192.168.196.96', '2026-06-28 16:16:39'),
+(55, 5, NULL, '192.168.93.88', '2026-06-27 16:16:39'),
+(56, 5, 36, '192.168.47.202', '2026-07-03 16:16:39'),
+(57, 5, NULL, '192.168.58.14', '2026-06-27 16:16:39'),
+(58, 5, NULL, '192.168.125.223', '2026-06-18 16:16:39'),
+(59, 5, NULL, '192.168.173.197', '2026-06-21 16:16:39'),
+(60, 5, NULL, '192.168.163.184', '2026-06-25 16:16:39'),
+(61, 6, 24, '192.168.105.169', '2026-07-13 16:16:39'),
+(62, 6, NULL, '192.168.186.122', '2026-07-09 16:16:39'),
+(63, 6, NULL, '192.168.82.219', '2026-07-06 16:16:39'),
+(64, 6, 12, '192.168.5.106', '2026-07-15 16:16:39'),
+(65, 6, NULL, '192.168.73.209', '2026-07-08 16:16:39'),
+(66, 6, NULL, '192.168.14.1', '2026-06-19 16:16:39'),
+(67, 6, 1, '192.168.24.110', '2026-06-19 16:16:39'),
+(68, 6, 40, '192.168.174.15', '2026-07-08 16:16:39'),
+(69, 6, 27, '192.168.134.6', '2026-06-29 16:16:39'),
+(70, 6, NULL, '192.168.101.50', '2026-06-22 16:16:39'),
+(71, 7, NULL, '192.168.88.180', '2026-06-30 16:16:39'),
+(72, 7, NULL, '192.168.105.232', '2026-07-06 16:16:39'),
+(73, 7, NULL, '192.168.93.59', '2026-07-13 16:16:39'),
+(74, 7, NULL, '192.168.27.138', '2026-07-04 16:16:39'),
+(75, 7, NULL, '192.168.139.178', '2026-06-20 16:16:39'),
+(76, 7, 17, '192.168.31.155', '2026-06-25 16:16:39'),
+(77, 7, NULL, '192.168.2.49', '2026-06-17 16:16:39'),
+(78, 7, 49, '192.168.93.235', '2026-06-30 16:16:39'),
+(79, 7, NULL, '192.168.88.105', '2026-07-14 16:16:39'),
+(80, 7, NULL, '192.168.131.206', '2026-06-30 16:16:39'),
+(81, 8, 46, '192.168.72.180', '2026-06-25 16:16:39'),
+(82, 8, 25, '192.168.134.42', '2026-07-08 16:16:39'),
+(83, 8, NULL, '192.168.22.31', '2026-07-05 16:16:39'),
+(84, 8, NULL, '192.168.16.9', '2026-06-16 16:16:39'),
+(85, 8, NULL, '192.168.65.191', '2026-06-16 16:16:39'),
+(86, 8, NULL, '192.168.112.43', '2026-06-30 16:16:39'),
+(87, 8, 50, '192.168.147.241', '2026-06-16 16:16:39'),
+(88, 8, 31, '192.168.186.205', '2026-06-20 16:16:39'),
+(89, 8, NULL, '192.168.97.145', '2026-06-25 16:16:39'),
+(90, 8, NULL, '192.168.207.185', '2026-07-10 16:16:39'),
+(91, 9, NULL, '192.168.63.242', '2026-07-15 16:16:39'),
+(92, 9, 50, '192.168.91.206', '2026-06-17 16:16:39'),
+(93, 9, NULL, '192.168.19.53', '2026-06-21 16:16:39'),
+(94, 9, NULL, '192.168.176.47', '2026-06-20 16:16:39'),
+(95, 9, NULL, '192.168.31.100', '2026-06-27 16:16:39'),
+(96, 9, NULL, '192.168.86.52', '2026-07-15 16:16:39'),
+(97, 9, NULL, '192.168.51.170', '2026-06-24 16:16:39'),
+(98, 9, NULL, '192.168.7.53', '2026-06-16 16:16:39'),
+(99, 9, 6, '192.168.251.144', '2026-06-19 16:16:39'),
+(100, 9, NULL, '192.168.244.157', '2026-07-09 16:16:39'),
+(101, 10, 21, '192.168.112.244', '2026-07-01 16:16:39'),
+(102, 10, NULL, '192.168.43.71', '2026-06-18 16:16:39'),
+(103, 10, NULL, '192.168.149.244', '2026-07-14 16:16:39'),
+(104, 10, 22, '192.168.68.3', '2026-07-07 16:16:39'),
+(105, 10, 39, '192.168.236.77', '2026-06-23 16:16:39'),
+(106, 10, NULL, '192.168.186.72', '2026-07-09 16:16:39'),
+(107, 10, 34, '192.168.131.149', '2026-07-04 16:16:39'),
+(108, 10, 33, '192.168.193.218', '2026-07-15 16:16:39'),
+(109, 10, NULL, '192.168.42.135', '2026-07-11 16:16:39'),
+(110, 10, 21, '192.168.123.58', '2026-06-25 16:16:39');
+
+INSERT INTO `promo_utilisations` (`id`, `code_promo_id`, `commande_id`, `utilisateur_id`, `montant_initial`, `remise`, `montant_final`, `date_utilisation`) VALUES
+(1, 1, 1001, 1, 100000.00, 50000.00, 50000.00, '2025-07-15 13:30:00'),
+(2, 2, 1002, 2, 25000.00, 7500.00, 17500.00, '2025-07-20 09:15:00'),
+(3, 3, 1003, 3, 30000.00, 5000.00, 25000.00, '2025-07-25 15:45:00'),
+(4, 4, 1004, 4, 15000.00, 1500.00, 13500.00, '2025-08-01 08:00:00'),
+(5, 5, 1005, 5, 45000.00, 6750.00, 38250.00, '2025-08-05 12:20:00'),
+(6, 16, 11, 6, 35000.00, 10500.00, 24500.00, '2026-07-20 08:00:00'),
+(7, 16, 12, 7, 28000.00, 8400.00, 19600.00, '2026-07-21 13:30:00'),
+(8, 16, 13, 8, 42000.00, 12600.00, 29400.00, '2026-07-22 10:15:00'),
+(9, 17, 14, 9, 18000.00, 10800.00, 7200.00, '2026-07-25 15:45:00'),
+(10, 17, 15, 10, 15000.00, 9000.00, 6000.00, '2026-07-26 09:20:00'),
+(11, 20, 16, 6, 5000.00, 1000.00, 4000.00, '2026-07-28 07:30:00'),
+(12, 20, 17, 7, 12000.00, 2400.00, 9600.00, '2026-07-29 12:00:00'),
+(13, 20, 18, 8, 8000.00, 1600.00, 6400.00, '2026-07-30 16:20:00'),
+(14, 21, 19, 9, 10000.00, 2000.00, 8000.00, '2026-08-01 08:45:00'),
+(15, 21, 20, 10, 6000.00, 1200.00, 4800.00, '2026-08-02 11:30:00');
+
+INSERT INTO `reviews` (`id`, `produit_id`, `user_id`, `commande_id`, `note`, `titre`, `commentaire`, `statut`, `date_creation`) VALUES
+(1, 1, 1, NULL, 5, 'Excellent produit !', 'Très satisfait de ce produit, je recommande vivement.', 'approuve', '2026-07-14 15:50:40'),
+(2, 2, 2, NULL, 4, 'Très bon', 'Produit de qualité, livraison rapide.', 'approuve', '2026-07-14 15:50:40'),
+(3, 3, 3, NULL, 5, 'Parfait !', 'Correspond parfaitement à la description.', 'approuve', '2026-07-14 15:50:40'),
+(4, 4, 4, NULL, 3, 'Moyen', 'Correct mais je m\'attendais à mieux.', 'approuve', '2026-07-14 15:50:40'),
+(5, 5, 5, NULL, 4, 'Bien', 'Bon produit, je suis satisfait.', 'approuve', '2026-07-14 15:50:40'),
+(6, 247, 246, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 1)', 'approuve', '2026-07-12 14:44:13'),
+(7, 49, 253, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 2)', 'en_attente', '2026-07-10 14:44:13'),
+(8, 26, 344, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 3)', 'approuve', '2026-07-13 14:44:13'),
+(9, 454, 211, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 4)', 'en_attente', '2026-07-10 14:44:13'),
+(10, 201, 242, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 5)', 'en_attente', '2026-07-02 14:44:13'),
+(11, 493, 241, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 6)', 'approuve', '2026-07-13 14:44:13'),
+(12, 81, 227, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 7)', 'approuve', '2026-07-03 14:44:13'),
+(13, 492, 262, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 8)', 'approuve', '2026-07-05 14:44:13'),
+(14, 387, 198, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 9)', 'approuve', '2026-07-13 14:44:13'),
+(15, 490, 344, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 10)', 'approuve', '2026-07-08 14:44:13'),
+(16, 400, 270, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 11)', 'approuve', '2026-07-02 14:44:13'),
+(17, 241, 221, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 12)', 'approuve', '2026-07-10 14:44:13'),
+(18, 403, 220, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 13)', 'approuve', '2026-07-04 14:44:13'),
+(19, 272, 266, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 14)', 'en_attente', '2026-07-02 14:44:13'),
+(20, 367, 334, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 15)', 'approuve', '2026-07-15 14:44:13'),
+(21, 388, 233, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 16)', 'approuve', '2026-07-12 14:44:13'),
+(22, 344, 265, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 17)', 'en_attente', '2026-07-08 14:44:13'),
+(23, 260, 236, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 18)', 'approuve', '2026-07-13 14:44:13'),
+(24, 36, 291, NULL, 3, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 19)', 'approuve', '2026-07-14 14:44:13'),
+(25, 394, 260, NULL, 4, 'Avis sur le produit', 'Très bon produit, je recommande ! (Avis 20)', 'approuve', '2026-07-02 14:44:13');
+
+INSERT INTO `settings` (`id`, `setting_key`, `setting_value`, `created_at`, `updated_at`) VALUES
+(1, 'site_name', 'NDIGITMARKET PLACE 4', '2026-07-14 16:18:16', '2026-07-18 18:46:21'),
+(2, 'site_tagline', 'Le marketplace digital de référence en Afrique de l\'Ouest', '2026-07-14 16:18:16', '2026-07-16 15:20:51'),
+(3, 'site_email', 'ndigitmarket@gmail.com', '2026-07-14 16:18:16', '2026-07-16 15:17:27'),
+(4, 'site_currency', 'FCFA', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(5, 'commission_rate', '10', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(6, 'min_withdrawal', '5000', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(7, 'min_order_amount', '500', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(8, 'max_order_amount', '5000000', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(9, 'refund_days', '5', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(10, 'vendor_payout_days', '30', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(11, 'maintenance_mode', '0', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(12, 'maintenance_message', 'Nous effectuons une maintenance. Le site sera bientôt de retour...', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(13, 'facebook_url', 'https://www.facebook.com/Ricardohounmenou669', '2026-07-14 16:18:16', '2026-07-16 15:24:02'),
+(14, 'twitter_url', 'https://www.facebook.com/Ricardohounmenou669', '2026-07-14 16:18:16', '2026-07-16 15:24:02'),
+(15, 'instagram_url', '', '2026-07-14 16:18:16', '2026-07-18 18:46:22'),
+(16, 'linkedin_url', 'https://www.facebook.com/Ricardohounmenou669', '2026-07-14 16:18:16', '2026-07-16 15:24:02'),
+(17, 'smtp_host', 'smtp.gmail.com', '2026-07-14 16:18:16', '2026-07-18 19:07:33'),
+(18, 'smtp_port', '587', '2026-07-14 16:18:16', '2026-07-18 19:03:09'),
+(19, 'smtp_username', 'hounmenouangelo@gmail.com', '2026-07-14 16:18:16', '2026-07-18 19:17:56'),
+(20, 'smtp_password', 'wgmygddabwoxqouo', '2026-07-14 16:18:16', '2026-07-18 20:03:46'),
+(21, 'smtp_encryption', 'TLS', '2026-07-14 16:18:16', '2026-07-17 16:22:40'),
+(22, 'smtp_from_email', 'hounmenouangelo@gmail.com', '2026-07-14 16:18:16', '2026-07-18 19:03:09'),
+(23, 'smtp_from_name', 'NDIGITMARKET PLACE 2', '2026-07-14 16:18:16', '2026-07-18 19:03:09'),
+(24, 'fedapay_public_key', 'pub_test_xxxxxxxxxx', '2026-07-14 16:18:16', '2026-07-19 11:38:53'),
+(25, 'fedapay_secret_key', 'sec_test_xxxxxxxxxx', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(26, 'fedapay_mode', 'test', '2026-07-14 16:18:16', '2026-07-19 11:38:53'),
+(27, 'payment_mobile_money', '1', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(28, 'payment_card', '1', '2026-07-14 16:18:16', '2026-07-16 14:47:41'),
+(29, 'payment_bank_transfer', '1', '2026-07-14 16:18:16', '2026-07-19 11:18:43'),
+(30, 'payment_paypal', '1', '2026-07-14 16:18:16', '2026-07-19 11:54:21'),
+(542, 'site_logo', '', '2026-07-16 16:35:27', '2026-07-16 16:35:27'),
+(543, 'site_favicon', '', '2026-07-16 16:35:27', '2026-07-16 16:35:27');
+
+
+
+
+
+
 
 
 
